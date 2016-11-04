@@ -1,0 +1,9 @@
+[ignore]
+
+[include]
+
+[libs]
+
+[options]
+module.system=haste
+esproposal.class_static_fields=enable

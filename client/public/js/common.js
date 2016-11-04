@@ -1,0 +1,3 @@
+$( function() {
+     UIkit.datepicker('.datepicker');
+  } );

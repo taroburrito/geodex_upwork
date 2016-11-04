@@ -1,0 +1,296 @@
+@import 'https://fonts.googleapis.com/css?family=Open+Sans:300,400,400i,600,700,800';
+
+body {
+  background: rgba(0, 0, 0, 0) url("../images/background.jpg") no-repeat fixed left top / cover ;
+  font-family: "Open Sans",sans-serif;
+  padding-top: 40px;
+}
+
+.login_form {
+  max-width: 400px;
+  width: 100%;
+}
+
+.login_form .uk-form {
+  background: rgba(0, 0, 0, 0.3) none repeat scroll 0 0;
+  border: medium none;
+  box-shadow: 15px 15px 6px rgba(0, 0, 0, 0.2);
+  color: #fff;
+}
+
+.login_form .uk-link-muted, .login_form .uk-link-muted a {
+  color: #ccc;
+}
+
+
+.uk-container-my .uk-nav {
+/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#4a5863+0,4a5863+100&1+54,0+100 */
+background: -moz-linear-gradient(top,  rgba(74,88,99,1) 0%, rgba(74,88,99,1) 54%, rgba(74,88,99,0) 100%); /* FF3.6-15 */
+background: -webkit-linear-gradient(top,  rgba(74,88,99,1) 0%,rgba(74,88,99,1) 54%,rgba(74,88,99,0) 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(to bottom,  rgba(74,88,99,1) 0%,rgba(74,88,99,1) 54%,rgba(74,88,99,0) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4a5863', endColorstr='#004a5863',GradientType=0 ); /* IE6-9 */
+
+  bottom: 0;
+  box-shadow: none;
+  content: "";
+  display: block;
+  height:650px;
+  border-bottom:none;
+}
+
+.uk-nav-offcanvas > .uk-open > a, html:not(.uk-touch) .uk-nav-offcanvas > li > a:focus, html:not(.uk-touch) .uk-nav-offcanvas > li > a:hover {
+  background: rgba(0, 0, 0, 0.3) none repeat scroll 0 0;
+  color: #fff;
+  outline: 0 none;
+}
+
+.tm-main.uk-width-medium-3-4 {
+  padding-left: 0;
+}
+
+h2.white_heading {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  font-family: open sans;
+  font-weight: 700 !important;
+  padding-bottom: 0;
+  padding-top: 2%;
+  width: 100%;
+}
+
+h2.white_heading  .uk-align-right {
+  font-size: 15px;
+  font-weight: normal;
+}
+
+h2.white_heading  .uk-align-right label{
+margin-right:10px;}
+
+
+.tm-main .uk-panel {
+  background: rgba(255, 255, 255, 0.7) none repeat scroll 0 0;
+  border: medium none;
+  border-radius: 3px;
+  box-shadow: 7px 7px 10px rgba(0, 0, 0, 0.2);
+}
+
+.tm-main  .uk-slider .uk-panel {
+  background: rgba(255, 255, 255, 0.9) none repeat scroll 0 0;
+  border: medium none;
+  border-radius: 3px;
+  box-shadow: none;
+}
+
+.tm-main{
+  padding-bottom: 40px;
+  padding-top: 20px;
+}
+
+nav {
+background: rgb(69,72,77)!important;
+background: -moz-linear-gradient(top,  rgba(69,72,77,1) 0%, rgba(0,0,0,1) 100%)!important;
+background: -webkit-linear-gradient(top,  rgba(69,72,77,1) 0%,rgba(0,0,0,1) 100%)!important;
+background: linear-gradient(to bottom,  rgba(69,72,77,1) 0%,rgba(0,0,0,1) 100%)!important;
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#45484d', endColorstr='#000000',GradientType=0 )!important;
+  border: medium none;
+  left: 0;
+  position: fixed;
+  padding: 0px 2% 0px;
+  top: 0;
+  width: 96%;
+  border-radius:0;
+  z-index:5;
+}
+
+.uk-navbar-nav > li > a {
+  color: #fff !important;
+  text-shadow: none !important;
+}
+
+.uk-navbar-nav > li.uk-active > a {
+  color: #666 !important;
+}
+
+.white_panel .uk-panel {
+  background: #fff none repeat scroll 0 0;
+}
+
+
+.top_grid .uk-panel-title {
+  color: #222 !important;
+  font-size: 14px;
+  font-weight: 800;
+  height: 30px;
+  line-height: 17px;
+  margin-bottom: 15px;
+  margin-top: 0;
+  text-transform: none;
+}
+
+.top_grid p {
+  color: #333 !important;
+  font-size: 25px;
+  font-weight: 300;
+}
+
+.top_grid .uk-panel {
+  padding-bottom: 20px;
+  text-align: center;
+}
+
+.white_panel h3 {
+  border-bottom: 1px solid #f1f1f1;
+  color: #000 !important;
+  font-family: open sans;
+  font-size: 19px;
+  font-weight: 400 !important;
+  margin-bottom: 0;
+  padding-bottom: 7px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.pro_slid .uk-panel.uk-panel-box {
+  padding: 0 0 7px;
+  text-align: center;
+}
+
+.pro_slid h3 {
+  color: #000 !important;
+  margin-bottom: 0;
+  margin-top: 6px;
+}
+
+.pro_slid .uk-slider.uk-grid-small.uk-grid-width-medium-1-6 {
+  min-height: 234px !important;
+}
+
+.pro_slid p {
+  color: #000 !important;
+  font-size: 13px;
+  margin-bottom: 10px;
+  margin-top: 0;
+}
+
+.pro_slid .uk-slider img {
+  border-radius: 2px 2px 0 0;
+}
+
+
+
+
+  .fixed-nav .uk-button {
+  background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
+  border: medium none;
+  border-radius: 0;
+  color: #fff;
+  padding: 6px 12px;
+  text-shadow: none;
+}
+
+
+#forget_pass .uk-modal-dialog {
+  max-width: 400px;
+  width: 100%;
+}
+
+.geo_modals .uk-modal-header {
+  background: #fff none repeat scroll 0 0;
+  border-bottom: 1px solid #e5e5e5;
+  border-radius: 4px 4px 0 0;
+  margin: -20px -20px 15px;
+  padding: 7px 20px;
+}
+
+.tm-main .uk-grid + .uk-grid {
+  margin-top: 15px;
+}
+
+.tm-main form label {
+  color: #000;
+  font-family: open sans;
+  font-size: 18px;
+  font-weight: 400 !important;
+  margin-bottom: 7px !important;
+  margin-top: 5px;
+}
+
+
+.uk-form select, .uk-form textarea, .uk-form input:not([type]), .uk-form input[type="text"], .uk-form input[type="password"], .uk-form input[type="datetime"], .uk-form input[type="datetime-local"], .uk-form input[type="date"], .uk-form input[type="month"], .uk-form input[type="time"], .uk-form input[type="week"], .uk-form input[type="number"], .uk-form input[type="email"], .uk-form input[type="url"], .uk-form input[type="search"], .uk-form input[type="tel"], .uk-form input[type="color"] {
+  padding: 7px 10px;
+  height: auto;
+ }
+
+ .tm-main table {
+  background: #fff none repeat scroll 0 0;
+  border-bottom: 10px solid #fff;
+  border-left: 10px solid #fff;
+  border-right: 10px solid #fff;
+}
+
+.manage_page i {
+  font-size: 17px;
+  padding-left: 5px;
+  padding-right: 5px;
+  cursor:pointer;
+}
+
+.manage_page .uk-icon-edit {
+  color: green;
+}
+
+.manage_page .uk-icon-close {
+  color: darkred;
+}
+
+.manage_page td:last-child {
+  width: 100px;
+}
+
+.add_cat_btn {
+  padding: 3px 0 !important;
+  text-align:right;
+}
+
+.add_cat_btn .uk-button.uk-button-primary {
+  width: 60%;
+}
+
+.cat_shorting {
+	margin-left:0;
+}
+
+.cat_shorting ul {
+	width:100%;
+}
+
+h3.white_heading_small {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  font-family: open sans;
+  font-weight: 700 !important;
+  margin-bottom: 20px;
+  margin-left: 0 !important;
+  padding-bottom: 0;
+  padding-left: 0;
+  padding-top: 40px;
+  width: 100%;
+}
+input.myinputcont {
+    padding: 6px 10px!important;
+    height: auto;
+    border-radius: 3px;
+    border: 1px solid #ccc;
+    margin-left: -10px;
+    box-shadow: 0 0 8px #ccc inset;
+}
+
+.myinputcont_btn {
+    color: #ffffff;
+    width: 98px;
+    margin-left: 10px;
+}
+
+.myinputcont_btn a {
+color:#ffffff;
+}
