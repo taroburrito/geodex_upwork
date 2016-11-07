@@ -9,14 +9,16 @@ import {  Clicked_SignUp, SignUp_Success, SignUp_Fail,
           Forgot_Password_Email_Error,
           Forgot_Password_Email_Success,
           Clicked_Forgot_Password,
-        Reset_Password_Success,Reset_Password_Failed } from '../actions/AuthActions';
+        Reset_Password_Success,
+        Reset_Password_Failed,
+      Change_Password_Failed, Change_Password_Success } from '../actions/AuthActions';
 
 const defaultStartState = { isLoggedIn: false,
                             fetchingAuthUpdate: false,
                             userObject: null,
                             error: null,
                             success: null,
-                
+
 
                           };
 
@@ -25,6 +27,33 @@ const defaultResetState = {
   successMessage:null,
   error:null
 
+}
+const defaultMessageState = {
+
+  successMessage:null,
+  error:null
+
+}
+
+export function updateError(actionMessage = defaultMessageState,action){
+  switch (action.type) {
+    case Change_Password_Success:
+    return Object.assign({}, actionMessage, {
+      successMessage: "You have successfully changed your password",
+      error:null
+    });
+      break;
+    case Change_Password_Failed:
+    return Object.assign({}, actionMessage, {
+      error: action.error,
+      successMessage:null
+    });
+        break;
+
+    default:
+    return actionMessage;
+
+  }
 }
 
 export function updateUserInfo(userAuthState = defaultStartState , action) {

@@ -4,23 +4,23 @@ import {  Start_Fetching_User_Profile,
         } from '../actions/ProfileActions';
 
 const defaultStartState = { profileLoaded: false, //true even if results failed
-                            isFetchingProfile: false, 
+                            isFetchingProfile: false,
                             userData: null,
                             error: null
                           }
 const defaultuserData = null;
 
 /*export function updateProfileData(userProfileState = defaultStartState , action) {
-  
+
   switch (action.type){
-    
+
     case Start_Fetching_User_Profile:
       return Object.assign({}, defaultStartState,{isFetchingProfile: true });
 
     case Fetch_User_Profile_Success:
       return {
         profileLoaded: true,
-        isFetchingProfile: false, 
+        isFetchingProfile: false,
         userData: action.userData,
         error: null
       };
@@ -29,7 +29,7 @@ const defaultuserData = null;
     case Fetch_User_Profile_Fail:
       return {
         profileLoaded: true,
-        isFetchingProfile: false, 
+        isFetchingProfile: false,
         userData: null,
         error: action.error
       };
@@ -38,15 +38,18 @@ const defaultuserData = null;
       return Object.assign({}, defaultStartState);
     case Get_User_Details:return Object.assign({},action.userdetail);
 
-    default: 
+    default:
       return userProfileState;
   }
 }*/
-
-export function userProfileData(userProfileState = {} , action){
+const defaultStates={
+  error: null,
+  success: null,
+}
+export function userProfileData(userProfileState = defaultStates , action){
   switch (action.type){
 
-        case Get_User_Details: 
+        case Get_User_Details:
              return action.userdetail;
 
        case Update_Profile_Input:
@@ -54,6 +57,7 @@ export function userProfileData(userProfileState = {} , action){
              dataObj[action.field]=action.value;
              return Object.assign({},userProfileState,dataObj);
       case Update_Profile_Success:
+      action.data.success = "updated successfully";
         return Object.assign({}, userProfileState, action.data);
        default:
           return userProfileState;

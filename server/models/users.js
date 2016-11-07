@@ -160,6 +160,8 @@ var userModel = {
       });
 
     },
+
+    
     // Update User Function
 
     updateUser(data,callback){
@@ -167,8 +169,7 @@ var userModel = {
         var updateUserQuery=constructupdateUserQuery(data);
         var updateUserDetailsQuery = constructupdateUserDetailQuery(data);
         // Update Query for gx_users table
-        console.log(updateUserQuery);
-        console.log(updateUserDetailsQuery);
+
         dbConnection.query(updateUserQuery, function (error, results, fields) {
             if (error) {
                 dbConnection.destroy();
@@ -176,20 +177,13 @@ var userModel = {
                 return (callback({error: error}));
             } else if (results.affectedRows === 1) {
 
-
-
                 //Update query for gx_user_details table
                 dbConnection.query(updateUserDetailsQuery,function(errors,result,field){
-
-                    if(errors){
-
-                        dbConnection.destroy();
+                  if(errors){
+                    dbConnection.destroy();
                         return (callback({error: errors}));
                     }else if (result.affectedRows === 1) {
-
-
-                            return (callback({success: "Profile Data successfully updated"}));
-
+                      return (callback({success: "Update user data successfully"}));
                     }else {
                         return (callback({error: "Error in updating user details"}));
                     }
@@ -199,10 +193,59 @@ var userModel = {
                 return (callback({error: "Error in update "}));
             }
         });
-    }
+    },
+
+    // update profile images
+
+    updateUserProfileImage(data,callback){
+        return (callback({success: data}));
+    },
+
+    // change password
+
+    changePassword: function(data,callback){
+
+      var dbConnection = dbConnectionCreator();
+
+      var getUserByEmail = constructGetUserProfileByEmail(data.email);
+      dbConnection.query(getUserByEmail, function (error, results, fields) {
+          if (error) {
+              dbConnection.destroy();
+
+              return (callback({error: error}));
+          } else {
+            if (!bcrypt.compareSync(data.old_pwd, results[0].password)) {
+                  return (callback({error: "Incorrect old password"}));
+            }else{
+               var changePasswordQuery = constructchangePasswordQuery(data.email,data.new_pwd);
+
+              dbConnection.query(changePasswordQuery, function (error, results, fields) {
+                  if (error) {
+                      dbConnection.destroy();
+
+                      return (callback({error: changePasswordQuery}));
+                  } else if (results.affectedRows === 1) {
+                      return (callback({success: "Success"}));
+
+                  } else {
+                      return (callback({error: "Error in update pwd query"}));
+                  }
+              });
+            }
+          }
+
+      });
+
+    },
 
 
 };
+function constructchangePasswordQuery(email,new_pwd){
+  var salt = bcrypt.genSaltSync(10);
+  var passwordHashNew = bcrypt.hashSync(new_pwd, salt);
+  var query = " UPDATE  gx_users set password ="+mysql.escape(passwordHashNew)+"  WHERE email = " + mysql.escape(email);
+  return query;
+}
 function constructupdateUserQuery(data){
     var timestamp = moment();
     var formatted = timestamp.format('YYYY-MM-DD HH:mm:ss Z');
@@ -225,8 +268,6 @@ function constructupdateUserDetailQuery(data){
         ", profile_image = " + mysql.escape(data.profile_image) +
         ", last_updated = '" + formatted+"'" +
         " WHERE user_id = " + mysql.escape(data.user_id);
-    /*"UPDATE `gx_user_details` SET  `first_name`='"+data.first_name+"', `last_name`='"+data.last_name+"', `dob`='"+data.dob+"', `gender`='"+data.gender+"', `address`='"+data.address+"',"+
-        " `latitude`='"+data.latitude+"', `longitude`='"+data.longitude+"',`last_updated`='" + formatted + "' WHERE user_id="+data.id;*/
     return query;
 }
 function sendMailToUser(token,from,to,subject,content){
@@ -288,10 +329,16 @@ function constructresetPasswordByTokenQuery(token, pwd){
 }
 
 function constructGetUserProfileSqlString(userId) {
-    var query = " SELECT  * " +
+    var query = " SELECT  *, FROM_BASE64(profile_image) as image_profile " +
             " FROM gx_users LEFT JOIN gx_user_details " +
             " ON gx_user_details.user_id = gx_users.id" +
             " WHERE  gx_users.id = " + mysql.escape(userId);
+    return query;
+
+}
+function constructGetUserProfileByEmail(email) {
+    var query = " SELECT  * " +
+            " FROM gx_users WHERE  gx_users.email = " + mysql.escape(email);
     return query;
 
 }

@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import GooglePlacesSuggest from 'react-google-places-suggest';
 import { Navigation } from 'react-router';
 import Datetime from 'react-datetime'
+import ChangePassword from './ChangePassword';
 import { validateEmail, validateDisplayName, validatePassword } from '../../utilities/RegexValidators';
 require('react-datetime/css/react-datetime.css');
 import {updateProfileInput,updateUserProfileData} from '../../actions/ProfileActions';
@@ -26,6 +27,7 @@ export default class EditProfile extends Component {
     this.handleScale = this.handleScale.bind(this);
     this.handleBorderRadius = this.handleBorderRadius.bind(this);
     this.handleOnClickUpdate=this.handleOnClickUpdate.bind(this);
+
     this.state = {
         search: '',
         selectedCoordinate: initialFormState,
@@ -34,15 +36,20 @@ export default class EditProfile extends Component {
         dob:null,
         scale: 1,
         borderRadius: 0,
-        preview: null
+        preview: null,
+        content: 'edit_profile'
     }
   }
-  
+
   handleSave (data) {
     var img = this.refs.avatar.getImage();
    // this.setState({ preview: img});
-    const {dispatch}=this.props;
+    const {dispatch, userData}=this.props;
+    userData.profile_image = img;
+    if(dispatch(updateUserProfileData(userData))){
     dispatch(updateProfileInput('profile_image',img));
+    }
+
   }
 
   handleScale (e) {
@@ -110,7 +117,7 @@ export default class EditProfile extends Component {
     const {dispatch}=this.props;
     dispatch(updateProfileInput('email',event.target.value));
  }
- 
+
  onDobChange(dob){
     const {dispatch}=this.props;
     dispatch(updateProfileInput('dob',dob));
@@ -133,24 +140,128 @@ getProfileImage(img){
    if(img){
     return img;
   }else{
-   return "public/images/user.jpg";  
+   return "public/images/user.jpg";
   }
-  
+
 }
+
+__renderContent(){
+  const { dispatch,userData} = this.props;
+
+  const { search } = this.state;
+  if(this.state.content == 'edit_profile'){
+    return(
+      <div className="uk-width-medium-2-3 profile-form">
+
+          <div className="uk-grid uk-grid-medium">
+              <h4 className="uk-width-medium-1-1">Personal Information</h4>
+              <div className="uk-width-medium-1-2">
+                  <label className="uk-form-label" for="form-gs-a">First Name</label>
+                  <div className="uk-form-controls">
+                      <input id="form-gs-a" placeholder="" ref="first_name" className="uk-width-1-1" onChange={this.onFirstNameChange} value={userData.first_name}   type="text"/>
+                  </div>
+              </div>
+              <div className="uk-width-medium-1-2">
+                  <label className="uk-form-label" for="form-gs-b">Last Name</label>
+                  <div className="uk-form-controls">
+                      <input id="form-gs-b" placeholder="" ref="last_name" onChange={this.onLastNameChange} value={userData.last_name} className="uk-width-1-1" type="text"/>
+                  </div>
+              </div>
+          </div>
+
+          <div className="uk-grid uk-grid-medium">
+              <div className="uk-width-medium-1-2">
+                  <label className="uk-form-label" for="form-gs-a">Email Id</label>
+                  <div className="uk-form-controls">
+                      <input id="form-gs-a" placeholder="" ref="email" onChange={this.onEmailChange} value={userData.email}  className="uk-width-1-1" type="text"/>
+                  </div>
+              </div>
+              <div className="uk-width-medium-1-2">
+                  <label className="uk-form-label" for="form-gs-b">Location</label>
+                  <div className="uk-form-controls">
+                      <GooglePlacesSuggest onSelectSuggest={ this.handleSelectSuggest.bind(this) } search={ search }>
+                        <input className="uk-width-1-1 uk-form-large" type="text" ref="address" value={ userData.address } placeholder="Search a location" onChange={ this.handleSearchChange.bind(this) }/>
+                        <input type="hidden" value={this.state.selectedCoordinate?this.state.selectedCoordinate.latitude:''} ref="latitude"/>
+                        <input type="hidden" value={this.state.selectedCoordinate?this.state.selectedCoordinate.longitude:''} ref="longitude"/>
+                    </GooglePlacesSuggest>
+                  </div>
+              </div>
+          </div>
+
+          <div className="uk-grid uk-grid-medium">
+              <div className="uk-width-medium-1-2">
+                  <label className="uk-form-label" for="form-gs-a">Date of Birth</label>
+                  <div className="uk-form-controls">
+                  <Datetime value={this.dateVal(userData.dob)} disableOnClickOutside={true} inputProps={{name:"dob",placeholder:"Date of birth"}} onChange={(dob) => this.onDobChange(dob)}  input={true} className={"dob"} closeOnSelect={true} viewMode={"days"} timeFormat={false} dateFormat={'YYYY-MM-DD'}  />
+
+                  </div>
+              </div>
+              <div className="uk-width-medium-1-2">
+                  <label className="uk-form-label" for="form-gs-b">Gender</label>
+                  <div className="uk-form-controls">
+                      <div className="uk-width-small-1-2 gender_select">
+
+                          <input name="gender" ref="radio_female" value="female" id="u_0_d" type="radio" onChange={this.onGenderChange} checked={userData.gender === 'female'} />
+                          <label className="_58mt" for="u_0_d">
+                              &nbsp;Female&nbsp;
+                          </label>
+
+                          <input name="gender" ref="radio_male" value="male" id="u_0_e" type="radio" onChange={this.onGenderChange} checked={userData.gender === 'male'}/>
+                          <label className="_58mt" for="u_0_e">
+                              &nbsp;Male&nbsp;
+                          </label>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+          <div>
+            <p className="text-align-right">
+                <button className="uk-button uk-button-success uk-button-large" onClick={this.handleOnClickUpdate} >Update </button>
+
+                <a className="uk-button uk-button-large" href="#/dashboard">Cancel</a>
+
+            </p>
+          </div>
+      </div>
+    );
+  }else if (this.state.content == 'change_password') {
+    return(
+    <ChangePassword userData={userData}/>
+    );
+  }else if (this.state.content == 'custom') {
+    return(
+      <div>Custom</div>
+    );
+  }else {
+    return(
+      <div>Else</div>
+    );
+  }
+}
+
  render() {
     const { dispatch,userData} = this.props;
 
     const { search } = this.state;
     if(userData){
         var errorLabel;
+        var errorLabelStyle={
+          position:'absolute'
+        };
         if(this.state.errorMessage){
-            errorLabel =(<div className="uk-alert uk-alert-danger">
+            errorLabel =(<div className="uk-alert uk-alert-danger uk-width-small-1-2" style={errorLabelStyle}>
                 <p>{this.state.errorMessage}</p>
             </div>);
+        }else if(userData.success){
+          errorLabel =(<div className="uk-alert uk-alert-success uk-width-small-1-2" style={errorLabelStyle}>
+              <p>{userData.success}</p>
+          </div>);
         }
          return (
-        
+
             <div>
+
              <div id="profilepic" className="uk-modal profile-modal" >
                 <div className="uk-modal-dialog">
                     <AvatarEditor
@@ -159,7 +270,7 @@ getProfileImage(img){
                       width={250}
                       height={250}
                       border={10}
-                      color={[255, 255, 255, 0.6]} // RGBA 
+                      color={[255, 255, 255, 0.6]} // RGBA
                       scale={parseFloat(this.state.scale)}
                       borderRadius={this.state.borderRadius}
                       onSave={this.handleSave}
@@ -172,9 +283,9 @@ getProfileImage(img){
                  <br />
                 <input name="scale" type="range" ref="scale" onChange={this.handleScale} min="1" max="2" step="0.01"
                              defaultValue="1" />
-               
+
                 <br />
-                <input className="uk-button uk-button-primary uk-button-large" type="button" onClick={this.handleSave} value="Save" />
+                <input className="uk-button uk-button-primary uk-button-large uk-modal-close" type="button" onClick={this.handleSave} value="Save" />
 
                 <br />
             </div>
@@ -204,98 +315,31 @@ getProfileImage(img){
                             <div className="uk-width-medium-1-3 profile-sidebar">
                                 <ul className="uk-tab uk-tab-left uk-width-medium-1-1" data-uk-tab="">
                                     <li className="uk-active" aria-expanded="true">
-                                        <a href="#">Edit Profile</a>
+                                        <a href="#" onClick={()=>this.setState({content: 'edit_profile'})}>Edit Profile</a>
                                     </li>
                                     <li className="" aria-expanded="false">
-                                        <a href="#">Change Password</a>
+                                        <a href="#" onClick={()=>this.setState({content: 'change_password'})}>Change Password</a>
                                     </li>
                                     <li aria-expanded="false" className="">
-                                        <a href="#">Custom Design</a>
+                                        <a href="#" onClick={()=>this.setState({content: 'custom'})}>Custom Design</a>
                                     </li>
 
                                 </ul>
                             </div>
+                            {errorLabel}
 
-                            <div className="uk-width-medium-2-3 profile-form">
-                                {errorLabel}
-                                <div className="uk-grid uk-grid-medium">
-                                    <h4 className="uk-width-medium-1-1">Personal Information</h4>
-                                    <div className="uk-width-medium-1-2">
-                                        <label className="uk-form-label" for="form-gs-a">First Name</label>
-                                        <div className="uk-form-controls">
-                                            <input id="form-gs-a" placeholder="" ref="first_name" className="uk-width-1-1" onChange={this.onFirstNameChange} value={userData.first_name}   type="text"/>
-                                        </div>
-                                    </div>
-                                    <div className="uk-width-medium-1-2">
-                                        <label className="uk-form-label" for="form-gs-b">Last Name</label>
-                                        <div className="uk-form-controls">
-                                            <input id="form-gs-b" placeholder="" ref="last_name" onChange={this.onLastNameChange} value={userData.last_name} className="uk-width-1-1" type="text"/>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="uk-grid uk-grid-medium">
-                                    <div className="uk-width-medium-1-2">
-                                        <label className="uk-form-label" for="form-gs-a">Email Id</label>
-                                        <div className="uk-form-controls">
-                                            <input id="form-gs-a" placeholder="" ref="email" onChange={this.onEmailChange} value={userData.email}  className="uk-width-1-1" type="text"/>
-                                        </div>
-                                    </div>
-                                    <div className="uk-width-medium-1-2">
-                                        <label className="uk-form-label" for="form-gs-b">Location</label>
-                                        <div className="uk-form-controls">
-                                            <GooglePlacesSuggest onSelectSuggest={ this.handleSelectSuggest.bind(this) } search={ search }>
-                                              <input className="uk-width-1-1 uk-form-large" type="text" ref="address" value={ userData.address } placeholder="Search a location" onChange={ this.handleSearchChange.bind(this) }/>
-                                              <input type="hidden" value={this.state.selectedCoordinate?this.state.selectedCoordinate.latitude:''} ref="latitude"/>
-                                              <input type="hidden" value={this.state.selectedCoordinate?this.state.selectedCoordinate.longitude:''} ref="longitude"/>
-                                          </GooglePlacesSuggest>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="uk-grid uk-grid-medium">
-                                    <div className="uk-width-medium-1-2">
-                                        <label className="uk-form-label" for="form-gs-a">Date of Birth</label>
-                                        <div className="uk-form-controls">
-                                        <Datetime value={this.dateVal(userData.dob)} disableOnClickOutside={true} inputProps={{name:"dob",placeholder:"Date of birth"}} onChange={(dob) => this.onDobChange(dob)}  input={true} className={"dob"} closeOnSelect={true} viewMode={"days"} timeFormat={false} dateFormat={'YYYY-MM-DD'}  />
-                                            
-                                        </div>
-                                    </div>
-                                    <div className="uk-width-medium-1-2">
-                                        <label className="uk-form-label" for="form-gs-b">Gender</label>
-                                        <div className="uk-form-controls">
-                                            <div className="uk-width-small-1-2 gender_select">
-
-                                                <input name="gender" ref="radio_female" value="female" id="u_0_d" type="radio" onChange={this.onGenderChange} checked={userData.gender === 'female'} />
-                                                <label className="_58mt" for="u_0_d">
-                                                    &nbsp;Female&nbsp;
-                                                </label>
-
-                                                <input name="gender" ref="radio_male" value="male" id="u_0_e" type="radio" onChange={this.onGenderChange} checked={userData.gender === 'male'}/>
-                                                <label className="_58mt" for="u_0_e">
-                                                    &nbsp;Male&nbsp;
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            {this.__renderContent()}
                         </div>
                     </div>
-                    <p className="text-align-right">
-                        <button className="uk-button uk-button-success uk-button-large" onClick={this.handleOnClickUpdate} >Update </button>
 
-                        <a className="uk-button uk-button-large" href="#/dashboard">Cancel</a>
-
-                    </p>
                 </div>
             </div>
-       
+
 
 
     );
     }
-   
+
   }
 }
 

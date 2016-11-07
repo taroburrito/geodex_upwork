@@ -37,7 +37,8 @@ module.exports = {
             socket.on('user-detail',function(userId){
                 userModel.getUserProfile(userId,function(result){
                     if(result.userData && result.userData.length){
-                            socket.emit("userDetail",result.userData[0]);     
+                            var userData=JSON.stringify(result.userData[0]);
+                            socket.emit("userDetail",userData);     
                     }
                    
                 })

@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { updateUserInfo, verifyToken, forgotPasswordResult} from './AuthReducer';
+import { updateUserInfo, verifyToken, forgotPasswordResult, updateError} from './AuthReducer';
 import { updateUniversalTodoList, updateUniversalUnsavedTodoList } from './TodoReducer';
 import { updateProfileData,userProfileData } from './ProfileReducer';
 import { updateCategoryList, handleMessage} from './CategoryReducer';
@@ -30,6 +30,7 @@ const RootReducer = combineReducers({
   forgotPasswordResult: forgotPasswordResult,
   handleMessage: handleMessage,
   getPageData:getPageData,
+  actionMessage: updateError,
 
   //For viewing profiles.
   userProfileData:userProfileData,

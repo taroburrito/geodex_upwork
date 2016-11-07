@@ -19,7 +19,6 @@ class StaticPages extends Component{
 
   }
   componentDidMount(){
-    console.log("didmount");
     const {dispatch} = this.props;
     dispatch(getPageById(this.props.params.slug));
   }

@@ -15,7 +15,6 @@ class UserSettings extends Component{
 
   render(){
     const {userAuthSession, dispatch} = this.props;
-
     if(userAuthSession.isLoggedIn){
 
       return(

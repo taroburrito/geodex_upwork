@@ -25,6 +25,10 @@ export const Token_Verified_Success = 'Token_Verified_Success';
 
 export const Reset_Password_Failed = 'Reset_Password_Failed';
 export const Reset_Password_Success = 'Reset_Password_Success';
+
+export const Change_Password_Failed = 'Change_Password_Failed';
+export const Change_Password_Success = 'Change_Password_Success';
+
 export const Clicked_Reset_Password = 'Clicked_Reset_Password';
 
 export const Forgot_Password_Email_Error = 'Forgot_Password_Email_Error';
@@ -65,6 +69,14 @@ export function resetPasswordFailed(error){
 
 export function resetPasswordSuccess(){
 	return{type: Reset_Password_Success};
+}
+
+export function changePasswordFailed(error){
+	return{type: Change_Password_Failed, error};
+}
+
+export function changePasswordSuccess(){
+	return{type: Change_Password_Success};
 }
 
 export function clickedLogin() {
@@ -154,6 +166,30 @@ export function resetPassword(token, pwd){
 		}).error(function(error){
 			console.log("Error in get all pages api call"+JSON.stringify(error));
 			dispatch(resetPasswordFailed(error));
+		});
+	}
+}
+
+export function changePassword(email, oldPwd, newPwd){
+
+	return (dispatch) => {
+
+		$.ajax({
+			type:'POST',
+			url:'/api/v1/users/changePassword',
+			data: {email:email,old_pwd:oldPwd,new_pwd:newPwd}
+		}).done(function(data){
+			if(data.error){
+				console.log(data);
+				dispatch(changePasswordFailed(data.error));
+			}else{
+			console.log(data);
+			dispatch(changePasswordSuccess());
+			}
+
+		}).error(function(error){
+			console.log("Error in change password api call call"+JSON.stringify(error));
+			//dispatch(resetPasswordFailed(error));
 		});
 	}
 }

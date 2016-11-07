@@ -69,27 +69,33 @@ export function updateProfileInput(field,val){
 export function updatedProfileData(data){
 	return {type:Update_Profile_Success,data}
 }
-export function updateUserProfileData(userData){
-	return (dispatch) => {
-		$.ajax({
-			type:'POST',
-			url:'/api/v1/user/update/'+userData.id,
-			data:userData,
-			processData: false,
-    		contentType: false
-		}).done(function(data){
-			if(data.error){
-				console.log("Error in Updating data");
-			}else{
-				console.log("Successfully Updated");
-				dispatch(updatedProfileData(data));
-				//dispatch(handleSuccessMessage("Added Successfully"));
-			}
 
-		}).error(function(error){
-			console.log("Error in get all pages api call"+JSON.stringify(error));
-		})
-	}
+export function updateProfileSuccess(userdetail){
+	return { type: Update_Profile_Success, data:userdetail};
 }
 
+export function handleSuccessMessage(msg){
 
+}
+
+export function updateUserProfileData(userData){
+  return(dispatch) => {
+    $.ajax({
+      type:'Post',
+      url:'/api/v1/user/update/'+userData.id,
+      dataType:'JSON',
+      data:userData,
+    }).done(function(data){
+
+      if(data.error){
+        console.log("error:"+data.error);
+      }else{
+        dispatch(updateProfileSuccess(userData));
+      // /  dispatch(handleSuccessMessage("Updated Successfully"));
+
+      }
+    }).error(function(error){
+    console.log("Error in update profile api"+ error);
+    })
+  }
+}

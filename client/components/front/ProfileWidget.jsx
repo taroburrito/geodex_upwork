@@ -15,9 +15,8 @@ export default class ProfileWidget extends Component {
 
 
     render() {
-
         if(this.props.userdetail){
-            
+
                 return (
                     <div>
                         <EditProfile  userdetail={this.props.userdetail}/>
@@ -30,7 +29,7 @@ export default class ProfileWidget extends Component {
                     <div></div>
                 );
         }
-        
+
     }
 
 }
