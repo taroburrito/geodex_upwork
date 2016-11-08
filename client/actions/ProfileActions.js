@@ -9,6 +9,7 @@ export const Get_User_Details='Get_User_Deails';
 export const Update_Profile_Input='Update_Profile_Input';
 export const Update_Profile_Success='Update_Profile_Success';
 import {Handle_Success_Message} from './PageActions';
+export const Fetch_Freind_List = 'Fetch_Freind_List';
 
 	/*
      * other constants
@@ -20,6 +21,10 @@ import {Handle_Success_Message} from './PageActions';
 
 export function startFetchingUserProfile() {
   return { type: Start_Fetching_User_Profile };
+}
+
+export function receivedAllfriendsList(friendList){
+  return {type: Fetch_Freind_List, data: friendList}
 }
 
 
@@ -96,6 +101,29 @@ export function updateUserProfileData(userData){
       }
     }).error(function(error){
     console.log("Error in update profile api"+ error);
+    })
+  }
+}
+
+export function updateUserData(userData){
+  return(dispatch) => {
+    $.ajax({
+      type:'Post',
+      url:'/api/v1/user/updateData/',
+      dataType:'JSON',
+      data:userData,
+    }).done(function(data){
+
+      if(data.error){
+        console.log("error:"+data.error);
+      }else{
+        console.log(data);
+        //dispatch(updateProfileSuccess(userData));
+      // /  dispatch(handleSuccessMessage("Updated Successfully"));
+
+      }
+    }).error(function(error){
+    console.log("Error in update user data api"+ JSON.stringify(error));
     })
   }
 }

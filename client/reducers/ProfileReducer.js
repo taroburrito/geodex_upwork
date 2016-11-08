@@ -1,6 +1,7 @@
 import {  Start_Fetching_User_Profile,
           Fetch_User_Profile_Success, Fetch_User_Profile_Fail,
-          Reload_Profile_Page,Get_User_Details,Update_Profile_Input,Update_Profile_Success
+          Reload_Profile_Page,Get_User_Details,Update_Profile_Input,Update_Profile_Success,
+          Fetch_Freind_List
         } from '../actions/ProfileActions';
 
 const defaultStartState = { profileLoaded: false, //true even if results failed
@@ -61,5 +62,16 @@ export function userProfileData(userProfileState = defaultStates , action){
         return Object.assign({}, userProfileState, action.data);
        default:
           return userProfileState;
+  }
+}
+
+export function getAllFriendsList(allFriendsList={}, action){
+  switch (action.type) {
+    case Fetch_Freind_List:
+      return Object.assign({}, allFriendsList, action.data);
+      break;
+    default:
+    return allFriendsList;
+
   }
 }

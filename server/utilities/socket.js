@@ -26,8 +26,16 @@ module.exports = {
 
             });
 
+            socket.on('getAllFriendsList',function(userId){
+              userModel.getAllFriends(userId,function(result){
+
+
+                socket.emit("allFriendsList",result);
+              })
+            });
+
             socket.on('getAllPagesData',function(){
-          
+
               pageModel.getAllPages(function(result){
                 socket.emit("allPages",result);
               })
@@ -38,9 +46,9 @@ module.exports = {
                 userModel.getUserProfile(userId,function(result){
                     if(result.userData && result.userData.length){
                             var userData=JSON.stringify(result.userData[0]);
-                            socket.emit("userDetail",userData);     
+                            socket.emit("userDetail",userData);
                     }
-                   
+
                 })
 
             });

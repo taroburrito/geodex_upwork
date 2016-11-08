@@ -672,11 +672,16 @@ background: url("../images/bg_line.png") no-repeat left;
 
 }
 
+.custom-width{
+  width: 100%!important;
+  max-width: 100%!important;
+}
+
 
 /* profile */
 
 .background_profile {
-  background: rgba(0, 0, 0, 0) url("../images/profile_banner.jpg") no-repeat scroll left center / cover ;
+  background: rgba(0, 0, 0, 0)  no-repeat scroll left center / cover ;
   margin-top: 50px;
   padding: 30px 0;
   width: 100%;
@@ -1140,4 +1145,28 @@ p.text-align-right a.uk-button.uk-button-large {
   background: #fff none repeat scroll 0 0;
   max-width: 350px;
   text-align: center;
+}
+
+
+/*add friend*/
+.af_border {
+  border: 1px solid #dfdfdf;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.add_friend .user_bottom_img_right {
+  padding-top: 10px;
+}
+
+.add_friend {
+  margin-bottom: 20px;
+  margin-top: 10px;
+}
+
+.add_friend  .user_bottom_img_right h3 {
+    font-family: open sans;
+    font-size: 19px;
+    font-weight: 400;
+    line-height: 24px;
+    padding-left: 11px;
 }

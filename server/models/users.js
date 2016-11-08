@@ -28,6 +28,7 @@ var userModel = {
             //userCreatedTodos: todos
         };*/
     },
+
     getUserProfile: function (userId, callback) {
         var dbConnection = dbConnectionCreator();
         var getUserSettingsSqlString = constructGetUserProfileSqlString(userId);
@@ -44,6 +45,25 @@ var userModel = {
             }
         });
     },
+
+    getAllFriends: function(userId, callback){
+      var dbConnection = dbConnectionCreator();
+      var getUserFriendsListSqlString = constructgetUserFriendsListSqlString(userId);
+      //console.log("ANGEL: getting user details");
+      dbConnection.query(getUserFriendsListSqlString, function (error, results, fields) {
+          if (error) {
+              dbConnection.destroy();
+              console.log("error: ", error);
+              return (callback({error: error}));
+          } else if (results.length === 0) {
+              return (callback({error: "User not found."}));
+          } else {
+                return (callback({friendList: userModel.convertRowsToUserProfileObject(results)}));
+
+          }
+      });
+    },
+
     getUserProfileByToken: function (token, token_type, callback) {
         var dbConnection = dbConnectionCreator();
         var getUserSettingsSqlString = constructGetUserProfileByTokenSqlString(token, token_type);
@@ -161,7 +181,7 @@ var userModel = {
 
     },
 
-    
+
     // Update User Function
 
     updateUser(data,callback){
@@ -195,10 +215,25 @@ var userModel = {
         });
     },
 
-    // update profile images
+    // update user data
 
-    updateUserProfileImage(data,callback){
-        return (callback({success: data}));
+    updateUserData(req, callback){
+      var dbConnection = dbConnectionCreator();
+      var updateUserDataQuery = constructupdateUserDataQuery(req);
+      // Update Query for gx_users table
+
+
+      dbConnection.query(updateUserDataQuery, function (error, results, fields) {
+          if (error) {
+              dbConnection.destroy();
+
+              return (callback({error: error}));
+          } else if (results.affectedRows === 1) {
+            return(callback({success:"Successfully updated cover"}));
+          } else {
+              return (callback({error: "Error in update "}));
+          }
+      });
     },
 
     // change password
@@ -240,6 +275,16 @@ var userModel = {
 
 
 };
+
+function constructupdateUserDataQuery(data){
+  var timestamp = moment();
+  var formatted = timestamp.format('YYYY-MM-DD HH:mm:ss Z');
+  var query ="UPDATE gx_user_details SET " +
+        data.field+ "= '" + data.val+"'" +
+      ", last_updated = '" + formatted+"'" +
+      " WHERE user_id = " + mysql.escape(data.id);
+  return query;
+}
 function constructchangePasswordQuery(email,new_pwd){
   var salt = bcrypt.genSaltSync(10);
   var passwordHashNew = bcrypt.hashSync(new_pwd, salt);
@@ -336,6 +381,16 @@ function constructGetUserProfileSqlString(userId) {
     return query;
 
 }
+
+function constructgetUserFriendsListSqlString(userId){
+  var query = " SELECT  *" +
+          " FROM gx_friends_list LEFT JOIN gx_user_details" +
+          " ON gx_user_details.user_id = gx_friends_list.sender_id" +
+          " WHERE  gx_friends_list.sender_id = " + mysql.escape(userId);
+  return query;
+}
+
+
 function constructGetUserProfileByEmail(email) {
     var query = " SELECT  * " +
             " FROM gx_users WHERE  gx_users.email = " + mysql.escape(email);

@@ -1,7 +1,8 @@
 import { receivedAllUniversalTodos, optimisticUniversalAddSuccess } from '../actions/TodoActions';
 import { receivedAllUniversalCategories } from '../actions/CategoryActions';
 import { receivedAllUniversalPages } from '../actions/PageActions';
-import {getUserDetails} from '../actions/ProfileActions';
+import {getUserDetails, receivedAllfriendsList} from '../actions/ProfileActions';
+
 
 var socket = io();
 var  encode =function(input) {
@@ -12,7 +13,7 @@ var  encode =function(input) {
 
     while (i < input.length) {
         chr1 = input[i++];
-        chr2 = i < input.length ? input[i++] : Number.NaN; // Not sure if the index 
+        chr2 = i < input.length ? input[i++] : Number.NaN; // Not sure if the index
         chr3 = i < input.length ? input[i++] : Number.NaN; // checks are needed here
 
         enc1 = chr1 >> 2;
@@ -62,6 +63,16 @@ export function linkSocketToStore(dispatch) {
 		}
 	});
 
+  socket.on("allFriendsList",function(result){
+		if(result.error){
+
+		console.log("Error in server socket line 68");
+		} else {
+			console.log(result);
+			dispatch(receivedAllfriendsList(result.friendList));
+		}
+	});
+
 	socket.on("allPages",function(result){
 
 		if(result.error){
@@ -91,6 +102,10 @@ export function registerToUniversalTodo() {
 
 export function registerCategory(){
 	socket.emit("getAllCategoriesData");
+}
+
+export function fetchFriendList(userId){
+  socket.emit("getAllFriendsList",userId)
 }
 
 export function registerPages(){

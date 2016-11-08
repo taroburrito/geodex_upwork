@@ -15,17 +15,23 @@ import { history } from 'react-router/lib/HashHistory';
 
 // views (containers)
 import App from './App';
+
+//front end components
 import MainSignUpPage from './front/MainSignUpPage';
-import MainLoginPage from './admin/MainLoginPage';
-import Dashboard from './admin/Dashboard';
-import ManageCategory from './admin/ManageCategory';
-import ManagePages from './admin/ManagePages';
 import UserProfilePage from './front/UserProfilePage';
-import Pages from './admin/Pages';
 import StaticPages from './front/StaticPages';
 import HomePage from './front/HomePage';
 import UserSettings from './front/UserSettings';
 import DashboardPage from '../components/front/DashboardPage';
+import ManageFriends from './front/ManageFriends';
+
+//backend components
+import MainLoginPage from './admin/MainLoginPage';
+import Dashboard from './admin/Dashboard';
+import ManageCategory from './admin/ManageCategory';
+import ManagePages from './admin/ManagePages';
+import Pages from './admin/Pages';
+
 
 // Static Pages
 
@@ -60,6 +66,7 @@ var routes = (
     <Route path="pages/:slug" component={StaticPages}/>
     <Route path="dashboard" component={HomePage}/>
     <Route path="settings" component={UserSettings} view="user"/>
+    <Route path="manage_friends" component={ManageFriends}/>
   </Route>
 
 

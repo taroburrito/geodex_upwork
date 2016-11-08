@@ -7,7 +7,7 @@ import Datetime from 'react-datetime'
 import ChangePassword from './ChangePassword';
 import { validateEmail, validateDisplayName, validatePassword } from '../../utilities/RegexValidators';
 require('react-datetime/css/react-datetime.css');
-import {updateProfileInput,updateUserProfileData} from '../../actions/ProfileActions';
+import {updateProfileInput,updateUserProfileData,updateUserData} from '../../actions/ProfileActions';
 var AvatarEditor = require('react-avatar-editor');
 
 const initialFormState ={
@@ -24,6 +24,7 @@ export default class EditProfile extends Component {
     this.onDobChange=this.onDobChange.bind(this);
     this.onGenderChange=this.onGenderChange.bind(this);
     this.handleSave = this.handleSave.bind(this);
+    this.handleSaveCoverImage = this.handleSaveCoverImage.bind(this);
     this.handleScale = this.handleScale.bind(this);
     this.handleBorderRadius = this.handleBorderRadius.bind(this);
     this.handleOnClickUpdate=this.handleOnClickUpdate.bind(this);
@@ -37,10 +38,15 @@ export default class EditProfile extends Component {
         scale: 1,
         borderRadius: 0,
         preview: null,
-        content: 'edit_profile'
+        content: 'edit_profile',
+        cover_image: null,
     }
   }
 
+  componentDidMount(){
+    const {userData}=this.props;
+    console.log(userData);
+  }
   handleSave (data) {
     var img = this.refs.avatar.getImage();
    // this.setState({ preview: img});
@@ -51,6 +57,29 @@ export default class EditProfile extends Component {
     }
 
   }
+
+  handleSaveCoverImage(data) {
+    var img = this.refs.cover.getImage();
+   // this.setState({ preview: img});
+    const {dispatch, userData}=this.props;
+    userData.cover_image = img;
+    this.setState({cover_image: img});
+    userData.cover_image = img;
+    console.log(userData);
+    var req={
+      id:userData.user_id,
+      field:'cover_image',
+      val: img
+    }
+
+    // update user data for specific field
+     if(dispatch(updateUserData(req))){
+     //dispatch(updateProfileInput('cover_image',img));
+     }
+
+  }
+
+
 
   handleScale (e) {
     var scale = parseFloat(e.target.value);
@@ -241,7 +270,17 @@ __renderContent(){
 }
 
  render() {
+
     const { dispatch,userData} = this.props;
+    if(!userData.cover_image){
+    var background_profile_css ={
+      backgroundImage: 'url(public/images/profile_banner.jpg)'
+    }
+  }else{
+    var background_profile_css ={
+      backgroundImage: 'url(' + userData.cover_image + ')'
+    }
+  }
 
     const { search } = this.state;
     if(userData){
@@ -290,7 +329,35 @@ __renderContent(){
                 <br />
             </div>
         </div>
-                <div className="background_profile">
+        <div id="coverImage" className="uk-modal profile-modal" >
+           <div className="uk-modal-dialog custom-width">
+               <AvatarEditor
+                 image={this.getProfileImage(userData.cover_image)}
+                 ref="cover"
+                 width={1300}
+                 height={215}
+                 border={10}
+                 color={[255, 255, 255, 0.6]} // RGBA
+                 scale={1}
+                 borderRadius={this.state.borderRadius}
+                 onSave={this.handleSaveCoverImage}
+                 onLoadFailure={this.logCallback.bind(this, 'onLoadFailed')}
+                 onLoadSuccess={this.logCallback.bind(this, 'onLoadSuccess')}
+                 onImageReady={this.logCallback.bind(this, 'onImageReady')}
+                 onImageLoad={this.logCallback.bind(this, 'onImageLoad')}
+                 onDropFile={this.logCallback.bind(this, 'onDropFile')}
+                />
+            <br />
+           <input name="scale" type="range" ref="scale" onChange={this.handleScale} min="1" max="2" step="0.01"
+                        defaultValue="1" />
+
+           <br />
+           <input className="uk-button uk-button-primary uk-button-large uk-modal-close" type="button" onClick={this.handleSaveCoverImage} value="Save" />
+
+           <br />
+       </div>
+   </div>
+                <div className="background_profile" style={background_profile_css}>
                     <div className="uk-container uk-container-center">
                         <div className="uk-grid uk-grid-large dash_top_head">
                             <div className="uk-width-small-1-2">
@@ -306,6 +373,7 @@ __renderContent(){
                                     </div>
                                 </div>
                             </div>
+                            <a href="#" data-uk-modal="{target:'#coverImage'}" className="edit_profile_background_btn">Edit <i class="uk-icon-file-image-o"></i></a>
                         </div>
                     </div>
                 </div>

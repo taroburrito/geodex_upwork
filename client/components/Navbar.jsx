@@ -7,7 +7,7 @@ export default class Navbar extends Component {
     super(props);
   }
   changeContent(e){
-  
+
     this.props.changeContent(e);
   }
 
@@ -19,7 +19,7 @@ export default class Navbar extends Component {
           <nav className="uk-navbar fixed-nav innerpage_nav">
               <a className="uk-navbar-brand uk-hidden-small" href=""><img src="public/images/logo.png"/></a>
 
-      <form className="uk-search search_dash_nav" data-uk-search="{source:'_searchautocomplete.json'}">
+      <form className="uk-search search_dash_nav">
               <input className="uk-search-field" placeholder="search..." autocomplete="off" type="search"/>
           <div className="uk-dropdown uk-dropdown-search" aria-expanded="false"></div></form>
 
@@ -36,7 +36,9 @@ export default class Navbar extends Component {
                           <ul className="uk-nav uk-nav-dropdown">
 
                               <li><Link to="settings">Settings </Link><a href="#" ></a></li>
-                              <li><a href="#" onClick={this.props.logout}>Logout</a></li>
+                              <li><Link to="manage_friends">Manage friends</Link></li>
+                            <li><a href="#" onClick={this.props.logout}>Logout</a></li>
+
 
                           </ul>
                       </div>
