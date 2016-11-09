@@ -23,9 +23,7 @@ export function startFetchingUserProfile() {
   return { type: Start_Fetching_User_Profile };
 }
 
-export function receivedAllfriendsList(friendList){
-  return {type: Fetch_Freind_List, data: friendList}
-}
+
 
 
 export function fetchUserProfile(userId) {

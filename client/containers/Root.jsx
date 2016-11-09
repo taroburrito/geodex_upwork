@@ -67,6 +67,7 @@ var routes = (
     <Route path="dashboard" component={HomePage}/>
     <Route path="settings" component={UserSettings} view="user"/>
     <Route path="manage_friends" component={ManageFriends}/>
+    
   </Route>
 
 

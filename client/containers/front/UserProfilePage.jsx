@@ -1,101 +1,41 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import ProfileWidget from '../../components/front/ProfileWidget';
+import Home from '../../components/front/Home';
 
-import { fetchUserProfile, reloadingProfilePage } from '../../actions/ProfileActions';
+//import { fetchUserProfile, reloadingProfilePage } from '../../actions/ProfileActions';
 
-
-
-class UserTodoList extends Component {
-  render(){
-    var todoElements;
-
-    var todoObjects = this.props.todos;
-
-    if(Object.keys(todoObjects).length === 0){
-      todoElements = <p> This user hasn't created any todos. </p>;
-    } else {
-      todoElements = [];
-
-      Object.keys(todoObjects).forEach(function(todo, value){
-        todoElements.push(<li> {todoObjects[todo]}</li>);
-      });
-      todoElements = <ul> {todoElements} </ul>;
-    }
-
-    return(
-        <div>
-          {todoElements}
-        </div>
-      );
-  }
-}
-
-
-
-class UserProfilePage extends Component {
+export default class UserProfilePage extends Component {
   constructor(props, context) {
-    super(props, context);
-    this.routerWillLeave = this.routerWillLeave.bind(this);
+    super(props);
   }
   componentWillMount() {
-    this.props.dispatch(fetchUserProfile(this.props.params.id));
-    this.context.router.addTransitionHook(this.routerWillLeave);
+    console.log(this.props.params.id);
+  //  this.props.dispatch(fetchUserProfile(this.props.params.id));
   }
 
   componentWillUpdate(){
-    const { dispatch, userProfileData, params } = this.props;
-    if(!userProfileData.profileLoaded && !userProfileData.isFetchingProfile){
-      dispatch(fetchUserProfile(params.id));
-    }
+
   }
 
-  componentWillUnmount() {
-      this.context.router.removeTransitionHook(this.routerWillLeave);
-  }
-
-  routerWillLeave (nextState, router) {
-    this.props.dispatch(reloadingProfilePage());
-  }
 
   render() {
     const { dispatch, userAuthSession, userProfileData } = this.props;
-
-    var content;
-    if (!userProfileData.profileLoaded){
-      content = <p> Loading </p>;
-    }
-    else if (userProfileData.error) {
-      content = <p> Sorry Something went wrong: {userProfileData.error} </p>;
-    } else {
-      content = <div>
-                  <p> display name: {userProfileData.userData.userInfo.displayName} </p>
-                  <p> email: {userProfileData.userData.userInfo.email} </p>
-                </div>;
-    }
-
-    var todoList;
-    if (userProfileData !== undefined){
-      if(userProfileData.userData !== null){
-        if (userProfileData.userData.userCreatedTodos !== null){
-          todoList = <UserTodoList todos={userProfileData.userData.userCreatedTodos}/>;
-        }
-      }
-    }
-
+    if(userAuthSession.isLoggedIn){
     return (
-      <div>
-        <h1> Profile Page </h1>
-        <h2> User id: {this.props.params.id} </h2>
-        {content}
-        {todoList}
+      <div className="full_width">
+      {/* <ProfileWidget userProfileData={this.props.userProfileData} userId={this.props.params.id}/> */}
+      </div>
+    );
+  }else {
+    return (
+      <div className="full_width">
+        <h1> <Home/> </h1>
       </div>
     );
   }
+  }
 }
-
-UserProfilePage.contextTypes = {
-  router: PropTypes.object.isRequired
-};
 
 
 function select(state) {

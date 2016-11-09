@@ -1,7 +1,8 @@
 import { combineReducers } from 'redux';
 import { updateUserInfo, verifyToken, forgotPasswordResult, updateError} from './AuthReducer';
 import { updateUniversalTodoList, updateUniversalUnsavedTodoList } from './TodoReducer';
-import { updateProfileData,userProfileData,getAllFriendsList } from './ProfileReducer';
+import { updateProfileData,userProfileData } from './ProfileReducer';
+import {getAllFriendsList} from './UserReducer';
 import { updateCategoryList, handleMessage} from './CategoryReducer';
 import { updatePagesList, getPageData } from './PageReducer';
 // import { Add_Todo, Complete_Todo, Set_Visibility_Filter, VisibilityFilters  } from '../actions/TodoActions';
@@ -31,7 +32,7 @@ const RootReducer = combineReducers({
   handleMessage: handleMessage,
   getPageData:getPageData,
   actionMessage: updateError,
-  friendList: getAllFriendsList,
+  friendsListState: getAllFriendsList,
 
   //For viewing profiles.
   userProfileData:userProfileData,

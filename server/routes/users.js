@@ -117,6 +117,20 @@ var setUserRoutes = function (router) {
         }
     );
 
+    router.post('/api/v1/user/updateData/',
+        function (req, res) {
+
+            userModel.updateUserData(req.body, function(results){
+                if(results.success){
+                    return res.json(results);
+                }else{
+                    return res.json(results);
+                }
+            });
+
+        }
+    );
+
     router.post('/api/v1/user/updateProfileImage/:id',
         function (req, res) {
 
@@ -131,6 +145,29 @@ var setUserRoutes = function (router) {
 
         }
     );
+
+    router.post('/api/v1/user/deleteFriend/:id',
+        function (req, res) {
+
+          //  console.log(req.body);
+            userModel.deleteFriend(req.params,function(results){
+                if(results.success){
+                    return res.json(results);
+                }else{
+                    return res.json(results);
+                }
+            });
+
+        }
+    );
+
+    router.post('/api/v1/user/blockUser/',
+        function(req,res){
+            userModel.blockUser(req.body,function(results){
+              return res.json(results);
+            });
+        }
+      );
 
 }
 

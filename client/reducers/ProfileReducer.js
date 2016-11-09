@@ -47,6 +47,8 @@ const defaultStates={
   error: null,
   success: null,
 }
+
+
 export function userProfileData(userProfileState = defaultStates , action){
   switch (action.type){
 
@@ -62,16 +64,5 @@ export function userProfileData(userProfileState = defaultStates , action){
         return Object.assign({}, userProfileState, action.data);
        default:
           return userProfileState;
-  }
-}
-
-export function getAllFriendsList(allFriendsList={}, action){
-  switch (action.type) {
-    case Fetch_Freind_List:
-      return Object.assign({}, allFriendsList, action.data);
-      break;
-    default:
-    return allFriendsList;
-
   }
 }

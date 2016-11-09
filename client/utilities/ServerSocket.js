@@ -1,7 +1,8 @@
 import { receivedAllUniversalTodos, optimisticUniversalAddSuccess } from '../actions/TodoActions';
 import { receivedAllUniversalCategories } from '../actions/CategoryActions';
 import { receivedAllUniversalPages } from '../actions/PageActions';
-import {getUserDetails, receivedAllfriendsList} from '../actions/ProfileActions';
+import {getUserDetails} from '../actions/ProfileActions';
+import {receivedAllfriendsList} from '../actions/UserActions';
 
 
 var socket = io();
@@ -66,7 +67,7 @@ export function linkSocketToStore(dispatch) {
   socket.on("allFriendsList",function(result){
 		if(result.error){
 
-		console.log("Error in server socket line 68");
+		console.log("Error in server socket line 68:"+JSON.stringify(result.error));
 		} else {
 			console.log(result);
 			dispatch(receivedAllfriendsList(result.friendList));

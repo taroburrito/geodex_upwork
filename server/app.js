@@ -12,6 +12,10 @@ var LocalStrategy = require('passport-local').Strategy;
 
 var app = express();
 
+app.use(bodyParser.json({limit: "50mb"}));
+app.use(bodyParser.urlencoded({limit: "50mb", extended: true, parameterLimit:50000}));
+
+
 app.use(favicon(path.join(__dirname, 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -27,6 +31,7 @@ var sessionOptions = config.sessionOptions;
 app.use(session(sessionOptions));
 app.use(passport.initialize());
 app.use(passport.session());
+
 
 // set routes
 require('./routes/index')(app, passport);

@@ -13,11 +13,10 @@ export default class FriendsList extends Component{
    var friends = this.props.friendsList;
    var friendElement = [];
 
-   Object.keys(friends).forEach( (friendId) => {
-     friendElement.push(<Friends id={friendId}
-                 {...friends[friendId]}
-
-             isSaved={true}
+   Object.keys(friends).forEach((id)=> {
+     friendElement.push(<Friends id={id} onClickBlock={this.props.onClickBlock} onDeleteClick={this.props.onDeleteClick}
+                 {...friends[id]}
+                 isSaved={true}
               />);
      }
    );
@@ -25,9 +24,10 @@ export default class FriendsList extends Component{
 
 
    return (
-<div>
+ <div className="uk-grid uk-grid-large dash_top_head">
          {friendElement}
        </div>
+
 
    );
  }

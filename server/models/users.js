@@ -49,6 +49,7 @@ var userModel = {
     getAllFriends: function(userId, callback){
       var dbConnection = dbConnectionCreator();
       var getUserFriendsListSqlString = constructgetUserFriendsListSqlString(userId);
+    //  return (callback({error: getUserFriendsListSqlString}));
       //console.log("ANGEL: getting user details");
       dbConnection.query(getUserFriendsListSqlString, function (error, results, fields) {
           if (error) {
@@ -58,8 +59,11 @@ var userModel = {
           } else if (results.length === 0) {
               return (callback({error: "User not found."}));
           } else {
-                return (callback({friendList: userModel.convertRowsToUserProfileObject(results)}));
-
+            var friends = {};
+            results.forEach(function (result) {
+                friends[result.id] = userModel.convertRowsToUserProfileObject(result);
+            });
+            return callback({friendList: friends});
           }
       });
     },
@@ -273,8 +277,55 @@ var userModel = {
 
     },
 
+    blockUser: function(data,callback){
+      var dbConnection = dbConnectionCreator();
+      var blockUserQuery = constructblockUserQuery(data);
+
+      dbConnection.query(blockUserQuery, function (error, results, fields) {
+          if (error) {
+              dbConnection.destroy();
+
+              return (callback({error: error}));
+          } else if (results.affectedRows === 1) {
+            return(callback({success:"Successfully blocked user"}));
+          } else {
+              return (callback({error: "Error in block user "}));
+          }
+      });
+    },
+
+    deleteFriend: function(data,callback){
+      var dbConnection = dbConnectionCreator();
+      var deleteFriendQuery = constructdeleteFriendQuery(data);
+      //return callback({success:deleteFriendQuery});
+      dbConnection.query(deleteFriendQuery, function (error, results, fields) {
+          if (error) {
+              dbConnection.destroy();
+
+              return (callback({error: error}));
+          } else if (results.affectedRows === 1) {
+            return(callback({success:"Successfully deleted friend"}));
+          } else {
+              return (callback({error: results}));
+          }
+      });
+    }
+
 
 };
+
+function constructdeleteFriendQuery(data){
+  var query = "DELETE FROM gx_friends_list WHERE id="+data.id;
+  return query;
+}
+
+function constructblockUserQuery(data){
+  var query ="UPDATE gx_friends_list SET " +
+        " blocked_by=" + mysql.escape(data.user)+
+      " WHERE sender_id = " + mysql.escape(data.sender)+" AND receiver_id="+mysql.escape(data.receiver);
+  return query;
+
+}
 
 function constructupdateUserDataQuery(data){
   var timestamp = moment();
@@ -383,10 +434,12 @@ function constructGetUserProfileSqlString(userId) {
 }
 
 function constructgetUserFriendsListSqlString(userId){
-  var query = " SELECT  *" +
-          " FROM gx_friends_list LEFT JOIN gx_user_details" +
-          " ON gx_user_details.user_id = gx_friends_list.sender_id" +
-          " WHERE  gx_friends_list.sender_id = " + mysql.escape(userId);
+  var query = "SELECT gfl.*, gud.user_id, gud.first_name, gud.last_name, gud.address, gud.profile_image from gx_friends_list as gfl"+
+  " left join gx_user_details as gud on gfl.receiver_id = gud.user_id"+
+  " WHERE gfl.sender_id="+ mysql.escape(userId)+" Union"+
+  " SELECT gfl.*, gud.user_id, gud.first_name, gud.last_name, gud.address, gud.profile_image from gx_friends_list as gfl"+
+  " left join gx_user_details as gud on gfl.sender_id = gud.user_id"+
+  " WHERE gfl.receiver_id="+ mysql.escape(userId);
   return query;
 }
 
