@@ -7,27 +7,135 @@ function generateUUID(){
   return (Math.round(Math.random()*10000000000000000).toString()+(Date.now()));
 }
 
-
 export default class DashboardPage extends Component {
   constructor(props) {
     super(props);
+    this.handleClickAddCategory = this.handleClickAddCategory.bind(this);
+    this.handleClickPlus = this.handleClickPlus.bind(this);
+    this.state ={
+      errorMessage: null,
+    }
+  }
+
+  componentWillMount(){
+    const{userAuthSession} = this.props;
+
+    this.props.fetchInitialData(userAuthSession.userObject.id);
+  }
+
+  handleClickPlus(){
+    this.setState({errorMessage:null});
+    this.props.handleMessage = null;
+  }
+
+  componentDidMount(){
+
+  }
+
+  getProfileImage(img){
+     if(img){
+      return img;
+    }else{
+     return "public/images/user.jpg";
+    }
+
+  }
+
+  handleClickAddCategory(){
+    const{userAuthSession} = this.props;
+    var category_name= this.refs.categoryName.getDOMNode().value.trim();
+    if(category_name === ''){
+      this.setState({errorMessage:"Please Enter category name"});
+    }else{
+      this.setState({errorMessage:null});
+      var req = {
+      user_id:userAuthSession.userObject.id,
+      category_name: this.refs.categoryName.getDOMNode().value,
+      added_by:'user'
+      };
+
+      this.props.addCategory(req);
+     this.refs.categoryName.getDOMNode().value = "";
+    }
+  }
+
+  renderCategoriesContent(){
+    const{categories} = this.props;
+    var categoriesElement = [];
+
+    Object.keys(categories).map(function (key) {
+      var item = categories[key];
+      categoriesElement.push(<li id={item.id}>{item.category_name}</li>);
+    });
+    categoriesElement.push(<a data-uk-modal="{target:'#categoryModal'}" href="#" onClick={this.handleClickPlus}><li id={0}>+</li></a>);
+
+    return (
+      {categoriesElement}
+    );
   }
 
 
 
   render() {
-    const { dispatch, userAuthSession } = this.props;
 
+    const { dispatch, userAuthSession, userProfileData, categories, handleMessage} = this.props;
     var content;
+    var errorLabel;
+    if(this.state.errorMessage){
+        errorLabel = (
+          <div className="uk-alert uk-alert-danger"><p>{this.state.errorMessage}</p></div>
+        )
+      }else if (handleMessage && handleMessage.error) {
+        errorLabel = (
+          <div className="uk-alert uk-alert-danger"><p>{handleMessage.error}</p></div>
+        )
+      }else if (handleMessage && handleMessage.success) {
+        errorLabel = (
+          <div className="uk-alert uk-alert-success"><p>{handleMessage.success}</p></div>
+        )
+      }
+
     return (
       <div className="uk-container uk-container-center middle_content dashboad">
          <div className="uk-grid uk-grid-large dash_top_head">
+           <div id="categoryModal" className="uk-modal" ref="modal" >
+             <div className="uk-modal-dialog">
+                <button type="button" className="uk-modal-close uk-close"></button>
+                {errorLabel}
+                  <form className="uk-form uk-margin uk-form-stacked add_category">
+                        <fieldset>
+                          <div className="uk-grid">
+                              <div className="uk-width-1-1">
+                                  <label className="uk-form-label" for="form-gs-street">Add Category</label>
+                              </div>
+                          </div>
+
+                          <div className="uk-grid">
+                            <div className="uk-width-1-1">
+                              <div className="uk-form-controls">
+                                <input id="" placeholder="Categorie name" className="uk-width-8-10" type="text" ref="categoryName"/>
+
+                                <div className="uk-width-2-10 uk-float-right add_cat_btn">
+                                  <a className="uk-button uk-button-primary " onClick={this.handleClickAddCategory}>Add</a>
+
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                      </fieldset>
+
+                   </form>
+
+              </div>
+            </div>
 
           <div className="uk-width-small-1-2">
             <div className="uk-grid uk-grid-small">
-            <div className="uk-width-3-10 user_img_left"><img src="public/images/user.jpg" className=""/></div>
+            <div className="uk-width-3-10 user_img_left">  <img src={this.getProfileImage(userProfileData.profile_image)} /></div>
             <div className="uk-width-7-10 user_img_right">
-            <h3>Salvador Dali <small className="uk-float-right">s.dali@gmail.com</small></h3>
+            <h3>{userProfileData.first_name} {userProfileData.last_name}
+               <small className="uk-float-right">{userProfileData.email}</small></h3>
             <textarea placeholder="Post to geodex..." className="uk-width-1-1"></textarea>
             <i className="uk-icon-image"></i>
             </div>
@@ -41,17 +149,10 @@ export default class DashboardPage extends Component {
           </div>
 
          </div>
+         <div className="uk-width-small-1-1 shortlist_menu">
+           <ul>
+             {this.renderCategoriesContent()}
 
-
-
-
-      <div className="uk-width-small-1-1 shortlist_menu">
-
-              <ul>
-                  <li className="active_sm">All</li>
-                  <li>Friends</li>
-          <li>COLLEAGUES</li>
-          <li>+</li>
         </ul>
         <div className="uk-float-right">
         <label>Sort</label>

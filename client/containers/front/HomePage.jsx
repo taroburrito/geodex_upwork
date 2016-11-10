@@ -4,6 +4,8 @@ import Home from '../../components/front/Home';
 import DashboardPage from '../../components/front/DashboardPage';
 import Navbar from '../../components/Navbar';
 import { attemptLogout } from '../../actions/AuthActions';
+import {addCategory} from '../../actions/CategoryActions';
+import {getUserDetail} from '../../utilities/ServerSocket';
 
 class HomePage extends Component{
   constructor(props){
@@ -20,7 +22,14 @@ class HomePage extends Component{
 
       return(
         <div className="full_width">
-        <DashboardPage/>
+        <DashboardPage
+          addCategory={(req)=>
+          dispatch(addCategory(req))}
+          categories={this.props.categories}
+          userAuthSession = {this.props.userAuthSession}
+          fetchInitialData={(id)=>getUserDetail(id)}
+          userProfileData={this.props.userProfileData}
+          handleMessage={this.props.handleMessage}/>
         </div>
       );
     }else{
@@ -37,6 +46,9 @@ class HomePage extends Component{
 function select(state) {
   return {
   userAuthSession: state.userAuthSession,
+  userProfileData: state.userProfileData,
+  categories: state.universalCategories,
+  handleMessage: state.handleMessage,
   };
 }
 

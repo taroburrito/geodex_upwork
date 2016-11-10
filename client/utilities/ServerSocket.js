@@ -82,14 +82,14 @@ export function linkSocketToStore(dispatch) {
 			dispatch(receivedAllUniversalPages(result.pages));
 		}
 	});
-	socket.on("userDetail",function(result){
-
-		if(result.error){
+	socket.on("userDetail",function(userdata,userCategoriesData){
+		if(userdata.error || userCategoriesData.error){
 			console.log("Error in server socket");
 		}else{
-			var data=JSON.parse(result);
-			console.log(data);
+			var data=JSON.parse(userdata);
 			dispatch(getUserDetails(data));
+
+      dispatch(receivedAllUniversalCategories(userCategoriesData));
 		}
 	});
 

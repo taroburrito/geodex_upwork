@@ -1,17 +1,18 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import ProfileWidget from '../../components/front/ProfileWidget';
+import Profile from '../../components/front/Profile';
 import Home from '../../components/front/Home';
+import {getUserDetail} from '../../utilities/ServerSocket';
 
-//import { fetchUserProfile, reloadingProfilePage } from '../../actions/ProfileActions';
+import { fetchUserProfile, reloadingProfilePage } from '../../actions/ProfileActions';
 
 export default class UserProfilePage extends Component {
   constructor(props, context) {
     super(props);
   }
   componentWillMount() {
+    const{dispatch} = this.props;
     console.log(this.props.params.id);
-  //  this.props.dispatch(fetchUserProfile(this.props.params.id));
   }
 
   componentWillUpdate(){
@@ -24,7 +25,10 @@ export default class UserProfilePage extends Component {
     if(userAuthSession.isLoggedIn){
     return (
       <div className="full_width">
-      {/* <ProfileWidget userProfileData={this.props.userProfileData} userId={this.props.params.id}/> */}
+      <Profile
+        fetchInitialData={(id)=>getUserDetail(id)}
+        userProfileData={this.props.userProfileData}
+         userId={this.props.params.id}/>
       </div>
     );
   }else {

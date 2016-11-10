@@ -40,13 +40,14 @@ export const Update_Category_Success = 'Update_Category_Success';
 
 
 /*     Add Category           */
-export function addCategory(text) {
+export function addCategory(req) {
   return (dispatch) => {
 
     $.ajax({
 			type: 'POST',
 			url: '/api/v1/categories/addCategory',
-			data: {"category_name": text, "status": "1"} })
+      dataType: 'json',
+			data: req })
 			.done(function(data) {
 				if (data.error){
 					console.log("add todo worked but error: ", data);

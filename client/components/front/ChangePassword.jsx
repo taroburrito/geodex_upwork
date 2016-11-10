@@ -29,7 +29,6 @@ export default class ChangePassword extends Component {
     const{dispatch, userData} = this.props;
   //  console.log(userData);
     var formData = {
-        old_password : this.refs.old_password.getDOMNode().value.trim(),
         new_password : this.refs.new_password.getDOMNode().value.trim(),
         confirm_password: this.refs.confirm_new_password.getDOMNode().value.trim(),
       }
@@ -39,16 +38,12 @@ export default class ChangePassword extends Component {
       this.setState(newState);
 
       if(!newState.errorMessage){
-       dispatch(changePassword(userData.email,formData.old_password,formData.new_password));
+       dispatch(changePassword(userData.email,formData.new_password));
       }
   }
   findErrorsInChangePasswordForm(formData){
     let newState = Object.assign({}, initialFormState);
-    if(formData.old_password === ''){
-      newState.errorMessage = "Please enter old password";
-    }else if(!validatePassword(formData.old_password)) {
-      newState.errorMessage = "Your password must contain at least 6 valid characters";
-    }else if(formData.new_password === ''){
+    if(formData.new_password === ''){
       newState.errorMessage = "Please enter new password";
     }else if(!validatePassword(formData.new_password)) {
       newState.errorMessage = "Your password must contain at least 6 valid characters";
@@ -102,12 +97,7 @@ export default class ChangePassword extends Component {
           <div className="uk-grid uk-grid-medium">
               <h4 className="uk-width-medium-1-1">Change Password</h4>
                 {errorLabel}
-              <div className="uk-width-medium-2-3">
-                  <label className="uk-form-label" for="form-gs-a">Old Password</label>
-                  <div className="uk-form-controls">
-                      <input id="form-gs-a" placeholder="Old Password" ref="old_password" className="uk-width-1-1" type="password"/>
-                  </div>
-              </div>
+            
               <div className="uk-width-medium-2-3">
                   <label className="uk-form-label" for="form-gs-b">New Password</label>
                   <div className="uk-form-controls">

@@ -170,14 +170,14 @@ export function resetPassword(token, pwd){
 	}
 }
 
-export function changePassword(email, oldPwd, newPwd){
+export function changePassword(email,newPwd){
 
 	return (dispatch) => {
 
 		$.ajax({
 			type:'POST',
 			url:'/api/v1/users/changePassword',
-			data: {email:email,old_pwd:oldPwd,new_pwd:newPwd}
+			data: {email:email,new_pwd:newPwd}
 		}).done(function(data){
 			if(data.error){
 				console.log(data);

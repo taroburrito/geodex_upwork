@@ -57,9 +57,8 @@ var setUserRoutes = function (router) {
     router.post('/api/v1/users/changePassword',
             function (req, res) {
                 var email = req.body.email;
-                var old_pwd = req.body.old_pwd;
                 var new_pwd = req.body.new_pwd;
-                var data = {email:email,old_pwd:old_pwd,new_pwd:new_pwd};
+                var data = {email:email,new_pwd:new_pwd};
                 userModel.changePassword(data, function (result) {
                    return res.json(result);
                 }

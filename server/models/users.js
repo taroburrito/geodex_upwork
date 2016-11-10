@@ -32,16 +32,36 @@ var userModel = {
     getUserProfile: function (userId, callback) {
         var dbConnection = dbConnectionCreator();
         var getUserSettingsSqlString = constructGetUserProfileSqlString(userId);
-        //console.log("ANGEL: getting user details");
+        var getUsersCategoriesSqlString = constructGetUserCategoriesSqlString(userId);
+        var profileData;
+        var userCategoriesData;
+  //return (callback({error: getUsersCategoriesSqlString}));
         dbConnection.query(getUserSettingsSqlString, function (error, results, fields) {
             if (error) {
                 dbConnection.destroy();
-                console.log("error: ", error);
+
                 return (callback({error: error}));
             } else if (results.length === 0) {
                 return (callback({error: "User not found."}));
             } else {
-                  return (callback({userData: userModel.convertRowsToUserProfileObject(results)}));
+              userProfileData = userModel.convertRowsToUserProfileObject(results);
+              dbConnection.query(getUsersCategoriesSqlString, function (error1, results1, fields1) {
+                if (error1) {
+                    dbConnection.destroy();
+
+                    return (callback({error: error1}));
+                } else if (results1.length === 0) {
+                    return (callback({error: "User Categories not found."}));
+                }else {
+                  var categories = {};
+                  results1.forEach(function (resultIndex) {
+                      categories[resultIndex.id] = userModel.convertRowsToUserProfileObject(resultIndex);
+                  });
+
+                  return (callback({userData: userProfileData,userCategories: categories}));
+                }
+              });
+
             }
         });
     },
@@ -253,10 +273,7 @@ var userModel = {
 
               return (callback({error: error}));
           } else {
-            if (!bcrypt.compareSync(data.old_pwd, results[0].password)) {
-                  return (callback({error: "Incorrect old password"}));
-            }else{
-               var changePasswordQuery = constructchangePasswordQuery(data.email,data.new_pwd);
+             var changePasswordQuery = constructchangePasswordQuery(data.email,data.new_pwd);
 
               dbConnection.query(changePasswordQuery, function (error, results, fields) {
                   if (error) {
@@ -270,7 +287,7 @@ var userModel = {
                       return (callback({error: "Error in update pwd query"}));
                   }
               });
-            }
+            
           }
 
       });
@@ -313,6 +330,15 @@ var userModel = {
 
 
 };
+
+
+function constructGetUserCategoriesSqlString(userId){
+  var query = "Select * from gx_categories"+
+              " WHERE gx_categories.user_id="+mysql.escape(userId)+
+              " OR added_by='admin'";
+  return query;
+
+}
 
 function constructdeleteFriendQuery(data){
   var query = "DELETE FROM gx_friends_list WHERE id="+data.id;
@@ -425,7 +451,7 @@ function constructresetPasswordByTokenQuery(token, pwd){
 }
 
 function constructGetUserProfileSqlString(userId) {
-    var query = " SELECT  *, FROM_BASE64(profile_image) as image_profile " +
+    var query = " SELECT  *, profile_image " +
             " FROM gx_users LEFT JOIN gx_user_details " +
             " ON gx_user_details.user_id = gx_users.id" +
             " WHERE  gx_users.id = " + mysql.escape(userId);

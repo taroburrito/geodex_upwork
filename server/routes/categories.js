@@ -27,8 +27,7 @@ var setCategoryRoutes = function (router) {
     //router.post('/api/v1/pages/addPage', authenticationMiddleware.isLoggedIn,
     router.post('/api/v1/categories/addCategory',
             function (req, res) {
-                categoryModel.createCategory(req.body.category_name,
-                        req.body.status,
+                categoryModel.createCategory(req.body,
                         function (result) {
                             return res.json(result);
                         }

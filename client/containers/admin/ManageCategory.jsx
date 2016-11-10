@@ -28,7 +28,7 @@ class ManageCategory extends Component {
                         title = {"Manage Category"}
                         categories  = {this.props.universalCategories}
                         onAddClick = {text =>
-                                    dispatch(addCategory(text))
+                                    dispatch(addCategory(req))
                                  }
                         onDeleteClick={Id => dispatch(deleteCategory(Id))}
                         onChange={(id, value) => {

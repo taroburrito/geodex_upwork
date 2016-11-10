@@ -405,28 +405,29 @@ text-transform:uppercase;
 
 
 .user_img_right h3 {
-  font-family: open sans;
-  font-size: 30px;
-  font-weight: 400;
-  line-height: 35px;
+    font-family: open sans;
+    font-size: 30px;
+    font-weight: 400;
+    line-height: 32px;
 }
 
 .user_img_right h3 small {
-  color: #888;
-  font-family: open sans;
-  font-size: 16px;
-  padding-top: 6px;
+    color: #888;
+    font-family: open sans;
+    font-size: 14px;
+    padding-top: 0px;
+    width: 100%;
 }
 
 .user_img_right textarea {
-  background: #fff none repeat scroll 0 0;
-  border: 1px solid #ccc;
-  box-shadow: 0 0 5px #ccc inset;
-  font-family: open sans;
-  height: 104px;
-  padding: 5px 29px 5px 10px;
-  resize: none;
-  width: 100%;
+    background: #fff none repeat scroll 0 0;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 5px #ccc inset;
+    font-family: open sans;
+    height: 90px;
+    padding: 5px 29px 5px 10px;
+    resize: none;
+    width: 100%;
 }
 
 .user_img_right i.uk-icon-image {
@@ -1097,6 +1098,12 @@ p.text-align-right a.uk-button.uk-button-large {
   background: #fff none repeat scroll 0 0;
   border: 1px solid #666;
   margin-left: 10px;
+}
+
+p.text-align-left .uk-button-large {
+  background: #009dd8 none repeat scroll 0 0;
+  padding: 0 20px;
+  margin-top: 10px;
 }
 
 .chosen_bg {

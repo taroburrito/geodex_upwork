@@ -15,9 +15,10 @@ var categoryModel = {
             date_created: row.date_created
         };
     },
-    createCategory: function (name, status, callback) {
+    createCategory: function (req, callback) {
         var dbConnection = dbConnectionCreator();
-        var createCategorySqlString = constructCreateCategorySqlString(name, status);
+        var createCategorySqlString = constructCreateCategorySqlString(req);
+        //return (callback({success:createCategorySqlString}));
         dbConnection.query(createCategorySqlString, function (error, results, fields) {
             if (error) {
                 dbConnection.destroy();
@@ -102,13 +103,14 @@ var categoryModel = {
 
 };
 
-function constructCreateCategorySqlString(name, status) {
+function constructCreateCategorySqlString(req) {
     var timestamp = moment();
     var formatted = timestamp.format('YYYY-MM-DD HH:mm:ss Z');
     var query = "INSERT INTO gx_categories SET " +
-            " category_name = " + mysql.escape(name) +
-            ", added_by = 'admin'" +
-            ", status = " + mysql.escape(status) +
+              " user_id = " + mysql.escape(req.user_id) +
+            ", category_name = " + mysql.escape(req.category_name) +
+            ", added_by = " + mysql.escape(req.added_by) +
+            ", status = 1" +
             ", date_created = '" + formatted + "'";
 
     return query;

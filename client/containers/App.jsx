@@ -28,7 +28,7 @@ class App extends Component {
 
     // Injected by connect() call:
     const { dispatch, userAuthSession } = this.props;
-
+    console.log(userAuthSession);
     // Injected by React Router
     const { location, children } = this.props;
     const { pathname } = location;

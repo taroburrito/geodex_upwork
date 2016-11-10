@@ -49,6 +49,7 @@ export default class AddCategory extends Component {
   }
 
   handleClickAdd(e) {
+    const{userAuthSession} = this.props;
     const node = findDOMNode(this.refs.categoryName);
     const text = node.value.trim();
     if(text === ''){
@@ -56,7 +57,12 @@ export default class AddCategory extends Component {
         node.focus();
     }else{
       this.setState({errorMessage:null});
-    this.props.onAddClick(text);
+      var req = {
+      user_id:userAuthSession.userObject.id,
+      category_name: text,
+      added_by:'admin'
+      };
+    this.props.onAddClick(req);
     node.value = '';
   }
   }
