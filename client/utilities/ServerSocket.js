@@ -3,6 +3,7 @@ import { receivedAllUniversalCategories } from '../actions/CategoryActions';
 import { receivedAllUniversalPages } from '../actions/PageActions';
 import {getVisitedUserData, getUserDetails} from '../actions/ProfileActions';
 import {receivedAllfriendsList} from '../actions/UserActions';
+import {receivedAllposts} from '../actions/PostActions';
 
 
 var socket = io();
@@ -99,6 +100,7 @@ export function linkSocketToStore(dispatch) {
 
       dispatch(receivedAllUniversalCategories(userCategoriesData));
       dispatch(receivedAllfriendsList(res.friendList));
+      dispatch(receivedAllposts(res.posts));
 		}
 	});
 
@@ -114,6 +116,7 @@ export function linkSocketToStore(dispatch) {
     var friendList = res.friendList;
     userdata.categories = userCategoriesData;
     userdata.friends = friendList;
+    userdata.posts = res.posts;
   //  console.log(userdata);
 		if(userdata.error){
 			console.log("Error in server socket");

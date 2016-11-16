@@ -1,3 +1,14 @@
+export const Get_All_Posts = 'Get_All_Posts';
+export const Post_Added_Success =  'Post_Added_Success';
+
+export function receivedAllposts(posts){
+  return{type: Get_All_Posts, data:posts}
+}
+
+export function addPostSuccess(post){
+  return{type: Post_Added_Success, post};
+}
+
 export function addPost(formData){
   return (dispatch) => {
     $.ajax({
@@ -9,8 +20,8 @@ export function addPost(formData){
       if(data.error){
         console.log(data.error);
       }else{
-      console.log("Successfully created post:"+JSON.stringify(data));
-
+      console.log(data);
+      dispatch(addPostSuccess(data.post));
 
       }
 

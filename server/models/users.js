@@ -34,6 +34,7 @@ var userModel = {
         var getUserSettingsSqlString = constructGetUserProfileSqlString(userId);
         var getUsersCategoriesSqlString = constructGetUserCategoriesSqlString(userId);
         var getUserFriendsListSqlString = constructgetUserFriendsListSqlString(userId);
+        var createGetPostsByUserSql = constructGetPostByUserSqlString(userId);
         var profileData;
         var userCategoriesData;
   //return (callback({error: getUsersCategoriesSqlString}));
@@ -58,8 +59,38 @@ var userModel = {
                   results1.forEach(function (resultIndex) {
                       categories[resultIndex.id] = userModel.convertRowsToUserProfileObject(resultIndex);
                   });
+                  dbConnection.query(createGetPostsByUserSql,function(error2,result2,fields2){
+                    if(error2){
+                      var posts = null;
+                      return (callback({userData: userProfileData,userCategories: categories,posts:posts}));
+                    }else{
+                      var posts = {};
+                          result2.forEach(function (postIndex) {
+                          posts[postIndex.id] = userModel.convertRowsToUserProfileObject(postIndex);
+                      });
 
-                  return (callback({userData: userProfileData,userCategories: categories}));
+                      dbConnection.query(getUserFriendsListSqlString,function(error3,result3,fields3){
+                        if(error3){
+                          return (callback({userData: userProfileData,userCategories: categories,posts:posts,friendList:error3}));
+                        }else if (result3.length === 0) {
+                          return (callback({userData: userProfileData,userCategories: categories,posts:posts,friendList:null}));
+                        }else {
+                          var friends = {};
+                          var friendsIds = [];
+                          result3.forEach(function (friendIndex) {
+                              friends[friendIndex.id] = userModel.convertRowsToUserProfileObject(friendIndex);
+                              if(friendIndex.status == 1)
+                              friendsIds.push(friendIndex.user_id);
+
+                          });
+                          return (callback({userData: userProfileData,userCategories: categories,posts:posts,friendList:friends,friendsArray:friendsIds}));
+                        }
+                      });
+
+                    }
+                  });
+
+
                 }
               });
 
@@ -373,6 +404,11 @@ var userModel = {
 
 };
 
+function constructGetPostByUserSqlString(userId){
+    var query = "select * from gx_posts where user_id="+userId;
+    return query;
+}
+
 function constructUpdateFriendListQuery(data){
   var query ="UPDATE gx_friends_list SET " +
         data.field+ "= '" + data.val+"'" +
@@ -519,10 +555,10 @@ function constructGetUserProfileSqlString(userId) {
 function constructgetUserFriendsListSqlString(userId){
   var query = "SELECT gfl.*, gud.user_id, gud.first_name, gud.last_name, gud.address, gud.profile_image from gx_friends_list as gfl"+
   " left join gx_user_details as gud on gfl.receiver_id = gud.user_id"+
-  " WHERE gfl.status = 1 AND gfl.sender_id="+ mysql.escape(userId)+" Union"+
+  " WHERE  gfl.sender_id="+ mysql.escape(userId)+" Union"+
   " SELECT gfl.*, gud.user_id, gud.first_name, gud.last_name, gud.address, gud.profile_image from gx_friends_list as gfl"+
   " left join gx_user_details as gud on gfl.sender_id = gud.user_id"+
-  " WHERE gfl.status = 1 AND gfl.receiver_id="+ mysql.escape(userId);
+  " WHERE   gfl.receiver_id="+ mysql.escape(userId);
   return query;
 }
 

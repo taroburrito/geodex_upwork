@@ -41,6 +41,9 @@ export default class DashboardPage extends Component {
     }
 
     this.props.onClickSavePost(formData);
+    this.setState({image:null,post_image:null});
+    this.refs.postContent.getDOMNode().value = "";
+    //this.props.fetchInitialData(userAuthSession.userObject.id);
   }
 
 
@@ -103,6 +106,7 @@ export default class DashboardPage extends Component {
     console.log(friends);
     Object.keys(friends).map(function (key) {
       var item = friends[key];
+      if(item.status == 1){
       var profile_link = "/user/"+item.user_id;
       friendsElement.push(  <div className="uk-grid dash_top_head dash_botom_list" id={item.id}>
 
@@ -146,10 +150,8 @@ export default class DashboardPage extends Component {
 
 
            </div>);
+         }
     });
-
-
-
     return(
       {friendsElement}
 
@@ -173,7 +175,24 @@ handleImageChange(evt) {
 reader.readAsDataURL(file);
 
 }
+ renderLatestPost(){
+   const{posts} = this.props;
+   var content;
+   var latestPost;
+   if(posts){
+     var highest = Object.keys(posts).sort().pop();
+      latestPost = posts[''+highest];
+     console.log(latestPost);
+     if(latestPost)
+      return (
+       <div className="uk-width-small-1-2 post_control" style={{maxHeight:200,overflow:"hidden"}}>
+       <img src={latestPost.image? latestPost.image: null} className="uk-float-right img_margin_left"/>
+       <p>{latestPost.content}</p>
+       </div>
+     );
+   }
 
+ }
 
   render() {
     console.log(this.props);
@@ -194,6 +213,7 @@ reader.readAsDataURL(file);
         )
       }
 
+      if(userProfileData)
     return (
 
       <div className="uk-container uk-container-center middle_content dashboad">
@@ -230,12 +250,12 @@ reader.readAsDataURL(file);
               </div>
             </div>
             <div id="statusImage" className="uk-modal" >
-               <div className="uk-modal-dialog" style={{width:400}}>
+               <div className="uk-modal-dialog" style={{width:300}}>
                  <AvatarEditor
                    image={this.getProfileImage(this.state.image)}
                    ref="postImage"
-                   width={350}
-                   height={350}
+                   width={200}
+                   height={150}
                    border={10}
                    color={[255, 255, 255, 0.6]} // RGBA
                    scale={1}
@@ -248,7 +268,7 @@ reader.readAsDataURL(file);
                   />
                 <br />
                   <input
-                    className="hidden_file_input"
+
         type="file"
         ref="file"
         onChange={this.handleImageChange.bind(this)
@@ -278,11 +298,7 @@ reader.readAsDataURL(file);
             </div>
           </div>
 
-          <div className="uk-width-small-1-2 post_control">
-          <img src="public/images/post_img.jpg" className="uk-float-right img_margin_left"/>
-          <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book a galley of type and... <a href="#">[more]</a></p>
-          <p className="time">3.25pm</p>
-          </div>
+          {this.renderLatestPost()}
 
          </div>
          <div className="uk-width-small-1-1 shortlist_menu">

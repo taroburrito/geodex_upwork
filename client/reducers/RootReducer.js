@@ -5,6 +5,7 @@ import { updateProfileData,userProfileData, visitedUserData } from './ProfileRed
 import {getAllFriendsList, getUserData} from './UserReducer';
 import { updateCategoryList, handleMessage} from './CategoryReducer';
 import { updatePagesList, getPageData } from './PageReducer';
+import { updatePostsList} from './PostReducer';
 // import { Add_Todo, Complete_Todo, Set_Visibility_Filter, VisibilityFilters  } from '../actions/TodoActions';
 // const { Show_All } = VisibilityFilters;
 
@@ -33,6 +34,7 @@ const RootReducer = combineReducers({
   getPageData:getPageData,
   actionMessage: updateError,
   friendsListState: getAllFriendsList,
+  postsList: updatePostsList,
 
   //For viewing profiles.
   userProfileData:userProfileData,
