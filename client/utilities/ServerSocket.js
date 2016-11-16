@@ -1,7 +1,7 @@
 import { receivedAllUniversalTodos, optimisticUniversalAddSuccess } from '../actions/TodoActions';
 import { receivedAllUniversalCategories } from '../actions/CategoryActions';
 import { receivedAllUniversalPages } from '../actions/PageActions';
-import {getUserDetails} from '../actions/ProfileActions';
+import {getVisitedUserData, getUserDetails} from '../actions/ProfileActions';
 import {receivedAllfriendsList} from '../actions/UserActions';
 
 
@@ -82,14 +82,46 @@ export function linkSocketToStore(dispatch) {
 			dispatch(receivedAllUniversalPages(result.pages));
 		}
 	});
-	socket.on("userDetail",function(userdata,userCategoriesData){
-		if(userdata.error || userCategoriesData.error){
+	socket.on("userDetail",function(res){
+    console.log(res);
+    //user profile data
+    var userdata = res.userData[0];
+
+    // user category data
+    var userCategoriesData = res.userCategories;
+  //  userdata.categories = userCategoriesData;
+  //  console.log(userdata);
+		if(userdata.error){
 			console.log("Error in server socket");
 		}else{
-			var data=JSON.parse(userdata);
-			dispatch(getUserDetails(data));
+
+			dispatch(getUserDetails(userdata));
 
       dispatch(receivedAllUniversalCategories(userCategoriesData));
+      dispatch(receivedAllfriendsList(res.friendList));
+		}
+	});
+
+// Visited user detail
+  socket.on("visitedUserDetail",function(res){
+    console.log(res);
+    //user profile data
+    var userdata = res.userData[0];
+
+    // user category data
+    var userCategoriesData = res.userCategories;
+    // visited users friendlist
+    var friendList = res.friendList;
+    userdata.categories = userCategoriesData;
+    userdata.friends = friendList;
+  //  console.log(userdata);
+		if(userdata.error){
+			console.log("Error in server socket");
+		}else{
+
+			dispatch(getVisitedUserData(userdata));
+
+      //dispatch(receivedAllUniversalCategories(userCategoriesData));
 		}
 	});
 
@@ -113,6 +145,12 @@ export function registerPages(){
 	socket.emit("getAllPagesData");
 }
 
+//LoggedIn user profile detail
 export function getUserDetail(userId){
 	socket.emit("user-detail",userId);
+}
+
+// visited user profile detail
+export function getVisitedUserDetail(userId){
+  socket.emit("visited-user-detail", userId);
 }

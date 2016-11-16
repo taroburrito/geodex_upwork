@@ -16,8 +16,7 @@ class UserSettings extends Component{
   render(){
     const {userAuthSession, dispatch} = this.props;
     if(userAuthSession.isLoggedIn){
-
-      return(
+    return(
         <div className="full_width">
         <ProfileWidget fetchInitialData={(id)=>getUserDetail(id)}
                         userdetail={this.props.profileData}
@@ -25,14 +24,8 @@ class UserSettings extends Component{
                       />
         </div>
       );
-    }else{
-    return(
-      <div className="full_width">
-      <Navbar userAuthSession={userAuthSession}/>
-      <Home/>
-      </div>
-    );
-  }
+    }
+
   }
 }
 

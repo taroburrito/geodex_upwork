@@ -1,10 +1,13 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { Navigation } from 'react-router';
+
 import Home from '../../components/front/Home';
 import DashboardPage from '../../components/front/DashboardPage';
 import Navbar from '../../components/Navbar';
 import { attemptLogout } from '../../actions/AuthActions';
 import {addCategory} from '../../actions/CategoryActions';
+import {addPost} from '../../actions/PostActions';
 import {getUserDetail} from '../../utilities/ServerSocket';
 
 class HomePage extends Component{
@@ -12,9 +15,7 @@ class HomePage extends Component{
     super(props);
 
   }
-  componentWillMount(){
 
-  }
   render(){
     const {userAuthSession, dispatch} = this.props;
 
@@ -23,9 +24,12 @@ class HomePage extends Component{
       return(
         <div className="full_width">
         <DashboardPage
+          onClickSavePost={(data)=>
+          dispatch(addPost(data))}
           addCategory={(req)=>
           dispatch(addCategory(req))}
           categories={this.props.categories}
+          friends={this.props.friendsList}
           userAuthSession = {this.props.userAuthSession}
           fetchInitialData={(id)=>getUserDetail(id)}
           userProfileData={this.props.userProfileData}
@@ -35,7 +39,7 @@ class HomePage extends Component{
     }else{
     return(
       <div className="full_width">
-      <Navbar userAuthSession={userAuthSession}/>
+
       <Home/>
       </div>
     );
@@ -43,11 +47,17 @@ class HomePage extends Component{
   }
 }
 
+HomePage.contextTypes = {
+  router: PropTypes.object.isRequired
+};
+
+
 function select(state) {
   return {
   userAuthSession: state.userAuthSession,
   userProfileData: state.userProfileData,
   categories: state.universalCategories,
+  friendsList: state.friendsListState,
   handleMessage: state.handleMessage,
   };
 }

@@ -44,12 +44,30 @@ module.exports = {
 
             socket.on('user-detail',function(userId){
                 userModel.getUserProfile(userId,function(result){
-                  //socket.emit("userDetail",result);
-                    if(result.userData && result.userData.length){
-                            var userData=JSON.stringify(result.userData[0]);
-                            //var userCategories = JSON.stringify(result.userCategories);
-                            socket.emit("userDetail",userData,result.userCategories);
-                    }
+
+                  userModel.getAllFriends(userId,function(res){
+                    var final_result = Object.assign({},result,res);
+                    socket.emit("userDetail",final_result);
+                  })
+
+                    // if(result.userData && result.userData.length){
+                    //       //  var userData=JSON.stringify(result.userData[0]);
+                    //         //var userCategories = JSON.stringify(result.userCategories);
+                    //         socket.emit("userDetail",result);
+                    // }
+
+                })
+
+            });
+
+//          Viseted user detail
+            socket.on('visited-user-detail',function(userId){
+                userModel.getUserProfile(userId,function(result){
+
+                  userModel.getAllFriends(userId,function(res){
+                    var final_result = Object.assign({},result,res);
+                    socket.emit("visitedUserDetail",final_result);
+                  })
 
                 })
 

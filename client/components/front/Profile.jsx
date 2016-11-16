@@ -4,11 +4,20 @@ export default class Profile extends Component {
 
     constructor(props){
         super(props);
-        console.log(this.props);
+        this.state={
+          isFriendWithLoggedInUser: false,
+        }
+        this.handleClickAddFriend = this.handleClickAddFriend.bind(this);
+        this.handleClickRespondToRequest = this.handleClickRespondToRequest.bind(this);
+      //  this.handleClickDenyRequest = this.handleClickDenyRequest.bind(this);
+
 
     }
     componentWillMount() {
       this.props.fetchInitialData(this.props.userId);
+    }
+    componentDidMount(){
+
     }
     getProfileImage(img){
        if(img){
@@ -18,10 +27,104 @@ export default class Profile extends Component {
       }
 
     }
+    handleClickDenyRequest(item,event){
+
+      this.props.onClickDenyRequest(item);
+      this.props.fetchInitialData(this.props.userId);
+    }
+    handleClickAddFriend(){
+      const{userAuthSession,userProfileData} = this.props;
+      var sender = userAuthSession.userObject;
+      var receiver = userProfileData;
+      this.props.onClickAddFriend(sender,receiver);
+      this.props.fetchInitialData(this.props.userId);
+    }
+
+    handleClickRespondToRequest(){
+      const{userAuthSession,userId} = this.props;
+      var senderId = userAuthSession.userObject.id;
+      this.props.onClickRespondFriendRequest(senderId);
+      this.props.fetchInitialData(this.props.userId);
+    }
+
+    renderAddFriendLink(){
+      const{userProfileData, userAuthSession} = this.props;
+      var friends = userProfileData.friends;
+      var link;
+      var denyLink = "";
+      var LoggedInUserId = userAuthSession.userObject.id;
+      if(friends && LoggedInUserId){
+      Object.keys(friends).forEach( (id) => {
+      var friendsData = friends[id];
+
+      // if there is friend list record for loggedin user and visited user
+      if(friendsData.sender_id == LoggedInUserId || friendsData.receiver_id == LoggedInUserId){
+//console.log("LoggedIn:"+LoggedInUserId);
+        //if visited user and loggedin user are friend
+        if(friendsData.status == 1){
+          link =(
+            <a className="uk-button add_friend_btn">Friends</a>
+          );
+
+        // if visited user and loggedin user are blocked
+        }else if (friendsData.status == 2) {
+
+          // if an friend request is sent either by visited user or by loggedin user
+        }else {
+          // If loggedin user sends request
+          if (friendsData.sender_id == LoggedInUserId) {
+            link =(
+              <a className="uk-button add_friend_btn">Friend request sent</a>
+            );
+
+
+            // if visited user sent friend request
+          }else {
+            link =(
+              <div data-uk-dropdown="" aria-haspopup="true" aria-expanded="false" className="add_friend_btn">
+                <a className="uk-button"><i className="uk-icon-chevron-down"></i></a>
+                <div className="uk-dropdown uk-dropdown-small uk-dropdown-bottom" aria-hidden="true" tabindex="">
+
+                  <ul className="uk-nav uk-nav-dropdown">
+                     <li><a  onClick={this.handleClickRespondToRequest}>Accept request</a></li>
+                     <li><a onClick={this.handleClickDenyRequest.bind(this,friendsData.id)}>Deny request</a></li>
+                   </ul>
+                 </div>
+                </div>
+
+
+              );
+
+          }
+        }
+
+      }else{
+
+      }
+      });
+    }else{
+      link =(
+
+        <a className="uk-button add_friend_btn" onClick={this.handleClickAddFriend}>Add Friend</a>
+      )
+    }
+    if(!link){
+      link = (
+          <a className="uk-button add_friend_btn" onClick={this.handleClickAddFriend}>Add Friend</a>
+      )
+    }
+
+        return(
+            {link}
+        );
+
+
+    }
 
 
     render() {
-      const{userProfileData} = this.props;
+      const{userProfileData, userAuthSession} = this.props;
+      console.log(userProfileData);
       if(userProfileData.cover_image){
         var background_profile_css ={
           backgroundImage: 'url('+userProfileData.cover_image+')'
@@ -44,6 +147,7 @@ export default class Profile extends Component {
 
                       </div>
                     <div className="uk-width-7-10 pro_right">
+                      {(userAuthSession.userObject.id != this.props.userId)? this.renderAddFriendLink(): null}
                     <h3>{userProfileData.first_name} {userProfileData.last_name}</h3>
                     <h4>{userProfileData.address}</h4>
                     <h5>{userProfileData.email} <i className="uk-icon-envelope"></i></h5>
@@ -53,7 +157,7 @@ export default class Profile extends Component {
                  </div>
                </div>
               </div>
-            
+
 
           <div className="uk-container uk-container-center middle_content profile">
              <div className="uk-grid uk-grid-large profile_bottom">

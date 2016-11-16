@@ -294,3 +294,11 @@ input.myinputcont {
 .myinputcont_btn a {
 color:#ffffff;
 }
+
+@media only screen and (max-width: 767px){
+
+.tm-main .uk-container {
+  padding-left: 45px;
+}
+
+}

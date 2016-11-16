@@ -2,9 +2,10 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Profile from '../../components/front/Profile';
 import Home from '../../components/front/Home';
-import {getUserDetail} from '../../utilities/ServerSocket';
+import {getVisitedUserDetail} from '../../utilities/ServerSocket';
 
 import { fetchUserProfile, reloadingProfilePage } from '../../actions/ProfileActions';
+import { clickedAddFriend, respondFriendRequest, clickedDeleteFriend } from '../../actions/UserActions';
 
 export default class UserProfilePage extends Component {
   constructor(props, context) {
@@ -21,13 +22,20 @@ export default class UserProfilePage extends Component {
 
 
   render() {
-    const { dispatch, userAuthSession, userProfileData } = this.props;
+    const { dispatch, userAuthSession, visitedUser } = this.props;
     if(userAuthSession.isLoggedIn){
     return (
       <div className="full_width">
       <Profile
-        fetchInitialData={(id)=>getUserDetail(id)}
-        userProfileData={this.props.userProfileData}
+        onClickDenyRequest={(id)=>
+        clickedDeleteFriend(id)}
+        onClickRespondFriendRequest={(id)=>
+          respondFriendRequest(id)}
+        onClickAddFriend={(sender,receiver)=>
+        clickedAddFriend(sender,receiver)}
+        userAuthSession={this.props.userAuthSession}
+        fetchInitialData={(id)=>getVisitedUserDetail(id)}
+        userProfileData={this.props.visitedUser}
          userId={this.props.params.id}/>
       </div>
     );
@@ -45,7 +53,7 @@ export default class UserProfilePage extends Component {
 function select(state) {
   return {
     userAuthSession: state.userAuthSession,
-    userProfileData: state.userProfileData,
+    visitedUser: state.visitedUser,
   };
 }
 

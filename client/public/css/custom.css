@@ -405,29 +405,36 @@ text-transform:uppercase;
 
 
 .user_img_right h3 {
-    font-family: open sans;
-    font-size: 30px;
-    font-weight: 400;
-    line-height: 32px;
+
+  float: left;
+  font-family: open sans;
+  font-size: 27px;
+  font-weight: 400;
+  line-height: 30px;
+  margin-bottom: 0;
+  width: 100%;
 }
 
 .user_img_right h3 small {
-    color: #888;
-    font-family: open sans;
-    font-size: 14px;
-    padding-top: 0px;
-    width: 100%;
+  color: #888;
+  font-family: open sans;
+  font-size: 15px;
+  line-height: 20px;
+  padding-bottom: 5px;
+  padding-top: 0;
+  width: 100%;
 }
 
 .user_img_right textarea {
-    background: #fff none repeat scroll 0 0;
-    border: 1px solid #ccc;
-    box-shadow: 0 0 5px #ccc inset;
-    font-family: open sans;
-    height: 90px;
-    padding: 5px 29px 5px 10px;
-    resize: none;
-    width: 100%;
+  background: #fff none repeat scroll 0 0;
+  border: 1px solid #ccc;
+  box-shadow: 0 0 5px #ccc inset;
+  font-family: open sans;
+  height: 99px;
+  padding: 5px 29px 5px 10px;
+  resize: none;
+  width: 100%;
+
 }
 
 .user_img_right i.uk-icon-image {
@@ -471,12 +478,14 @@ form.uk-search.search_dash_nav {
 .shortlist_menu li {
   background: #e5e5e5 none repeat scroll 0 0;
   border-radius: 3px;
+  cursor: pointer;
   float: left;
   font-size: 16px;
+  margin-bottom: 4px;
   margin-right: 9px;
+  margin-top: 4px;
   padding: 4px 13px;
   text-transform: uppercase;
-  cursor:pointer;
 }
 
 .shortlist_menu li:hover , .shortlist_menu li.active_sm {
@@ -1176,4 +1185,89 @@ p.text-align-left .uk-button-large {
     font-weight: 400;
     line-height: 24px;
     padding-left: 11px;
+}
+
+.add-friend-button{
+  position: absolute;
+    right: 10px;
+    bottom: 10px;
+}
+
+
+
+/*new css*/
+
+
+.uk-text-small.uk-pull-left.f_r_p {
+  float: left;
+  margin-bottom: 10px;
+  margin-top: 7px;
+  width: 100%;
+}
+
+.f_r_p .uk-float-right.uk-link.uk-link-muted {
+  font-size: 11px;
+  margin-top: -1px;
+  width: auto;
+}
+
+.placesSuggest {
+  margin-bottom: 9px;
+  margin-top: 9px;
+}
+
+
+
+@media only screen and (max-width: 900px){
+
+.uk-width-medium-1-1.banner_home.uk-row-first {
+  padding: 0;
+}
+
+.banner_home .uk-vertical-align.uk-text-center {
+  padding-top: 35%;
+}
+
+form.uk-search.search_dash_nav {
+  width: 25%;
+}
+
+}
+
+@media only screen and (max-width: 480px){
+
+.banner_home .uk-button-large {
+  min-width: 120px;
+}
+
+}
+
+@media only screen and (max-width: 767px){
+
+.innerpage_nav .uk-navbar-center {
+  float: left;
+}
+
+.dash_top_head .uk-width-small-1-2 {
+  width: 100%;
+}
+
+}
+
+.add_friend_btn{
+  position: absolute;
+    right: 5px;
+    bottom: 5px;
+}
+
+.capital_first{
+  text-transform: capitalize;
+}
+.hidden_file_input{
+  position: absolute;
+    top: 182px;
+    height: 100px;
+    opacity: 0.1;
+    cursor: pointer;
+    right: 70px;
 }

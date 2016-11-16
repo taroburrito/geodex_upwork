@@ -45,6 +45,20 @@ export default class Home extends Component {
 
             </div>
         </div>
+        <LoginPage onClickLogin={(formData) => {
+                       dispatch(attemptLogin(formData.email, formData.password, formData.role))
+                    }}
+                    isFetchingData={userAuthSession.fetchingAuthUpdate}
+                    serverError={userAuthSession.error}
+         />
+         <ForgotPassword onClickSubmit={(formData) => {
+           dispatch(forgetPasswordSubmit(formData.email))
+         }}
+         serverError={forgotPasswordResult.error}
+         successMessage={forgotPasswordResult.success}/>
+       <SignupPage onClickSignUp={formData =>{
+           dispatch(attemptSignUp(formData))
+         }}/>
      <Footer/>
        <div id="offcanvas" className="uk-offcanvas">
            <div className="uk-offcanvas-bar">
@@ -55,20 +69,7 @@ export default class Home extends Component {
                </ul>
            </div>
        </div>
-       <LoginPage onClickLogin={(formData) => {
-                      dispatch(attemptLogin(formData.email, formData.password, formData.role))
-                   }}
-                   isFetchingData={userAuthSession.fetchingAuthUpdate}
-                   serverError={userAuthSession.error}
-        />
-        <ForgotPassword onClickSubmit={(formData) => {
-          dispatch(forgetPasswordSubmit(formData.email))
-        }}
-        serverError={forgotPasswordResult.error}
-        successMessage={forgotPasswordResult.success}/>
-      <SignupPage onClickSignUp={formData =>{
-          dispatch(attemptSignUp(formData))
-        }}/>
+
 
      </div>
     );

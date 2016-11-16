@@ -33,6 +33,7 @@ var userModel = {
         var dbConnection = dbConnectionCreator();
         var getUserSettingsSqlString = constructGetUserProfileSqlString(userId);
         var getUsersCategoriesSqlString = constructGetUserCategoriesSqlString(userId);
+        var getUserFriendsListSqlString = constructgetUserFriendsListSqlString(userId);
         var profileData;
         var userCategoriesData;
   //return (callback({error: getUsersCategoriesSqlString}));
@@ -287,7 +288,7 @@ var userModel = {
                       return (callback({error: "Error in update pwd query"}));
                   }
               });
-            
+
           }
 
       });
@@ -311,6 +312,30 @@ var userModel = {
       });
     },
 
+    addFriendRequest: function(data, callback){
+      var dbConnection = dbConnectionCreator();
+      var addFriendQuery = constructAddFriendQuery(data.sender.id,data.receiver.user_id);
+
+      dbConnection.query(addFriendQuery, function (error, results, fields) {
+          if (error) {
+              dbConnection.destroy();
+
+              return (callback({error: error}));
+          } else if (results.affectedRows === 1) {
+
+            var mailContent = '<b>Hello,</b><br/><p>You have received new friend request from <b>' + data.sender.email + ' </b></p>' +
+                    '<br/><a href="http://localhost:6969/#/user/' + data.sender.id + '" target="_blank">Click here</a>';
+
+            //Send notification email on success
+            //token,from,to,subject,content
+            sendMailToUser('','admin@geodex.com',data.receiver.email,'New friend request',mailContent);
+            return(callback({success:"Successfully sent friend request"}));
+          } else {
+              return (callback({error: results}));
+          }
+      });
+    },
+
     deleteFriend: function(data,callback){
       var dbConnection = dbConnectionCreator();
       var deleteFriendQuery = constructdeleteFriendQuery(data);
@@ -326,10 +351,42 @@ var userModel = {
               return (callback({error: results}));
           }
       });
-    }
+    },
+
+    updateFriendList: function(data,callback){
+      var dbConnection = dbConnectionCreator();
+      var updateFriendListQuery = constructUpdateFriendListQuery(data);
+      dbConnection.query(updateFriendListQuery, function (error, results, fields) {
+          if (error) {
+              dbConnection.destroy();
+
+              return (callback({error: error}));
+          } else if (results.affectedRows === 1) {
+            return(callback({success:"Successfully Updated friend list"}));
+          } else {
+              return (callback({error: results}));
+          }
+      });
+    },
+
 
 
 };
+
+function constructUpdateFriendListQuery(data){
+  var query ="UPDATE gx_friends_list SET " +
+        data.field+ "= '" + data.val+"'" +
+      " WHERE receiver_id = " + mysql.escape(data.id);
+  return query;
+}
+
+function constructAddFriendQuery(sender,receiver){
+  var timestamp = moment();
+  var formatted = timestamp.format('YYYY-MM-DD HH:mm:ss Z');
+  var query = "INSERT INTO `gx_friends_list` (`id`, `sender_id`, `receiver_id`, `status`, `blocked_by`, `created`)"+
+  " VALUES ('', '" + sender + "', '" + receiver + "', '', '', '" + formatted + "')";
+  return query;
+}
 
 
 function constructGetUserCategoriesSqlString(userId){
@@ -462,10 +519,10 @@ function constructGetUserProfileSqlString(userId) {
 function constructgetUserFriendsListSqlString(userId){
   var query = "SELECT gfl.*, gud.user_id, gud.first_name, gud.last_name, gud.address, gud.profile_image from gx_friends_list as gfl"+
   " left join gx_user_details as gud on gfl.receiver_id = gud.user_id"+
-  " WHERE gfl.sender_id="+ mysql.escape(userId)+" Union"+
+  " WHERE gfl.status = 1 AND gfl.sender_id="+ mysql.escape(userId)+" Union"+
   " SELECT gfl.*, gud.user_id, gud.first_name, gud.last_name, gud.address, gud.profile_image from gx_friends_list as gfl"+
   " left join gx_user_details as gud on gfl.sender_id = gud.user_id"+
-  " WHERE gfl.receiver_id="+ mysql.escape(userId);
+  " WHERE gfl.status = 1 AND gfl.receiver_id="+ mysql.escape(userId);
   return query;
 }
 

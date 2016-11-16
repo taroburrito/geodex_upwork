@@ -10,6 +10,7 @@ export const Update_Profile_Input='Update_Profile_Input';
 export const Update_Profile_Success='Update_Profile_Success';
 import {Handle_Success_Message} from './PageActions';
 export const Fetch_Freind_List = 'Fetch_Freind_List';
+export const Get_Visited_User_Data = 'Get_Visited_User_Data';
 
 	/*
      * other constants
@@ -66,6 +67,10 @@ export function reloadingProfilePage() {
 export function getUserDetails(userdetail){
 	return { type: Get_User_Details, userdetail};
 }
+export function getVisitedUserData(data){
+  return{ type: Get_Visited_User_Data, data: data}
+}
+
 export function updateProfileInput(field,val){
   return {type:Update_Profile_Input,field:field,value:val}
 }

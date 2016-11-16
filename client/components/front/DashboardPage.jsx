@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { Navigation } from 'react-router';
+import { Navigation, Link } from 'react-router';
+var AvatarEditor = require('react-avatar-editor');
 
 function generateUUID(){
   //Note: this is a simple implentation for this project. //TODO create a better one
@@ -12,8 +13,12 @@ export default class DashboardPage extends Component {
     super(props);
     this.handleClickAddCategory = this.handleClickAddCategory.bind(this);
     this.handleClickPlus = this.handleClickPlus.bind(this);
+    this.handleSavePostImage = this.handleSavePostImage.bind(this);
+    this.handleSavePost = this.handleSavePost.bind(this);
     this.state ={
       errorMessage: null,
+      image: "public/images/user.jpg",
+      post_image:null
     }
   }
 
@@ -22,6 +27,22 @@ export default class DashboardPage extends Component {
 
     this.props.fetchInitialData(userAuthSession.userObject.id);
   }
+
+  handleSavePostImage(){
+    var img = this.refs.postImage.getImage();
+    this.setState({post_image: img});
+  }
+  handleSavePost(){
+    const{userAuthSession} = this.props;
+    var formData = {
+      user_id: userAuthSession.userObject.id,
+      content: this.refs.postContent.getDOMNode().value,
+      image: this.state.post_image
+    }
+
+    this.props.onClickSavePost(formData);
+  }
+
 
   handleClickPlus(){
     this.setState({errorMessage:null});
@@ -74,10 +95,88 @@ export default class DashboardPage extends Component {
     );
   }
 
+  renderFriendList(){
+
+    const{friends} = this.props;
+    var friendsElement = [];
+
+    console.log(friends);
+    Object.keys(friends).map(function (key) {
+      var item = friends[key];
+      var profile_link = "/user/"+item.user_id;
+      friendsElement.push(  <div className="uk-grid dash_top_head dash_botom_list" id={item.id}>
+
+            <div className="uk-width-small-1-2">
+              <div className="uk-grid uk-grid-small">
+              <div className="uk-width-3-10 user_img_left"><img src={item.profile_image?item.profile_image:"public/images/user.jpg"} className=""/></div>
+              <div className="uk-width-7-10 user_bottom_img_right">
+              <h3 className="capital_first"><Link to={profile_link}>{item.first_name} {item.last_name} </Link><img className="online_user" src="public/images/online.png"/> <small className="user_location">{item.address}<i className="uk-icon-envelope"></i></small></h3>
+
+
+            <div className="uk-slidenav-position uk-margin" data-uk-slider="{autoplay: true}">
+
+                    <div className="uk-slider-container img_slid">
+                        <ul className="uk-slider uk-grid-small uk-grid-width-medium-1-4">
+                <li><img src={item.profile_image?item.profile_image:"public/images/user.jpg"}/></li>
+                <li><img src={item.profile_image?item.profile_image:"public/images/user.jpg"}/></li>
+                <li><img src={item.profile_image?item.profile_image:"public/images/user.jpg"}/></li>
+                <li><img src={item.profile_image?item.profile_image:"public/images/user.jpg"}/></li>
+                <li><img src={item.profile_image?item.profile_image:"public/images/user.jpg"}/></li>
+                <li><img src={item.profile_image?item.profile_image:"public/images/user.jpg"}/></li>
+                <li><img src={item.profile_image?item.profile_image:"public/images/user.jpg"}/></li>
+                <li><img src={item.profile_image?item.profile_image:"public/images/user.jpg"}/></li>
+                        </ul>
+                    </div>
+
+                    <a href="#" className="uk-slidenav uk-slidenav-contrast uk-slidenav-previous" data-uk-slider-item="previous" draggable="false"></a>
+                    <a href="#" className="uk-slidenav uk-slidenav-contrast uk-slidenav-next" data-uk-slider-item="next" draggable="false"></a>
+
+                </div>
+
+
+              </div>
+              </div>
+            </div>
+            <div className="uk-width-small-1-2 post_control">
+    				<img src="public/images/post_img.jpg" className="uk-float-left img_margin_right"/>
+    				<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book a galley of type and... <a href="#">[more]</a></p>
+    				<p className="time">3.25pm</p>
+    				</div>
+
+
+
+           </div>);
+    });
+
+
+
+    return(
+      {friendsElement}
+
+    )
+  }
+
+logCallback(e){
+
+}
+
+handleImageChange(evt) {
+    var self = this;
+    var reader = new FileReader();
+    var file = evt.target.files[0];
+
+    reader.onloadend = function(upload) {
+    self.setState({
+        image: upload.target.result
+      });
+    };
+reader.readAsDataURL(file);
+
+}
 
 
   render() {
-
+    console.log(this.props);
     const { dispatch, userAuthSession, userProfileData, categories, handleMessage} = this.props;
     var content;
     var errorLabel;
@@ -96,6 +195,7 @@ export default class DashboardPage extends Component {
       }
 
     return (
+
       <div className="uk-container uk-container-center middle_content dashboad">
          <div className="uk-grid uk-grid-large dash_top_head">
            <div id="categoryModal" className="uk-modal" ref="modal" >
@@ -129,15 +229,51 @@ export default class DashboardPage extends Component {
 
               </div>
             </div>
+            <div id="statusImage" className="uk-modal" >
+               <div className="uk-modal-dialog" style={{width:400}}>
+                 <AvatarEditor
+                   image={this.getProfileImage(this.state.image)}
+                   ref="postImage"
+                   width={350}
+                   height={350}
+                   border={10}
+                   color={[255, 255, 255, 0.6]} // RGBA
+                   scale={1}
+                   onSave={this.handleSavePostImage}
+                   onLoadFailure={this.logCallback.bind(this, 'onLoadFailed')}
+                   onLoadSuccess={this.logCallback.bind(this, 'onLoadSuccess')}
+                   onImageReady={this.logCallback.bind(this, 'onImageReady')}
+                   onImageLoad={this.logCallback.bind(this, 'onImageLoad')}
+                   onDropFile={this.logCallback.bind(this, 'onDropFile')}
+                  />
+                <br />
+                  <input
+                    className="hidden_file_input"
+        type="file"
+        ref="file"
+        onChange={this.handleImageChange.bind(this)
+        }
+      />
+    <br/>
+               <input className="uk-button uk-button-primary uk-button-large uk-modal-close" type="button" onClick={this.handleSavePostImage} value="Save" />
+           </div>
+       </div>
 
           <div className="uk-width-small-1-2">
             <div className="uk-grid uk-grid-small">
-            <div className="uk-width-3-10 user_img_left">  <img src={this.getProfileImage(userProfileData.profile_image)} /></div>
+            <div className="uk-width-3-10 user_img_left">
+              <img src={this.getProfileImage(userProfileData.profile_image)} />
+
+            </div>
             <div className="uk-width-7-10 user_img_right">
             <h3>{userProfileData.first_name} {userProfileData.last_name}
                <small className="uk-float-right">{userProfileData.email}</small></h3>
-            <textarea placeholder="Post to geodex..." className="uk-width-1-1"></textarea>
-            <i className="uk-icon-image"></i>
+            <textarea placeholder="Post to geodex..." className="uk-width-1-1" ref="postContent"></textarea>
+
+
+            <i className="uk-icon-image" data-uk-modal="{target:'#statusImage'}"></i>
+            <a className="uk-button uk-button-primary uk-button-large" onClick={this.handleSavePost}>Post</a>
+
             </div>
             </div>
           </div>
@@ -161,138 +297,8 @@ export default class DashboardPage extends Component {
           </select>
         </div>
           </div>
-
-
-
-      <div className="uk-grid dash_top_head dash_botom_list">
-
-          <div className="uk-width-small-1-2">
-            <div className="uk-grid uk-grid-small">
-            <div className="uk-width-3-10 user_img_left"><img src="public/images/user.jpg" className=""/></div>
-            <div className="uk-width-7-10 user_bottom_img_right">
-            <h3>Lindsay Lemon <img className="online_user" src="public/images/online.png"/> <small className="user_location">Los Angeles, CA <i className="uk-icon-envelope"></i></small></h3>
-
-
-          <div className="uk-slidenav-position uk-margin" data-uk-slider="{autoplay: true}">
-
-                  <div className="uk-slider-container img_slid">
-                      <ul className="uk-slider uk-grid-small uk-grid-width-medium-1-4">
-                          <li><img src="public/images/user.jpg"/></li>
-              <li><img src="public/images/user.jpg"/></li>
-              <li><img src="public/images/user.jpg"/></li>
-              <li><img src="public/images/user.jpg"/></li>
-              <li><img src="public/images/user.jpg"/></li>
-              <li><img src="public/images/user.jpg"/></li>
-              <li><img src="public/images/user.jpg"/></li>
-                          <li><img src="public/images/user.jpg"/></li>
-                      </ul>
-                  </div>
-
-                  <a href="#" className="uk-slidenav uk-slidenav-contrast uk-slidenav-previous" data-uk-slider-item="previous" draggable="false"></a>
-                  <a href="#" className="uk-slidenav uk-slidenav-contrast uk-slidenav-next" data-uk-slider-item="next" draggable="false"></a>
-
-              </div>
-
-
-            </div>
-            </div>
-          </div>
-
-          <div className="uk-width-small-1-2 post_control">
-          <img src="public/images/post_img.jpg" className="uk-float-left img_margin_right"/>
-          <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book a galley of type and... <a href="#">[more]</a></p>
-          <p className="time">3.25pm</p>
-          </div>
-
-         </div>
-
-
-
-         <div className="uk-grid dash_top_head dash_botom_list">
-
-          <div className="uk-width-small-1-2">
-            <div className="uk-grid uk-grid-small">
-            <div className="uk-width-3-10 user_img_left"><img src="public/images/user.jpg" className=""/></div>
-            <div className="uk-width-7-10 user_bottom_img_right">
-            <h3>Lindsay Lemon <img className="online_user" src="public/images/offline.png"/> <small className="user_location">Los Angeles, CA <i className="uk-icon-envelope"></i></small></h3>
-
-
-          <div className="uk-slidenav-position uk-margin" data-uk-slider="{autoplay: true}">
-
-                  <div className="uk-slider-container img_slid">
-                      <ul className="uk-slider uk-grid-small uk-grid-width-medium-1-4">
-                          <li><img src="public/images/user.jpg"/></li>
-              <li><img src="public/images/user.jpg"/></li>
-              <li><img src="public/images/user.jpg"/></li>
-              <li><img src="public/images/user.jpg"/></li>
-              <li><img src="public/images/user.jpg"/></li>
-              <li><img src="public/images/user.jpg"/></li>
-              <li><img src="public/images/user.jpg"/></li>
-                          <li><img src="public/images/user.jpg"/></li>
-                      </ul>
-                  </div>
-
-                  <a href="#" className="uk-slidenav uk-slidenav-contrast uk-slidenav-previous" data-uk-slider-item="previous" draggable="false"></a>
-                  <a href="#" className="uk-slidenav uk-slidenav-contrast uk-slidenav-next" data-uk-slider-item="next" draggable="false"></a>
-
-              </div>
-
-
-            </div>
-            </div>
-          </div>
-
-          <div className="uk-width-small-1-2 post_control">
-          <img src="public/images/post_img.jpg" className="uk-float-left img_margin_right"/>
-          <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book a galley of type and... <a href="#">[more]</a></p>
-          <p className="time">3.25pm</p>
-          </div>
-
-         </div>
-
-
-         <div className="uk-grid dash_top_head dash_botom_list">
-
-          <div className="uk-width-small-1-2">
-            <div className="uk-grid uk-grid-small">
-            <div className="uk-width-3-10 user_img_left"><img src="public/images/user.jpg" className=""/></div>
-            <div className="uk-width-7-10 user_bottom_img_right">
-            <h3>Lindsay Lemon <img className="online_user" src="public/images/offline.png"/> <small className="user_location">Los Angeles, CA <i className="uk-icon-envelope"></i></small></h3>
-
-
-          <div className="uk-slidenav-position uk-margin" data-uk-slider="{autoplay: true}">
-
-                  <div className="uk-slider-container img_slid">
-                      <ul className="uk-slider uk-grid-small uk-grid-width-medium-1-4">
-                          <li><img src="public/images/user.jpg"/></li>
-              <li><img src="public/images/user.jpg"/></li>
-              <li><img src="public/images/user.jpg"/></li>
-              <li><img src="public/images/user.jpg"/></li>
-              <li><img src="public/images/user.jpg"/></li>
-              <li><img src="public/images/user.jpg"/></li>
-              <li><img src="public/images/user.jpg"/></li>
-                          <li><img src="public/images/user.jpg"/></li>
-                      </ul>
-                  </div>
-
-                  <a href="#" className="uk-slidenav uk-slidenav-contrast uk-slidenav-previous" data-uk-slider-item="previous" draggable="false"></a>
-                  <a href="#" className="uk-slidenav uk-slidenav-contrast uk-slidenav-next" data-uk-slider-item="next" draggable="false"></a>
-
-              </div>
-
-
-            </div>
-            </div>
-          </div>
-
-          <div className="uk-width-small-1-2 post_control">
-          <img src="public/images/post_img.jpg" className="uk-float-left img_margin_right"/>
-          <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book a galley of type and... <a href="#">[more]</a></p>
-          <p className="time">3.25pm</p>
-          </div>
-
-         </div>
-    </div>
+          {this.renderFriendList()}
+      </div>
 
 
     );

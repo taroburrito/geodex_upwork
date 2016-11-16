@@ -168,6 +168,24 @@ var setUserRoutes = function (router) {
         }
       );
 
+      router.post('/api/v1/user/addFriendRequest/',
+          function(req,res){
+
+              userModel.addFriendRequest(req.body,function(results){
+                return res.json(results);
+              });
+          }
+        );
+
+        router.post('/api/v1/user/updateFriendList/:id',
+            function(req,res){
+
+                userModel.updateFriendList(req.body,function(results){
+                  return res.json(results);
+                });
+            }
+          );
+
 }
 
 module.exports = setUserRoutes;

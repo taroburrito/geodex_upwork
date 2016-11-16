@@ -10,6 +10,7 @@ export function updateCategoryList(universalCategoriesState = {} , action) {
   switch (action.type){
 
     case Received_All_Universal_Categories:
+  
       return Object.assign({}, action.categories);
 
       case Update_Category_Success:

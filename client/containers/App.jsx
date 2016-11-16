@@ -28,12 +28,13 @@ class App extends Component {
 
     // Injected by connect() call:
     const { dispatch, userAuthSession } = this.props;
-    console.log(userAuthSession);
+
     // Injected by React Router
     const { location, children } = this.props;
     const { pathname } = location;
 
-    const value = pathname.substring(1);
+    const value = pathname.split('/');
+    const page = value[1];
 
 
     var content;
@@ -41,6 +42,8 @@ class App extends Component {
     var loginForm = <LoginForm/>
     if (children === undefined){
       landingPage = <HomePage/>;
+    }else if (page == 'pages') {
+      landingPage = children;
     }
 
     if (baseUrl == 'admin'){
@@ -57,6 +60,7 @@ class App extends Component {
      }
 
   } else{
+    console.log(userAuthSession);
     if(userAuthSession.isLoggedIn && userAuthSession.userObject.role=='user'){
     return (
             <div>
@@ -69,10 +73,10 @@ class App extends Component {
         }else{
           return(
             <div>
+              <Navbar userAuthSession={userAuthSession}/>
               {landingPage}
-              { children }
-              { content }
-            </div>
+
+              </div>
           );
         }
   }

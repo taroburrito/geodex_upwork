@@ -127,7 +127,7 @@ export default class LoginPage extends Component {
 }
 
 LoginPage.propTypes = {
-  onClickLogin: PropTypes.func.isRequired,
+//  onClickLogin: PropTypes.func.isRequired,
   isFetchingData: PropTypes.bool.isRequired,
   serverError: PropTypes.string
 };
