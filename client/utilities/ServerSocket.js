@@ -2,7 +2,7 @@ import { receivedAllUniversalTodos, optimisticUniversalAddSuccess } from '../act
 import { receivedAllUniversalCategories } from '../actions/CategoryActions';
 import { receivedAllUniversalPages } from '../actions/PageActions';
 import {getVisitedUserData, getUserDetails} from '../actions/ProfileActions';
-import {receivedAllfriendsList} from '../actions/UserActions';
+import {receivedAllfriendsList, receivedAllFriendsPosts} from '../actions/UserActions';
 import {receivedAllposts} from '../actions/PostActions';
 
 
@@ -101,6 +101,7 @@ export function linkSocketToStore(dispatch) {
       dispatch(receivedAllUniversalCategories(userCategoriesData));
       dispatch(receivedAllfriendsList(res.friendList));
       dispatch(receivedAllposts(res.posts));
+      dispatch(receivedAllFriendsPosts(res.friendsPost));
 		}
 	});
 

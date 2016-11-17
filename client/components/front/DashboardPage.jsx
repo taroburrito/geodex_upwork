@@ -98,14 +98,58 @@ export default class DashboardPage extends Component {
     );
   }
 
+  renderFriendPostContent(user_id){
+      const{freindsPosts} = this.props;
+      var friend_post_content;
+
+      var friendsPost = freindsPosts[user_id];
+    //  console.log(friendsPost);
+      //console.log(friendsPost);
+    //   if(friendsPost.user_id == user_id){
+    //      friend_post_content = (
+    //       <div className="uk-width-small-1-2 post_control">
+    //         {friendsPost.image?<img src={friendsPost.image} className="uk-float-left img_margin_right"/>:null}
+    //
+    //       <p>{friendsPost.content}</p>
+    //       </div>
+    //     );
+    //   }
+    //
+    // return(
+    //   {friend_post_content}
+    // )
+  }
+
+  renderFriendPostImages(user_id){
+    const{freindsPosts} = this.props;
+    var friend_post_images;
+    Object.keys(freindsPosts).map(function (key) {
+    var friendsPost = freindsPosts[key];
+    if(friendsPost.user_id == user_id){
+      if(friendsPost.image)
+       friend_post_images = (
+        <li><img src={friendsPost.image}/></li>
+      );
+    }
+  });
+    return(
+      {friend_post_images}
+    )
+  }
+
   renderFriendList(){
 
-    const{friends} = this.props;
+    const{friends, freindsPosts} = this.props;
     var friendsElement = [];
 
     console.log(friends);
-    Object.keys(friends).map(function (key) {
+    Object.keys(friends).map((key)=> {
       var item = friends[key];
+      var user_id = item.user_id;
+      var renderFriendsPost = this.renderFriendPostContent(user_id);
+
+
+
       if(item.status == 1){
       var profile_link = "/user/"+item.user_id;
       friendsElement.push(  <div className="uk-grid dash_top_head dash_botom_list" id={item.id}>
@@ -121,14 +165,8 @@ export default class DashboardPage extends Component {
 
                     <div className="uk-slider-container img_slid">
                         <ul className="uk-slider uk-grid-small uk-grid-width-medium-1-4">
-                <li><img src={item.profile_image?item.profile_image:"public/images/user.jpg"}/></li>
-                <li><img src={item.profile_image?item.profile_image:"public/images/user.jpg"}/></li>
-                <li><img src={item.profile_image?item.profile_image:"public/images/user.jpg"}/></li>
-                <li><img src={item.profile_image?item.profile_image:"public/images/user.jpg"}/></li>
-                <li><img src={item.profile_image?item.profile_image:"public/images/user.jpg"}/></li>
-                <li><img src={item.profile_image?item.profile_image:"public/images/user.jpg"}/></li>
-                <li><img src={item.profile_image?item.profile_image:"public/images/user.jpg"}/></li>
-                <li><img src={item.profile_image?item.profile_image:"public/images/user.jpg"}/></li>
+                          {this.renderFriendPostImages(user_id)}
+
                         </ul>
                     </div>
 
@@ -141,11 +179,8 @@ export default class DashboardPage extends Component {
               </div>
               </div>
             </div>
-            <div className="uk-width-small-1-2 post_control">
-    				<img src="public/images/post_img.jpg" className="uk-float-left img_margin_right"/>
-    				<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book a galley of type and... <a href="#">[more]</a></p>
-    				<p className="time">3.25pm</p>
-    				</div>
+
+          {renderFriendsPost}
 
 
 

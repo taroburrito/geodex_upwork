@@ -25,6 +25,7 @@ class HomePage extends Component{
         <div className="full_width">
         <DashboardPage
           posts={this.props.posts}
+          freindsPosts={this.props.friendsPosts}
           onClickSavePost={(data)=>
           dispatch(addPost(data))}
           addCategory={(req)=>
@@ -60,7 +61,8 @@ function select(state) {
   categories: state.universalCategories,
   friendsList: state.friendsListState,
   handleMessage: state.handleMessage,
-  posts:state.postsList
+  posts:state.postsList,
+  friendsPosts: state.friendsPosts
   };
 }
 

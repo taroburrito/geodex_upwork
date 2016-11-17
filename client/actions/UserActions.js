@@ -4,6 +4,7 @@
 export const Fetch_Freind_List = 'Fetch_Freind_List';
 export const Delete_friend_Success = 'Delete_friend_Success';
 export const Fetch_User_Data = 'Fetch_User_Data';
+export const Fetch_Friends_Posts = 'Fetch_Friends_Posts';
 
 
 
@@ -15,8 +16,13 @@ export const Fetch_User_Data = 'Fetch_User_Data';
  * action creators
  */
  export function receivedAllfriendsList(friendList){
-   console.log(friendList);
+   //console.log(friendList);
    return {type: Fetch_Freind_List, data: friendList}
+ }
+
+ export function receivedAllFriendsPosts(friendsPosts){
+   console.log(friendsPosts);
+   return {type: Fetch_Friends_Posts, data:friendsPosts}
  }
 
  export function getUserDataSuccess(userData){
