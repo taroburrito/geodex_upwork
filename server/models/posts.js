@@ -94,23 +94,23 @@ var postModel = {
             var posts = {};
             var users_array = []
 
-            results.forEach(function (result) {
-                var user_id = result.user_id;
-                if(users_array.indexOf(user_id) == -1){
-                  users_array.push(user_id);
-                  posts[result.user_id] = postModel.convertRowsToObject(result);
-                }else{
-                  var abc = [posts[result.user_id]];
+            // results.forEach(function (result) {
+            //     var user_id = result.user_id;
+            //     if(users_array.indexOf(user_id) == -1){
+            //       users_array.push(user_id);
+            //       posts[result.user_id] = postModel.convertRowsToObject(result);
+            //     }else{
+            //       var abc = [posts[result.user_id]];
+            //
+            //       abc.push(postModel.convertRowsToObject(result));
+            //       posts[result.user_id] = abc;
+            //     }
+            //
+            //
+            // });
 
-                  abc.push(postModel.convertRowsToObject(result));
-                  posts[result.user_id] = abc;
-                }
 
-
-            });
-
-
-            return (callback({friendsPost:posts}));
+            return (callback({friendsPost:results}));
           }
         });
 

@@ -84,7 +84,27 @@ export function linkSocketToStore(dispatch) {
 		}
 	});
 	socket.on("userDetail",function(res){
-    console.log(res);
+
+    var friendsPosts = res.friendsPost;
+    console.log(friendsPosts);
+
+    var postObj = [];
+    if(friendsPosts && friendsPosts.length){
+      friendsPosts.forEach((friendsPost)=>{
+
+        // console.log("postObj.indexOf(friendsPost.user_id): "+postObj.indexOf(friendsPost.user_id))
+        if(postObj[friendsPost.user_id]){
+          console.log('if part');
+          // console.log('prev length was: '+ postObj[friendsPost.user_id].length)
+          postObj[friendsPost.user_id].push(friendsPost);
+          // console.log('current length is: '+ postObj[friendsPost.user_id].length)
+        } else{
+          var temp = [];
+          temp.push(friendsPost);
+          postObj[friendsPost.user_id] = temp;
+        }
+      });
+    }
     //user profile data
     var userdata = res.userData[0];
 
@@ -101,7 +121,7 @@ export function linkSocketToStore(dispatch) {
       dispatch(receivedAllUniversalCategories(userCategoriesData));
       dispatch(receivedAllfriendsList(res.friendList));
       dispatch(receivedAllposts(res.posts));
-      dispatch(receivedAllFriendsPosts(res.friendsPost));
+      dispatch(receivedAllFriendsPosts(postObj));
 		}
 	});
 
