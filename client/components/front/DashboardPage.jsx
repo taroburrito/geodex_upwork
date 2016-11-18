@@ -99,42 +99,71 @@ export default class DashboardPage extends Component {
   }
 
   renderFriendPostContent(user_id){
-      const{freindsPosts} = this.props;
+      const{friendsPosts} = this.props;
       var friend_post_content;
 
-      var friendsPost = freindsPosts[user_id];
-    //  console.log(friendsPost);
-      //console.log(friendsPost);
-    //   if(friendsPost.user_id == user_id){
-    //      friend_post_content = (
-    //       <div className="uk-width-small-1-2 post_control">
-    //         {friendsPost.image?<img src={friendsPost.image} className="uk-float-left img_margin_right"/>:null}
-    //
-    //       <p>{friendsPost.content}</p>
-    //       </div>
-    //     );
-    //   }
-    //
-    // return(
-    //   {friend_post_content}
-    // )
+      var friendsPost = friendsPosts[user_id];
+      if(friendsPost && friendsPost.length){
+         friend_post_content = (
+          <div className="uk-width-small-1-2 post_control">
+            {friendsPost[0].image?<img src={friendsPost[0].image} className="uk-float-left img_margin_right"/>:null}
+
+          <p>{friendsPost[0].content}</p>
+          </div>
+        );
+      }else{
+        // console.log(friendsPost);
+        if(friendsPost)
+         friend_post_content = (
+          <div className="uk-width-small-1-2 post_control">
+            {friendsPost.image?<img src={friendsPost.image} className="uk-float-left img_margin_right"/>:null}
+
+          <p>{friendsPost.content}</p>
+          </div>
+        );
+      }
+
+    return(
+      {friend_post_content}
+    )
   }
 
   renderFriendPostImages(user_id){
-    const{freindsPosts} = this.props;
-    var friend_post_images;
-    Object.keys(freindsPosts).map(function (key) {
-    var friendsPost = freindsPosts[key];
-    if(friendsPost.user_id == user_id){
-      if(friendsPost.image)
-       friend_post_images = (
+    const{friendsPosts} = this.props;
+   var friend_post_images;
+   var friendsPost = friendsPosts[user_id];
+     if(friendsPost && friendsPost.length){
+       var friendElement = [];
+       Object.keys(friendsPost).map((id)=> {
+         var element = friendsPost[id];
+         if(element.image)
+         friendElement.push(
+             <li><img src={element.image}/></li>
+         );
+       });
+       return(
+         {friendElement}
+       );
+
+
+    //    friendsPost.map((key)=> {
+    //    var posts = friendsPost[key];
+     //
+    //    console.log(key);
+    //     //  if(posts.image)
+    //     //   friend_post_images += (
+    //     //    <li><img src={posts.image}/></li>
+    //     //  );
+     //
+    //  });
+     }else{
+       if(friendsPost && friendsPost.image)
+       return (
         <li><img src={friendsPost.image}/></li>
       );
-    }
-  });
-    return(
-      {friend_post_images}
-    )
+     }
+
+
   }
 
   renderFriendList(){
@@ -146,11 +175,8 @@ export default class DashboardPage extends Component {
     Object.keys(friends).map((key)=> {
       var item = friends[key];
       var user_id = item.user_id;
-      var renderFriendsPost = this.renderFriendPostContent(user_id);
-
-
-
       if(item.status == 1){
+      var renderFriendsPost = this.renderFriendPostContent(user_id);
       var profile_link = "/user/"+item.user_id;
       friendsElement.push(  <div className="uk-grid dash_top_head dash_botom_list" id={item.id}>
 
@@ -214,10 +240,10 @@ reader.readAsDataURL(file);
    const{posts} = this.props;
    var content;
    var latestPost;
+
    if(posts){
-     var highest = Object.keys(posts).sort().pop();
+    var highest = Object.keys(posts).sort()[0];
       latestPost = posts[''+highest];
-     console.log(latestPost);
      if(latestPost)
       return (
        <div className="uk-width-small-1-2 post_control" style={{maxHeight:200,overflow:"hidden"}}>
@@ -230,8 +256,9 @@ reader.readAsDataURL(file);
  }
 
   render() {
+
+    const { dispatch, userAuthSession, userProfileData, categories, handleMessage, friendsPosts} = this.props;
     console.log(this.props);
-    const { dispatch, userAuthSession, userProfileData, categories, handleMessage} = this.props;
     var content;
     var errorLabel;
     if(this.state.errorMessage){
@@ -348,7 +375,8 @@ reader.readAsDataURL(file);
           </select>
         </div>
           </div>
-          {this.renderFriendList()}
+
+          {friendsPosts? this.renderFriendList(): ''}
       </div>
 
 
