@@ -91,7 +91,7 @@ var postModel = {
           }else if (results.length == 0) {
 
           }else{
-            var posts = {};
+            var posts = []
             var users_array = []
 
             results.forEach(function (result) {
