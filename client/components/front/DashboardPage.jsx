@@ -15,6 +15,7 @@ export default class DashboardPage extends Component {
     this.handleClickPlus = this.handleClickPlus.bind(this);
     this.handleSavePostImage = this.handleSavePostImage.bind(this);
     this.handleSavePost = this.handleSavePost.bind(this);
+    this.handleChangeSort = this.handleChangeSort.bind(this);
     this.state ={
       errorMessage: null,
       image: "public/images/user.jpg",
@@ -83,6 +84,60 @@ export default class DashboardPage extends Component {
     }
   }
 
+
+  logCallback(e){
+
+  }
+
+  handleImageChange(evt) {
+      var self = this;
+      var reader = new FileReader();
+      var file = evt.target.files[0];
+
+      reader.onloadend = function(upload) {
+      self.setState({
+          image: upload.target.result
+        });
+      };
+  reader.readAsDataURL(file);
+
+  }
+
+  handleChangeSort(){
+    var sortBy = this.refs.sortFriends.getDOMNode().value;
+    console.log(sortBy);
+    const{friends} = this.props;
+    var list = [
+    { name:'Charlie', age:3},
+    { name:'Dog', age:1 },
+    { name:'Baker', age:7},
+    { name:'Abel', age:9 },
+    { name:'Baker', age:5 }
+    ];
+
+
+    console.log('*********');
+    console.log(friends);
+    var newArr = {};
+    var fullySorted = _.sortBy( friends, sortBy);
+    Object.keys(fullySorted).map((id)=>{
+      var sorted = fullySorted[id];
+      if(sorted.status == 1)
+      newArr[id] = sorted;
+    });
+  //   var newArr = _.sortBy(friends, 'first_name', function(n) {
+  //   return Math.sin(n);
+  // });
+  if(newArr){
+    this.props.updateFriendList(newArr);
+  }
+  console.log('*********');
+  console.log(fullySorted);
+  console.log('*********');
+  console.log(newArr);
+
+  }
+
   renderCategoriesContent(){
     const{categories} = this.props;
     var categoriesElement = [];
@@ -144,23 +199,6 @@ export default class DashboardPage extends Component {
        return(
          {friendElement}
        );
-
-
-    //    friendsPost.map((key)=> {
-    //    var posts = friendsPost[key];
-     //
-    //    console.log(key);
-    //     //  if(posts.image)
-    //     //   friend_post_images += (
-    //     //    <li><img src={posts.image}/></li>
-    //     //  );
-     //
-    //  });
-     }else{
-       if(friendsPost && friendsPost.image)
-       return (
-        <li><img src={friendsPost.image}/></li>
-      );
      }
 
 
@@ -219,23 +257,6 @@ export default class DashboardPage extends Component {
     )
   }
 
-logCallback(e){
-
-}
-
-handleImageChange(evt) {
-    var self = this;
-    var reader = new FileReader();
-    var file = evt.target.files[0];
-
-    reader.onloadend = function(upload) {
-    self.setState({
-        image: upload.target.result
-      });
-    };
-reader.readAsDataURL(file);
-
-}
  renderLatestPost(){
    const{posts} = this.props;
    var content;
@@ -370,9 +391,16 @@ reader.readAsDataURL(file);
         </ul>
         <div className="uk-float-right">
         <label>Sort</label>
-          <select>
-            <option>First Name</option>
-          </select>
+          <select name="sort" ref="sortFriends" onChange={this.handleChangeSort}>
+            <option>Please Select</option>
+            <option value="created">Recently added</option>
+            <option value="first_name">First Name</option>
+            <option value="last_name">Last Name</option>
+            <option value="email">Email</option>
+            <option value="locaton">Location</option>
+
+
+        </select>
         </div>
           </div>
 
