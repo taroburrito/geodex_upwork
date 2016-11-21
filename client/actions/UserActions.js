@@ -5,6 +5,7 @@ export const Fetch_Freind_List = 'Fetch_Freind_List';
 export const Delete_friend_Success = 'Delete_friend_Success';
 export const Fetch_User_Data = 'Fetch_User_Data';
 export const Fetch_Friends_Posts = 'Fetch_Friends_Posts';
+export const Update_Friend_List = 'Update_Friend_List';
 
 
 
@@ -18,6 +19,11 @@ export const Fetch_Friends_Posts = 'Fetch_Friends_Posts';
  export function receivedAllfriendsList(friendList){
    //console.log(friendList);
    return {type: Fetch_Freind_List, data: friendList}
+ }
+
+ export function updatefriendsList(friendList){
+   //console.log(friendList);
+   return {type: Update_Friend_List, data: friendList}
  }
 
  export function receivedAllFriendsPosts(friendsPosts){

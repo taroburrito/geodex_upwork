@@ -553,12 +553,15 @@ function constructGetUserProfileSqlString(userId) {
 }
 
 function constructgetUserFriendsListSqlString(userId){
-  var query = "SELECT gfl.*, gud.user_id, gud.first_name, gud.last_name, gud.address, gud.profile_image from gx_friends_list as gfl"+
+  var query = "SELECT gfl.*,gu.email, gud.user_id, gud.first_name, gud.last_name, gud.address, gud.profile_image from gx_friends_list as gfl"+
   " left join gx_user_details as gud on gfl.receiver_id = gud.user_id"+
+  " left join gx_users as gu on gu.id = gud.user_id"+
   " WHERE  gfl.sender_id="+ mysql.escape(userId)+" Union"+
-  " SELECT gfl.*, gud.user_id, gud.first_name, gud.last_name, gud.address, gud.profile_image from gx_friends_list as gfl"+
+  " SELECT gfl.*, gu.email,gud.user_id, gud.first_name, gud.last_name, gud.address, gud.profile_image from gx_friends_list as gfl"+
   " left join gx_user_details as gud on gfl.sender_id = gud.user_id"+
+   " left join gx_users as gu on gu.id = gud.user_id"+
   " WHERE   gfl.receiver_id="+ mysql.escape(userId);
+  console.log(query);
   return query;
 }
 

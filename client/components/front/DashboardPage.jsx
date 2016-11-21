@@ -15,6 +15,7 @@ export default class DashboardPage extends Component {
     this.handleClickPlus = this.handleClickPlus.bind(this);
     this.handleSavePostImage = this.handleSavePostImage.bind(this);
     this.handleSavePost = this.handleSavePost.bind(this);
+    this.handleChangeSort = this.handleChangeSort.bind(this);
     this.state ={
       errorMessage: null,
       image: "public/images/user.jpg",
@@ -52,6 +53,11 @@ export default class DashboardPage extends Component {
     this.props.handleMessage = null;
   }
 
+  handleOnClickEmailIcon(email){
+      this.refs.sendto.getDOMNode().value = email; 
+      console.log(email);
+  }
+
   componentDidMount(){
 
   }
@@ -81,6 +87,60 @@ export default class DashboardPage extends Component {
       this.props.addCategory(req);
      this.refs.categoryName.getDOMNode().value = "";
     }
+  }
+
+
+  logCallback(e){
+
+  }
+
+  handleImageChange(evt) {
+      var self = this;
+      var reader = new FileReader();
+      var file = evt.target.files[0];
+
+      reader.onloadend = function(upload) {
+      self.setState({
+          image: upload.target.result
+        });
+      };
+  reader.readAsDataURL(file);
+
+  }
+
+  handleChangeSort(){
+    var sortBy = this.refs.sortFriends.getDOMNode().value;
+    console.log(sortBy);
+    const{friends} = this.props;
+    var list = [
+    { name:'Charlie', age:3},
+    { name:'Dog', age:1 },
+    { name:'Baker', age:7},
+    { name:'Abel', age:9 },
+    { name:'Baker', age:5 }
+    ];
+
+
+    console.log('*********');
+    console.log(friends);
+    var newArr = {};
+    var fullySorted = _.sortBy( friends, sortBy);
+    Object.keys(fullySorted).map((id)=>{
+      var sorted = fullySorted[id];
+      if(sorted.status == 1)
+      newArr[id] = sorted;
+    });
+  //   var newArr = _.sortBy(friends, 'first_name', function(n) {
+  //   return Math.sin(n);
+  // });
+  if(newArr){
+    this.props.updateFriendList(newArr);
+  }
+  console.log('*********');
+  console.log(fullySorted);
+  console.log('*********');
+  console.log(newArr);
+
   }
 
   renderCategoriesContent(){
@@ -144,23 +204,6 @@ export default class DashboardPage extends Component {
        return(
          {friendElement}
        );
-
-
-    //    friendsPost.map((key)=> {
-    //    var posts = friendsPost[key];
-     //
-    //    console.log(key);
-    //     //  if(posts.image)
-    //     //   friend_post_images += (
-    //     //    <li><img src={posts.image}/></li>
-    //     //  );
-     //
-    //  });
-     }else{
-       if(friendsPost && friendsPost.image)
-       return (
-        <li><img src={friendsPost.image}/></li>
-      );
      }
 
 
@@ -184,7 +227,11 @@ export default class DashboardPage extends Component {
               <div className="uk-grid uk-grid-small">
               <div className="uk-width-3-10 user_img_left"><img src={item.profile_image?item.profile_image:"public/images/user.jpg"} className=""/></div>
               <div className="uk-width-7-10 user_bottom_img_right">
-              <h3 className="capital_first"><Link to={profile_link}>{item.first_name} {item.last_name} </Link><img className="online_user" src="public/images/online.png"/> <small className="user_location">{item.address}<i className="uk-icon-envelope"></i></small></h3>
+              <h3 className="capital_first"><Link to={profile_link}>{item.first_name} {item.last_name} </Link>
+              <a data-uk-modal="{target:'#sendEmail'}" onClick={this.handleOnClickEmailIcon.bind(this,item.email)}  data={item.email}  href="#">
+              <small className="user_location">{item.address}<i className="uk-icon-envelope"></i></small>
+              </a>
+              </h3>
 
 
             <div className="uk-slidenav-position uk-margin" data-uk-slider="{autoplay: true}">
@@ -219,23 +266,6 @@ export default class DashboardPage extends Component {
     )
   }
 
-logCallback(e){
-
-}
-
-handleImageChange(evt) {
-    var self = this;
-    var reader = new FileReader();
-    var file = evt.target.files[0];
-
-    reader.onloadend = function(upload) {
-    self.setState({
-        image: upload.target.result
-      });
-    };
-reader.readAsDataURL(file);
-
-}
  renderLatestPost(){
    const{posts} = this.props;
    var content;
@@ -311,6 +341,30 @@ reader.readAsDataURL(file);
 
               </div>
             </div>
+            <div id="sendEmail" className="uk-modal" ref="modal" >
+              <div className="uk-modal-dialog">
+                 <button type="button" className="uk-modal-close uk-close"></button>
+                 {errorLabel}
+                 <div className="uk-modal-header">
+                     <h3>Send Email</h3>
+                 </div>
+                <form className="uk-form">
+                       <div className="uk-form-row">
+                           <input className="uk-width-1-1 uk-form-large" placeholder="To" type="text" ref="sendto"/>
+                       </div>
+                       <div className="uk-form-row">
+                           <input className="uk-width-1-1 uk-form-large" placeholder="Subject" type="text" ref="Subject"/>
+                       </div>
+                       <div className="uk-form-row">
+                          <textarea className="uk-width-1-1 uk-form-large" placeholder="Body" rows="8" ref="emailBody"></textarea>
+                           
+                       </div>
+                       <div className="uk-form-row">
+                           <button className="uk-button uk-button-primary uk-button-large" onClick={this.handleOnClickEmail}>Send Mail</button>
+                       </div>
+                   </form>
+              </div>
+            </div>
             <div id="statusImage" className="uk-modal" >
                <div className="uk-modal-dialog" style={{width:300}}>
                  <AvatarEditor
@@ -370,9 +424,16 @@ reader.readAsDataURL(file);
         </ul>
         <div className="uk-float-right">
         <label>Sort</label>
-          <select>
-            <option>First Name</option>
-          </select>
+          <select name="sort" ref="sortFriends" onChange={this.handleChangeSort}>
+            <option>Please Select</option>
+            <option value="created">Recently added</option>
+            <option value="first_name">First Name</option>
+            <option value="last_name">Last Name</option>
+            <option value="email">Email</option>
+            <option value="locaton">Location</option>
+
+
+        </select>
         </div>
           </div>
 

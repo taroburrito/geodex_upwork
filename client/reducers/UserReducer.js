@@ -1,7 +1,8 @@
 import {
           Fetch_Freind_List,
           Delete_friend_Success,
-          Fetch_Friends_Posts
+          Fetch_Friends_Posts,
+          Update_Friend_List
         } from '../actions/UserActions';
 
 
@@ -10,6 +11,9 @@ export function getAllFriendsList(friendsListState={}, action){
     case Fetch_Freind_List:
       return Object.assign({}, friendsListState, action.data);
       break;
+      case Update_Friend_List:
+        return Object.assign({}, action.data);
+        break;
       case Delete_friend_Success:
         const newState = Object.assign([], friendsListState);
         console.log(newState);

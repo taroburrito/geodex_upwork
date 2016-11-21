@@ -9,6 +9,7 @@ import { attemptLogout } from '../../actions/AuthActions';
 import {addCategory} from '../../actions/CategoryActions';
 import {addPost} from '../../actions/PostActions';
 import {getUserDetail} from '../../utilities/ServerSocket';
+import {updatefriendsList} from '../../actions/UserActions';
 
 class HomePage extends Component{
   constructor(props){
@@ -24,6 +25,8 @@ class HomePage extends Component{
       return(
         <div className="full_width">
         <DashboardPage
+          updateFriendList={(friendList)=>
+          dispatch(updatefriendsList(friendList))}
           posts={this.props.posts}
           friendsPosts={this.props.friendsPosts}
           onClickSavePost={(data)=>
