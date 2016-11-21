@@ -400,6 +400,15 @@ var userModel = {
       });
     },
 
+    /*
+     Get all friends requests
+     param: userID
+    */
+    getFriendsRequests(userID){
+      var dbConnection = dbConnectionCreator();
+      var getFriendsRequestsQuery = constructGetFriendsRequestsQuery(userId);
+    }
+
 
 
 };
@@ -486,7 +495,7 @@ function constructupdateUserDetailQuery(data){
     return query;
 }
 function sendMailToUser(token,from,to,subject,content){
-  var smtpTransport = require('nodemailer-smtp-transport');
+  //var smtpTransport = require('nodemailer-smtp-transport');
 
   var transporter = nodemailer.createTransport(smtpTransport({
       service: 'gmail',

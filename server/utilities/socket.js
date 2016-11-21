@@ -45,11 +45,14 @@ module.exports = {
 
             socket.on('user-detail',function(userId){
                 userModel.getUserProfile(userId,function(result){
-                  if(result.friendsArray)
+                  if(result.friendsArray){
                   postModel.getAllFriendsPost(result.friendsArray,function(res){
                     var final_result = Object.assign({},result,res);
                     socket.emit("userDetail",final_result);
                   })
+                }else{
+                    socket.emit("userDetail",result);
+                }
                   // userModel.getAllFriends(userId,function(res){
                   //   var final_result = Object.assign({},result,res);
                   //   socket.emit("userDetail",final_result);
@@ -77,6 +80,12 @@ module.exports = {
                 })
 
             });
+
+            socket.on('fetch-friends-requests',function(userId){
+                userModel.getFriendsRequests(userId,function(result){
+                  socket.emit("friends-requests", result);
+                })
+              });
 
 
 
