@@ -10,6 +10,7 @@ export default class ProfileWidget extends Component {
     }
     componentWillMount() {
         const {userAuthSession, dispatch} = this.props;
+        
         this.props.fetchInitialData(userAuthSession.userObject.id);
     }
 
