@@ -1,5 +1,6 @@
 // TODO create and use utility fuction that converts req.user to userObject
 var authenticationMiddleware = require('../middlewares/authentication.js');
+var userModel = require('../models/users.js');
 
 
 /**
@@ -19,8 +20,13 @@ function addAuthRoute(app, passport, routePath, strategy) {
                 req.logIn(user, function (err) {
                     if (err) {
                         return next(err);
+                    }else{
+                      console.log("*******");
+                      userModel.getUserProfile(user.id, function (result) {
+                          return res.json(result);
+                      });
                     }
-                    return res.json(user);
+
                 });
             }
         })(req, res, next);

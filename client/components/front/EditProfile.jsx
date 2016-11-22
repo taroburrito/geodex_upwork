@@ -43,6 +43,11 @@ export default class EditProfile extends Component {
     }
   }
 
+  componentWillMount(){
+    console.log('********');
+    console.log(this.props);
+  }
+
   componentDidMount(){
     const {userData}=this.props;
     console.log(userData);
@@ -177,6 +182,14 @@ getProfileImage(img){
 __renderContent(){
   const { dispatch,userData} = this.props;
 
+  var maleRadio, femaleRadio;
+  if(this.state.gender == 'male'){
+    maleRadio = true;
+    femaleRadio = false;
+  }else if (this.state.gender == 'female') {
+    maleRadio = false;
+    femaleRadio = true;
+  }
   const { search } = this.state;
   if(this.state.content == 'edit_profile'){
     return(
@@ -230,12 +243,12 @@ __renderContent(){
                   <div className="uk-form-controls">
                       <div className="uk-width-small-1-2 gender_select">
 
-                          <input name="gender" ref="radio_female" value="female" id="u_0_d" type="radio" onChange={this.onGenderChange} checked={userData.gender === 'female'} />
+                          <input name="sex" ref="radio_female" value="female" id="u_0_d" type="radio" onChange={(e)=>this.setState({gender:e.target.value})} checked={maleRadio} />
                           <label className="_58mt" for="u_0_d">
                               &nbsp;Female&nbsp;
                           </label>
 
-                          <input name="gender" ref="radio_male" value="male" id="u_0_e" type="radio" onChange={this.onGenderChange} checked={userData.gender === 'male'}/>
+                          <input name="sex" ref="radio_male" value="male" id="u_0_e" type="radio" onChange={(e)=>this.setState({gender:e.target.value})} checked={femaleRadio}/>
                           <label className="_58mt" for="u_0_e">
                               &nbsp;Male&nbsp;
                           </label>

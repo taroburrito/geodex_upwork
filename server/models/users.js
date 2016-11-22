@@ -46,7 +46,7 @@ var userModel = {
             } else if (results.length === 0) {
                 return (callback({error: "User not found."}));
             } else {
-              userProfileData = userModel.convertRowsToUserProfileObject(results);
+              userProfileData = userModel.convertRowsToUserProfileObject(results[0]);
               dbConnection.query(getUsersCategoriesSqlString, function (error1, results1, fields1) {
                 if (error1) {
                     dbConnection.destroy();
@@ -176,11 +176,11 @@ var userModel = {
     sendForgotPasswordMail(token,from,to,subject,callback){
       var content = '<b>Hello,</b><br/><p>Please click on the link below to reset your password.</p>' +
               '<br/><a href="http://localhost:6969/#/admin/resetPassword/' + token + '" target="_blank">Click here</a>';
-      var sendMail = sendMailToUser(token,from,to,subject,content);
-      if(sendMail == 'success'){
+
+      if(sendMailToUser(token,from,to,subject,content)){
         return (callback({success: "Sent forgot password email"}));
       }else{
-          return (callback({success: "Sent forgot password email"}));
+          return (callback({error: "Error in send email"}));
       }
 
 
@@ -219,10 +219,11 @@ var userModel = {
                 // Send signup email to user
                 var content = '<b>Hello,</b><br/><p>Please click on the link below to verify and complete your signup.</p>' +
                         '<br/><a href="http://localhost:6969/#/verifySignUp/' + data.token + '" target="_blank">Click here</a>';
-                if(sendMailToUser(data.verify_token,'admin@geodex.com',data.email,'Verify Signup',content)){
+                var sendmail = sendMailToUser(data.verify_token,'admin@geodex.com',data.email,'Verify Signup',content);
+                if(sendmail){
                   return (callback({success: "Successfully sent verify signup email"}));
                 }else{
-                  return (callback({success: "Successfully sent verify signup email"}));
+                  return (callback({error: sendmail}));
                 }
 
               }else {
@@ -359,8 +360,13 @@ var userModel = {
 
             //Send notification email on success
             //token,from,to,subject,content
-            sendMailToUser('','admin@geodex.com',data.receiver.email,'New friend request',mailContent);
-            return(callback({success:"Successfully sent friend request"}));
+
+
+            if(sendMailToUser('','admin@geodex.com',data.receiver.email,'New friend request',mailContent)){
+              return(callback({success:"Successfully sent friend request"}));
+            }else{
+              return(callback({error:"Error in send friend request email"}));
+            }
           } else {
               return (callback({error: results}));
           }
@@ -412,6 +418,10 @@ var userModel = {
 
 
 };
+
+function constructGetFriendsRequestsQuery(userId){
+  var query = "Select * from gx_friends_list WHERE "
+}
 
 function constructGetPostByUserSqlString(userId){
     var query = "select * from gx_posts where user_id="+userId;
@@ -497,13 +507,19 @@ function constructupdateUserDetailQuery(data){
 function sendMailToUser(token,from,to,subject,content){
   //var smtpTransport = require('nodemailer-smtp-transport');
 
-  var transporter = nodemailer.createTransport(smtpTransport({
-      service: 'gmail',
-      auth: {
-         user: 'celebsingh1313@gmail.com', // Your email id
-         pass: 'edc@12345' // Your password
-      }
-  }));
+  var options ={
+      user: "talentelgia.testing@gmail.com", // Your gmail address.
+      clientId: "1049106362726-4eei3tl0inuf3j46ecseqsevbendthcv.apps.googleusercontent.com",
+      clientSecret: "7gSMmOvpUBQC6jVy5C_C41mJ",
+      refreshToken: "1/8genCpzLHqq32GWGT5cmNcQwlrbkqzjqx1QkRbJ37s4",
+      accessToken:"ya29.Ci-KAyJAGea8pMrMWelab6NTdPcTOQWDe_IeR-2o7l5EeAZmhXiMQMtWqZQMyrnfog"
+     };
+var smtpTransport = nodemailer.createTransport("SMTP", {
+  service: "Gmail",
+  auth: {
+    XOAuth2:options
+  }
+});
 
   var mailOptions = {
       from: from, // sender address
@@ -512,16 +528,13 @@ function sendMailToUser(token,from,to,subject,content){
       // text: token //, // plaintext body
       html: content
   };
-  transporter.sendMail(mailOptions, function (error, info) {
-      if (error) {
-
-          return false;
-      } else {
-
-        return true;
-      }
-
-
+  smtpTransport.sendMail(mailOptions, function(error, response) {
+  if (error) {
+    return error;
+  } else {
+    return response;
+  }
+  smtpTransport.close();
   });
 }
 
