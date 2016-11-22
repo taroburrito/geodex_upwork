@@ -96,7 +96,7 @@ export function updateUserProfileData(userData){
     }).done(function(data){
 
       if(data.error){
-        console.log("error:"+data.error);
+        console.log("error:"+JSON.stringify(data.error));
       }else{
         dispatch(updateProfileSuccess(userData));
       // /  dispatch(handleSuccessMessage("Updated Successfully"));

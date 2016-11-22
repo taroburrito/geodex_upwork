@@ -6,10 +6,10 @@ import Home from '../../components/front/Home';
 import DashboardPage from '../../components/front/DashboardPage';
 import Navbar from '../../components/Navbar';
 import { attemptLogout } from '../../actions/AuthActions';
-import {addCategory} from '../../actions/CategoryActions';
-import {addPost} from '../../actions/PostActions';
+//import {addCategory} from '../../actions/CategoryActions';
+//import {addPost} from '../../actions/PostActions';
 import {getUserDetail, fetchDashboardData} from '../../utilities/ServerSocket';
-import {updatefriendsList} from '../../actions/UserActions';
+import {updatefriendsList, addPost, addCategory} from '../../actions/UserActions';
 
 class HomePage extends Component{
   constructor(props){

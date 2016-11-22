@@ -7,6 +7,8 @@ export const Fetch_User_Data = 'Fetch_User_Data';
 export const Fetch_Friends_Posts = 'Fetch_Friends_Posts';
 export const Update_Friend_List = 'Update_Friend_List';
 export const Fetch_Dashboard_Data = 'Fetch_Dashboard_Data';
+export const Post_Added_Dashboard_Success = 'Post_Added_Dashboard_Success';
+export const Category_Added_Dashboard_Success = 'Category_Added_Dashboard_Success';
 
 
 
@@ -122,4 +124,61 @@ export function clickedDeleteFriend(id) {
 			  //dispatch(optimisticUniversalAddFail()); //TODO figure out what to pass
 			});
 //}
+}
+
+export function addPostSuccess(post){
+  return{type: Post_Added_Dashboard_Success, post};
+}
+
+export function addPost(formData){
+  return (dispatch) => {
+    $.ajax({
+      type:'POST',
+      url:'/api/v1/posts/addPost',
+      dataType:'JSON',
+      data:formData
+    }).done(function(data){
+      if(data.error){
+        console.log(data.error);
+      }else{
+      console.log(data);
+      dispatch(addPostSuccess(data.post));
+
+      }
+
+    }).error(function(error){
+      console.log("Error in posts api call"+JSON.stringify(error));
+    })
+  }
+}
+
+export function addCategorySuccess(category) {
+  return{type: Category_Added_Dashboard_Success, category};
+}
+
+export function addCategory(req) {
+  return (dispatch) => {
+
+    $.ajax({
+			type: 'POST',
+			url: '/api/v1/categories/addCategory',
+      dataType: 'json',
+			data: req })
+			.done(function(data) {
+				if (data.error){
+					console.log("add todo worked but error: ", data);
+        //  dispatch(handleErrorMessage(data.error));
+
+					} else {
+						console.log("add todo success", data);
+            dispatch(addCategorySuccess(data.category));
+          //  dispatch(handleSuccessMessage("Added Successfully"));
+
+					}
+				})
+			.fail(function(error) {
+				console.log("Failure");
+      //  dispatch(handleErrorMessage(error));
+			});
+  }
 }

@@ -353,7 +353,7 @@ var userModel = {
 
     // Update User Function
 
-    updateUser(data,callback){
+    updateUser: function(data,callback){
         var dbConnection = dbConnectionCreator();
         var updateUserQuery=constructupdateUserQuery(data);
         var updateUserDetailsQuery = constructupdateUserDetailQuery(data);
@@ -363,18 +363,16 @@ var userModel = {
             if (error) {
                 dbConnection.destroy();
 
-                return (callback({error: error}));
+                return (callback({error: updateUserQuery}));
             } else if (results.affectedRows === 1) {
 
                 //Update query for gx_user_details table
                 dbConnection.query(updateUserDetailsQuery,function(errors,result,field){
                   if(errors){
                     dbConnection.destroy();
-                        return (callback({error: errors}));
-                    }else if (result.affectedRows === 1) {
-                      return (callback({success: "Update user data successfully"}));
+                        return (callback({error: updateUserDetailsQuery}));
                     }else {
-                        return (callback({error: "Error in updating user details"}));
+                      return (callback({success: "Update user data successfully"}));
                     }
                 });
 
@@ -540,7 +538,7 @@ function constructFriendListForDashboardSqlString(userId){
   var query="SELECT (a.user_id) id,CONCAT(first_name,' ',last_name) NAME,dob,gender,address,latitude,longitude,"+
              "profile_image,cover_image,MAX(c.id) post_id,(image) post_image,(content) post_content"+
             " FROM `gx_user_details` a,(SELECT receiver_id FROM `gx_friends_list` WHERE sender_id ='"+userId+"'  AND STATUS = 1 UNION SELECT sender_id FROM `gx_friends_list` WHERE receiver_id ='"+userId+"' AND STATUS = 1) b,"+
-            " gx_posts c WHERE a.user_id = b.receiver_id AND a.user_id = c.user_id GROUP BY a.user_id";
+            " gx_posts c WHERE a.user_id = b.receiver_id AND a.user_id = c.user_id GROUP BY a.user_id ORDER BY c.id desc";
             return query;
 }
 function constructLatestPostSqlString(userId){
@@ -610,7 +608,7 @@ function constructupdateUserQuery(data){
     var formatted = timestamp.format('YYYY-MM-DD HH:mm:ss Z');
     var query = "UPDATE  `gx_users` SET  `email`="+mysql.escape(data.email)+
                 ", `last_updated`='"+formatted+
-                "' WHERE id="+data.user_id;
+                "' WHERE id="+data.id;
     return query;
 }
 function constructupdateUserDetailQuery(data){
@@ -693,7 +691,7 @@ function constructresetPasswordByTokenQuery(token, pwd){
 function constructGetUserProfileSqlString(userId) {
 
     var query = "SELECT  a.id, a.email,a.role,"+
-      " profile_image,cover_image,first_name, last_name, gender, address,latitude,longitude"+
+      " profile_image,cover_image,first_name, last_name, gender, dob, address,latitude,longitude"+
       " FROM gx_users a LEFT JOIN gx_user_details b ON b.user_id = a.id"+
       " WHERE  a.id = " + mysql.escape(userId);
 
