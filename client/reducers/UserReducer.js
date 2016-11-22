@@ -2,7 +2,8 @@ import {
           Fetch_Freind_List,
           Delete_friend_Success,
           Fetch_Friends_Posts,
-          Update_Friend_List
+          Update_Friend_List,
+          Fetch_Dashboard_Data
         } from '../actions/UserActions';
 
 
@@ -34,6 +35,17 @@ export function getAllFriendsPosts(friendsPostsState={}, action){
 
     default:
     return friendsPostsState;
+
+  }
+}
+
+export function updateDashboardData(dashboardDataState={},action){
+  switch (action.type) {
+    case Fetch_Dashboard_Data:
+      return Object.assign({},action.data)
+      break;
+    default:
+    return dashboardDataState;
 
   }
 }

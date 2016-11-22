@@ -69,10 +69,10 @@ export function updateUserInfo(userAuthState = defaultStartState , action) {
 
     case Login_Success:
     case SignUp_Success:
-      return Object.assign({}, userAuthState, {
+      return Object.assign({}, userAuthState, action.userObject,{
         isLoggedIn: true,
         fetchingAuthUpdate: false,
-        userObject: action.userObject,
+
         error: null
       });
 

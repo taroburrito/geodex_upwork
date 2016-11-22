@@ -17,7 +17,7 @@ export default class Navbar extends Component {
       return(
         <div>
           <nav className="uk-navbar fixed-nav innerpage_nav">
-              <a className="uk-navbar-brand uk-hidden-small" href=""><img src="public/images/logo.png"/></a>
+              <Link className="uk-navbar-brand uk-hidden-small" to="dashboard"><img src="public/images/logo.png"/></Link>
 
       <form className="uk-search search_dash_nav">
               <input className="uk-search-field" placeholder="search..." autocomplete="off" type="search"/>

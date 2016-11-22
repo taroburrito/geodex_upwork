@@ -6,6 +6,7 @@ export const Delete_friend_Success = 'Delete_friend_Success';
 export const Fetch_User_Data = 'Fetch_User_Data';
 export const Fetch_Friends_Posts = 'Fetch_Friends_Posts';
 export const Update_Friend_List = 'Update_Friend_List';
+export const Fetch_Dashboard_Data = 'Fetch_Dashboard_Data';
 
 
 
@@ -33,6 +34,10 @@ export const Update_Friend_List = 'Update_Friend_List';
 
  export function getUserDataSuccess(userData){
    return{type: Fetch_User_Data, data:userData}
+ }
+
+ export function getDashboardDataSuccess(dashboardData) {
+   return{type: Fetch_Dashboard_Data, data:dashboardData}
  }
 
 export function clickedBlockUser(senderId,receiverId,userId) {

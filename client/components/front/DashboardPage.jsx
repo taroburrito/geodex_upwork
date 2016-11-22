@@ -25,7 +25,6 @@ export default class DashboardPage extends Component {
 
   componentWillMount(){
     const{userAuthSession} = this.props;
-
     this.props.fetchInitialData(userAuthSession.userObject.id);
   }
 
@@ -51,11 +50,6 @@ export default class DashboardPage extends Component {
   handleClickPlus(){
     this.setState({errorMessage:null});
     this.props.handleMessage = null;
-  }
-
-  handleOnClickEmailIcon(email){
-      this.refs.sendto.getDOMNode().value = email; 
-      console.log(email);
   }
 
   componentDidMount(){
@@ -144,9 +138,10 @@ export default class DashboardPage extends Component {
   }
 
   renderCategoriesContent(){
-    const{categories} = this.props;
+    const{dashboardData} = this.props;
     var categoriesElement = [];
-
+    var categories = dashboardData.categories;
+    if(categories)
     Object.keys(categories).map(function (key) {
       var item = categories[key];
       categoriesElement.push(<li id={item.id}>{item.category_name}</li>);
@@ -189,18 +184,23 @@ export default class DashboardPage extends Component {
   }
 
   renderFriendPostImages(user_id){
-    const{friendsPosts} = this.props;
+
+    const{dashboardData} = this.props;
+    var friendsPosts = dashboardData.friendsPostImages;
    var friend_post_images;
+   if(friendsPosts)
    var friendsPost = friendsPosts[user_id];
      if(friendsPost && friendsPost.length){
+
        var friendElement = [];
-       Object.keys(friendsPost).map((id)=> {
-         var element = friendsPost[id];
-         if(element.image)
+       Object.keys(friendsPost).forEach((postImage)=> {
+         var postContent = friendsPost[postImage];
+         if(postImage)
          friendElement.push(
-             <li><img src={element.image}/></li>
+             <li id={postContent.user_id}><img src={postContent.post_image}/></li>
          );
        });
+
        return(
          {friendElement}
        );
@@ -211,27 +211,21 @@ export default class DashboardPage extends Component {
 
   renderFriendList(){
 
-    const{friends, freindsPosts} = this.props;
+    const{dashboardData} = this.props;
     var friendsElement = [];
-
-    console.log(friends);
+    var friends = dashboardData.friends;
+    if(friends)
     Object.keys(friends).map((key)=> {
       var item = friends[key];
-      var user_id = item.user_id;
-      if(item.status == 1){
-      var renderFriendsPost = this.renderFriendPostContent(user_id);
-      var profile_link = "/user/"+item.user_id;
+      var user_id = key;
+      var profile_link = "/user/"+user_id;
       friendsElement.push(  <div className="uk-grid dash_top_head dash_botom_list" id={item.id}>
 
             <div className="uk-width-small-1-2">
               <div className="uk-grid uk-grid-small">
               <div className="uk-width-3-10 user_img_left"><img src={item.profile_image?item.profile_image:"public/images/user.jpg"} className=""/></div>
               <div className="uk-width-7-10 user_bottom_img_right">
-              <h3 className="capital_first"><Link to={profile_link}>{item.first_name} {item.last_name} </Link>
-              <a data-uk-modal="{target:'#sendEmail'}" onClick={this.handleOnClickEmailIcon.bind(this,item.email)}  data={item.email}  href="#">
-              <small className="user_location">{item.address}<i className="uk-icon-envelope"></i></small>
-              </a>
-              </h3>
+              <h3 className="capital_first"><Link to={profile_link}>{item.NAME} </Link><img className="online_user" src="public/images/online.png"/> <small className="user_location">{item.address}<i className="uk-icon-envelope"></i></small></h3>
 
 
             <div className="uk-slidenav-position uk-margin" data-uk-slider="{autoplay: true}">
@@ -247,18 +241,16 @@ export default class DashboardPage extends Component {
                     <a href="#" className="uk-slidenav uk-slidenav-contrast uk-slidenav-next" data-uk-slider-item="next" draggable="false"></a>
 
                 </div>
-
-
-              </div>
+                </div>
               </div>
             </div>
+            <div className="uk-width-small-1-2 post_control">
+              {item.post_image?<img src={item.post_image} className="uk-float-left img_margin_right"/>:null}
 
-          {renderFriendsPost}
+            <p>{item.post_content}</p>
+            </div>
+         </div>);
 
-
-
-           </div>);
-         }
     });
     return(
       {friendsElement}
@@ -266,42 +258,98 @@ export default class DashboardPage extends Component {
     )
   }
 
- renderLatestPost(){
-   const{posts} = this.props;
-   var content;
-   var latestPost;
+  renderLatestPost(){
+    const{dashboardData} = this.props;
+    var content;
+    var latestPost = dashboardData.latestPost;
 
-   if(posts){
-    var highest = Object.keys(posts).sort()[0];
-      latestPost = posts[''+highest];
-     if(latestPost)
-      return (
-       <div className="uk-width-small-1-2 post_control" style={{maxHeight:200,overflow:"hidden"}}>
-       <img src={latestPost.image? latestPost.image: null} className="uk-float-right img_margin_left"/>
-       <p>{latestPost.content}</p>
-       </div>
-     );
-   }
+    if(latestPost){
+       return (
+        <div className="uk-width-small-1-2 post_control" style={{maxHeight:200,overflow:"hidden"}}>
+        <img src={latestPost.image? latestPost.image: null} className="uk-float-right img_margin_left"/>
+        <p>{latestPost.content}</p>
+        </div>
+      );
+    }
 
+  }
+
+ renderCategoryModel(){
+   return(
+     <div id="categoryModal" className="uk-modal" ref="modal" >
+       <div className="uk-modal-dialog">
+          <button type="button" className="uk-modal-close uk-close"></button>
+
+            <form className="uk-form uk-margin uk-form-stacked add_category">
+                  <fieldset>
+                    <div className="uk-grid">
+                        <div className="uk-width-1-1">
+                            <label className="uk-form-label" for="form-gs-street">Add Category</label>
+                        </div>
+                    </div>
+
+                    <div className="uk-grid">
+                      <div className="uk-width-1-1">
+                        <div className="uk-form-controls">
+                          <input id="" placeholder="Categorie name" className="uk-width-8-10" type="text" ref="categoryName"/>
+
+                          <div className="uk-width-2-10 uk-float-right add_cat_btn">
+                            <a className="uk-button uk-button-primary " onClick={this.handleClickAddCategory}>Add</a>
+
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                </fieldset>
+
+             </form>
+
+        </div>
+      </div>
+   );
+ }
+
+ renderStatusModel(){
+   return(
+     <div id="statusImage" className="uk-modal" >
+        <div className="uk-modal-dialog" style={{width:300}}>
+          <AvatarEditor
+            image={this.getProfileImage(this.state.image)}
+            ref="postImage"
+            width={200}
+            height={150}
+            border={10}
+            color={[255, 255, 255, 0.6]} // RGBA
+            scale={1}
+            onSave={this.handleSavePostImage}
+            onLoadFailure={this.logCallback.bind(this, 'onLoadFailed')}
+            onLoadSuccess={this.logCallback.bind(this, 'onLoadSuccess')}
+            onImageReady={this.logCallback.bind(this, 'onImageReady')}
+            onImageLoad={this.logCallback.bind(this, 'onImageLoad')}
+            onDropFile={this.logCallback.bind(this, 'onDropFile')}
+           />
+         <br />
+           <input type="file"  ref="file"  onChange={this.handleImageChange.bind(this)
+ }
+/>
+<br/>
+        <input className="uk-button uk-button-primary uk-button-large uk-modal-close" type="button" onClick={this.handleSavePostImage} value="Save" />
+    </div>
+</div>
+   );
  }
 
   render() {
 
-    const { dispatch, userAuthSession, userProfileData, categories, handleMessage, friendsPosts} = this.props;
-    console.log(this.props);
+    const { dispatch, userAuthSession, friendsPosts, dashboardData} = this.props;
+    console.log(dashboardData);
+    var userProfileData = userAuthSession.userObject;
     var content;
     var errorLabel;
     if(this.state.errorMessage){
         errorLabel = (
           <div className="uk-alert uk-alert-danger"><p>{this.state.errorMessage}</p></div>
-        )
-      }else if (handleMessage && handleMessage.error) {
-        errorLabel = (
-          <div className="uk-alert uk-alert-danger"><p>{handleMessage.error}</p></div>
-        )
-      }else if (handleMessage && handleMessage.success) {
-        errorLabel = (
-          <div className="uk-alert uk-alert-success"><p>{handleMessage.success}</p></div>
         )
       }
 
@@ -310,90 +358,8 @@ export default class DashboardPage extends Component {
 
       <div className="uk-container uk-container-center middle_content dashboad">
          <div className="uk-grid uk-grid-large dash_top_head">
-           <div id="categoryModal" className="uk-modal" ref="modal" >
-             <div className="uk-modal-dialog">
-                <button type="button" className="uk-modal-close uk-close"></button>
-                {errorLabel}
-                  <form className="uk-form uk-margin uk-form-stacked add_category">
-                        <fieldset>
-                          <div className="uk-grid">
-                              <div className="uk-width-1-1">
-                                  <label className="uk-form-label" for="form-gs-street">Add Category</label>
-                              </div>
-                          </div>
-
-                          <div className="uk-grid">
-                            <div className="uk-width-1-1">
-                              <div className="uk-form-controls">
-                                <input id="" placeholder="Categorie name" className="uk-width-8-10" type="text" ref="categoryName"/>
-
-                                <div className="uk-width-2-10 uk-float-right add_cat_btn">
-                                  <a className="uk-button uk-button-primary " onClick={this.handleClickAddCategory}>Add</a>
-
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-
-                      </fieldset>
-
-                   </form>
-
-              </div>
-            </div>
-            <div id="sendEmail" className="uk-modal" ref="modal" >
-              <div className="uk-modal-dialog">
-                 <button type="button" className="uk-modal-close uk-close"></button>
-                 {errorLabel}
-                 <div className="uk-modal-header">
-                     <h3>Send Email</h3>
-                 </div>
-                <form className="uk-form">
-                       <div className="uk-form-row">
-                           <input className="uk-width-1-1 uk-form-large" placeholder="To" type="text" ref="sendto"/>
-                       </div>
-                       <div className="uk-form-row">
-                           <input className="uk-width-1-1 uk-form-large" placeholder="Subject" type="text" ref="Subject"/>
-                       </div>
-                       <div className="uk-form-row">
-                          <textarea className="uk-width-1-1 uk-form-large" placeholder="Body" rows="8" ref="emailBody"></textarea>
-                           
-                       </div>
-                       <div className="uk-form-row">
-                           <button className="uk-button uk-button-primary uk-button-large" onClick={this.handleOnClickEmail}>Send Mail</button>
-                       </div>
-                   </form>
-              </div>
-            </div>
-            <div id="statusImage" className="uk-modal" >
-               <div className="uk-modal-dialog" style={{width:300}}>
-                 <AvatarEditor
-                   image={this.getProfileImage(this.state.image)}
-                   ref="postImage"
-                   width={200}
-                   height={150}
-                   border={10}
-                   color={[255, 255, 255, 0.6]} // RGBA
-                   scale={1}
-                   onSave={this.handleSavePostImage}
-                   onLoadFailure={this.logCallback.bind(this, 'onLoadFailed')}
-                   onLoadSuccess={this.logCallback.bind(this, 'onLoadSuccess')}
-                   onImageReady={this.logCallback.bind(this, 'onImageReady')}
-                   onImageLoad={this.logCallback.bind(this, 'onImageLoad')}
-                   onDropFile={this.logCallback.bind(this, 'onDropFile')}
-                  />
-                <br />
-                  <input
-
-        type="file"
-        ref="file"
-        onChange={this.handleImageChange.bind(this)
-        }
-      />
-    <br/>
-               <input className="uk-button uk-button-primary uk-button-large uk-modal-close" type="button" onClick={this.handleSavePostImage} value="Save" />
-           </div>
-       </div>
+           {this.renderCategoryModel()}
+            {this.renderStatusModel()}
 
           <div className="uk-width-small-1-2">
             <div className="uk-grid uk-grid-small">
@@ -414,7 +380,7 @@ export default class DashboardPage extends Component {
             </div>
           </div>
 
-          {this.renderLatestPost()}
+           {this.renderLatestPost()}
 
          </div>
          <div className="uk-width-small-1-1 shortlist_menu">
@@ -437,11 +403,16 @@ export default class DashboardPage extends Component {
         </div>
           </div>
 
-          {friendsPosts? this.renderFriendList(): ''}
+          {this.renderFriendList()}
       </div>
 
 
     );
+    else {
+      return(
+        <div>Dashboard</div>
+      )
+    }
   }
 }
 

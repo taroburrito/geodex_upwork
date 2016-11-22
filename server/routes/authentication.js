@@ -21,8 +21,9 @@ function addAuthRoute(app, passport, routePath, strategy) {
                     if (err) {
                         return next(err);
                     }else{
-                      console.log("*******");
-                      userModel.getUserProfile(user.id, function (result) {
+
+                      userModel.getLoggedInUserData(user.id, function (result) {
+                        var final_result = Object.assign({},user,result);
                           return res.json(result);
                       });
                     }
@@ -45,14 +46,23 @@ module.exports = function (app, passport) {
 
     app.post('/checkSession', function (req, res) {
         var isLoggedIn = req.isAuthenticated();
-        if (isLoggedIn)
-            return res.json({isLoggedIn: isLoggedIn,
-                userObject: {role: req.user.role,
-                    id: req.user.id,
-                    email: req.user.email
-                }
+        if (isLoggedIn){
+            // return res.json({isLoggedIn: isLoggedIn,
+            //     userObject: {role: req.user.role,
+            //         id: req.user.id,
+            //         email: req.user.email
+            //     }
+            // });
+            req.user.isLoggedIn = isLoggedIn;
+            userModel.getLoggedInUserData(req.user.id, function (result) {
+              var final_result = Object.assign({},req.user,result);
+                return res.json(final_result);
             });
-        return res.json({isLoggedIn: isLoggedIn});
+          }else {
+              return res.json({isLoggedIn: isLoggedIn});
+            }
+
+        //return res.json({isLoggedIn: isLoggedIn});
     });
 
 

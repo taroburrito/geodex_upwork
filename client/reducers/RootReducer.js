@@ -2,7 +2,7 @@ import { combineReducers } from 'redux';
 import { updateUserInfo, verifyToken, forgotPasswordResult, updateError} from './AuthReducer';
 import { updateUniversalTodoList, updateUniversalUnsavedTodoList } from './TodoReducer';
 import { updateProfileData,userProfileData, visitedUserData } from './ProfileReducer';
-import {getAllFriendsList, getUserData, getAllFriendsPosts} from './UserReducer';
+import {getAllFriendsList, getUserData, getAllFriendsPosts, updateDashboardData} from './UserReducer';
 import { updateCategoryList, handleMessage} from './CategoryReducer';
 import { updatePagesList, getPageData } from './PageReducer';
 import { updatePostsList} from './PostReducer';
@@ -36,6 +36,7 @@ const RootReducer = combineReducers({
   friendsListState: getAllFriendsList,
   postsList: updatePostsList,
   friendsPosts:getAllFriendsPosts,
+  dashboardData:updateDashboardData,
 
   //For viewing profiles.
   userProfileData:userProfileData,
