@@ -2,7 +2,7 @@ module.exports = {
     mysqlParams: {
         host: 'localhost',
         user: "root",
-         password: "root",
+         password: "",
       //  password: "Geodex@321",
         database: "geodex",
         multipleStatements: true // allows for multiple queries. consider making this a different connection?

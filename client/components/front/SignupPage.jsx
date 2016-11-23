@@ -21,6 +21,7 @@ export default class SignupPage extends Component {
   constructor(props) {
     super(props);
     this.handleOnClickSignUp = this.handleOnClickSignUp.bind(this);
+    this._handleKeyPress=this._handleKeyPress.bind(this);
     this.state = {
     search: '',
     selectedCoordinate: initialFormState,
@@ -59,7 +60,11 @@ export default class SignupPage extends Component {
     this.findErrorsInSignUpForm(formData);
 
   }
-
+_handleKeyPress(e){
+    if(e.key=='Enter'){
+        this.handleOnClickSignUp();
+      }
+  }
   setDateofBirth(x){
        var selectedDate = JSON.stringify(x);
        this.setState({dob:selectedDate});
@@ -68,10 +73,10 @@ export default class SignupPage extends Component {
   findErrorsInSignUpForm(formData){
 
     var newState = this.state.errorMessage;
-    if(formData.first_name === ''){
+    if(!validateDisplayName(formData.first_name)){
         this.setState({errorMessage:'Please enter first name'});
         this.refs.first_name.getDOMNode().focus();
-    }else if (formData.last_name === '') {
+    }else if (!validateDisplayName(formData.last_name)) {
       this.setState({errorMessage:'Please enter last name'});
       this.refs.last_name.getDOMNode().focus();
     }else if (formData.email === '') {
@@ -97,7 +102,7 @@ export default class SignupPage extends Component {
       this.setState({errorMessage:'Password and confirm password does not match'});
       this.refs.confirm_password.getDOMNode().focus();
     }
-    else if (this.state.dob === null) {
+    else if (this.state.dob==null) {
       this.setState({errorMessage:'Please enter date of birth'});
     }else if (!this.state.gender) {
       this.setState({errorMessage:'Please choose gender.'});
@@ -139,10 +144,10 @@ export default class SignupPage extends Component {
          <form className="uk-form">
            <div className="uk-grid uk-grid-small">
              <div className="uk-width-small-1-2">
-                    <input className="uk-width-1-1 uk-form-large" placeholder="First name" type="text" ref="first_name"/>
+                    <input className="uk-width-1-1 uk-form-large" onKeyPress={this._handleKeyPress} placeholder="First name" type="text" ref="first_name"/>
              </div>
                 <div className="uk-width-small-1-2">
-                    <input className="uk-width-1-1 uk-form-large" placeholder="Last name" type="text" ref="last_name"/>
+                    <input className="uk-width-1-1 uk-form-large" onKeyPress={this._handleKeyPress} placeholder="Last name" type="text" ref="last_name"/>
                 </div>
               </div>
 
@@ -155,29 +160,29 @@ export default class SignupPage extends Component {
 
               <div className="uk-grid uk-grid-small">
                 <div className="uk-width-small-1-1">
-                    <input className="uk-width-1-1 uk-form-large" placeholder="Email address" type="text" ref="email"/>
+                    <input className="uk-width-1-1 uk-form-large" onKeyPress={this._handleKeyPress} placeholder="Email address" type="text" ref="email"/>
                 </div>
               </div>
 
               <div className="uk-grid uk-grid-small">
                 <div className="uk-width-small-1-2">
-                    <input className="uk-width-1-1 uk-form-large" placeholder="Password" type="password" ref="password"/>
+                    <input className="uk-width-1-1 uk-form-large" onKeyPress={this._handleKeyPress} placeholder="Password" type="password" ref="password"/>
                 </div>
 
                 <div className="uk-width-small-1-2">
-                    <input className="uk-width-1-1 uk-form-large" placeholder="Confirm Password" type="password" ref="confirm_password"/>
+                    <input className="uk-width-1-1 uk-form-large" onKeyPress={this._handleKeyPress} placeholder="Confirm Password" type="password" ref="confirm_password"/>
                 </div>
               </div>
 
               <div className="uk-grid uk-grid-small">
                 <div className="uk-width-small-1-2">
-                    <Datetime inputProps={{name:"dateofbirth",placeholder:"Date of birth"}} onChange={(dob) => this.setDateofBirth(dob)}  input={true} className={"dob"} closeOnSelect={true} viewMode={"years"} timeFormat={false} dateFormat={'YYYY-MM-DD'}  />
+                    <Datetime inputProps={{name:"dateofbirth",placeholder:"Date of birth"}} onChange={(dob) => this.setDateofBirth(dob)}  input={true} className={"dob"} closeOnSelect={true} viewMode={"years"} timeFormat={false} dateFormat={'DD-MM-YYYY'}  />
                 </div>
 
             <div className="uk-width-small-1-2 gender_select">
               <label>Gender</label>
 
-              <input name="sex" type="radio" ref="radio_male" value="male" onChange={(e)=>this.setState({gender:e.target.value})}/>
+              <input name="sex" type="radio" ref="radio_male" onKeyPress={this._handleKeyPress} value="male" onChange={(e)=>this.setState({gender:e.target.value})}/>
               <label className="_58mt" for="u_0_d">
                 Male
               </label>
