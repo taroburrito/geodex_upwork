@@ -303,7 +303,7 @@ var userModel = {
 
 
 // Signup Function
-    signUp(data,callback){
+    signUp: function(data,callback){
 
        var dbConnection = dbConnectionCreator();
        var token = randtoken.generate(16);
@@ -314,8 +314,13 @@ var userModel = {
        dbConnection.query(signUpQuery, function (error, results, fields) {
            if (error) {
                dbConnection.destroy();
+               if(error.errno == 1062){
+                 return (callback({error: "This email is already used."}));
+               }else{
+                   return (callback({error: error}));
+               }
 
-              return (callback({error: error}));
+
           } else if (results.affectedRows === 1) {
 
             var lastInsertId = results.insertId;

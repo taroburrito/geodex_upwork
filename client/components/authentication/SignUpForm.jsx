@@ -96,6 +96,7 @@ export default class SignUpForm extends Component {
   }
 
   render() {
+  
     var loader; //TODO implement a better loader
     var errorLabel;
     if (this.props.isFetchingData){
@@ -104,7 +105,7 @@ export default class SignUpForm extends Component {
     //TODO create a "FormErrorMessage" component
     if(this.state.errorMessage){
       errorLabel = (
-        <div className={this.getInputContainerClass(true)}> 
+        <div className={this.getInputContainerClass(true)}>
           <label className="control-label">{this.state.errorMessage}</label>
         </div> );
     }
@@ -113,6 +114,10 @@ export default class SignUpForm extends Component {
         <div className={this.getInputContainerClass(true)}>
           <label className="control-label">{this.props.serverError}</label>
         </div> );
+    }else if (this.props.message && this.props.message.error) {
+      errorLabel =(<div className="uk-alert uk-alert-danger">
+          <p>{this.props.message.error}</p>
+        </div>);
     }
     return (
       <div>

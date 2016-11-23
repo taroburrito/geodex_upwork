@@ -6,6 +6,7 @@ import {getAllFriendsList, getUserData, getAllFriendsPosts, updateDashboardData}
 import { updateCategoryList, handleMessage} from './CategoryReducer';
 import { updatePagesList, getPageData } from './PageReducer';
 import { updatePostsList} from './PostReducer';
+import { handleFrontMessage} from './CommonReducer';
 // import { Add_Todo, Complete_Todo, Set_Visibility_Filter, VisibilityFilters  } from '../actions/TodoActions';
 // const { Show_All } = VisibilityFilters;
 
@@ -37,6 +38,7 @@ const RootReducer = combineReducers({
   postsList: updatePostsList,
   friendsPosts:getAllFriendsPosts,
   dashboardData:updateDashboardData,
+  updateMessage:handleFrontMessage,
 
   //For viewing profiles.
   userProfileData:userProfileData,

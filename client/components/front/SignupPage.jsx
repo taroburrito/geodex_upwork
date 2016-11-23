@@ -117,10 +117,15 @@ export default class SignupPage extends Component {
 
   render(){
     const { search } = this.state;
+  
     var errorLabel;
     if(this.state.errorMessage){
       errorLabel =(<div className="uk-alert uk-alert-danger">
           <p>{this.state.errorMessage}</p>
+        </div>);
+    }else if (this.props.message.error) {
+      errorLabel =(<div className="uk-alert uk-alert-danger">
+          <p>{this.props.message.error}</p>
         </div>);
     }
     return(
