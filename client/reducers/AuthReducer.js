@@ -70,13 +70,14 @@ export function updateUserInfo(userAuthState = defaultStartState , action) {
       });
 
     case Update_Profile_Success:
-    console.log(action);
-    // return Object.assign({}, userAuthState, action.userObject,{
-    //   isLoggedIn: true,
-    //   fetchingAuthUpdate: false,
-    //
-    //   error: null
-    // });
+    var prevState = Object.assign({}, userAuthState);
+    prevState.userObject = action.data;
+    return Object.assign({}, userAuthState, prevState.userObject,{
+      isLoggedIn: true,
+      fetchingAuthUpdate: false,
+
+      error: null
+    });
       break;
 
     case Login_Success:

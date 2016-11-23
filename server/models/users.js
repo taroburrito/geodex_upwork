@@ -101,7 +101,8 @@ var userModel = {
                           friendsIds.push(friendIndex.id);
 
                       });
-                      if(friendsIds && friendsIds.length !=0){
+                    }
+                      if(friendsIds && friendsIds.length >0){
                         var getFriendsPostImagesSqlString = constructFreindsPostImagesSqlString(friendsIds);
                         dbConnection.query(getFriendsPostImagesSqlString,function(error4,result4,fileds4){
                           if(error4){
@@ -126,8 +127,10 @@ var userModel = {
                             return (callback({latestPost: latestPost,categories: categories,friends:friends,friendsPostImages:postImage}));
                           }
                         });
+                      }else{
+                        return (callback({latestPost: latestPost,categories: categories,friends:null,friendsPostImages:null}));
                       }
-                    }
+
 
 
                   }

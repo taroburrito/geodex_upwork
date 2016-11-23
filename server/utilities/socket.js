@@ -88,7 +88,9 @@ module.exports = {
               });
 
               socket.on('fetch-dashboard-data',function(userId){
+
                 userModel.getDashboardData(userId,function(result){
+                
                   socket.emit("dashboad-data", result);
                 })
               });

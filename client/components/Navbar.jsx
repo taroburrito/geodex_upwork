@@ -20,7 +20,7 @@ export default class Navbar extends Component {
               <Link className="uk-navbar-brand uk-hidden-small" to="dashboard"><img src="public/images/logo.png"/></Link>
 
       <form className="uk-search search_dash_nav">
-              <input className="uk-search-field" placeholder="search..." autocomplete="off" type="search"/>
+              <input className="uk-search-field" placeholder="search..."  type="search"/>
           <div className="uk-dropdown uk-dropdown-search" aria-expanded="false"></div></form>
 
       <ul className="uk-navbar-nav uk-hidden-small uk-float-right">
@@ -32,7 +32,7 @@ export default class Navbar extends Component {
                   <div className="uk-button"></div>
                   <div data-uk-dropdown="" aria-haspopup="true" aria-expanded="false" className="">
                       <a href="#" className="uk-button"><i className="uk-icon-gear"></i></a>
-                      <div className="uk-dropdown uk-dropdown-small uk-dropdown-bottom" aria-hidden="true" style={{top:'30px',left:0}} tabindex="">
+                      <div className="uk-dropdown uk-dropdown-small uk-dropdown-bottom" aria-hidden="true" style={{top:'30px',left:0}} >
                           <ul className="uk-nav uk-nav-dropdown">
 
                               <li><Link to="settings">Settings </Link><a href="#" ></a></li>
