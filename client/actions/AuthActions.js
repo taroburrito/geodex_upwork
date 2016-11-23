@@ -34,6 +34,9 @@ export const Clicked_Reset_Password = 'Clicked_Reset_Password';
 export const Forgot_Password_Email_Error = 'Forgot_Password_Email_Error';
 export const Forgot_Password_Email_Success = 'Forgot_Password_Email_Success';
 export const Clicked_Forgot_Password = 'Clicked_Forgot_Password';
+export const Handle_Error_Signup = 'Handle_Error_Signup';
+
+
 /*
  * other constants
  */
@@ -52,7 +55,7 @@ export function signUpSuccess(userObject) {
 }
 
 export function signUpFail(error) {
-	return { type: SignUp_Fail, error };
+	return { type: Handle_Error_Signup, error };
 }
 
 export function tokenVerifyFail(token){
@@ -210,13 +213,14 @@ export function attemptSignUp(formData) {
 				//return false;
 				if (data.error){
 					dispatch(signUpFail(data.error));
+
 				} else {
 					dispatch(attemptLogin(formData.email,formData.password,'user'));
 				}
 			})
 			.fail(function(a,b,c,d) {
-			   console.log('failed to signup',a,b,c,d);
-			//  dispatch(signUpFail("TODO find the error..."));
+			   dispatch(signUpFail("Error in signup"));
+
 			});
   }
 }

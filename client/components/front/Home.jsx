@@ -58,7 +58,8 @@ export default class Home extends Component {
          successMessage={forgotPasswordResult.success}/>
        <SignupPage onClickSignUp={formData =>{
            dispatch(attemptSignUp(formData))
-         }}/>
+         }}
+         message={this.props.updateMessage}/>
      <Footer/>
        <div id="offcanvas" className="uk-offcanvas">
            <div className="uk-offcanvas-bar">
@@ -84,6 +85,7 @@ function select(state) {
   return {
        userAuthSession: state.userAuthSession,
        forgotPasswordResult: state.forgotPasswordResult,
+       updateMessage: state.updateMessage
   };
 }
 

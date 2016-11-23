@@ -28,7 +28,7 @@ class MainSignUpPage extends Component {
   }
 
   render() {
-    const { dispatch, userAuthSession } = this.props;
+    const { dispatch, userAuthSession, updateMessage } = this.props;
     return (
       <div style={{width: '33%', textAlign: 'center', marginLeft: '100px'}}>
         <h1> Sign Up </h1>
@@ -36,7 +36,9 @@ class MainSignUpPage extends Component {
                       dispatch(attemptSignUp(formData))
                     }}
                     isFetchingData={userAuthSession.fetchingAuthUpdate}
-                    serverError={userAuthSession.error} />
+                    serverError={userAuthSession.error}
+                    message={this.props.updateMessage}
+                    test="xcfdxf" />
       </div>
     );
   }
@@ -49,7 +51,8 @@ MainSignUpPage.contextTypes = {
 
 function select(state) {
   return {
-    userAuthSession: state.userAuthSession
+    userAuthSession: state.userAuthSession,
+    updateMessage: state.updateMessage,
   };
 }
 
