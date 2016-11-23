@@ -12,7 +12,11 @@ export default class FriendRequestsList extends Component{
    if(requestId)
    this.props.clickedConfirmRequest(requestId);
  }
-
+ handleClickDelete(requestId){
+   alert(requestId);
+   if(requestId)
+   this.props.clickedDeleteRequest(requestId);
+ }
  render() {
 
    const{dispatch} = this.props;
@@ -28,7 +32,7 @@ export default class FriendRequestsList extends Component{
            </div>
            <div className="manage-request-btns-div">
              <a style={{margin:'3'}} className="uk-button manage-request-btns" onClick={this.handleClickConfirm.bind(this, this.props.request_id)}>Confirm</a>
-             <a className="uk-button manage-request-btns">Delete Request</a>
+             <a className="uk-button manage-request-btns" onClick={this.handleClickDelete.bind(this, this.props.request_id)}>Delete Request</a>
            </div>
          </div>
       </div>

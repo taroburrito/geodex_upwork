@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Navigation } from 'react-router';
 import ManageRequestsWidget from '../../components/front/manage_requests/ManageRequestsWidget';
 import Home from '../../components/front/Home';
-import {confirmFriendRequest} from '../../actions/UserActions';
+import {confirmFriendRequest, deleteFriendRequest} from '../../actions/UserActions';
 import { fetchFriendsRequests } from '../../utilities/ServerSocket';
 
 export default class ManageRequests extends Component {
@@ -22,6 +22,8 @@ export default class ManageRequests extends Component {
           fetchFriendsRequests(userId)}
           userAuthSession={userAuthSession}
           friendRequests={this.props.friendRequests}
+          clickedDeleteRequest={(requestId)=>
+          dispatch(deleteFriendRequest(requestId))}
           clickedConfirmRequest={(requestId)=>
           dispatch(confirmFriendRequest(requestId))}/>
         </div>
