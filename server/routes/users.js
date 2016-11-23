@@ -186,6 +186,26 @@ var setUserRoutes = function (router) {
             }
           );
 
+          /* Get all pending friend requests of a user*/
+          router.get('/api/v1/users/getFriendRequests/:userId',
+                  function (req, res) {
+                      var userId = req.params.userId;
+                    //return res.json({success:"here"});
+                      userModel.getFreindRequests(userId, function (result) {
+                         return res.json(result);
+                      }
+                      );
+                  }
+          );
+
+          router.post('/api/v1/users/confirmFriendRequest/',
+              function(req,res){
+                  userModel.confirmFriendRequest(req.body.id,function(results){
+                    return res.json(results);
+                  });
+              }
+            );
+
 }
 
 module.exports = setUserRoutes;

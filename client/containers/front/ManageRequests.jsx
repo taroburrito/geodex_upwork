@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Navigation } from 'react-router';
 import ManageRequestsWidget from '../../components/front/manage_requests/ManageRequestsWidget';
 import Home from '../../components/front/Home';
-//import {clickedBlockUser, clickedDeleteFriend} from '../../actions/UserActions';
+import {confirmFriendRequest} from '../../actions/UserActions';
 import { fetchFriendsRequests } from '../../utilities/ServerSocket';
 
 export default class ManageRequests extends Component {
@@ -11,10 +11,8 @@ export default class ManageRequests extends Component {
     super(props);
   }
 
-
-
   render() {
-    const { dispatch, userAuthSession } = this.props;
+    const { dispatch, userAuthSession, friendRequests } = this.props;
     if(userAuthSession.isLoggedIn){
 
       return(
@@ -22,7 +20,10 @@ export default class ManageRequests extends Component {
         <ManageRequestsWidget
           fetchInitialData={(userId)=>
           fetchFriendsRequests(userId)}
-          userAuthSession={userAuthSession}/>
+          userAuthSession={userAuthSession}
+          friendRequests={this.props.friendRequests}
+          clickedConfirmRequest={(requestId)=>
+          dispatch(confirmFriendRequest(requestId))}/>
         </div>
       );
     }else{
@@ -39,6 +40,7 @@ export default class ManageRequests extends Component {
 function select(state) {
   return {
       userAuthSession: state.userAuthSession,
+      friendRequests:state.friendRequests
   };
 }
 
