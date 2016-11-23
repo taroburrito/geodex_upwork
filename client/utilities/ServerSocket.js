@@ -2,7 +2,7 @@ import { receivedAllUniversalTodos, optimisticUniversalAddSuccess } from '../act
 import { receivedAllUniversalCategories } from '../actions/CategoryActions';
 import { receivedAllUniversalPages } from '../actions/PageActions';
 import {getVisitedUserData, getUserDetails} from '../actions/ProfileActions';
-import {receivedAllfriendsList, receivedAllFriendsPosts} from '../actions/UserActions';
+import {receivedAllfriendsList, receivedAllFriendsPosts, getDashboardDataSuccess} from '../actions/UserActions';
 import {receivedAllposts} from '../actions/PostActions';
 
 
@@ -83,11 +83,21 @@ export function linkSocketToStore(dispatch) {
 			dispatch(receivedAllUniversalPages(result.pages));
 		}
 	});
+
+  socket.on("dashboad-data",function(res){
+    console.log(res);
+    if(res.error){
+
+    }else{
+
+      dispatch(getDashboardDataSuccess(res));
+    }
+  });
+
 	socket.on("userDetail",function(res){
 
-    var friendsPosts = res.friendsPost;
-    console.log(friendsPosts);
 
+    var friendsPosts = res.friends;
     var postObj = [];
     if(friendsPosts && friendsPosts.length){
       friendsPosts.forEach((friendsPost)=>{
@@ -106,11 +116,11 @@ export function linkSocketToStore(dispatch) {
       });
     }
     //user profile data
-    var userdata = res.userData[0];
+    var userdata = res.userData;
 
     // user category data
-    var userCategoriesData = res.userCategories;
-  //  userdata.categories = userCategoriesData;
+   var userCategoriesData = res.userCategories;
+   userdata.categories = userCategoriesData;
   //  console.log(userdata);
 		if(userdata.error){
 			console.log("Error in server socket");
@@ -118,10 +128,10 @@ export function linkSocketToStore(dispatch) {
 
 			dispatch(getUserDetails(userdata));
 
-      dispatch(receivedAllUniversalCategories(userCategoriesData));
-      dispatch(receivedAllfriendsList(res.friendList));
-      dispatch(receivedAllposts(res.posts));
-      dispatch(receivedAllFriendsPosts(postObj));
+     dispatch(receivedAllUniversalCategories(userCategoriesData));
+     dispatch(receivedAllfriendsList(res.friendList));
+     dispatch(receivedAllposts(res.posts));
+     dispatch(receivedAllFriendsPosts(postObj));
 		}
 	});
 
@@ -144,8 +154,6 @@ export function linkSocketToStore(dispatch) {
 		}else{
 
 			dispatch(getVisitedUserData(userdata));
-
-      //dispatch(receivedAllUniversalCategories(userCategoriesData));
 		}
 	});
 
@@ -177,4 +185,8 @@ export function getUserDetail(userId){
 // visited user profile detail
 export function getVisitedUserDetail(userId){
   socket.emit("visited-user-detail", userId);
+}
+
+export function fetchDashboardData(userId){
+  socket.emit("fetch-dashboard-data", userId);
 }

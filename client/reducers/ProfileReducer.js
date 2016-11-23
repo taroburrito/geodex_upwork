@@ -49,7 +49,7 @@ const defaultStates={
 }
 
 
-export function userProfileData(userProfileState = defaultStates , action){
+export function userProfileData(userProfileState = {} , action){
   switch (action.type){
 
         case Get_User_Details:

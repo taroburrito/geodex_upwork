@@ -33,7 +33,7 @@ class MainSignUpPage extends Component {
       <div style={{width: '33%', textAlign: 'center', marginLeft: '100px'}}>
         <h1> Sign Up </h1>
         <SignUpForm onClickSignUp={(formData) => {
-                      dispatch(attemptSignUp(formData.email, formData.password, formData.displayName))
+                      dispatch(attemptSignUp(formData))
                     }}
                     isFetchingData={userAuthSession.fetchingAuthUpdate}
                     serverError={userAuthSession.error} />

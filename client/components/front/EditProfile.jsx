@@ -18,9 +18,6 @@ const initialFormState ={
 export default class EditProfile extends Component {
   constructor(props) {
     super(props);
-    this.onFirstNameChange=this.onFirstNameChange.bind(this);
-    this.onLastNameChange=this.onLastNameChange.bind(this);
-    this.onEmailChange=this.onEmailChange.bind(this);
     this.onDobChange=this.onDobChange.bind(this);
     this.onGenderChange=this.onGenderChange.bind(this);
     this.handleSave = this.handleSave.bind(this);
@@ -29,23 +26,24 @@ export default class EditProfile extends Component {
     this.handleBorderRadius = this.handleBorderRadius.bind(this);
     this.handleOnClickUpdate=this.handleOnClickUpdate.bind(this);
 
-    this.state = {
-        search: '',
-        selectedCoordinate: initialFormState,
-        errorMessage :null,
-        gender: null,
-        dob:null,
-        scale: 1,
-        borderRadius: 0,
-        preview: null,
-        content: 'edit_profile',
-        cover_image: null,
-    }
+    this.state = Object.assign({},this.props.userAuthSession.userObject,{
+      search: '',
+      selectedCoordinate: initialFormState,
+      errorMessage :null,
+
+      scale: 1,
+      borderRadius: 0,
+      preview: null,
+      content: 'edit_profile'
+    });
+
+  }
+
+  componentWillMount(){
   }
 
   componentDidMount(){
-    const {userData}=this.props;
-    console.log(userData);
+
   }
   handleSave (data) {
     var img = this.refs.avatar.getImage();
@@ -61,13 +59,14 @@ export default class EditProfile extends Component {
   handleSaveCoverImage(data) {
     var img = this.refs.cover.getImage();
    // this.setState({ preview: img});
-    const {dispatch, userData}=this.props;
+    const {dispatch, userAuthSession}=this.props;
+    var userData = userAuthSession.userObject;
     userData.cover_image = img;
     this.setState({cover_image: img});
     userData.cover_image = img;
-    console.log(userData);
+  //  console.log(userData);
     var req={
-      id:userData.user_id,
+      id:userData.id,
       field:'cover_image',
       val: img
     }
@@ -91,9 +90,8 @@ export default class EditProfile extends Component {
     this.setState({ borderRadius: borderRadius })
   }
   handleSearchChange(e){
-     const { dispatch} = this.props;
-     dispatch(updateProfileInput('address',e.target.value));
     this.setState({ search: e.target.value })
+    this.setState({ address: e.target.value })
 
   }
    handleSelectSuggest(suggestName, coordinate){
@@ -106,46 +104,46 @@ export default class EditProfile extends Component {
     //console.log("callback", e);
   }
     handleOnClickUpdate(){
-        const {userData,dispatch}=this.props;
+        const {dispatch, userAuthSession}=this.props;
         var newState = this.state.errorMessage;
-        if(userData.first_name === ''){
-            this.setState({errorMessage:'Please enter first name'});
-            this.refs.first_name.getDOMNode().focus();
-        }else if (userData.last_name === '') {
-            this.setState({errorMessage:'Please enter last name'});
-            this.refs.last_name.getDOMNode().focus();
-        }else if (userData.email === '') {
-            this.setState({errorMessage:'Please enter email'});
-            this.refs.email.getDOMNode().focus();
-        }else if (!validateEmail(userData.email)) {
-            this.setState({errorMessage:'Please enter correct email address'});
-            this.refs.email.getDOMNode().focus();
-        }
-        else if (userData.address === '') {
-            this.setState({errorMessage:'Please enter address'});
-            this.refs.address.getDOMNode().focus();
-        }else if (userData.dob === null) {
-            this.setState({errorMessage:'Please enter date of birth'});
-        }else{
-            this.setState({errorMessage:null});
-            dispatch(updateUserProfileData(userData));
-        }
+        var formData={
+          first_name: this.refs.first_name.getDOMNode().value.trim(),
+          last_name:  this.refs.last_name.getDOMNode().value.trim(),
+          email: this.refs.email.getDOMNode().value.trim(),
+          address: this.refs.address.getDOMNode().value.trim(),
+          dob: this.state.dob,
+          gender: this.state.gender,
+          longitude: this.state.selectedCoordinate.longitude,
+          latitude:this.state.selectedCoordinate.latitude,
+          id: userAuthSession.userObject.id
+        };
+        console.log(formData);
+        dispatch(updateUserProfileData(formData));
+        // if(userData.first_name === ''){
+        //     this.setState({errorMessage:'Please enter first name'});
+        //     this.refs.first_name.getDOMNode().focus();
+        // }else if (userData.last_name === '') {
+        //     this.setState({errorMessage:'Please enter last name'});
+        //     this.refs.last_name.getDOMNode().focus();
+        // }else if (userData.email === '') {
+        //     this.setState({errorMessage:'Please enter email'});
+        //     this.refs.email.getDOMNode().focus();
+        // }else if (!validateEmail(userData.email)) {
+        //     this.setState({errorMessage:'Please enter correct email address'});
+        //     this.refs.email.getDOMNode().focus();
+        // }
+        // else if (userData.address === '') {
+        //     this.setState({errorMessage:'Please enter address'});
+        //     this.refs.address.getDOMNode().focus();
+        // }else if (userData.dob === null) {
+        //     this.setState({errorMessage:'Please enter date of birth'});
+        // }else{
+        //     this.setState({errorMessage:null});
+        //     console.log(userData);
+        //     //dispatch(updateUserProfileData(userData));
+        // }
 
     }
-
-
- onFirstNameChange(event){
-    const { dispatch} = this.props;
-    dispatch(updateProfileInput('first_name',event.target.value));
- }
- onLastNameChange(event){
-    const {dispatch}=this.props;
-    dispatch(updateProfileInput('last_name',event.target.value));
- }
- onEmailChange(event){
-    const {dispatch}=this.props;
-    dispatch(updateProfileInput('email',event.target.value));
- }
 
  onDobChange(dob){
     const {dispatch}=this.props;
@@ -174,9 +172,15 @@ getProfileImage(img){
 
 }
 
-__renderContent(){
-  const { dispatch,userData} = this.props;
+setDateofBirth(x){
+     var selectedDate = JSON.stringify(x);
+     this.setState({dob:selectedDate});
+  }
 
+__renderContent(){
+  const { dispatch,userAuthSession} = this.props;
+  var userData = userAuthSession.userObject;
+//  console.log(userData);
   const { search } = this.state;
   if(this.state.content == 'edit_profile'){
     return(
@@ -187,13 +191,13 @@ __renderContent(){
               <div className="uk-width-medium-1-2">
                   <label className="uk-form-label" for="form-gs-a">First Name</label>
                   <div className="uk-form-controls">
-                      <input id="form-gs-a" placeholder="" ref="first_name" className="uk-width-1-1" onChange={this.onFirstNameChange} value={userData.first_name}   type="text"/>
+                      <input id="form-gs-a" placeholder="" ref="first_name" className="uk-width-1-1" onChange={(e)=>this.setState({first_name:e.target.value})} value={this.state.first_name}   type="text"/>
                   </div>
               </div>
               <div className="uk-width-medium-1-2">
                   <label className="uk-form-label" for="form-gs-b">Last Name</label>
                   <div className="uk-form-controls">
-                      <input id="form-gs-b" placeholder="" ref="last_name" onChange={this.onLastNameChange} value={userData.last_name} className="uk-width-1-1" type="text"/>
+                      <input id="form-gs-b" placeholder="" ref="last_name" onChange={(e)=>this.setState({last_name:e.target.value})} value={this.state.last_name} className="uk-width-1-1" type="text"/>
                   </div>
               </div>
           </div>
@@ -202,16 +206,16 @@ __renderContent(){
               <div className="uk-width-medium-1-2">
                   <label className="uk-form-label" for="form-gs-a">Email Id</label>
                   <div className="uk-form-controls">
-                      <input id="form-gs-a" placeholder="" ref="email" onChange={this.onEmailChange} value={userData.email}  className="uk-width-1-1" type="text"/>
+                      <input id="form-gs-a" placeholder="" ref="email" onChange={(e)=>this.setState({email:e.target.value})} value={this.state.email}  className="uk-width-1-1" type="text"/>
                   </div>
               </div>
               <div className="uk-width-medium-1-2">
                   <label className="uk-form-label" for="form-gs-b">Location</label>
                   <div className="uk-form-controls">
                       <GooglePlacesSuggest onSelectSuggest={ this.handleSelectSuggest.bind(this) } search={ search }>
-                        <input className="uk-width-1-1 uk-form-large" type="text" ref="address" value={ userData.address } placeholder="Search a location" onChange={ this.handleSearchChange.bind(this) }/>
-                        <input type="hidden" value={this.state.selectedCoordinate?this.state.selectedCoordinate.latitude:''} ref="latitude"/>
-                        <input type="hidden" value={this.state.selectedCoordinate?this.state.selectedCoordinate.longitude:''} ref="longitude"/>
+                        <input className="uk-width-1-1 uk-form-large" type="text" ref="address" value={ search?search:this.state.address } placeholder="Search a location" onChange={ this.handleSearchChange.bind(this) }/>
+                        <input type="hidden" value={this.state.selectedCoordinate?this.state.selectedCoordinate.latitude:this.state.latitude} ref="latitude"/>
+                        <input type="hidden" value={this.state.selectedCoordinate?this.state.selectedCoordinate.longitude:this.state.longitude} ref="longitude"/>
                     </GooglePlacesSuggest>
                   </div>
               </div>
@@ -221,7 +225,7 @@ __renderContent(){
               <div className="uk-width-medium-1-2">
                   <label className="uk-form-label" for="form-gs-a">Date of Birth</label>
                   <div className="uk-form-controls">
-                  <Datetime value={this.dateVal(userData.dob)} disableOnClickOutside={true} inputProps={{name:"dob",placeholder:"Date of birth"}} onChange={(dob) => this.onDobChange(dob)}  input={true} className={"dob"} closeOnSelect={true} viewMode={"days"} timeFormat={false} dateFormat={'YYYY-MM-DD'}  />
+                  <Datetime defaultValue={userData.dob} inputProps={{name:"dateofbirth",placeholder:"Date of birth"}} onChange={(dob) => this.setDateofBirth(dob)}  input={true} className={"dob"} closeOnSelect={true} viewMode={"years"} timeFormat={false} dateFormat={'YYYY-MM-DD'}  />
 
                   </div>
               </div>
@@ -230,12 +234,12 @@ __renderContent(){
                   <div className="uk-form-controls">
                       <div className="uk-width-small-1-2 gender_select">
 
-                          <input name="gender" ref="radio_female" value="female" id="u_0_d" type="radio" onChange={this.onGenderChange} checked={userData.gender === 'female'} />
+                          <input name="sex" ref="radio_female" value="female" id="u_0_d" type="radio" onChange={(e)=>this.setState({gender:e.target.value})} checked={this.state.gender == 'female'?true:false} />
                           <label className="_58mt" for="u_0_d">
                               &nbsp;Female&nbsp;
                           </label>
 
-                          <input name="gender" ref="radio_male" value="male" id="u_0_e" type="radio" onChange={this.onGenderChange} checked={userData.gender === 'male'}/>
+                          <input name="sex" ref="radio_male" value="male" id="u_0_e" type="radio" onChange={(e)=>this.setState({gender:e.target.value})} checked={this.state.gender == 'male'?true:false}/>
                           <label className="_58mt" for="u_0_e">
                               &nbsp;Male&nbsp;
                           </label>
@@ -269,9 +273,77 @@ __renderContent(){
   }
 }
 
+renderProfileModel(){
+  const{userAuthSession} = this.props;
+  var userData = userAuthSession.userObject;
+  return(
+    <div id="profilepic" className="uk-modal profile-modal" >
+       <div className="uk-modal-dialog">
+           <AvatarEditor
+             image={this.getProfileImage(userData.profile_image)}
+             ref="avatar"
+             width={250}
+             height={250}
+             border={10}
+             color={[255, 255, 255, 0.6]} // RGBA
+             scale={parseFloat(this.state.scale)}
+             borderRadius={this.state.borderRadius}
+             onSave={this.handleSave}
+             onLoadFailure={this.logCallback.bind(this, 'onLoadFailed')}
+             onLoadSuccess={this.logCallback.bind(this, 'onLoadSuccess')}
+             onImageReady={this.logCallback.bind(this, 'onImageReady')}
+             onImageLoad={this.logCallback.bind(this, 'onImageLoad')}
+             onDropFile={this.logCallback.bind(this, 'onDropFile')}
+            />
+        <br />
+       <input name="scale" type="range" ref="scale" onChange={this.handleScale} min="1" max="2" step="0.01"
+                    defaultValue="1" />
+
+       <br />
+       <input className="uk-button uk-button-primary uk-button-large uk-modal-close" type="button" onClick={this.handleSave} value="Save" />
+
+       <br />
+   </div>
+</div>
+  );
+}
+
+renderCoverModel(){
+  const{userAuthSession} = this.props;
+  var userData = userAuthSession.userObject;
+  return(
+    <div id="coverImage" className="uk-modal profile-modal" >
+       <div className="uk-modal-dialog custom-width">
+           <AvatarEditor
+             image={this.getProfileImage(userData.cover_image)}
+             ref="cover"
+             width={1300}
+             height={215}
+             border={10}
+             color={[255, 255, 255, 0.6]} // RGBA
+             scale={1}
+             borderRadius={this.state.borderRadius}
+             onSave={this.handleSaveCoverImage}
+             onLoadFailure={this.logCallback.bind(this, 'onLoadFailed')}
+             onLoadSuccess={this.logCallback.bind(this, 'onLoadSuccess')}
+             onImageReady={this.logCallback.bind(this, 'onImageReady')}
+             onImageLoad={this.logCallback.bind(this, 'onImageLoad')}
+             onDropFile={this.logCallback.bind(this, 'onDropFile')}
+            />
+        <br />
+
+       <input className="uk-button uk-button-primary uk-button-large uk-modal-close" type="button" onClick={this.handleSaveCoverImage} value="Save" />
+
+       <br />
+   </div>
+</div>
+  );
+}
+
  render() {
 
-    const { dispatch,userData} = this.props;
+    const { dispatch,userAuthSession} = this.props;
+    var userData = userAuthSession.userObject;
     if(!userData.cover_image){
     var background_profile_css ={
       backgroundImage: 'url(public/images/profile_banner.jpg)'
@@ -301,62 +373,8 @@ __renderContent(){
 
             <div>
 
-             <div id="profilepic" className="uk-modal profile-modal" >
-                <div className="uk-modal-dialog">
-                    <AvatarEditor
-                      image={this.getProfileImage(userData.profile_image)}
-                      ref="avatar"
-                      width={250}
-                      height={250}
-                      border={10}
-                      color={[255, 255, 255, 0.6]} // RGBA
-                      scale={parseFloat(this.state.scale)}
-                      borderRadius={this.state.borderRadius}
-                      onSave={this.handleSave}
-                      onLoadFailure={this.logCallback.bind(this, 'onLoadFailed')}
-                      onLoadSuccess={this.logCallback.bind(this, 'onLoadSuccess')}
-                      onImageReady={this.logCallback.bind(this, 'onImageReady')}
-                      onImageLoad={this.logCallback.bind(this, 'onImageLoad')}
-                      onDropFile={this.logCallback.bind(this, 'onDropFile')}
-                     />
-                 <br />
-                <input name="scale" type="range" ref="scale" onChange={this.handleScale} min="1" max="2" step="0.01"
-                             defaultValue="1" />
-
-                <br />
-                <input className="uk-button uk-button-primary uk-button-large uk-modal-close" type="button" onClick={this.handleSave} value="Save" />
-
-                <br />
-            </div>
-        </div>
-        <div id="coverImage" className="uk-modal profile-modal" >
-           <div className="uk-modal-dialog custom-width">
-               <AvatarEditor
-                 image={this.getProfileImage(userData.cover_image)}
-                 ref="cover"
-                 width={1300}
-                 height={215}
-                 border={10}
-                 color={[255, 255, 255, 0.6]} // RGBA
-                 scale={1}
-                 borderRadius={this.state.borderRadius}
-                 onSave={this.handleSaveCoverImage}
-                 onLoadFailure={this.logCallback.bind(this, 'onLoadFailed')}
-                 onLoadSuccess={this.logCallback.bind(this, 'onLoadSuccess')}
-                 onImageReady={this.logCallback.bind(this, 'onImageReady')}
-                 onImageLoad={this.logCallback.bind(this, 'onImageLoad')}
-                 onDropFile={this.logCallback.bind(this, 'onDropFile')}
-                />
-            <br />
-           <input name="scale" type="range" ref="scale" onChange={this.handleScale} min="1" max="2" step="0.01"
-                        defaultValue="1" />
-
-           <br />
-           <input className="uk-button uk-button-primary uk-button-large uk-modal-close" type="button" onClick={this.handleSaveCoverImage} value="Save" />
-
-           <br />
-       </div>
-   </div>
+             {this.renderProfileModel()}
+             {this.renderCoverModel()}
                 <div className="background_profile" style={background_profile_css}>
                     <div className="uk-container uk-container-center">
                         <div className="uk-grid uk-grid-large dash_top_head">
@@ -417,7 +435,7 @@ EditProfile.contextTypes = {
 
 function select(state) {
    return {
-        userData:state.userProfileData
+
   };
 }
 

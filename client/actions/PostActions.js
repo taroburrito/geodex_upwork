@@ -1,12 +1,13 @@
 export const Get_All_Posts = 'Get_All_Posts';
 export const Post_Added_Success =  'Post_Added_Success';
+export const Post_Added_Dashboard_Success = 'Post_Added_Dashboard_Success';
 
 export function receivedAllposts(posts){
   return{type: Get_All_Posts, data:posts}
 }
 
 export function addPostSuccess(post){
-  return{type: Post_Added_Success, post};
+  return{type: Post_Added_Dashboard_Success, post};
 }
 
 export function addPost(formData){

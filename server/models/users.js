@@ -15,18 +15,130 @@ var userModel = {
         var objString=JSON.stringify(rows);
         var obj=JSON.parse(objString);
         return obj;
-        /*var userInfo = {
-            id: rows[0].id,
-            email: rows[0].email,
-            role:rows[0].role,
-            forgot_password_token:rows[0].forgot_password_token,
-            date_created:rows[0].date_created,
 
+    },
+
+    /*
+     func:get LoggedIn user basic data
+     params: userId
+     return: userProfileData
+    */
+    getLoggedInUserData: function(userId,callback){
+      var dbConnection = dbConnectionCreator();
+      var getUserSettingsSqlString = constructGetUserProfileSqlString(userId);
+      dbConnection.query(getUserSettingsSqlString,function(error,result,fields){
+        if(error){
+          return(callback({error:"Error in get LoggedIn user data query"}));
+        }else if (result.length == 0) {
+          return(callback({error:"No result found for userid:"+userId}));
+        }else {
+        var userObject = userModel.convertRowsToUserProfileObject(result[0]);
+            return (callback({userObject}));
         }
-        return {
-            userInfo: userInfo,
-            //userCreatedTodos: todos
-        };*/
+      });
+    },
+
+    /*
+     func:get LoggedIn user dashboard data
+     params: userId
+     return: latestPost,categories,friendslist,friendsLatestPost
+    */
+    getDashboardData: function(userId, callback){
+      var dbConnection = dbConnectionCreator();
+      var getLatestPostSqlString = constructLatestPostSqlString(userId);
+      var getUsersCategoriesSqlString = constructGetUserCategoriesSqlString(userId);
+      var getUserFriendsListSqlString = constructgetUserFriendsListSqlString(userId);
+      var getFriendsListForDashboardSqlString = constructFriendListForDashboardSqlString(userId);
+      var profileData;
+      var userCategoriesData;
+
+      dbConnection.query(getLatestPostSqlString, function (error, results, fields) {
+          if (error) {
+              dbConnection.destroy();
+              return (callback({error: "Error in latest post query"}));
+          }else {
+
+            if (results.length === 0) {
+                var latestPost = null;
+            }else{
+              /* create object of latestPost */
+              var latestPost = userModel.convertRowsToUserProfileObject(results[0]);
+              }
+
+            /*Get categories result of a user and admin*/
+            dbConnection.query(getUsersCategoriesSqlString, function (error1, results1, fields1) {
+              if (error1) {
+                  dbConnection.destroy();
+
+                  return (callback({error: error1}));
+              }else {
+
+                if (results1.length === 0) {
+                    var categories = null;
+                }else{
+                  /* Create object of all categories*/
+                  var categories = {};
+                  results1.forEach(function (resultIndex) {
+                      categories[resultIndex.id] = userModel.convertRowsToUserProfileObject(resultIndex);
+                  });
+                }
+
+
+                /*Get friendList of user*/
+                dbConnection.query(getFriendsListForDashboardSqlString,function(error3,result3,fields3){
+                  if(error3){
+                  return(callback({error: "Error in get friends for dashboard query"}));
+                  }else {
+
+                     if (result3.length === 0) {
+                      var friends = null;
+                    }else {
+                      var friends = {};
+                      var friendsIds = [];
+                      result3.forEach(function (friendIndex) {
+                          friends[friendIndex.id] = userModel.convertRowsToUserProfileObject(friendIndex);
+                          //if(friendIndex.status == 1)
+                          friendsIds.push(friendIndex.id);
+
+                      });
+                      if(friendsIds && friendsIds.length !=0){
+                        var getFriendsPostImagesSqlString = constructFreindsPostImagesSqlString(friendsIds);
+                        dbConnection.query(getFriendsPostImagesSqlString,function(error4,result4,fileds4){
+                          if(error4){
+                            return(callback({error:"Error in friends image query"}));
+                          }else{
+                            if(result4.length == 0){
+                              var postImage = null;
+                            }else{
+                              var postImage = {};
+                              result4.forEach(function (freindsPostId) {
+                                if(postImage[freindsPostId.user_id]){
+                                  postImage[freindsPostId.user_id].push(freindsPostId);
+                                  // console.log('current length is: '+ postObj[friendsPost.user_id].length)
+                                } else{
+                                  var temp = [];
+                                  temp.push(freindsPostId);
+                                  postImage[freindsPostId.user_id] = temp;
+                                }
+
+                              });
+                            }
+                            return (callback({latestPost: latestPost,categories: categories,friends:friends,friendsPostImages:postImage}));
+                          }
+                        });
+                      }
+                    }
+
+
+                  }
+                });
+
+
+              }
+            });
+
+          }
+      });
     },
 
     getUserProfile: function (userId, callback) {
@@ -46,7 +158,7 @@ var userModel = {
             } else if (results.length === 0) {
                 return (callback({error: "User not found."}));
             } else {
-              userProfileData = userModel.convertRowsToUserProfileObject(results);
+              userProfileData = userModel.convertRowsToUserProfileObject(results[0]);
               dbConnection.query(getUsersCategoriesSqlString, function (error1, results1, fields1) {
                 if (error1) {
                     dbConnection.destroy();
@@ -176,11 +288,11 @@ var userModel = {
     sendForgotPasswordMail(token,from,to,subject,callback){
       var content = '<b>Hello,</b><br/><p>Please click on the link below to reset your password.</p>' +
               '<br/><a href="http://localhost:6969/#/admin/resetPassword/' + token + '" target="_blank">Click here</a>';
-      var sendMail = sendMailToUser(token,from,to,subject,content);
-      if(sendMail == 'success'){
+
+      if(sendMailToUser(token,from,to,subject,content)){
         return (callback({success: "Sent forgot password email"}));
       }else{
-          return (callback({success: "Sent forgot password email"}));
+          return (callback({error: "Error in send email"}));
       }
 
 
@@ -219,10 +331,11 @@ var userModel = {
                 // Send signup email to user
                 var content = '<b>Hello,</b><br/><p>Please click on the link below to verify and complete your signup.</p>' +
                         '<br/><a href="http://localhost:6969/#/verifySignUp/' + data.token + '" target="_blank">Click here</a>';
-                if(sendMailToUser(data.verify_token,'admin@geodex.com',data.email,'Verify Signup',content)){
+                var sendmail = sendMailToUser(data.verify_token,'admin@geodex.com',data.email,'Verify Signup',content);
+                if(sendmail){
                   return (callback({success: "Successfully sent verify signup email"}));
                 }else{
-                  return (callback({success: "Successfully sent verify signup email"}));
+                  return (callback({error: sendmail}));
                 }
 
               }else {
@@ -240,7 +353,7 @@ var userModel = {
 
     // Update User Function
 
-    updateUser(data,callback){
+    updateUser: function(data,callback){
         var dbConnection = dbConnectionCreator();
         var updateUserQuery=constructupdateUserQuery(data);
         var updateUserDetailsQuery = constructupdateUserDetailQuery(data);
@@ -250,18 +363,16 @@ var userModel = {
             if (error) {
                 dbConnection.destroy();
 
-                return (callback({error: error}));
+                return (callback({error: updateUserQuery}));
             } else if (results.affectedRows === 1) {
 
                 //Update query for gx_user_details table
                 dbConnection.query(updateUserDetailsQuery,function(errors,result,field){
                   if(errors){
                     dbConnection.destroy();
-                        return (callback({error: errors}));
-                    }else if (result.affectedRows === 1) {
-                      return (callback({success: "Update user data successfully"}));
+                        return (callback({error: updateUserDetailsQuery}));
                     }else {
-                        return (callback({error: "Error in updating user details"}));
+                      return (callback({success: "Update user data successfully"}));
                     }
                 });
 
@@ -359,8 +470,13 @@ var userModel = {
 
             //Send notification email on success
             //token,from,to,subject,content
-            sendMailToUser('','admin@geodex.com',data.receiver.email,'New friend request',mailContent);
-            return(callback({success:"Successfully sent friend request"}));
+
+
+            if(sendMailToUser('','admin@geodex.com',data.receiver.email,'New friend request',mailContent)){
+              return(callback({success:"Successfully sent friend request"}));
+            }else{
+              return(callback({error:"Error in send friend request email"}));
+            }
           } else {
               return (callback({error: results}));
           }
@@ -412,6 +528,23 @@ var userModel = {
 
 
 };
+
+function constructFreindsPostImagesSqlString(friendsIds){
+  var query = "Select user_id, (image) post_image from gx_posts WHERE image!='' and user_id IN("+friendsIds+")";
+  return query;
+}
+
+function constructFriendListForDashboardSqlString(userId){
+  var query="SELECT (a.user_id) id,CONCAT(first_name,' ',last_name) NAME,dob,gender,address,latitude,longitude,"+
+             "profile_image,cover_image,MAX(c.id) post_id,(image) post_image,(content) post_content"+
+            " FROM `gx_user_details` a,(SELECT receiver_id FROM `gx_friends_list` WHERE sender_id ='"+userId+"'  AND STATUS = 1 UNION SELECT sender_id FROM `gx_friends_list` WHERE receiver_id ='"+userId+"' AND STATUS = 1) b,"+
+            " gx_posts c WHERE a.user_id = b.receiver_id AND a.user_id = c.user_id GROUP BY a.user_id ORDER BY c.id desc";
+            return query;
+}
+function constructLatestPostSqlString(userId){
+  var query = "Select * from gx_posts WHERE user_id="+userId+" Order By id desc Limit 1";
+  return query;
+}
 
 function constructGetPostByUserSqlString(userId){
     var query = "select * from gx_posts where user_id="+userId;
@@ -475,7 +608,7 @@ function constructupdateUserQuery(data){
     var formatted = timestamp.format('YYYY-MM-DD HH:mm:ss Z');
     var query = "UPDATE  `gx_users` SET  `email`="+mysql.escape(data.email)+
                 ", `last_updated`='"+formatted+
-                "' WHERE id="+data.user_id;
+                "' WHERE id="+data.id;
     return query;
 }
 function constructupdateUserDetailQuery(data){
@@ -497,13 +630,19 @@ function constructupdateUserDetailQuery(data){
 function sendMailToUser(token,from,to,subject,content){
   //var smtpTransport = require('nodemailer-smtp-transport');
 
-  var transporter = nodemailer.createTransport(smtpTransport({
-      service: 'gmail',
-      auth: {
-         user: 'celebsingh1313@gmail.com', // Your email id
-         pass: 'edc@12345' // Your password
-      }
-  }));
+  var options ={
+      user: "talentelgia.testing@gmail.com", // Your gmail address.
+      clientId: "1049106362726-4eei3tl0inuf3j46ecseqsevbendthcv.apps.googleusercontent.com",
+      clientSecret: "7gSMmOvpUBQC6jVy5C_C41mJ",
+      refreshToken: "1/8genCpzLHqq32GWGT5cmNcQwlrbkqzjqx1QkRbJ37s4",
+      accessToken:"ya29.Ci-KAyJAGea8pMrMWelab6NTdPcTOQWDe_IeR-2o7l5EeAZmhXiMQMtWqZQMyrnfog"
+     };
+var smtpTransport = nodemailer.createTransport("SMTP", {
+  service: "Gmail",
+  auth: {
+    XOAuth2:options
+  }
+});
 
   var mailOptions = {
       from: from, // sender address
@@ -512,16 +651,13 @@ function sendMailToUser(token,from,to,subject,content){
       // text: token //, // plaintext body
       html: content
   };
-  transporter.sendMail(mailOptions, function (error, info) {
-      if (error) {
-
-          return false;
-      } else {
-
-        return true;
-      }
-
-
+  smtpTransport.sendMail(mailOptions, function(error, response) {
+  if (error) {
+    return error;
+  } else {
+    return response;
+  }
+  smtpTransport.close();
   });
 }
 
@@ -553,10 +689,12 @@ function constructresetPasswordByTokenQuery(token, pwd){
 }
 
 function constructGetUserProfileSqlString(userId) {
-    var query = " SELECT  *, profile_image " +
-            " FROM gx_users LEFT JOIN gx_user_details " +
-            " ON gx_user_details.user_id = gx_users.id" +
-            " WHERE  gx_users.id = " + mysql.escape(userId);
+
+    var query = "SELECT  a.id, a.email,a.role,"+
+      " profile_image,cover_image,first_name, last_name, gender, dob, address,latitude,longitude"+
+      " FROM gx_users a LEFT JOIN gx_user_details b ON b.user_id = a.id"+
+      " WHERE  a.id = " + mysql.escape(userId);
+
     return query;
 
 }

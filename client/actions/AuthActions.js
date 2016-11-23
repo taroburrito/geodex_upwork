@@ -195,6 +195,7 @@ export function changePassword(email,newPwd){
 }
 
 export function attemptSignUp(formData) {
+	console.log(formData);
   return (dispatch) => {
     dispatch(clickedSignUp());
 

@@ -1,5 +1,6 @@
 // TODO create and use utility fuction that converts req.user to userObject
 var authenticationMiddleware = require('../middlewares/authentication.js');
+var userModel = require('../models/users.js');
 
 
 /**
@@ -19,8 +20,14 @@ function addAuthRoute(app, passport, routePath, strategy) {
                 req.logIn(user, function (err) {
                     if (err) {
                         return next(err);
+                    }else{
+
+                      userModel.getLoggedInUserData(user.id, function (result) {
+                        var final_result = Object.assign({},user,result);
+                          return res.json(result);
+                      });
                     }
-                    return res.json(user);
+
                 });
             }
         })(req, res, next);
@@ -39,14 +46,23 @@ module.exports = function (app, passport) {
 
     app.post('/checkSession', function (req, res) {
         var isLoggedIn = req.isAuthenticated();
-        if (isLoggedIn)
-            return res.json({isLoggedIn: isLoggedIn,
-                userObject: {role: req.user.role,
-                    id: req.user.id,
-                    email: req.user.email
-                }
+        if (isLoggedIn){
+            // return res.json({isLoggedIn: isLoggedIn,
+            //     userObject: {role: req.user.role,
+            //         id: req.user.id,
+            //         email: req.user.email
+            //     }
+            // });
+            req.user.isLoggedIn = isLoggedIn;
+            userModel.getLoggedInUserData(req.user.id, function (result) {
+              var final_result = Object.assign({},req.user,result);
+                return res.json(final_result);
             });
-        return res.json({isLoggedIn: isLoggedIn});
+          }else {
+              return res.json({isLoggedIn: isLoggedIn});
+            }
+
+        //return res.json({isLoggedIn: isLoggedIn});
     });
 
 

@@ -6,10 +6,10 @@ import Home from '../../components/front/Home';
 import DashboardPage from '../../components/front/DashboardPage';
 import Navbar from '../../components/Navbar';
 import { attemptLogout } from '../../actions/AuthActions';
-import {addCategory} from '../../actions/CategoryActions';
-import {addPost} from '../../actions/PostActions';
-import {getUserDetail} from '../../utilities/ServerSocket';
-import {updatefriendsList} from '../../actions/UserActions';
+//import {addCategory} from '../../actions/CategoryActions';
+//import {addPost} from '../../actions/PostActions';
+import {getUserDetail, fetchDashboardData} from '../../utilities/ServerSocket';
+import {updatefriendsList, addPost, addCategory} from '../../actions/UserActions';
 
 class HomePage extends Component{
   constructor(props){
@@ -36,9 +36,10 @@ class HomePage extends Component{
           categories={this.props.categories}
           friends={this.props.friendsList}
           userAuthSession = {this.props.userAuthSession}
-          fetchInitialData={(id)=>getUserDetail(id)}
+          fetchInitialData={(id)=>fetchDashboardData(id)}
           userProfileData={this.props.userProfileData}
-          handleMessage={this.props.handleMessage}/>
+          handleMessage={this.props.handleMessage}
+          dashboardData={this.props.dashboardData}/>
         </div>
       );
     }else{
@@ -65,7 +66,8 @@ function select(state) {
   friendsList: state.friendsListState,
   handleMessage: state.handleMessage,
   posts:state.postsList,
-  friendsPosts: state.friendsPosts
+  friendsPosts: state.friendsPosts,
+  dashboardData: state.dashboardData
   };
 }
 

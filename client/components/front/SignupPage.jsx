@@ -43,15 +43,6 @@ export default class SignupPage extends Component {
 
   handleOnClickSignUp(){
 
-    var gender;
-    if(this.refs.radio_male.getDOMNode().value){
-      gender = this.refs.radio_male.getDOMNode().value;
-    }else if (this.refs.radio_female.getDOMNode().value) {
-      gender = this.refs.radio_female.getDOMNode().value;
-    }else{
-      gender = "male";
-    }
-
     var formData = {
       first_name: this.refs.first_name.getDOMNode().value.trim(),
       last_name:  this.refs.last_name.getDOMNode().value.trim(),
@@ -108,7 +99,11 @@ export default class SignupPage extends Component {
     }
     else if (this.state.dob === null) {
       this.setState({errorMessage:'Please enter date of birth'});
-    }else{
+    }else if (!this.state.gender) {
+      this.setState({errorMessage:'Please choose gender.'});
+
+    }
+    else{
       this.setState({errorMessage:null});
       //dispatch(attemptSignUp(formData));
       this.props.onClickSignUp(formData);
@@ -116,9 +111,9 @@ export default class SignupPage extends Component {
     }
 
   }
-  selsectGender(e){
-    this.setState({gender:e.target.value});
-  }
+  // selsectGender(e){
+  //   this.setState({gender:e.target.value});
+  // }
 
   render(){
     const { search } = this.state;
@@ -177,12 +172,12 @@ export default class SignupPage extends Component {
             <div className="uk-width-small-1-2 gender_select">
               <label>Gender</label>
 
-              <input name="sex" value="male" id="u_0_d" type="radio" ref="radio_male" onChange={this.selsectGender.bind(this)} checked={true}/>
+              <input name="sex" type="radio" ref="radio_male" value="male" onChange={(e)=>this.setState({gender:e.target.value})}/>
               <label className="_58mt" for="u_0_d">
                 Male
               </label>
 
-              <input name="sex" value="female" id="u_0_e" type="radio" ref="radio_female" onChange={this.selsectGender.bind(this)}/>
+              <input name="sex"  type="radio" ref="radio_female"  value="female" onChange={(e)=>this.setState({gender:e.target.value})}/>
               <label className="_58mt" for="u_0_e">
                 Female
               </label>

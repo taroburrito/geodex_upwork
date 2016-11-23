@@ -9,25 +9,22 @@ export default class ProfileWidget extends Component {
 
     }
     componentWillMount() {
-        const {userAuthSession, dispatch} = this.props;
-        
-        this.props.fetchInitialData(userAuthSession.userObject.id);
+        // const {userAuthSession, dispatch} = this.props;
+        // if(userAuthSession.userObject.id)
+        // this.props.fetchInitialData(userAuthSession.userObject.id);
     }
 
 
     render() {
         if(this.props.userdetail){
-
-                return (
+          return (
                     <div>
-                        <EditProfile  userdetail={this.props.userdetail}/>
+                        <EditProfile
+                          userdetail={this.props.userdetail}
+                          userAuthSession={this.props.userAuthSession}/>
 
                     </div>
 
-                );
-        }else{
-            return (
-                    <div></div>
                 );
         }
 
