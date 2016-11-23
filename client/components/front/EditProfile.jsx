@@ -48,11 +48,12 @@ export default class EditProfile extends Component {
   handleSave (data) {
     var img = this.refs.avatar.getImage();
    // this.setState({ preview: img});
-    const {dispatch, userData}=this.props;
+    const {dispatch, userAuthSession}=this.props;
+    var userData = userAuthSession.userObject;
     userData.profile_image = img;
-    if(dispatch(updateUserProfileData(userData))){
+    //if(dispatch(updateUserProfileData(userData))){
     dispatch(updateProfileInput('profile_image',img));
-    }
+    //}
 
   }
 
@@ -172,6 +173,20 @@ getProfileImage(img){
 
 }
 
+handleImageChange(evt) {
+    var self = this;
+    var reader = new FileReader();
+    var file = evt.target.files[0];
+
+    reader.onloadend = function(upload) {
+    self.setState({
+        profile_image: upload.target.result
+      });
+    };
+reader.readAsDataURL(file);
+
+}
+
 setDateofBirth(x){
      var selectedDate = JSON.stringify(x);
      this.setState({dob:selectedDate});
@@ -280,7 +295,7 @@ renderProfileModel(){
     <div id="profilepic" className="uk-modal profile-modal" >
        <div className="uk-modal-dialog">
            <AvatarEditor
-             image={this.getProfileImage(userData.profile_image)}
+             image={this.getProfileImage(this.state.profile_image)}
              ref="avatar"
              width={250}
              height={250}
@@ -296,6 +311,7 @@ renderProfileModel(){
              onDropFile={this.logCallback.bind(this, 'onDropFile')}
             />
         <br />
+        <input type="file"  ref="file"  onChange={this.handleImageChange.bind(this)}/><br/>
        <input name="scale" type="range" ref="scale" onChange={this.handleScale} min="1" max="2" step="0.01"
                     defaultValue="1" />
 
@@ -391,7 +407,7 @@ renderCoverModel(){
                                     </div>
                                 </div>
                             </div>
-                            <a href="#" data-uk-modal="{target:'#coverImage'}" className="edit_profile_background_btn">Edit <i class="uk-icon-file-image-o"></i></a>
+                            <a href="#" data-uk-modal="{target:'#coverImage'}" className="edit_profile_background_btn">Edit <i className="uk-icon-file-image-o"></i></a>
                         </div>
                     </div>
                 </div>
