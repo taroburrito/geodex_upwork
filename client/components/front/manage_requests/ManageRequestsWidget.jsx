@@ -17,7 +17,9 @@ render(){
   if(friendRequests)
    var friendElement = [];
   Object.keys(friendRequests).forEach((id)=> {
-    friendElement.push(<FriendRequestsList id={id} clickedConfirmRequest={this.props.clickedConfirmRequest}
+    friendElement.push(<FriendRequestsList id={id}
+                clickedDeleteRequest={this.props.clickedDeleteRequest}
+                clickedConfirmRequest={this.props.clickedConfirmRequest}
                 {...friendRequests[id]}
                 isSaved={true}
              />);

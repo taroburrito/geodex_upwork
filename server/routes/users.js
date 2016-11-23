@@ -206,6 +206,14 @@ var setUserRoutes = function (router) {
               }
             );
 
+            router.delete('/api/v1/users/deleteFriendRequest/:id',
+                function(req,res){
+                    userModel.deleteFriendRequest(req.params.id,function(results){
+                      return res.json(results);
+                    });
+                }
+              );
+
 }
 
 module.exports = setUserRoutes;

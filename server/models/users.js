@@ -59,6 +59,25 @@ var userModel = {
     },
 
     /*
+     func:delete friend request
+     params: request id
+     return: success or error
+    */
+    deleteFriendRequest: function(requestId, callback){
+      var dbConnection = dbConnectionCreator();
+      var deleteFriendRequestSqlString = constructDeleteFriendRequestSqlString(requestId);
+      dbConnection.query(deleteFriendRequestSqlString, function(error,results,fields){
+        if(error){
+          return(callback({error:error}));
+        }else if (results.affectedRows === 0) {
+          return(callback({error:"Not deleted record"}));
+        }else{
+          return(callback({success:"Deleted Friend successfully"}));
+        }
+      });
+    },
+
+    /*
      func:get friend requests of LoggedIn user
      params: userId
      return: friend Requests List
@@ -167,7 +186,7 @@ var userModel = {
 
                               });
                             }
-                            return (callback({latestPost: latestPost,categories: categories,friends:friends,friendsPostImages:postImage}));
+                            return (callback({latestPost: latestPost,categories: categories,friends:friends,friendsPostImages:postImage,query:getFriendsListForDashboardSqlString}));
                           }
                         });
                       }else{
@@ -579,6 +598,11 @@ var userModel = {
 
 
 };
+
+function constructDeleteFriendRequestSqlString(requestId){
+  var query = "DELETE from  gx_friends_list  WHERE id="+requestId;
+  return query;
+}
 
 function constructConfirmFriendRequestSqlString(requestId){
   var query = "UPDATE gx_friends_list set status=1 WHERE id="+requestId;

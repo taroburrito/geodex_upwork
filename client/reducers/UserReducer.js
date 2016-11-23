@@ -6,7 +6,10 @@ import {
           Fetch_Dashboard_Data,
           Post_Added_Dashboard_Success,
           Category_Added_Dashboard_Success,
-          Fetch_Freind_Requests
+          Fetch_Freind_Requests,
+          Confirm_Friend_Success,
+          Delete_Friend_Request_Success,
+          Delete_Friend_Request_Failed
         } from '../actions/UserActions';
 
 
@@ -72,6 +75,18 @@ export function friendRequests(friendRequestsState={}, action){
     case Fetch_Freind_Requests:
     return Object.assign({},friendRequestsState,action.friendRequests);
       break;
+
+      case Confirm_Friend_Success:
+        var prevState = Object.assign({},friendRequestsState);
+        delete prevState[action.id];
+        return Object.assign({},prevState);
+        break;
+
+        case Delete_Friend_Request_Success:
+          var prevState = Object.assign({},friendRequestsState);
+          delete prevState[action.id];
+          return Object.assign({},prevState);
+          break;
     default:
     return friendRequestsState;
   }
