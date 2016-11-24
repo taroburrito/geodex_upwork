@@ -11,6 +11,8 @@ export const Update_Profile_Success='Update_Profile_Success';
 import {Handle_Success_Message} from './PageActions';
 export const Fetch_Freind_List = 'Fetch_Freind_List';
 export const Get_Visited_User_Data = 'Get_Visited_User_Data';
+export const Update_Profile_Input_Success = 'Update_Profile_Input_Success';
+export const Update_Profile_Input_Failed = 'Update_Profile_Input_Failed';
 
 	/*
      * other constants
@@ -90,14 +92,15 @@ export function updateUserProfileData(userData){
   return(dispatch) => {
     $.ajax({
       type:'Post',
-      url:'/api/v1/user/update/'+userData.id,
+      url:'/api/v1/users/update/'+userData.id,
       dataType:'JSON',
       data:userData,
     }).done(function(data){
 
       if(data.error){
-        console.log("error:"+JSON.stringify(data.error));
+        console.log("error in update userProfile:"+JSON.stringify(data.error));
       }else{
+        console.log("Success update user Profile");
         dispatch(updateProfileSuccess(userData));
       // /  dispatch(handleSuccessMessage("Updated Successfully"));
 
@@ -106,6 +109,14 @@ export function updateUserProfileData(userData){
     console.log("Error in update profile api"+ error);
     })
   }
+}
+
+export function updateProfileInputSuccess(userObject){
+  return{type: Update_Profile_Input_Success, data:userObject}
+}
+
+export function updateProfileInputFailed(error){
+  return{type: Update_Profile_Input_Failed, error}
 }
 
 export function updateUserData(userData){
@@ -118,15 +129,19 @@ export function updateUserData(userData){
     }).done(function(data){
 
       if(data.error){
+        console.log("error update user data api");
         console.log("error:"+data.error);
+          dispatch(updateProfileInputFailed(data.error));
       }else{
+        console.log("success update user data api");
         console.log(data);
-        //dispatch(updateProfileSuccess(userData));
+        dispatch(updateProfileInputSuccess(userData));
       // /  dispatch(handleSuccessMessage("Updated Successfully"));
 
       }
     }).error(function(error){
-    console.log("Error in update user data api"+ JSON.stringify(error));
+    console.log("Error update user data api call"+ JSON.stringify(error));
+    dispatch(updateProfileInputFailed("Error in update profiel"));
     })
   }
 }
