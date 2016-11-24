@@ -156,7 +156,7 @@ export default class EditProfile extends Component {
 
         }else{
             this.setState({errorMessage:null});
-
+            // save profile data
             dispatch(updateUserProfileData(formData));
         }
 
