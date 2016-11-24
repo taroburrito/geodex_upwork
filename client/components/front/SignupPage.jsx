@@ -157,7 +157,7 @@ _handleKeyPress(e){
                   <input className="uk-width-1-1 uk-form-large" type="text" ref="address" value={ search } placeholder="Search a location" onChange={ this.handleSearchChange.bind(this) }/>
                   <input type="hidden" value={this.state.selectedCoordinate?this.state.selectedCoordinate.latitude:''} ref="latitude"/>
                   <input type="hidden" value={this.state.selectedCoordinate?this.state.selectedCoordinate.longitude:''} ref="longitude"/>
-            </GooglePlacesSuggest>
+              </GooglePlacesSuggest>
 
 
               <div className="uk-grid uk-grid-small">

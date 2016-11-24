@@ -70,7 +70,7 @@ var setUserRoutes = function (router) {
             function (req, res) {
 
                 var data = req.body;
-                userModel.signUp(data, function (result) {
+                userModel.signUp(data,req, function (result) {
                    return res.json(result);
                 }
                 );

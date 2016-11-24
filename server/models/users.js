@@ -365,8 +365,8 @@ var userModel = {
 
 
 // Signup Function
-    signUp: function(data,callback){
-
+    signUp: function(data,req,callback){
+       var baseUrl=req.protocol+"://"+req.get('host');
        var dbConnection = dbConnectionCreator();
        var token = randtoken.generate(16);
        data.verify_token = token;
@@ -400,7 +400,7 @@ var userModel = {
 
                 // Send signup email to user
                 var content = '<b>Hello,</b><br/><p>Please click on the link below to verify and complete your signup.</p>' +
-                        '<br/><a href="http://localhost:6969/#/verifySignUp/' + data.token + '" target="_blank">Click here</a>';
+                        '<br/><a href="'+baseUrl+'"/#/verifySignUp/' + data.token + '" target="_blank">Click here</a>';
                 var sendmail = sendMailToUser(data.verify_token,'admin@geodex.com',data.email,'Verify Signup',content);
                 if(sendmail){
                   return (callback({success: "Successfully sent verify signup email"}));
