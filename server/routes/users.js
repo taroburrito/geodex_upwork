@@ -101,16 +101,13 @@ var setUserRoutes = function (router) {
                 });
             }
     );
-    router.post('/api/v1/user/update/:id',
+    router.post('/api/v1/users/update/:id',
         function (req, res) {
 
           //  console.log(req.body);
-            userModel.updateUser(req.body,function(results){
-                if(results.success){
-                    return res.json("success");
-                }else{
-                    return res.json(results);
-                }
+            userModel.updateUserProfile(req.body,function(results){
+                return res.json(results);
+
             });
 
         }
@@ -130,20 +127,20 @@ var setUserRoutes = function (router) {
         }
     );
 
-    router.post('/api/v1/user/updateProfileImage/:id',
-        function (req, res) {
-
-          //  console.log(req.body);
-            userModel.updateUser(req.body,function(results){
-                if(results.success){
-                    return res.json(results);
-                }else{
-                    return res.json(results);
-                }
-            });
-
-        }
-    );
+    // router.post('/api/v1/user/updateProfileImage/:id',
+    //     function (req, res) {
+    //
+    //       //  console.log(req.body);
+    //         userModel.updateUser(req.body,function(results){
+    //             if(results.success){
+    //                 return res.json(results);
+    //             }else{
+    //                 return res.json(results);
+    //             }
+    //         });
+    //
+    //     }
+    // );
 
     router.post('/api/v1/user/deleteFriend/:id',
         function (req, res) {

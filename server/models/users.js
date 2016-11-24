@@ -26,13 +26,13 @@ var userModel = {
     getLoggedInUserData: function(userId,callback){
       var dbConnection = dbConnectionCreator();
       var getUserSettingsSqlString = constructGetUserProfileSqlString(userId);
-      dbConnection.query(getUserSettingsSqlString,function(error,result,fields){
+        dbConnection.query(getUserSettingsSqlString,function(error,result,fields){
         if(error){
           return(callback({error:"Error in get LoggedIn user data query"}));
         }else if (result.length == 0) {
           return(callback({error:"No result found for userid:"+userId}));
         }else {
-        var userObject = userModel.convertRowsToUserProfileObject(result[0]);
+            var userObject = userModel.convertRowsToUserProfileObject(result[0]);
             return (callback({userObject}));
         }
       });
@@ -283,7 +283,7 @@ var userModel = {
       dbConnection.query(getUserFriendsListSqlString, function (error, results, fields) {
           if (error) {
               dbConnection.destroy();
-              console.log("error: ", error);
+
               return (callback({error: error}));
           } else if (results.length === 0) {
               return (callback({error: "User not found."}));
@@ -303,7 +303,7 @@ var userModel = {
         dbConnection.query(getUserSettingsSqlString, function (error, results, fields) {
             if (error) {
                 dbConnection.destroy();
-                console.log("error: ", error);
+
                 return (callback({error: error}));
             } else if (results.length === 0) {
                 return (callback({error: "Token not found."}));
@@ -421,9 +421,11 @@ var userModel = {
     },
 
 
-    // Update User Function
-
-    updateUser: function(data,callback){
+    /* func: Update User Profile
+      params: userObject
+      return: success or error
+    */
+    updateUserProfile: function(data,callback){
         var dbConnection = dbConnectionCreator();
         var updateUserQuery=constructupdateUserQuery(data);
         var updateUserDetailsQuery = constructupdateUserDetailQuery(data);
@@ -433,21 +435,19 @@ var userModel = {
             if (error) {
                 dbConnection.destroy();
 
-                return (callback({error: updateUserQuery}));
-            } else if (results.affectedRows === 1) {
+                return (callback({error: error}));
+            } else{
 
                 //Update query for gx_user_details table
                 dbConnection.query(updateUserDetailsQuery,function(errors,result,field){
                   if(errors){
                     dbConnection.destroy();
-                        return (callback({error: updateUserDetailsQuery}));
+                        return (callback({error: errors}));
                     }else {
                       return (callback({success: "Update user data successfully"}));
                     }
                 });
 
-            } else {
-                return (callback({error: "Error in update "}));
             }
         });
     },
@@ -710,9 +710,8 @@ function constructupdateUserDetailQuery(data){
         ", address = " + mysql.escape(data.address) +
         ", latitude = " + mysql.escape(data.latitude) +
         ", longitude = " + mysql.escape(data.longitude) +
-        ", profile_image = " + mysql.escape(data.profile_image) +
         ", last_updated = '" + formatted+"'" +
-        " WHERE user_id = " + mysql.escape(data.user_id);
+        " WHERE user_id = " + mysql.escape(data.id);
     return query;
 }
 function sendMailToUser(token,from,to,subject,content){
@@ -796,7 +795,7 @@ function constructgetUserFriendsListSqlString(userId){
   " left join gx_user_details as gud on gfl.sender_id = gud.user_id"+
    " left join gx_users as gu on gu.id = gud.user_id"+
   " WHERE   gfl.receiver_id="+ mysql.escape(userId);
-  console.log(query);
+
   return query;
 }
 

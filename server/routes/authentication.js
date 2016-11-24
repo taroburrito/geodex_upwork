@@ -24,6 +24,7 @@ function addAuthRoute(app, passport, routePath, strategy) {
 
                       userModel.getLoggedInUserData(user.id, function (result) {
                         var final_result = Object.assign({},user,result);
+                        //console.log(result);
                           return res.json(result);
                       });
                     }
