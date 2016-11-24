@@ -1,4 +1,4 @@
-
+import moment from 'moment';
 var emailRegex = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
 var displayNameRegex = /^[a-zA-Z\-\_0-9]+$/; //alphanumerics, "-" and "_"
 var passwordRegex = /^[a-zA-Z0-9!@#$%^&*]{6,}$/; // At least 6 characters    
@@ -27,5 +27,11 @@ export function validateDisplayName(displayName) {
 	*/
 export function validatePassword(password) {
 	return passwordRegex.test(password);
+}
+
+export function validateDate(dateStr){
+	var d = moment(dateStr,'D/M/YYYY');
+    if(d == null || !d.isValid()) return false;
+    return true;
 }
 

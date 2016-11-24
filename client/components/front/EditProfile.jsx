@@ -5,7 +5,7 @@ import GooglePlacesSuggest from 'react-google-places-suggest';
 import { Navigation } from 'react-router';
 import Datetime from 'react-datetime'
 import ChangePassword from './ChangePassword';
-import { validateEmail, validateDisplayName, validatePassword } from '../../utilities/RegexValidators';
+import { validateEmail, validateDisplayName, validatePassword,validateDate } from '../../utilities/RegexValidators';
 require('react-datetime/css/react-datetime.css');
 import {updateProfileInput,updateUserProfileData,updateUserData} from '../../actions/ProfileActions';
 var AvatarEditor = require('react-avatar-editor');
@@ -126,31 +126,40 @@ export default class EditProfile extends Component {
           latitude:this.state.latitude,
           id: userAuthSession.userObject.id
         };
+
         console.log(formData);
         //dispatch(updateUserProfileData(formData));
-        if(formData.first_name === ''){
+        if(!validateDisplayName(formData.first_name)){
             this.setState({errorMessage:'Please enter first name'});
             this.refs.first_name.getDOMNode().focus();
-        }else if (formData.last_name === '') {
-            this.setState({errorMessage:'Please enter last name'});
-            this.refs.last_name.getDOMNode().focus();
+        }else if (!validateDisplayName(formData.last_name)) {
+          this.setState({errorMessage:'Please enter last name'});
+          this.refs.last_name.getDOMNode().focus();
         }else if (formData.email === '') {
-            this.setState({errorMessage:'Please enter email'});
-            this.refs.email.getDOMNode().focus();
+          this.setState({errorMessage:'Please enter email'});
+          this.refs.email.getDOMNode().focus();
         }else if (!validateEmail(formData.email)) {
-            this.setState({errorMessage:'Please enter correct email address'});
-            this.refs.email.getDOMNode().focus();
+          this.setState({errorMessage:'Please enter correct email address'});
+          this.refs.email.getDOMNode().focus();
         }
         else if (formData.address === '') {
-            this.setState({errorMessage:'Please enter address'});
-            this.refs.address.getDOMNode().focus();
-        }else if (formData.dob === null) {
-            this.setState({errorMessage:'Please enter date of birth'});
+          this.setState({errorMessage:'Please enter address'});
+          this.refs.address.getDOMNode().focus();
+        }else if (formData.password === '') {
+          this.setState({errorMessage:'Please enter Password'});
+          this.refs.password.getDOMNode().focus();
+        }
+        else if (!validateDate(new Date(formData.dob))) {
+          this.setState({errorMessage:'Please enter date of birth'});
+        }else if (!this.state.gender) {
+          this.setState({errorMessage:'Please choose gender.'});
+
         }else{
             this.setState({errorMessage:null});
 
             dispatch(updateUserProfileData(formData));
         }
+
 
     }
 
@@ -210,7 +219,7 @@ reader.readAsDataURL(file);
 
 setDateofBirth(x){
      var selectedDate = JSON.stringify(x);
-     this.setState({dob:selectedDate});
+     this.setState({dob:new Date(x)});
   }
 
 __renderContent(){
