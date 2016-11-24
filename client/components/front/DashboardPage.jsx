@@ -16,16 +16,24 @@ export default class DashboardPage extends Component {
     this.handleSavePostImage = this.handleSavePostImage.bind(this);
     this.handleSavePost = this.handleSavePost.bind(this);
     this.handleChangeSort = this.handleChangeSort.bind(this);
+    this.sortByAllCategory = this.sortByAllCategory.bind(this);
     this.state ={
       errorMessage: null,
       image: "public/images/user.jpg",
-      post_image:null
+      post_image:null,
+      active_cat:'all'
+
     }
   }
 
   componentWillMount(){
     const{userAuthSession} = this.props;
-    this.props.fetchInitialData(userAuthSession.userObject.id);
+    this.props.fetchInitialData(userAuthSession.userObject.id,null);
+  }
+
+  sortByAllCategory(){
+    const{userAuthSession} = this.props;
+    this.props.fetchInitialData(userAuthSession.userObject.id,null);
   }
 
   handleSavePostImage(){
@@ -104,37 +112,59 @@ export default class DashboardPage extends Component {
 
   handleChangeSort(){
     var sortBy = this.refs.sortFriends.getDOMNode().value;
-    console.log(sortBy);
-    const{friends} = this.props;
-    var list = [
-    { name:'Charlie', age:3},
-    { name:'Dog', age:1 },
-    { name:'Baker', age:7},
-    { name:'Abel', age:9 },
-    { name:'Baker', age:5 }
-    ];
+    console.log(this.props);
+    const{dashboardData} = this.props;
+    var friends = dashboardData.friends;
+      var newArr = {};
+      var fullySorted = _.sortBy(friends, sortBy);
+      Object.keys(fullySorted).map((id)=>{
+        newArr[id] = fullySorted[id];
+      });
+    //   var newArr = _.sortBy(friends, 'first_name', function(n) {
+    //   return Math.sin(n);
+    // });
+    if(newArr){
+      console.log(newArr);
+      this.props.updateDashboardFriendList(newArr);
+    }
 
 
-    console.log('*********');
-    console.log(friends);
-    var newArr = {};
-    var fullySorted = _.sortBy( friends, sortBy);
-    Object.keys(fullySorted).map((id)=>{
-      var sorted = fullySorted[id];
-      if(sorted.status == 1)
-      newArr[id] = sorted;
-    });
-  //   var newArr = _.sortBy(friends, 'first_name', function(n) {
-  //   return Math.sin(n);
-  // });
-  if(newArr){
-    this.props.updateFriendList(newArr);
+
+  //   const{friends} = this.props;
+  //   var list = [
+  //   { name:'Charlie', age:3},
+  //   { name:'Dog', age:1 },
+  //   { name:'Baker', age:7},
+  //   { name:'Abel', age:9 },
+  //   { name:'Baker', age:5 }
+  //   ];
+  //
+  //
+  //   console.log('*********');
+  //   console.log(friends);
+  //   var newArr = {};
+  //   var fullySorted = _.sortBy( friends, sortBy);
+  //   Object.keys(fullySorted).map((id)=>{
+  //     var sorted = fullySorted[id];
+  //     if(sorted.status == 1)
+  //     newArr[id] = sorted;
+  //   });
+  // //   var newArr = _.sortBy(friends, 'first_name', function(n) {
+  // //   return Math.sin(n);
+  // // });
+  // if(newArr){
+  //   this.props.updateFriendList(newArr);
+  // }
+  // console.log('*********');
+  // console.log(fullySorted);
+  // console.log('*********');
+  // console.log(newArr);
+
   }
-  console.log('*********');
-  console.log(fullySorted);
-  console.log('*********');
-  console.log(newArr);
-
+  sortByCategory(catId){
+    const{userAuthSession} = this.props;
+    this.setState({active_cat: catId});
+    this.props.fetchInitialData(userAuthSession.userObject.id, catId);
   }
 
   renderCategoriesContent(){
@@ -144,8 +174,8 @@ export default class DashboardPage extends Component {
     if(categories)
     Object.keys(categories).map(function (key) {
       var item = categories[key];
-      categoriesElement.push(<li id={item.id}>{item.category_name}</li>);
-    });
+      categoriesElement.push(<li id={item.id} onClick={this.sortByCategory.bind(this,item.id)} className={this.state.active_cat == item.id ? "active_sm":''}>{item.category_name}</li>);
+    }, this);
     categoriesElement.push(<a data-uk-modal="{target:'#categoryModal'}" href="#" onClick={this.handleClickPlus}><li id={0}>+</li></a>);
 
     return (
@@ -185,15 +215,16 @@ export default class DashboardPage extends Component {
 
   renderFriendPostImages(user_id){
 
-    const{dashboardData} = this.props;
-    var friendsPosts = dashboardData.friendsPostImages;
-   var friend_post_images;
-   if(friendsPosts)
-   var friendsPost = friendsPosts[user_id];
-     if(friendsPost && friendsPost.length){
+     const{dashboardData} = this.props;
+     var friendsPosts = dashboardData.friendsPostImages;
+     var friend_post_images;
+     if(friendsPosts)
+     var friendsPost = friendsPosts[user_id];
+       if(friendsPost && friendsPost.length){
 
        var friendElement = [];
        Object.keys(friendsPost).forEach((postImage)=> {
+
          var postContent = friendsPost[postImage];
          if(postImage)
          friendElement.push(
@@ -205,7 +236,7 @@ export default class DashboardPage extends Component {
          {friendElement}
        );
      }
-
+    console.log(friendsPost);
 
   }
 
@@ -216,9 +247,11 @@ export default class DashboardPage extends Component {
     var friends = dashboardData.friends;
     if(friends)
     Object.keys(friends).map((key)=> {
+
       var item = friends[key];
-      var user_id = key;
+      var user_id = friends[key].id;
       var profile_link = "/user/"+user_id;
+      var slider_images = this.renderFriendPostImages(user_id);
       friendsElement.push(  <div className="uk-grid dash_top_head dash_botom_list" id={item.id}>
 
             <div className="uk-width-small-1-2">
@@ -232,7 +265,7 @@ export default class DashboardPage extends Component {
 
                     <div className="uk-slider-container img_slid">
                         <ul className="uk-slider uk-grid-small uk-grid-width-medium-1-4">
-                          {this.renderFriendPostImages(user_id)}
+                          {slider_images}
 
                         </ul>
                     </div>
@@ -313,7 +346,7 @@ export default class DashboardPage extends Component {
  renderStatusModel(){
    return(
      <div id="statusImage" className="uk-modal" >
-        <div className="uk-modal-dialog" style={{width:300}}>
+        <div className="uk-modal-dialog uk-text-center" style={{width:300}}>
           <AvatarEditor
             image={this.getProfileImage(this.state.image)}
             ref="postImage"
@@ -384,6 +417,7 @@ export default class DashboardPage extends Component {
          </div>
          <div className="uk-width-small-1-1 shortlist_menu">
            <ul>
+             <li onClick={this.sortByAllCategory} className={this.state.active_cat == 'all'?"active_sm":''}>All</li>
              {this.renderCategoriesContent()}
 
         </ul>
@@ -392,10 +426,9 @@ export default class DashboardPage extends Component {
           <select name="sort" ref="sortFriends" onChange={this.handleChangeSort}>
             <option>Please Select</option>
             <option value="created">Recently added</option>
-            <option value="first_name">First Name</option>
-            <option value="last_name">Last Name</option>
+            <option value="NAME">Name</option>
             <option value="email">Email</option>
-            <option value="locaton">Location</option>
+            <option value="latitude">Location</option>
 
 
         </select>

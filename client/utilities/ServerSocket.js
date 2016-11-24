@@ -197,8 +197,9 @@ export function getVisitedUserDetail(userId){
   socket.emit("visited-user-detail", userId);
 }
 
-export function fetchDashboardData(userId){
-  socket.emit("fetch-dashboard-data", userId);
+export function fetchDashboardData(userId,catId){
+  //console.log(catId);
+  socket.emit("fetch-dashboard-data", userId,catId);
 }
 
 export function fetchFriendsRequests(userId){

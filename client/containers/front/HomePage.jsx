@@ -9,7 +9,7 @@ import { attemptLogout } from '../../actions/AuthActions';
 //import {addCategory} from '../../actions/CategoryActions';
 //import {addPost} from '../../actions/PostActions';
 import {getUserDetail, fetchDashboardData} from '../../utilities/ServerSocket';
-import {updatefriendsList, addPost, addCategory} from '../../actions/UserActions';
+import {updatefriendsList,updateDashboardFriendList, addPost, addCategory} from '../../actions/UserActions';
 
 class HomePage extends Component{
   constructor(props){
@@ -25,8 +25,8 @@ class HomePage extends Component{
       return(
         <div className="full_width">
         <DashboardPage
-          updateFriendList={(friendList)=>
-          dispatch(updatefriendsList(friendList))}
+          updateDashboardFriendList={(friendList)=>
+          dispatch(updateDashboardFriendList(friendList))}
           posts={this.props.posts}
           friendsPosts={this.props.friendsPosts}
           onClickSavePost={(data)=>
@@ -36,7 +36,7 @@ class HomePage extends Component{
           categories={this.props.categories}
           friends={this.props.friendsList}
           userAuthSession = {this.props.userAuthSession}
-          fetchInitialData={(id)=>fetchDashboardData(id)}
+          fetchInitialData={(id,catId)=>fetchDashboardData(id,catId)}
           userProfileData={this.props.userProfileData}
           handleMessage={this.props.handleMessage}
           dashboardData={this.props.dashboardData}/>

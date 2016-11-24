@@ -7,6 +7,7 @@ import { attemptLogout } from '../../actions/AuthActions';
 import {fetchUserProfile} from '../../actions/ProfileActions';
 import {getUserDetail} from '../../utilities/ServerSocket';
 
+
 class UserSettings extends Component{
   constructor(props){
     super(props);

@@ -14,6 +14,7 @@ export const Confirm_Friend_Success = 'Confirm_Friend_Success';
 export const Confirm_Friend_Failed = 'Confirm_Friend_Failed';
 export const Delete_Friend_Request_Success = 'Delete_Friend_Request_Success';
 export const Delete_Friend_Request_Failed = 'Delete_Friend_Request_Failed';
+export const Update_Dashboard_Friend_List = 'Update_Dashboard_Friend_List';
 
 
 
@@ -32,6 +33,11 @@ export const Delete_Friend_Request_Failed = 'Delete_Friend_Request_Failed';
  export function updatefriendsList(friendList){
    //console.log(friendList);
    return {type: Update_Friend_List, data: friendList}
+ }
+
+ export function updateDashboardFriendList(friendList){
+   //console.log(friendList);
+   return {type: Update_Dashboard_Friend_List, data: friendList}
  }
 
  export function receivedAllFriendsPosts(friendsPosts){

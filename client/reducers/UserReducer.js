@@ -9,7 +9,8 @@ import {
           Fetch_Freind_Requests,
           Confirm_Friend_Success,
           Delete_Friend_Request_Success,
-          Delete_Friend_Request_Failed
+          Delete_Friend_Request_Failed,
+          Update_Dashboard_Friend_List
         } from '../actions/UserActions';
 
 
@@ -57,6 +58,12 @@ export function updateDashboardData(dashboardDataState={},action){
       var currentData = Object.assign({}, dashboardDataState);
       currentData.latestPost = action.post;
         return Object.assign({}, currentData);
+      break;
+
+      case Update_Dashboard_Friend_List:
+      var currentData = Object.assign({}, dashboardDataState);
+      currentData.friends = action.data;
+        return Object.assign({}, dashboardDataState,currentData);
       break;
 
       case Category_Added_Dashboard_Success:

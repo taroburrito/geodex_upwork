@@ -438,13 +438,13 @@ text-transform:uppercase;
 }
 
 .user_img_right i.uk-icon-image {
-  background: #fff none repeat scroll 0 0;
-  border-radius: 3px;
-  float: right;
-  font-size: 26px;
-  margin-right: 3px;
-  margin-top: -31px;
-  position: relative;
+    background: #fff none repeat scroll 0 0;
+    border-radius: 3px;
+    float: right;
+    font-size: 26px;
+    margin-right: 59px;
+    margin-top: -31px;
+    position: relative;
 }
 
 
@@ -1279,4 +1279,18 @@ form.uk-search.search_dash_nav {
 .manage-request-btns-div{
   text-align: right;
       padding: 5px;
+}
+.dash_top_head {
+    width: 100%;
+}
+
+.user_img_right .uk-button-large {
+    float: right;
+    padding: 0 10px;
+    min-height: 17px;
+    line-height: 26px;
+    margin-top: -33px;
+    border-radius: 0;
+    position: relative;
+    z-index: 100;
 }

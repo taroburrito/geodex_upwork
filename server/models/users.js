@@ -105,12 +105,17 @@ var userModel = {
      params: userId
      return: latestPost,categories,friendslist,friendsLatestPost
     */
-    getDashboardData: function(userId, callback){
+    getDashboardData: function(userId,catId, callback){
+    
       var dbConnection = dbConnectionCreator();
       var getLatestPostSqlString = constructLatestPostSqlString(userId);
       var getUsersCategoriesSqlString = constructGetUserCategoriesSqlString(userId);
       var getUserFriendsListSqlString = constructgetUserFriendsListSqlString(userId);
+      if(!catId){
       var getFriendsListForDashboardSqlString = constructFriendListForDashboardSqlString(userId);
+    }else{
+      var getFriendsListForDashboardSqlString = constructFriendListByCatForDashboardSqlString(userId,catId);
+    }
       var profileData;
       var userCategoriesData;
 
@@ -186,7 +191,7 @@ var userModel = {
 
                               });
                             }
-                            return (callback({latestPost: latestPost,categories: categories,friends:friends,friendsPostImages:postImage,query:getFriendsListForDashboardSqlString}));
+                            return (callback({latestPost: latestPost,categories: categories,friends:friends,friendsPostImages:postImage}));
                           }
                         });
                       }else{
@@ -286,7 +291,7 @@ var userModel = {
 
               return (callback({error: error}));
           } else if (results.length === 0) {
-              return (callback({error: "User not found."}));
+              return (callback({error: "Empty friends list"}));
           } else {
             var friends = {};
             results.forEach(function (result) {
@@ -624,9 +629,17 @@ function constructFreindsPostImagesSqlString(friendsIds){
 
 function constructFriendListForDashboardSqlString(userId){
   var query="SELECT (a.user_id) id,CONCAT(first_name,' ',last_name) NAME,dob,gender,address,latitude,longitude,"+
-             "profile_image,cover_image,MAX(c.id) post_id,(image) post_image,(content) post_content"+
+             "profile_image,cover_image,MAX(c.id) post_id,(image) post_image,(content) post_content, u.email, (u.date_created) created"+
             " FROM `gx_user_details` a,(SELECT receiver_id FROM `gx_friends_list` WHERE sender_id ='"+userId+"'  AND STATUS = 1 UNION SELECT sender_id FROM `gx_friends_list` WHERE receiver_id ='"+userId+"' AND STATUS = 1) b,"+
-            " gx_posts c WHERE a.user_id = b.receiver_id AND a.user_id = c.user_id GROUP BY a.user_id ORDER BY c.id desc";
+            " gx_posts c, gx_users u WHERE a.user_id = b.receiver_id AND a.user_id = c.user_id AND a.user_id = u.id GROUP BY a.user_id ORDER BY c.id desc";
+            return query;
+}
+
+function constructFriendListByCatForDashboardSqlString(userId,catId){
+  var query="SELECT (a.user_id) id,CONCAT(first_name,' ',last_name) NAME,dob,gender,address,latitude,longitude,"+
+             "profile_image,cover_image,MAX(c.id) post_id,(image) post_image,(content) post_content, u.email, (u.date_created) created, fc.category_id"+
+            " FROM `gx_user_details` a,(SELECT receiver_id FROM `gx_friends_list` WHERE sender_id ='"+userId+"'  AND STATUS = 1 UNION SELECT sender_id FROM `gx_friends_list` WHERE receiver_id ='"+userId+"' AND STATUS = 1) b,"+
+            " gx_posts c, gx_users u, gx_friends_category fc WHERE a.user_id = b.receiver_id AND a.user_id = c.user_id AND a.user_id = u.id AND a.user_id = fc.friend_id AND fc.category_id='"+catId+"' GROUP BY a.user_id ORDER BY c.id desc";
             return query;
 }
 function constructLatestPostSqlString(userId){

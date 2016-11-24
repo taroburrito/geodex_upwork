@@ -14,6 +14,7 @@ export default class FriendsList extends Component{
    var friendElement = [];
 
    Object.keys(friends).forEach((id)=> {
+     if(friends[id].status !=0)
      friendElement.push(<Friends id={id} onClickBlock={this.props.onClickBlock} onDeleteClick={this.props.onDeleteClick}
                  {...friends[id]}
                  isSaved={true}
