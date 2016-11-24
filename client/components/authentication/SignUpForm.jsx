@@ -15,6 +15,7 @@ export default class SignUpForm extends Component {
     super(props);
     this.state = Object.assign({}, initialFormState);
     this.handleOnClickSignUp = this.handleOnClickSignUp.bind(this);
+    this._handleKeyPress = this._handleKeyPress.bind(this);
   }
 
   getInputContainerClass(inputIncorrect){
@@ -64,7 +65,11 @@ export default class SignUpForm extends Component {
 
     return newState;
   }
-
+  _handleKeyPress(e){
+    if(e.key=='Enter'){
+        this.handleOnClickSignUp();
+      }
+  }
   handleOnClickSignUp(){
     var formData = {
       displayName : this.refs.displayName.getDOMNode().value.trim(),
@@ -124,16 +129,16 @@ export default class SignUpForm extends Component {
         { loader }
         { errorLabel }
         <div className={this.getInputContainerClass(this.state.isDisplayNameFieldIncorrect)}>
-          <input className="form-control" type="text" placeholder="Display Name" ref="displayName"/>
+          <input className="form-control" type="text" onKeyPress={this._handleKeyPress} placeholder="Display Name" ref="displayName"/>
         </div>
         <div className={this.getInputContainerClass(this.state.isEmailFieldIncorrect)}>
-          <input className="form-control" type="text" placeholder="Email" ref="email"/>
+          <input className="form-control" onKeyPress={this._handleKeyPress} type="text" placeholder="Email" ref="email"/>
         </div>
         <div className={this.getInputContainerClass(this.state.isPasswordFieldIncorrect)}>
-          <input className="form-control" type="password" placeholder="Password" ref="password" />
+          <input className="form-control" onKeyPress={this._handleKeyPress} type="password" placeholder="Password" ref="password" />
         </div>
         <div className={this.getInputContainerClass(this.state.isConfirmPasswordFieldIncorrect)}>
-          <input className="form-control" type="password" placeholder="Confirm Password" ref="confirmPassword" />
+          <input className="form-control" onKeyPress={this._handleKeyPress} type="password" placeholder="Confirm Password" ref="confirmPassword" />
         </div>
           <button onClick={this.handleOnClickSignUp}> Sign Up </button>
       </div>

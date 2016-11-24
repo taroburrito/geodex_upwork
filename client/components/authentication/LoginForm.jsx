@@ -14,6 +14,7 @@ export default class LoginForm extends Component {
     this.state = Object.assign({}, initialFormState);
     this.handleOnClickLogin = this.handleOnClickLogin.bind(this);
     this.handleClickForgot = this.handleClickForgot.bind(this);
+    this._handleKeyPress = this._handleKeyPress.bind(this);
   }
 
   getInputContainerClass(inputIncorrect){
@@ -50,7 +51,11 @@ export default class LoginForm extends Component {
 
     return newState;
   }
-
+  _handleKeyPress(e){
+    if(e.key=='Enter'){
+        this.handleOnClickLogin();
+      }
+  }
   handleOnClickLogin(){
     var formData = {
       email : this.refs.email.getDOMNode().value.trim(),
@@ -69,7 +74,7 @@ export default class LoginForm extends Component {
   }
 
   componentDidUpdate(){
-    console.log(this.props.serverError);
+    
     if(this.props.serverError === "Email not found."){
       if(!this.state.isEmailFieldIncorrect){
         let newState = Object.assign({}, this.state);
@@ -117,10 +122,10 @@ export default class LoginForm extends Component {
         { errorLabel }
         {loader}
         <div className="uk-form-row">
-          <input className="uk-width-1-1 uk-form-large" type="text" placeholder="Email" ref="email"/>
+          <input className="uk-width-1-1 uk-form-large" type="text" onKeyPress={this._handleKeyPress} placeholder="Email" ref="email"/>
         </div>
         <div className="uk-form-row">
-          <input className="uk-width-1-1 uk-form-large" type="password" placeholder="Password" ref="password" />
+          <input className="uk-width-1-1 uk-form-large" type="password"  onKeyPress={this._handleKeyPress} placeholder="Password" ref="password" />
           <input type="hidden" value="admin" ref="role" />
         </div>
         <div className="uk-form-row">

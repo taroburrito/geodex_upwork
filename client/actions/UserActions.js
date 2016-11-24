@@ -10,6 +10,10 @@ export const Fetch_Dashboard_Data = 'Fetch_Dashboard_Data';
 export const Post_Added_Dashboard_Success = 'Post_Added_Dashboard_Success';
 export const Category_Added_Dashboard_Success = 'Category_Added_Dashboard_Success';
 export const Fetch_Freind_Requests = 'Fetch_Freind_Requests';
+export const Confirm_Friend_Success = 'Confirm_Friend_Success';
+export const Confirm_Friend_Failed = 'Confirm_Friend_Failed';
+export const Delete_Friend_Request_Success = 'Delete_Friend_Request_Success';
+export const Delete_Friend_Request_Failed = 'Delete_Friend_Request_Failed';
 
 
 
@@ -192,6 +196,13 @@ export function fetchFriendsRequestsSuccess(friendRequests) {
 return{type: Fetch_Freind_Requests, friendRequests}
 }
 
+export function confirmFriendSuccess(requestId,success){
+  return{type:Confirm_Friend_Success,id:requestId, msg:success};
+}
+export function confirmFriendFailed(error){
+  return{type:Confirm_Friend_Failed, msg:error};
+}
+
 export function confirmFriendRequest(requestId){
 
   return (dispatch) =>{
@@ -203,11 +214,40 @@ export function confirmFriendRequest(requestId){
     }).done(function(result){
       if(result.error){
         console.log("Error in confirm firend request query");
+        dispatch(confirmFriendFailed(result.error));
       }else{
-        console.log("Confirm frined success");
+        dispatch(confirmFriendSuccess(requestId,result.success));
       }
     }).fail(function(error){
-      console.log("Error in confirm request call "+ JSON.stringify(error));
+      dispatch(confirmFriendFailed("Error in confirm request call"));
+    });
+  }
+}
+
+export function deleteFriendRequestSuccess(requestId, success){
+  return{type:  Delete_Friend_Request_Success,id:requestId, msg:success};
+}
+
+export function deleteFriendRequestFailed(error){
+    return{type:Delete_Friend_Request_Failed, msg:error};
+}
+
+export function deleteFriendRequest(requestId){
+
+  return (dispatch) =>{
+    $.ajax({
+      type: 'DELETE',
+      url: '/api/v1/users/deleteFriendRequest/'+requestId,
+
+    }).done(function(result){
+      if(result.error){
+        console.log("Error in confirm firend request query");
+        dispatch(deleteFriendRequestFailed(result.error));
+      }else{
+        dispatch(deleteFriendRequestSuccess(requestId,result.success));
+      }
+    }).fail(function(error){
+      dispatch(deleteFriendRequestFailed("Error in confirm request call"));
     });
   }
 }

@@ -12,6 +12,7 @@ export default class LoginPage extends Component {
   constructor(props) {
     super(props);
     this.handleOnClickLogin = this.handleOnClickLogin.bind(this);
+    this._handleKeyPress=this._handleKeyPress.bind(this)
     this.state = Object.assign({}, initialFormState);
   }
 
@@ -63,7 +64,11 @@ export default class LoginPage extends Component {
 
     return newState;
   }
-
+  _handleKeyPress(e){
+    if(e.key=='Enter'){
+        this.handleOnClickLogin();
+      }
+  }
   handleOnClickLogin(){
     var formData = {
       email : this.refs.email.getDOMNode().value.trim(),
@@ -103,10 +108,10 @@ export default class LoginPage extends Component {
            {errorLabel}
           <form className="uk-form">
                  <div className="uk-form-row">
-                     <input className="uk-width-1-1 uk-form-large" placeholder="Username" type="text" ref="email"/>
+                     <input className="uk-width-1-1 uk-form-large" placeholder="Username" onKeyPress={this._handleKeyPress} type="text" ref="email"/>
                  </div>
                  <div className="uk-form-row">
-                     <input className="uk-width-1-1 uk-form-large" placeholder="Password" type="password" ref="password"/>
+                     <input className="uk-width-1-1 uk-form-large" placeholder="Password" onKeyPress={this._handleKeyPress} type="password" ref="password"/>
                      <input value="user" type="hidden" ref="role"/>
                  </div>
                  <div className="uk-form-row">

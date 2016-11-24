@@ -343,7 +343,6 @@ export default class DashboardPage extends Component {
   render() {
 
     const { dispatch, userAuthSession, friendsPosts, dashboardData} = this.props;
-    console.log(dashboardData);
     var userProfileData = userAuthSession.userObject;
     var content;
     var errorLabel;

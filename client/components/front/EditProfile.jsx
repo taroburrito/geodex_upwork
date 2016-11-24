@@ -5,7 +5,7 @@ import GooglePlacesSuggest from 'react-google-places-suggest';
 import { Navigation } from 'react-router';
 import Datetime from 'react-datetime'
 import ChangePassword from './ChangePassword';
-import { validateEmail, validateDisplayName, validatePassword } from '../../utilities/RegexValidators';
+import { validateEmail, validateDisplayName, validatePassword,validateDate } from '../../utilities/RegexValidators';
 require('react-datetime/css/react-datetime.css');
 import {updateProfileInput,updateUserProfileData,updateUserData} from '../../actions/ProfileActions';
 var AvatarEditor = require('react-avatar-editor');
@@ -51,8 +51,15 @@ export default class EditProfile extends Component {
     const {dispatch, userAuthSession}=this.props;
     var userData = userAuthSession.userObject;
     userData.profile_image = img;
+    var req={
+      id:userData.id,
+      field:'profile_image',
+      val: img
+    }
     //if(dispatch(updateUserProfileData(userData))){
-    dispatch(updateProfileInput('profile_image',img));
+    if(dispatch(updateUserData(req))){
+
+    }
     //}
 
   }
@@ -63,8 +70,7 @@ export default class EditProfile extends Component {
     const {dispatch, userAuthSession}=this.props;
     var userData = userAuthSession.userObject;
     userData.cover_image = img;
-    this.setState({cover_image: img});
-    userData.cover_image = img;
+    //this.setState({cover_image: img});
   //  console.log(userData);
     var req={
       id:userData.id,
@@ -96,7 +102,9 @@ export default class EditProfile extends Component {
 
   }
    handleSelectSuggest(suggestName, coordinate){
-    this.setState({ search: suggestName, selectedCoordinate: coordinate })
+     var latitude = coordinate.latitude;
+     var longitude = coordinate.longitude;
+    this.setState({ search: suggestName, latitude: latitude, longitude:longitude })
      const { dispatch} = this.props;
      dispatch(updateProfileInput('address',suggestName));
   }
@@ -114,35 +122,44 @@ export default class EditProfile extends Component {
           address: this.refs.address.getDOMNode().value.trim(),
           dob: this.state.dob,
           gender: this.state.gender,
-          longitude: this.state.selectedCoordinate.longitude,
-          latitude:this.state.selectedCoordinate.latitude,
+          longitude: this.state.longitude,
+          latitude:this.state.latitude,
           id: userAuthSession.userObject.id
         };
+
         console.log(formData);
-        dispatch(updateUserProfileData(formData));
-        // if(userData.first_name === ''){
-        //     this.setState({errorMessage:'Please enter first name'});
-        //     this.refs.first_name.getDOMNode().focus();
-        // }else if (userData.last_name === '') {
-        //     this.setState({errorMessage:'Please enter last name'});
-        //     this.refs.last_name.getDOMNode().focus();
-        // }else if (userData.email === '') {
-        //     this.setState({errorMessage:'Please enter email'});
-        //     this.refs.email.getDOMNode().focus();
-        // }else if (!validateEmail(userData.email)) {
-        //     this.setState({errorMessage:'Please enter correct email address'});
-        //     this.refs.email.getDOMNode().focus();
-        // }
-        // else if (userData.address === '') {
-        //     this.setState({errorMessage:'Please enter address'});
-        //     this.refs.address.getDOMNode().focus();
-        // }else if (userData.dob === null) {
-        //     this.setState({errorMessage:'Please enter date of birth'});
-        // }else{
-        //     this.setState({errorMessage:null});
-        //     console.log(userData);
-        //     //dispatch(updateUserProfileData(userData));
-        // }
+        //dispatch(updateUserProfileData(formData));
+        if(!validateDisplayName(formData.first_name)){
+            this.setState({errorMessage:'Please enter first name'});
+            this.refs.first_name.getDOMNode().focus();
+        }else if (!validateDisplayName(formData.last_name)) {
+          this.setState({errorMessage:'Please enter last name'});
+          this.refs.last_name.getDOMNode().focus();
+        }else if (formData.email === '') {
+          this.setState({errorMessage:'Please enter email'});
+          this.refs.email.getDOMNode().focus();
+        }else if (!validateEmail(formData.email)) {
+          this.setState({errorMessage:'Please enter correct email address'});
+          this.refs.email.getDOMNode().focus();
+        }
+        else if (formData.address === '') {
+          this.setState({errorMessage:'Please enter address'});
+          this.refs.address.getDOMNode().focus();
+        }else if (formData.password === '') {
+          this.setState({errorMessage:'Please enter Password'});
+          this.refs.password.getDOMNode().focus();
+        }
+        else if (!validateDate(new Date(formData.dob))) {
+          this.setState({errorMessage:'Please enter date of birth'});
+        }else if (!this.state.gender) {
+          this.setState({errorMessage:'Please choose gender.'});
+
+        }else{
+            this.setState({errorMessage:null});
+
+            dispatch(updateUserProfileData(formData));
+        }
+
 
     }
 
@@ -186,16 +203,29 @@ handleImageChange(evt) {
 reader.readAsDataURL(file);
 
 }
+handleCoverImageChange(evt) {
+    var self = this;
+    var reader = new FileReader();
+    var file = evt.target.files[0];
+
+    reader.onloadend = function(upload) {
+    self.setState({
+        cover_image: upload.target.result
+      });
+    };
+reader.readAsDataURL(file);
+
+}
 
 setDateofBirth(x){
      var selectedDate = JSON.stringify(x);
-     this.setState({dob:selectedDate});
+     this.setState({dob:new Date(x)});
   }
 
 __renderContent(){
   const { dispatch,userAuthSession} = this.props;
   var userData = userAuthSession.userObject;
-//  console.log(userData);
+  var dob = new Date(this.state.dob);
   const { search } = this.state;
   if(this.state.content == 'edit_profile'){
     return(
@@ -229,8 +259,8 @@ __renderContent(){
                   <div className="uk-form-controls">
                       <GooglePlacesSuggest onSelectSuggest={ this.handleSelectSuggest.bind(this) } search={ search }>
                         <input className="uk-width-1-1 uk-form-large" type="text" ref="address" value={ search?search:this.state.address } placeholder="Search a location" onChange={ this.handleSearchChange.bind(this) }/>
-                        <input type="hidden" value={this.state.selectedCoordinate?this.state.selectedCoordinate.latitude:this.state.latitude} ref="latitude"/>
-                        <input type="hidden" value={this.state.selectedCoordinate?this.state.selectedCoordinate.longitude:this.state.longitude} ref="longitude"/>
+                        <input type="hidden" value={this.state.latitude} ref="latitude"/>
+                        <input type="hidden" value={this.state.longitude} ref="longitude"/>
                     </GooglePlacesSuggest>
                   </div>
               </div>
@@ -240,7 +270,7 @@ __renderContent(){
               <div className="uk-width-medium-1-2">
                   <label className="uk-form-label" for="form-gs-a">Date of Birth</label>
                   <div className="uk-form-controls">
-                  <Datetime defaultValue={userData.dob} inputProps={{name:"dateofbirth",placeholder:"Date of birth"}} onChange={(dob) => this.setDateofBirth(dob)}  input={true} className={"dob"} closeOnSelect={true} viewMode={"years"} timeFormat={false} dateFormat={'YYYY-MM-DD'}  />
+                  <Datetime defaultValue={dob} inputProps={{name:"dateofbirth",placeholder:"Date of birth"}} onChange={(dob) => this.setDateofBirth(dob)}  input={true} className={"dob"} closeOnSelect={true} viewMode={"years"} timeFormat={false} dateFormat={'DD-MM-YYYY'}  />
 
                   </div>
               </div>
@@ -331,7 +361,7 @@ renderCoverModel(){
     <div id="coverImage" className="uk-modal profile-modal" >
        <div className="uk-modal-dialog custom-width">
            <AvatarEditor
-             image={this.getProfileImage(userData.cover_image)}
+             image={this.getProfileImage(this.state.cover_image)}
              ref="cover"
              width={1300}
              height={215}
@@ -347,7 +377,7 @@ renderCoverModel(){
              onDropFile={this.logCallback.bind(this, 'onDropFile')}
             />
         <br />
-
+          <input type="file"  ref="coverfile"  onChange={this.handleCoverImageChange.bind(this)}/><br/>
        <input className="uk-button uk-button-primary uk-button-large uk-modal-close" type="button" onClick={this.handleSaveCoverImage} value="Save" />
 
        <br />
@@ -451,7 +481,7 @@ EditProfile.contextTypes = {
 
 function select(state) {
    return {
-
+     userAuthSession: state.userAuthSession
   };
 }
 
