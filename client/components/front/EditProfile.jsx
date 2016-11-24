@@ -5,7 +5,7 @@ import GooglePlacesSuggest from 'react-google-places-suggest';
 import { Navigation } from 'react-router';
 import Datetime from 'react-datetime'
 import ChangePassword from './ChangePassword';
-import { validateEmail, validateDisplayName, validatePassword } from '../../utilities/RegexValidators';
+import { validateEmail, validateDisplayName, validatePassword,validateDate } from '../../utilities/RegexValidators';
 require('react-datetime/css/react-datetime.css');
 import {updateProfileInput,updateUserProfileData,updateUserData} from '../../actions/ProfileActions';
 var AvatarEditor = require('react-avatar-editor');
@@ -118,7 +118,7 @@ export default class EditProfile extends Component {
           latitude:this.state.selectedCoordinate.latitude,
           id: userAuthSession.userObject.id
         };
-        console.log(formData);
+        
         dispatch(updateUserProfileData(formData));
         // if(userData.first_name === ''){
         //     this.setState({errorMessage:'Please enter first name'});
@@ -189,7 +189,7 @@ reader.readAsDataURL(file);
 
 setDateofBirth(x){
      var selectedDate = JSON.stringify(x);
-     this.setState({dob:selectedDate});
+     this.setState({dob:new Date(x)});
   }
 
 __renderContent(){

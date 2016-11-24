@@ -1,7 +1,8 @@
 import React, {Component, PropTypes} from 'react';
 import GooglePlacesSuggest from 'react-google-places-suggest'
 import Datetime from 'react-datetime'
-import { validateEmail, validateDisplayName, validatePassword } from '../../utilities/RegexValidators';
+import moment from 'moment';
+import { validateEmail, validateDisplayName, validatePassword,validateDate } from '../../utilities/RegexValidators';
 import { attemptSignUp } from '../../actions/AuthActions';
 require('react-datetime/css/react-datetime.css');
 
@@ -67,11 +68,12 @@ _handleKeyPress(e){
   }
   setDateofBirth(x){
        var selectedDate = JSON.stringify(x);
-       this.setState({dob:selectedDate});
+       this.setState({dob:new Date(x)});
+   
     }
 
   findErrorsInSignUpForm(formData){
-
+   
     var newState = this.state.errorMessage;
     if(!validateDisplayName(formData.first_name)){
         this.setState({errorMessage:'Please enter first name'});
@@ -102,7 +104,7 @@ _handleKeyPress(e){
       this.setState({errorMessage:'Password and confirm password does not match'});
       this.refs.confirm_password.getDOMNode().focus();
     }
-    else if (this.state.dob==null) {
+    else if (!validateDate(new Date(this.state.dob))) {
       this.setState({errorMessage:'Please enter date of birth'});
     }else if (!this.state.gender) {
       this.setState({errorMessage:'Please choose gender.'});
@@ -176,7 +178,7 @@ _handleKeyPress(e){
 
               <div className="uk-grid uk-grid-small">
                 <div className="uk-width-small-1-2">
-                    <Datetime inputProps={{name:"dateofbirth",placeholder:"Date of birth"}} onChange={(dob) => this.setDateofBirth(dob)}  input={true} className={"dob"} closeOnSelect={true} viewMode={"years"} timeFormat={false} dateFormat={'DD-MM-YYYY'}  />
+                    <Datetime inputProps={{name:"dateofbirth",placeholder:"Date of birth"}} onChange={(dob) => this.setDateofBirth(dob)}  input={true} className={"dob"} closeOnSelect={true} viewMode={"years"} timeFormat={false} dateFormat={'DD/MM/YYYY'}  />
                 </div>
 
             <div className="uk-width-small-1-2 gender_select">

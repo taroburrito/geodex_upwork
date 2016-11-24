@@ -702,17 +702,20 @@ function constructupdateUserQuery(data){
 function constructupdateUserDetailQuery(data){
     var timestamp = moment();
     var formatted = timestamp.format('YYYY-MM-DD HH:mm:ss Z');
-    var query ="UPDATE gx_user_details SET " +
+    var dob=moment(new Date(data.dob)).format('YYYY-MM-DD');
+   
+     var query ="UPDATE gx_user_details SET " +
         "first_name = " + mysql.escape(data.first_name) +
         ", last_name = " + mysql.escape(data.last_name) +
-        ", dob = " + mysql.escape(data.dob) +
-        ", gender = " + mysql.escape(data.gender) +
+        ", dob = '" + dob+
+        "', gender = " + mysql.escape(data.gender) +
         ", address = " + mysql.escape(data.address) +
         ", latitude = " + mysql.escape(data.latitude) +
         ", longitude = " + mysql.escape(data.longitude) +
         ", profile_image = " + mysql.escape(data.profile_image) +
         ", last_updated = '" + formatted+"'" +
-        " WHERE user_id = " + mysql.escape(data.user_id);
+        " WHERE user_id = " + mysql.escape(data.id);
+        console.log(query);
     return query;
 }
 function sendMailToUser(token,from,to,subject,content){
@@ -762,9 +765,11 @@ function constructsignUpQuery(data){
 function constructInsertUserDetailQuery(data){
   var timestamp = moment();
   var formatted = timestamp.format('YYYY-MM-DD HH:mm:ss Z');
+  var dob=moment(new Date(data.dob)).format('YYYY-MM-DD');
+  
   var query = "INSERT INTO `gx_user_details` (`id`, `user_id`, `first_name`, `last_name`, `dob`, `gender`, `address`,"+
   " `latitude`, `longitude`, `zip`, `profile_image`, `last_updated`, `date_created`)"+
-  " VALUES ('', '" + data.user_id + "', '" + data.first_name + "', '" + data.last_name + "', " + data.dob + ", "+
+  " VALUES ('', '" + data.user_id + "', '" + data.first_name + "', '" + data.last_name + "', '" + dob+ "', "+
   " '" + data.gender + "', '" + data.address + "', '" + data.latitude + "', '" + data.longitude + "', '', '', '',  '" + formatted + "')";
   return query;
 }
