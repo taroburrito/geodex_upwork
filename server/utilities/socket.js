@@ -81,16 +81,16 @@ module.exports = {
 
             });
 
-            socket.on('fetch-friends-requests',function(userId){
-                userModel.getFriendsRequests(userId,function(result){
-                  socket.emit("friends-requests", result);
+            socket.on('fetch-friend-requests',function(userId){
+                userModel.getFreindRequests(userId,function(result){
+                  socket.emit("friend-requests", result);
                 })
               });
 
               socket.on('fetch-dashboard-data',function(userId){
 
                 userModel.getDashboardData(userId,function(result){
-                
+
                   socket.emit("dashboad-data", result);
                 })
               });

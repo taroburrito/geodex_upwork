@@ -38,6 +38,49 @@ var userModel = {
       });
     },
 
+
+    /*
+     func:Confirm friend request
+     params: request id
+     return: success or error
+    */
+    confirmFriendRequest: function(requestId, callback){
+      var dbConnection = dbConnectionCreator();
+      var confirmFriendRequestSqlString = constructConfirmFriendRequestSqlString(requestId);
+      dbConnection.query(confirmFriendRequestSqlString, function(error,results,fields){
+        if(error){
+          return(callback({error:error}));
+        }else if (results.affectedRows === 0) {
+          return(callback({error:"Not updated record"}));
+        }else{
+          return(callback({success:"Confirm Friend successfully"}));
+        }
+      });
+    },
+
+    /*
+     func:get friend requests of LoggedIn user
+     params: userId
+     return: friend Requests List
+    */
+    getFreindRequests: function(userId,callback){
+        var dbConnection = dbConnectionCreator();
+        var getFriendRequestsSqlString = constructFriendRequestsSqlString(userId);
+        dbConnection.query(getFriendRequestsSqlString,function(error,results,field){
+          if(error){
+            return(callback({error:error}));
+          }else if (results.length === 0) {
+            return(callback({friendRequests:null}));
+          }else {
+            var friends = {};
+            results.forEach(function (result) {
+                friends[result.request_id] = userModel.convertRowsToUserProfileObject(result);
+            });
+            return(callback({friendRequests:friends}));
+          }
+        });
+    },
+
     /*
      func:get LoggedIn user dashboard data
      params: userId
@@ -536,6 +579,19 @@ var userModel = {
 
 
 };
+
+function constructConfirmFriendRequestSqlString(requestId){
+  var query = "UPDATE gx_friends_list set status=1 WHERE id="+requestId;
+  return query;
+}
+
+function constructFriendRequestsSqlString(userId){
+  var query = "SELECT (a.id) request_id, b.user_id,CONCAT(b.first_name,' ', b.last_name) Name,"+
+              " b.address, b.profile_image, b.gender FROM gx_friends_list a"+
+              " LEFT JOIN gx_user_details b ON b.user_id=a.sender_id"+
+              " WHERE a.receiver_id="+userId+" AND a.status=0";
+  return query;
+}
 
 function constructFreindsPostImagesSqlString(friendsIds){
   var query = "Select user_id, (image) post_image from gx_posts WHERE image!='' and user_id IN("+friendsIds+")";

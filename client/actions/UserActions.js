@@ -9,6 +9,7 @@ export const Update_Friend_List = 'Update_Friend_List';
 export const Fetch_Dashboard_Data = 'Fetch_Dashboard_Data';
 export const Post_Added_Dashboard_Success = 'Post_Added_Dashboard_Success';
 export const Category_Added_Dashboard_Success = 'Category_Added_Dashboard_Success';
+export const Fetch_Freind_Requests = 'Fetch_Freind_Requests';
 
 
 
@@ -180,5 +181,33 @@ export function addCategory(req) {
 				console.log("Failure");
       //  dispatch(handleErrorMessage(error));
 			});
+  }
+}
+
+export function fetchFriendsRequestsFailed(error) {
+
+}
+
+export function fetchFriendsRequestsSuccess(friendRequests) {
+return{type: Fetch_Freind_Requests, friendRequests}
+}
+
+export function confirmFriendRequest(requestId){
+
+  return (dispatch) =>{
+    $.ajax({
+      type: 'POST',
+      url: '/api/v1/users/confirmFriendRequest',
+      data:{id:requestId},
+      dataType: 'json'
+    }).done(function(result){
+      if(result.error){
+        console.log("Error in confirm firend request query");
+      }else{
+        console.log("Confirm frined success");
+      }
+    }).fail(function(error){
+      console.log("Error in confirm request call "+ JSON.stringify(error));
+    });
   }
 }

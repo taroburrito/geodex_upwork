@@ -2,7 +2,7 @@ import { receivedAllUniversalTodos, optimisticUniversalAddSuccess } from '../act
 import { receivedAllUniversalCategories } from '../actions/CategoryActions';
 import { receivedAllUniversalPages } from '../actions/PageActions';
 import {getVisitedUserData, getUserDetails} from '../actions/ProfileActions';
-import {receivedAllfriendsList, receivedAllFriendsPosts, getDashboardDataSuccess} from '../actions/UserActions';
+import {receivedAllfriendsList, receivedAllFriendsPosts, getDashboardDataSuccess, fetchFriendsRequestsSuccess} from '../actions/UserActions';
 import {receivedAllposts} from '../actions/PostActions';
 
 
@@ -91,6 +91,16 @@ export function linkSocketToStore(dispatch) {
     }else{
 
       dispatch(getDashboardDataSuccess(res));
+    }
+  });
+
+  socket.on("friend-requests",function(res){
+    console.log(res);
+    if(res.error){
+
+    }else{
+
+      dispatch(fetchFriendsRequestsSuccess(res.friendRequests));
     }
   });
 
@@ -189,4 +199,8 @@ export function getVisitedUserDetail(userId){
 
 export function fetchDashboardData(userId){
   socket.emit("fetch-dashboard-data", userId);
+}
+
+export function fetchFriendsRequests(userId){
+  socket.emit("fetch-friend-requests", userId);
 }

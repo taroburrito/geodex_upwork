@@ -5,7 +5,8 @@ import {
           Update_Friend_List,
           Fetch_Dashboard_Data,
           Post_Added_Dashboard_Success,
-          Category_Added_Dashboard_Success
+          Category_Added_Dashboard_Success,
+          Fetch_Freind_Requests
         } from '../actions/UserActions';
 
 
@@ -63,5 +64,15 @@ export function updateDashboardData(dashboardDataState={},action){
     default:
     return dashboardDataState;
 
+  }
+}
+
+export function friendRequests(friendRequestsState={}, action){
+  switch (action.type) {
+    case Fetch_Freind_Requests:
+    return Object.assign({},friendRequestsState,action.friendRequests);
+      break;
+    default:
+    return friendRequestsState;
   }
 }

@@ -1271,3 +1271,12 @@ form.uk-search.search_dash_nav {
     cursor: pointer;
     right: 70px;
 }
+.manage-requests-btns{
+  padding-left: 10px;
+    margin:5px;
+    padding-right: 10px;
+}
+.manage-request-btns-div{
+  text-align: right;
+      padding: 5px;
+}
