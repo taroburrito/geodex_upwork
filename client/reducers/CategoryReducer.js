@@ -3,15 +3,22 @@ import {  Received_All_Universal_Categories,
     Deleted_Category,
      Handle_Success_Message,
       Hide_Message,
-    Handle_Error_Message,Update_Category_Success,Update_Category_Failed } from '../actions/CategoryActions';
+    Handle_Error_Message,
+    Update_Category_Success,
+    Update_Category_Failed,
+    Fetch_Categories_By_User } from '../actions/CategoryActions';
 // create function that flips loader for retrieving all todos
 
 export function updateCategoryList(universalCategoriesState = {} , action) {
   switch (action.type){
 
     case Received_All_Universal_Categories:
-  
+
       return Object.assign({}, action.categories);
+
+      case Fetch_Categories_By_User:
+          return Object.assign({}, action.categories);
+        break;
 
       case Update_Category_Success:
 

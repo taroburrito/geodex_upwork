@@ -25,9 +25,9 @@ export const Update_Dashboard_Friend_List = 'Update_Dashboard_Friend_List';
 /*
  * action creators
  */
- export function receivedAllfriendsList(friendList){
+ export function receivedAllfriendsList(friendList,categorizedFriendList){
    //console.log(friendList);
-   return {type: Fetch_Freind_List, data: friendList}
+   return {type: Fetch_Freind_List, friendList: friendList, categorizedFriendList:categorizedFriendList}
  }
 
  export function updatefriendsList(friendList){
@@ -254,6 +254,35 @@ export function deleteFriendRequest(requestId){
       }
     }).fail(function(error){
       dispatch(deleteFriendRequestFailed("Error in confirm request call"));
+    });
+  }
+}
+
+export function getCategoryByUserId(userId){
+  console.log("Here");
+  return (dispatch) => {
+    $.ajax({
+      type:'GET',
+      url: 'api/v1/users/getCategoryByUserId/'+userId,
+    }).done(function(result){
+      console.log("Success get cat by user id");
+    }).fail(function(error){
+      console.log("Error in get cat by user id");
+    });
+  }
+}
+
+export function changeFriendCat(userId,friendId, catId){
+  return(dispatch) => {
+    $.ajax({
+      type: 'POST',
+      url: '/api/v1/users/changeFriendCat',
+      data:{userId:userId,friendId:friendId,catId:catId},
+      dataType: 'json'
+    }).done(function(result){
+      console.log("success:"+JSON.stringify(result));
+    }).fail(function(error){
+      console.log("success:"+JSON.stringify(error));
     });
   }
 }

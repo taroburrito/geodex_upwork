@@ -1294,3 +1294,16 @@ form.uk-search.search_dash_nav {
     position: relative;
     z-index: 100;
 }
+.category-select {
+    float: left;
+    padding-left: 15px;
+    margin: 0 0 4px 0;
+}
+.category-select select {
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    margin-left: 5px;
+    padding: 4px 6px;
+    background-color: buttonface;
+    font-size: 13.3333px Arial;
+}

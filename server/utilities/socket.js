@@ -88,12 +88,19 @@ module.exports = {
               });
 
               socket.on('fetch-dashboard-data',function(userId,catId){
-                
+
                 userModel.getDashboardData(userId,catId,function(result){
 
                   socket.emit("dashboad-data", result);
                 })
               });
+
+              socket.on('get-categories-by-user', function(userId){
+                userModel.getCategoryByUserId(userId, function (result) {
+                  socket.emit("categories-by-user", result);
+               }
+              );
+              })
 
 
 

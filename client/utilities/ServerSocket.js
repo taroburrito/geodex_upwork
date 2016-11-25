@@ -1,5 +1,5 @@
 import { receivedAllUniversalTodos, optimisticUniversalAddSuccess } from '../actions/TodoActions';
-import { receivedAllUniversalCategories } from '../actions/CategoryActions';
+import { receivedAllUniversalCategories, fetchcategoriesByUserId } from '../actions/CategoryActions';
 import { receivedAllUniversalPages } from '../actions/PageActions';
 import {getVisitedUserData, getUserDetails} from '../actions/ProfileActions';
 import {receivedAllfriendsList, receivedAllFriendsPosts, getDashboardDataSuccess, fetchFriendsRequestsSuccess} from '../actions/UserActions';
@@ -55,6 +55,15 @@ export function linkSocketToStore(dispatch) {
 		}
 	});
 
+  socket.on('categories-by-user',function(result){
+    console.log(result);
+    if(result.error){
+
+    }else{
+      dispatch(fetchcategoriesByUserId(result.categories));
+    }
+  });
+
 	socket.on("allCategories",function(result){
 		if(result.error){
 
@@ -71,7 +80,8 @@ export function linkSocketToStore(dispatch) {
 		console.log("Error in server socket line 68:"+JSON.stringify(result.error));
 		} else {
 			console.log(result);
-			dispatch(receivedAllfriendsList(result.friendList));
+			//dispatch(receivedAllfriendsList(result.friendList));
+      dispatch(receivedAllfriendsList(result.friendList, result.categorizedFriendList));
 		}
 	});
 
@@ -204,4 +214,8 @@ export function fetchDashboardData(userId,catId){
 
 export function fetchFriendsRequests(userId){
   socket.emit("fetch-friend-requests", userId);
+}
+
+export function getCategoryByUserId(userId){
+  socket.emit("get-categories-by-user", userId);
 }

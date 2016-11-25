@@ -54,6 +54,15 @@ var setUserRoutes = function (router) {
             }
     );
 
+    router.post('/api/v1/users/changeFriendCat',
+            function (req, res) {
+                userModel.changeFriendCat(req.body, function (result) {
+                   return res.json(result);
+                }
+                );
+            }
+    );
+
     router.post('/api/v1/users/changePassword',
             function (req, res) {
                 var email = req.body.email;
@@ -209,6 +218,18 @@ var setUserRoutes = function (router) {
                       return res.json(results);
                     });
                 }
+              );
+
+              router.get('/api/v1/users/getCategoryByUserId/:userId',
+
+                      function (req, res) {
+                        return res.json({success:"Sdsds"});
+                          var userId = req.params.userId;
+                          // userModel.getCategoryByUserId(userId, function (result) {
+                          //    return res.json(result);
+                          // }
+                        //  );
+                      }
               );
 
 }

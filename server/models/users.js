@@ -106,7 +106,7 @@ var userModel = {
      return: latestPost,categories,friendslist,friendsLatestPost
     */
     getDashboardData: function(userId,catId, callback){
-    
+
       var dbConnection = dbConnectionCreator();
       var getLatestPostSqlString = constructLatestPostSqlString(userId);
       var getUsersCategoriesSqlString = constructGetUserCategoriesSqlString(userId);
@@ -280,9 +280,16 @@ var userModel = {
         });
     },
 
+    /*
+    func: getAllFriends
+    params: userId
+    return: friendList, categorizedFriendList
+    */
+
     getAllFriends: function(userId, callback){
       var dbConnection = dbConnectionCreator();
       var getUserFriendsListSqlString = constructgetUserFriendsListSqlString(userId);
+      var getAllCategorisedFriendSqlString = constructGetAllCategorisedFriendSqlString(userId);
     //  return (callback({error: getUserFriendsListSqlString}));
       //console.log("ANGEL: getting user details");
       dbConnection.query(getUserFriendsListSqlString, function (error, results, fields) {
@@ -297,7 +304,21 @@ var userModel = {
             results.forEach(function (result) {
                 friends[result.id] = userModel.convertRowsToUserProfileObject(result);
             });
-            return callback({friendList: friends});
+
+            dbConnection.query(getAllCategorisedFriendSqlString,function(error1,results1,fields1){
+              if(error1){
+                return(callback({error: error1}));
+              }else if (results1.length == 0) {
+                return callback({friendList: friends, categorizedFriendList:null});
+              }else{
+                var categorizedFriends = {};
+                results1.forEach(function (result) {
+                    categorizedFriends[result.friend_id] = userModel.convertRowsToUserProfileObject(result);
+                });
+                  return callback({friendList: friends, categorizedFriendList:categorizedFriends});
+              }
+            });
+
           }
       });
     },
@@ -598,11 +619,94 @@ var userModel = {
     getFriendsRequests(userID){
       var dbConnection = dbConnectionCreator();
       var getFriendsRequestsQuery = constructGetFriendsRequestsQuery(userId);
+    },
+
+    /*
+    getCategoryByUserId
+    params: userId
+    return: categories
+    */
+    getCategoryByUserId: function(userId, callback){
+        var dbConnection = dbConnectionCreator();
+        var getCategoiresByUserSqlString = constructGetUserCategoriesSqlString(userId);
+        dbConnection.query(getCategoiresByUserSqlString,function(error,results,fields){
+            if(error){
+              return(callback({error:error}));
+            }else if (results.length == 0) {
+              return(callback({error:"No categories found for this user"}));
+            }else {
+              /* Create object of all categories*/
+              var categories = {};
+              results.forEach(function (resultIndex) {
+                  categories[resultIndex.id] = userModel.convertRowsToUserProfileObject(resultIndex);
+              });
+
+              return(callback({categories:categories}));
+            }
+        });
+    },
+
+    /*
+    changeFriendCat
+    params: userId,friendId,catId,
+    return:
+    */
+    changeFriendCat: function(data, callback){
+      var dbConnection = dbConnectionCreator();
+      var checkFriendCatSqlString = constructCheckFriendCatSqlString(data.userId, data.friendId);
+      var insertFriendCatSqlString = constructInsertFriendCatSqlString(data.userId, data.friendId, data.catId);
+      var updateFriendCatSqlString = constructUpdateFriendSqlString(data.userId, data.friendId, data.catId);
+      dbConnection.query(checkFriendCatSqlString,function(error,results,fields){
+        if(error){
+          return(callback({error: error}));
+        }else if (results.length == 0) {
+          //Insert New entry
+          dbConnection.query(insertFriendCatSqlString,function(error1,result1,field1){
+            if(error1){
+              return(callback({error:error1}));
+            }else if (result1.affectedRows == 0) {
+              return(callback({error: "Error in inserting friend cat"}));
+            }else {
+              return(callback({success: "successfully enterd friend cat"}));
+            }
+          });
+        }else {
+          //update query
+          dbConnection.query(updateFriendCatSqlString,function(error1,result1,field1){
+            if(error1){
+              return(callback({error:error1}));
+            }else if (result1.affectedRows == 0) {
+              return(callback({error: "Error in updating friend cat"}));
+            }else {
+              return(callback({success: "successfully updated friend cat"}));
+            }
+          });
+        }
+      });
     }
 
 
 
 };
+
+function constructInsertFriendCatSqlString(userId,friendId,catId){
+  var timestamp = moment();
+  var formatted = timestamp.format('YYYY-MM-DD HH:mm:ss Z');
+  var query = "INSERT INTO `gx_friends_category` (`id`, `user_id`, `friend_id`, `category_id`, `created`)"+
+  " VALUES ('', '" + userId + "', '" + friendId + "', '" + catId + "',  '" + formatted + "')";
+  return query;
+}
+
+function constructUpdateFriendSqlString(userId,friendId,catId){
+  var query = "UPDATE gx_friends_category set category_id="+catId+
+              " WHERE user_id="+userId+" AND friend_id="+friendId;
+              return query;
+}
+
+function constructCheckFriendCatSqlString(userId,friendId){
+  var query = "Select * from gx_friends_category WHERE user_id="+userId+" AND friend_id="+friendId;
+  return query;
+}
 
 function constructDeleteFriendRequestSqlString(requestId){
   var query = "DELETE from  gx_friends_list  WHERE id="+requestId;
@@ -814,6 +918,11 @@ function constructgetUserFriendsListSqlString(userId){
    " left join gx_users as gu on gu.id = gud.user_id"+
   " WHERE   gfl.receiver_id="+ mysql.escape(userId);
 
+  return query;
+}
+
+function constructGetAllCategorisedFriendSqlString(userId){
+  var query = "SELECT a.*, b.category_name from gx_friends_category a, gx_categories b WHERE a.user_id='"+userId+"' AND b.id = a.category_id";
   return query;
 }
 
