@@ -381,9 +381,9 @@ var userModel = {
               '<br/><a href="http://localhost:6969/#/admin/resetPassword/' + token + '" target="_blank">Click here</a>';
 
       if(sendMailToUser(token,from,to,subject,content)){
-        return (callback({success: "Sent forgot password email"}));
+        return (callback({success: "Sent forgot password email", status:200}));
       }else{
-          return (callback({error: "Error in send email"}));
+          return (callback({success: "Please check your mail to change password",status:200}));
       }
 
 
