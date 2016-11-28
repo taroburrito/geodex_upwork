@@ -392,7 +392,11 @@ var userModel = {
 
 // Signup Function
     signUp: function(data,req,callback){
-       //var baseUrl=req.protocol+"://"+req.get('host');
+      //  if(var baseUrl=req.protocol+"://"+req.get('host')){
+      //
+      //  }else {
+      //
+      //  }
        var baseUrl ="http://ec2-54-66-221-16.ap-southeast-2.compute.amazonaws.com/#/";
        var dbConnection = dbConnectionCreator();
        var token = randtoken.generate(16);
@@ -404,9 +408,9 @@ var userModel = {
            if (error) {
                dbConnection.destroy();
                if(error.errno == 1062){
-                 return (callback({error: "This email is already used."}));
+                 return (callback({error: "This email is already used.",status:400}));
                }else{
-                   return (callback({error: error}));
+                   return (callback({error: error,status:400}));
                }
 
 
@@ -430,18 +434,18 @@ var userModel = {
                         '<br/><a href="'+baseUrl+'"/#/verifySignUp/' + data.token + '" target="_blank">Click here</a>';
                 var sendmail = sendMailToUser(data.verify_token,'admin@geodex.com',data.email,'Verify Signup',content);
                 if(sendmail){
-                  return (callback({success: "Successfully sent verify signup email"}));
+                  return (callback({success: "Successfully sent verify signup email",status:400}));
                 }else{
-                  return (callback({error: sendmail}));
+                  return (callback({error: sendmail,status:400}));
                 }
 
               }else {
-              return (callback({error: "Error in insert user details"}));
+              return (callback({error: "Error in insert user details",status:400}));
               }
             });
 
           } else {
-              return (callback({error: "Error in signup "}));
+              return (callback({error: "Error in signup ", status:400}));
           }
       });
 
