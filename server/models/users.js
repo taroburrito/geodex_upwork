@@ -28,12 +28,12 @@ var userModel = {
       var getUserSettingsSqlString = constructGetUserProfileSqlString(userId);
         dbConnection.query(getUserSettingsSqlString,function(error,result,fields){
         if(error){
-          return(callback({error:"Error in get LoggedIn user data query"}));
+          return(callback({error:"Error in get LoggedIn user data query",status:400}));
         }else if (result.length == 0) {
-          return(callback({error:"No result found for userid:"+userId}));
+          return(callback({error:"No result found for userid:"+userId,status:400}));
         }else {
             var userObject = userModel.convertRowsToUserProfileObject(result[0]);
-            return (callback({userObject}));
+            return (callback({userObject,status:200}));
         }
       });
     },

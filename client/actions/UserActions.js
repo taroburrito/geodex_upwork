@@ -141,6 +141,10 @@ export function addPostSuccess(post){
   return{type: Post_Added_Dashboard_Success, post};
 }
 
+/* addPost
+  params: user_id,content,image
+  return: post
+*/
 export function addPost(formData){
   return (dispatch) => {
     $.ajax({
