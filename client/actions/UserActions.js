@@ -15,6 +15,7 @@ export const Confirm_Friend_Failed = 'Confirm_Friend_Failed';
 export const Delete_Friend_Request_Success = 'Delete_Friend_Request_Success';
 export const Delete_Friend_Request_Failed = 'Delete_Friend_Request_Failed';
 export const Update_Dashboard_Friend_List = 'Update_Dashboard_Friend_List';
+export const Search_Users_Result_Success = 'Search_Users_Result_Success';
 
 
 
@@ -288,5 +289,23 @@ export function changeFriendCat(userId,friendId, catId){
     }).fail(function(error){
       console.log("success:"+JSON.stringify(error));
     });
+  }
+}
+
+export function searchUserSuccess(result){
+  return{type:Search_Users_Result_Success,data:result};
+}
+
+export function searchUser(str){
+  return(dispatch) => {
+    $.ajax({
+      type:'GET',
+      url: 'api/v1/users/searchUser/'+str,
+
+    }).done(function(result){
+      dispatch(searchUserSuccess(result.searchResult));
+    }).fail(function(error){
+      console.log(error);
+    })
   }
 }

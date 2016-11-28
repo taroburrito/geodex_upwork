@@ -10,7 +10,8 @@ import {
           Confirm_Friend_Success,
           Delete_Friend_Request_Success,
           Delete_Friend_Request_Failed,
-          Update_Dashboard_Friend_List
+          Update_Dashboard_Friend_List,
+          Search_Users_Result_Success
         } from '../actions/UserActions';
 
 
@@ -101,5 +102,15 @@ export function friendRequests(friendRequestsState={}, action){
           break;
     default:
     return friendRequestsState;
+  }
+}
+
+export function searchUsersResult(searchResultState={}, action) {
+  switch (action.type) {
+    case Search_Users_Result_Success:
+      return Object.assign({},action.data);
+      break;
+    default:
+      return searchResultState;
   }
 }

@@ -234,6 +234,7 @@ export function attemptLogin(email, password, role) {
 			url: '/login',
 			data: {email, password, role} })
 			.done(function(data) {
+				console.log(data);
 				if (data.error){
 					dispatch(loginFail(data.error));
 				} else {

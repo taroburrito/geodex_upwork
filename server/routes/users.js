@@ -232,6 +232,16 @@ var setUserRoutes = function (router) {
                       }
               );
 
+              router.get('/api/v1/users/searchUser/:str',
+                      function (req, res) {
+                          var str = req.params.str;
+                          userModel.searchUser(str, function (result) {
+                              return res.json(result);
+                          }
+                          );
+                      }
+              );
+
 }
 
 module.exports = setUserRoutes;

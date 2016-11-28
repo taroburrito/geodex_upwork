@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
+import { searchUser } from '../actions/UserActions';
 
 export default class Navbar extends Component {
   constructor(props){
@@ -11,7 +12,25 @@ export default class Navbar extends Component {
     this.props.changeContent(e);
   }
 
+  handleSearchChange(e){
+
+    this.props.searchUser(e.target.value);
+  }
+
   render() {
+    const{searchResult} = this.props;
+    var searchList  = [];
+    if(searchResult){
+      Object.keys(searchResult).forEach((Id)=>
+      {
+        var item = searchResult[Id];
+         searchList.push(
+           <li>{item.email}</li>
+         );
+      }
+    );
+    console.log(searchList);
+    }
     if(this.props.userAuthSession){
       if(this.props.userAuthSession.isLoggedIn){
       return(
@@ -20,8 +39,12 @@ export default class Navbar extends Component {
               <Link className="uk-navbar-brand uk-hidden-small" to="dashboard"><img src="public/images/logo.png"/></Link>
 
       <form className="uk-search search_dash_nav">
-              <input className="uk-search-field" placeholder="search..."  type="search"/>
+              <input className="uk-search-field" placeholder="search..."  type="search" onChange={this.handleSearchChange.bind(this)}/>
           <div className="uk-dropdown uk-dropdown-search" aria-expanded="false"></div></form>
+          <ul>
+            <li>assd</li>
+          {searchList}
+          </ul>
 
       <ul className="uk-navbar-nav uk-hidden-small uk-float-right">
                   <li><a href="">Current</a></li>

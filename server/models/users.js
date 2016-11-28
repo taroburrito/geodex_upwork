@@ -28,12 +28,12 @@ var userModel = {
       var getUserSettingsSqlString = constructGetUserProfileSqlString(userId);
         dbConnection.query(getUserSettingsSqlString,function(error,result,fields){
         if(error){
-          return(callback({error:"Error in get LoggedIn user data query",status:400}));
+          return(callback({error:"Error in get LoggedIn user data query",status:400,message:"Error in logged In query"}));
         }else if (result.length == 0) {
-          return(callback({error:"No result found for userid:"+userId,status:400}));
+          return(callback({error:"No result found for userid:"+userId,status:400,message:"No record found with these parameters"}));
         }else {
             var userObject = userModel.convertRowsToUserProfileObject(result[0]);
-            return (callback({userObject,status:200}));
+            return (callback({userObject,status:200,message:"Login success"}));
         }
       });
     },
@@ -683,11 +683,37 @@ var userModel = {
           });
         }
       });
+    },
+
+    searchUser:function(str, callback){
+      var dbConnection = dbConnectionCreator();
+      var searchUserSqlString = constructSearchUserSqlString(str);
+      dbConnection.query(searchUserSqlString,function(errors,results,fields){
+        if(errors){
+          return(callback({error:error,status:400}));
+        }else if (results.length == 0) {
+          return(callback({error:"No rrecord found",status:400}));
+        }else {
+          var records = {};
+          results.forEach(function (resultIndex) {
+              records[resultIndex.id] = userModel.convertRowsToUserProfileObject(resultIndex);
+          });
+          return(callback({searchResult:records,status:200}));
+        }
+      });
     }
 
 
 
 };
+
+function constructSearchUserSqlString(str){
+
+  var sql = "SELECT DISTINCT(u.id),u.email, ud.first_name,ud.last_name FROM gx_users u,"+
+            " gx_user_details ud WHERE (u.email LIKE '"+str+"%' OR  ud.first_name LIKE '"+str+"%' OR last_name LIKE '"+str+"%')"+
+            " AND u.id = ud.user_id LIMIT 10 ";
+  return sql;
+}
 
 function constructInsertFriendCatSqlString(userId,friendId,catId){
   var timestamp = moment();

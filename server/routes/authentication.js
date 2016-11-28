@@ -11,14 +11,17 @@ function addAuthRoute(app, passport, routePath, strategy) {
     app.post(routePath, function (req, res, next) {
         passport.authenticate(strategy, function (err, user, info) {
             if (err) {
+              err.status = 400;
                 return next(err);
             }
             if (!user) {
+              info.status = 400;
                 return res.json(info);
             }
             if (user) {
                 req.logIn(user, function (err) {
                     if (err) {
+                      err.status = 400;
                         return next(err);
                     }else{
 
@@ -60,7 +63,7 @@ module.exports = function (app, passport) {
                 return res.json(final_result);
             });
           }else {
-              return res.json({isLoggedIn: isLoggedIn});
+              return res.json({isLoggedIn: isLoggedIn,status:400,error:"Not logged in"});
             }
 
         //return res.json({isLoggedIn: isLoggedIn});

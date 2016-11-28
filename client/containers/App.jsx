@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 //Actions
 import { attemptLogout } from '../actions/AuthActions';
+import { searchUser } from '../actions/UserActions';
 
 //Components
 import Navbar from '../components/Navbar';
@@ -64,7 +65,9 @@ class App extends Component {
     if(userAuthSession.isLoggedIn && userAuthSession.userObject.role=='user'){
     return (
             <div>
-              <Navbar userAuthSession={userAuthSession} logout={() => dispatch(attemptLogout())}/>
+              <Navbar userAuthSession={userAuthSession} logout={() => dispatch(attemptLogout())} searchUser={(str)=>
+                dispatch(searchUser(str))}
+                searchResult={this.props.searchResult}/>
               {landingPage}
               { children }
               { content }
@@ -73,7 +76,9 @@ class App extends Component {
         }else{
           return(
             <div>
-              <Navbar userAuthSession={userAuthSession}/>
+              <Navbar userAuthSession={userAuthSession} searchUser={(str)=>
+                dispatch(searchUser(str))}
+                searchResult={this.props.searchResult}/>
               {landingPage}
 
               </div>
@@ -94,6 +99,7 @@ function select(state) {
     unsavedUniversalTodos: state.unsavedUniversalTodos,
     userAuthSession: state.userAuthSession,
     errorMessage: state.errorMessage,
+    searchResult: state.searchResult
   //  universalPages: state.universalPages,
   };
 }
