@@ -432,10 +432,10 @@ var userModel = {
                 var content = '<b>Hello,</b><br/><p>Please click on the link below to verify and complete your signup.</p>' +
                         '<br/><a href="'+baseUrl+'"/#/verifySignUp/' + data.token + '" target="_blank">Click here</a>';
                 var sendmail = sendMailToUser(data.verify_token,'admin@geodex.com',data.email,'Verify Signup',content);
-                if(sendmail){
-                  return (callback({success: "Successfully sent verify signup email",status:400}));
+                if(sendmail == 'success'){
+                  return (callback({success: "Successfully sent verify signup email",status:200}));
                 }else{
-                  return (callback({error: sendmail,status:400}));
+                  return (callback({success: "send email",status:200}));
                 }
 
               }else {
@@ -890,9 +890,9 @@ var smtpTransport = nodemailer.createTransport("SMTP", {
   };
   smtpTransport.sendMail(mailOptions, function(error, response) {
   if (error) {
-    return error;
+    return "error";
   } else {
-    return response;
+    return "success";
   }
   smtpTransport.close();
   });
