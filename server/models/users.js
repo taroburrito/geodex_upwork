@@ -392,7 +392,8 @@ var userModel = {
 
 // Signup Function
     signUp: function(data,req,callback){
-       var baseUrl=req.protocol+"://"+req.get('host');
+       //var baseUrl=req.protocol+"://"+req.get('host');
+       var baseUrl ="http://ec2-54-66-221-16.ap-southeast-2.compute.amazonaws.com/#/";
        var dbConnection = dbConnectionCreator();
        var token = randtoken.generate(16);
        data.verify_token = token;

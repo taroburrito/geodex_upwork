@@ -25,7 +25,7 @@ export default class Navbar extends Component {
       {
         var item = searchResult[Id];
          searchList.push(
-           <li>{item.email}</li>
+           <li  className="placesSuggest_suggest"><span><Link>{item.email}</Link></span></li>
          );
       }
     );
@@ -41,10 +41,11 @@ export default class Navbar extends Component {
       <form className="uk-search search_dash_nav">
               <input className="uk-search-field" placeholder="search..."  type="search" onChange={this.handleSearchChange.bind(this)}/>
           <div className="uk-dropdown uk-dropdown-search" aria-expanded="false"></div></form>
-          <ul>
-            <li>assd</li>
-          {searchList}
+          <ul className="placesSuggest_suggests">
+
+          {searchList?searchList:null}
           </ul>
+
 
       <ul className="uk-navbar-nav uk-hidden-small uk-float-right">
                   <li><a href="">Current</a></li>
