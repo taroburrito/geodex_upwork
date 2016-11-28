@@ -90,7 +90,6 @@ var setUserRoutes = function (router) {
             function (req, res) {
 
                 var email = req.body.email;
-                console.log(email);
                 userModel.generateForgotPasswordToken(email, function (result) {
                     if (result.result_token) {
                         var token = result.result_token;

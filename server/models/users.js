@@ -347,12 +347,12 @@ var userModel = {
             if (error) {
                 dbConnection.destroy();
 
-                return (callback({error: generateForgotPasswordTokenQuery}));
+                return (callback({error: "Error in forget password query", status:400}));
             } else if (results.affectedRows === 1) {
-                return (callback({result_token: token}));
+                return (callback({result_token: token,status:200}));
 
             } else {
-                return (callback({error: "User not found."}));
+                return (callback({error: "User not found.",status:400}));
             }
         });
     },
