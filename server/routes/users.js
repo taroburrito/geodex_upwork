@@ -95,11 +95,8 @@ var setUserRoutes = function (router) {
                     if (result.result_token) {
                         var token = result.result_token;
                       userModel.sendForgotPasswordMail(token,'admin@geodex.com',email,'Reset Password',function(results){
-                        if(results.success){
-                            return res.json("success");
-                        }else{
-                          return res.json(results);
-                        }
+                        return res.json(results);
+
                     //return res.json("success");
                       });
 
