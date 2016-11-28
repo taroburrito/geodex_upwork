@@ -419,7 +419,6 @@ var userModel = {
             var lastInsertId = results.insertId;
             data.user_id = lastInsertId;
             var inserUserDetailsQuery = constructInsertUserDetailQuery(data);
-
             //signup query for gx_user_details table
             dbConnection.query(inserUserDetailsQuery,function(errors,result,field){
 

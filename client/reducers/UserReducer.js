@@ -11,7 +11,8 @@ import {
           Delete_Friend_Request_Success,
           Delete_Friend_Request_Failed,
           Update_Dashboard_Friend_List,
-          Search_Users_Result_Success
+          Search_Users_Result_Success,
+          Clear_Search_List
         } from '../actions/UserActions';
 
 
@@ -110,6 +111,10 @@ export function searchUsersResult(searchResultState={}, action) {
     case Search_Users_Result_Success:
       return Object.assign({},action.data);
       break;
+
+      case Clear_Search_List:
+        return null;
+        break;
     default:
       return searchResultState;
   }

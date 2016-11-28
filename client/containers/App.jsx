@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 //Actions
 import { attemptLogout } from '../actions/AuthActions';
-import { searchUser } from '../actions/UserActions';
+import { searchUser, clearSearchList } from '../actions/UserActions';
 
 //Components
 import Navbar from '../components/Navbar';
@@ -65,7 +65,9 @@ class App extends Component {
     if(userAuthSession.isLoggedIn && userAuthSession.userObject.role=='user'){
     return (
             <div>
-              <Navbar userAuthSession={userAuthSession} logout={() => dispatch(attemptLogout())} searchUser={(str)=>
+              <Navbar
+                clearSearchList={this.props.clearSearchList}
+                 userAuthSession={userAuthSession} logout={() => dispatch(attemptLogout())} searchUser={(str)=>
                 dispatch(searchUser(str))}
                 searchResult={this.props.searchResult}/>
               {landingPage}
@@ -76,7 +78,9 @@ class App extends Component {
         }else{
           return(
             <div>
-              <Navbar userAuthSession={userAuthSession} searchUser={(str)=>
+              <Navbar
+                clearSearchList={this.props.clearSearchList}
+                userAuthSession={userAuthSession} searchUser={(str)=>
                 dispatch(searchUser(str))}
                 searchResult={this.props.searchResult}/>
               {landingPage}

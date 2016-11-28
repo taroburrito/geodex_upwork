@@ -16,6 +16,7 @@ export const Delete_Friend_Request_Success = 'Delete_Friend_Request_Success';
 export const Delete_Friend_Request_Failed = 'Delete_Friend_Request_Failed';
 export const Update_Dashboard_Friend_List = 'Update_Dashboard_Friend_List';
 export const Search_Users_Result_Success = 'Search_Users_Result_Success';
+export const Clear_Search_List = 'Clear_Search_List';
 
 
 
@@ -296,6 +297,10 @@ export function searchUserSuccess(result){
   return{type:Search_Users_Result_Success,data:result};
 }
 
+export function clearSearchList (){
+  
+  return{type: Clear_Search_List};
+}
 export function searchUser(str){
   return(dispatch) => {
     $.ajax({

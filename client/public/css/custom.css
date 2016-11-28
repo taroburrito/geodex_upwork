@@ -1010,7 +1010,7 @@ ul.placesSuggest_suggests {
     margin-top: 0;
     position: absolute;
     background: #fff;
-    width: 93%;
+    width: 100%;
     z-index: 1;
 }
 
@@ -1019,8 +1019,19 @@ ul.placesSuggest_suggests li {
     padding-left: 0 !important;
     border-bottom: 1px solid #ffffff !important;
     margin-left: 0 !important;
-    padding: 5px 0px !important;
-    background:rgba(204, 204, 204, 0.45);
+    padding: 5px 12px !important;
+    background: rgba(204, 204, 204, 0.45);
+    color: #000;
+}
+
+ul.placesSuggest_suggests li:hover {
+    
+    background: rgba(204, 204, 204, 0.8);
+}
+
+ul.placesSuggest_suggests li a{
+  color:#000000;
+  text-decoration:none;
 }
 
 ul.placesSuggest_suggests li svg.placesSuggest_suggestIcon {
@@ -1292,7 +1303,7 @@ form.uk-search.search_dash_nav {
     margin-top: -33px;
     border-radius: 0;
     position: relative;
-    z-index: 100;
+    z-index: 1;
 }
 .category-select {
     float: left;

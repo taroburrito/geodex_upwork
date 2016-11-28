@@ -6,6 +6,7 @@ import { searchUser } from '../actions/UserActions';
 export default class Navbar extends Component {
   constructor(props){
     super(props);
+
   }
   changeContent(e){
 
@@ -17,6 +18,11 @@ export default class Navbar extends Component {
     this.props.searchUser(e.target.value);
   }
 
+  handleClickUser(name){
+    this.refs.search.getDOMNode().value = name;
+    this.props.searchUser('');
+  }
+
   render() {
     const{searchResult} = this.props;
     var searchList  = [];
@@ -24,8 +30,10 @@ export default class Navbar extends Component {
       Object.keys(searchResult).forEach((Id)=>
       {
         var item = searchResult[Id];
+        var name = item.first_name+" "+item.last_name;
+        var link = "/user/"+item.id;
          searchList.push(
-           <li  className="placesSuggest_suggest"><span><Link>{item.email}</Link></span></li>
+           <li  className="placesSuggest_suggest"><span><Link to={link} onClick={this.handleClickUser.bind(this,name)}>{name}</Link></span></li>
          );
       }
     );
@@ -39,12 +47,14 @@ export default class Navbar extends Component {
               <Link className="uk-navbar-brand uk-hidden-small" to="dashboard"><img src="public/images/logo.png"/></Link>
 
       <form className="uk-search search_dash_nav">
-              <input className="uk-search-field" placeholder="search..."  type="search" onChange={this.handleSearchChange.bind(this)}/>
-          <div className="uk-dropdown uk-dropdown-search" aria-expanded="false"></div></form>
-          <ul className="placesSuggest_suggests">
+              <input className="uk-search-field" placeholder="search..."  type="search" ref="search" onChange={this.handleSearchChange.bind(this)}/>
+          <div className="uk-dropdown uk-dropdown-search" aria-expanded="false"></div>
+            <ul className="placesSuggest_suggests">
 
-          {searchList?searchList:null}
-          </ul>
+            {searchList?searchList:null}
+            </ul>
+          </form>
+
 
 
       <ul className="uk-navbar-nav uk-hidden-small uk-float-right">
