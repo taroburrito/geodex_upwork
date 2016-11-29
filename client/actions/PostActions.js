@@ -1,6 +1,8 @@
 export const Get_All_Posts = 'Get_All_Posts';
 export const Post_Added_Success =  'Post_Added_Success';
 export const Post_Added_Dashboard_Success = 'Post_Added_Dashboard_Success';
+export const Set_Comments_Null = 'Set_Comments_Null';
+export const Fetch_Comment_Success = 'Fetch_Comment_Success';
 
 export function receivedAllposts(posts){
   return{type: Get_All_Posts, data:posts}
@@ -29,5 +31,35 @@ export function addPost(formData){
     }).error(function(error){
       console.log("Error in posts api call"+JSON.stringify(error));
     })
+  }
+}
+
+export function initializeComments(){
+  return{type: Set_Comments_Null}
+}
+
+export function fetchCommentSuccess(comments){
+  return{type: Fetch_Comment_Success, data:comments};
+}
+
+export function fetchCommentsByPost(postId){
+  return(dispatch) =>{
+    dispatch(initializeComments());
+    $.ajax({
+      type:'GET',
+      url:'/api/v1/posts/getComments/'+postId,
+
+    }).done(function(result){
+
+      if(result.error){
+        console.log("error:"+JSON.stringify(result.error));
+      }else {
+        console.log("Success comments");
+        dispatch(fetchCommentSuccess(result.comments));
+      }
+    }).fail(function(error){
+      console.log("Fail comments");
+      console.log(error);
+    });
   }
 }

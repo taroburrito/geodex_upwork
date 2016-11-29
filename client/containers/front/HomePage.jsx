@@ -7,7 +7,7 @@ import DashboardPage from '../../components/front/DashboardPage';
 import Navbar from '../../components/Navbar';
 import { attemptLogout } from '../../actions/AuthActions';
 //import {addCategory} from '../../actions/CategoryActions';
-//import {addPost} from '../../actions/PostActions';
+import {fetchCommentsByPost} from '../../actions/PostActions';
 import {getUserDetail, fetchDashboardData} from '../../utilities/ServerSocket';
 import {updatefriendsList,updateDashboardFriendList, addPost, addCategory} from '../../actions/UserActions';
 
@@ -25,6 +25,9 @@ class HomePage extends Component{
       return(
         <div className="full_width">
         <DashboardPage
+          fetchComments={(postId)=>
+          dispatch(fetchCommentsByPost(postId))}
+          comments={this.props.comments}
           updateDashboardFriendList={(friendList)=>
           dispatch(updateDashboardFriendList(friendList))}
           posts={this.props.posts}
@@ -67,7 +70,8 @@ function select(state) {
   handleMessage: state.handleMessage,
   posts:state.postsList,
   friendsPosts: state.friendsPosts,
-  dashboardData: state.dashboardData
+  dashboardData: state.dashboardData,
+  comments:state.commentsByPost
   };
 }
 

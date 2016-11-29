@@ -114,11 +114,39 @@ var postModel = {
           }
         });
 
+    },
+
+    /*
+    getComments
+    params:postId
+    return:comments object or error
+    */
+    getComments: function(postId,callback){
+        var dbConnection = dbConnectionCreator();
+        var getCommentsByPostSqlString = constructGetCommentsByPostSqlString(postId);
+        dbConnection.query(getCommentsByPostSqlString, function(error,results,fields){
+          if(error){
+            return(callback({status:400,error:"Error in comments query"}));
+          }else if (results.length == 0) {
+            return(callback({status:400, error:"No comments found for this post"}));
+          }else {
+            var comments = {};
+            results.forEach(function (result) {
+                comments[result.id] = postModel.convertRowsToObject(result);
+            });
+            return(callback({status:200,comments}));
+          }
+        })
     }
 
 
 
 };
+
+function constructGetCommentsByPostSqlString(postId){
+  var sql = "SELECT * from gx_post_comments WHERE post_id="+postId;
+  return sql;
+}
 
 function constructGetAllFriendsPostsSql(friends){
   var friends_str = friends.toString();

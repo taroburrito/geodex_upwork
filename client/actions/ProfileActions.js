@@ -89,10 +89,11 @@ export function handleSuccessMessage(msg){
 }
 
 export function updateUserProfileData(userData){
+  console.log(userData);
   return(dispatch) => {
     $.ajax({
       type:'Post',
-      url:'/api/v1/users/update/'+userData.id,
+      url:'/api/v1/users/update/',
       dataType:'JSON',
       data:userData,
     }).done(function(data){

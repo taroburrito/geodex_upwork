@@ -106,7 +106,7 @@ var setUserRoutes = function (router) {
                 });
             }
     );
-    router.post('/api/v1/users/update/:id',
+    router.post('/api/v1/users/update/',
         function (req, res) {
 
           //  console.log(req.body);

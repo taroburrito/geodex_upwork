@@ -1,5 +1,7 @@
 import {Get_All_Posts,
-        Post_Added_Success
+        Post_Added_Success,
+        Set_Comments_Null,
+        Fetch_Comment_Success
       } from '../actions/PostActions';
 
 export function updatePostsList(postsListState={},action){
@@ -15,5 +17,19 @@ export function updatePostsList(postsListState={},action){
     default:
     return postsListState;
 
+  }
+}
+
+export function updateComments(commentsByPostState={}, action){
+  switch (action.type) {
+    case Set_Comments_Null:
+    return null;
+      break;
+
+      case Fetch_Comment_Success:
+        return Object.assign({},commentsByPostState, action.data);
+        break;
+    default:
+      return commentsByPostState;
   }
 }

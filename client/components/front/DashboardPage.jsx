@@ -281,6 +281,8 @@ export default class DashboardPage extends Component {
               {item.post_image?<img src={item.post_image} className="uk-float-left img_margin_right"/>:null}
 
             <p>{item.post_content}</p>
+            {this.renderPostComments(item)}
+            <a  href="#" data-uk-modal={"{target:'#content_comment_pop_"+item.post_id+"'}"} onClick={this.loadComments.bind(this,item.post_id)}>more...</a>
             </div>
          </div>);
 
@@ -289,6 +291,116 @@ export default class DashboardPage extends Component {
       {friendsElement}
 
     )
+  }
+
+  loadComments(postId){
+    const{comments} = this.props;
+    this.props.fetchComments(postId);
+
+  }
+
+  renderComments(postId){
+    const{comments} = this.props;
+    if(comments)
+    var commentElement = [];
+    Object.keys(comments).forEach((id)=>{
+      var item = comments[id];
+      commentElement.push(
+        <li>
+            <article className="uk-comment">
+                <header className="uk-comment-header">
+                    <img className="uk-comment-avatar" src="public/images/user.jpg" alt="" width="40" height="40"/>
+                    <h4 className="uk-comment-title">Author</h4>
+                    <div className="uk-comment-meta"><span>email@gmail.com</span> | Los Angeles, CA</div>
+                </header>
+                <div className="uk-comment-body">
+                    <p>{item.comment}</p>
+                </div>
+            </article>
+      </li>
+      )
+    });
+
+    return(
+      {commentElement}
+    //   <li>
+    //       <article className="uk-comment">
+    //           <header className="uk-comment-header">
+    //               <img className="uk-comment-avatar" src="public/images/user.jpg" alt="" width="40" height="40"/>
+    //               <h4 className="uk-comment-title">Author</h4>
+    //               <div className="uk-comment-meta"><span>email@gmail.com</span> | Los Angeles, CA</div>
+    //           </header>
+    //           <div className="uk-comment-body">
+    //               <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.</p>
+    //           </div>
+    //       </article>
+    //       {/* <ul>
+    //           <li>
+    //               <article className="uk-comment">
+    //                   <header className="uk-comment-header">
+    //                       <img className="uk-comment-avatar" src="public/images/user.jpg" alt="" width="40" height="40"/>
+    //                       <h4 className="uk-comment-title">Author</h4>
+    //                       <div className="uk-comment-meta"><span>email@gmail.com</span> | Los Angeles, CA</div>
+    //                   </header>
+    //                   <div className="uk-comment-body">
+    //                       <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.</p>
+    //                   </div>
+    //               </article>
+    //
+    //               <div className="comenting_form">
+    //                 <img className="uk-comment-avatar" src="public/images/user.jpg" alt="" width="40" height="40"/>
+    //                 <textarea placeholder="Write Comment..."></textarea>
+    //                 <input type="submit" value="Send"/>
+    //               </div>
+    //         </li>
+    //     </ul> */}
+    // </li>
+    )
+  }
+
+  renderPostComments(item){
+    const {comments} = this.props;
+    return(
+      <div id={'content_comment_pop_'+item.post_id} className="uk-modal coment_popup">
+          <div className="uk-modal-dialog uk-modal-dialog-blank">
+      		<button className="uk-modal-close uk-close" type="button"></button>
+      			<div className="uk-grid">
+
+      				<div className="uk-width-small-1-1 popup_img_right coment_pop_cont">
+
+      				<article className="uk-comment">
+                  <header className="uk-comment-header">
+                      {item.profile_image?<img src={item.profile_image} className="uk-comment-avatar" width="60" height="60"/>:null}
+
+                      <h4 className="uk-comment-title">{item.NAME}</h4>
+                      <div className="uk-comment-meta">{item.address}<span>{item.email}</span></div>
+                  </header>
+
+                  <div className="uk-comment-body">
+                    <div className="uk-width-small-1-1 post_control">
+                      {item.post_image?<img src={item.post_image} className="uk-float-left img_margin_right"/>:null}
+            		        <p>{item.post_content}</p>
+            				</div>
+                  </div>
+              </article>
+      				<h5 className="coment_heading">Comments</h5>
+      				<ul className="uk-comment-list">
+                {comments?this.renderComments(item.post_id):null}
+           </ul>
+
+
+    				<div className="comenting_form border-top_cf">
+    				<img className="uk-comment-avatar" src="public/images/user.jpg" alt="" width="40" height="40"/>
+    				<textarea placeholder="Write Comment..."></textarea>
+    				<input type="submit" value="Send"/>
+    				</div>
+
+
+      	</div>
+      </div>
+    </div>
+  </div>
+    );
   }
 
   renderLatestPost(){

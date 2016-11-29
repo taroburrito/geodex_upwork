@@ -465,16 +465,16 @@ var userModel = {
             if (error) {
                 dbConnection.destroy();
 
-                return (callback({error: error}));
+                return (callback({error: error, status:400}));
             } else{
 
                 //Update query for gx_user_details table
                 dbConnection.query(updateUserDetailsQuery,function(errors,result,field){
                   if(errors){
                     dbConnection.destroy();
-                        return (callback({error: errors}));
+                        return (callback({error: "error in update profile",status:400}));
                     }else {
-                      return (callback({success: "Update user data successfully"}));
+                      return (callback({success: "Updated user data successfully", status:200}));
                     }
                 });
 
