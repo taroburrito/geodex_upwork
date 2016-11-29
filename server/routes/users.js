@@ -122,11 +122,8 @@ var setUserRoutes = function (router) {
         function (req, res) {
 
             userModel.updateUserData(req.body, function(results){
-                if(results.success){
-                    return res.json(results);
-                }else{
-                    return res.json(results);
-                }
+              return res.json(results);
+
             });
 
         }

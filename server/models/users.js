@@ -494,11 +494,11 @@ var userModel = {
           if (error) {
               dbConnection.destroy();
 
-              return (callback({error: error}));
+              return (callback({error: error,status:400}));
           } else if (results.affectedRows === 1) {
-            return(callback({success:"Successfully updated cover"}));
+            return(callback({success:"Successfully updated cover",status:200}));
           } else {
-              return (callback({error: "Error in update "}));
+              return (callback({error: "Error in update data",status:400}));
           }
       });
     },
