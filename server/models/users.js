@@ -28,7 +28,7 @@ var userModel = {
       var getUserSettingsSqlString = constructGetUserProfileSqlString(userId);
         dbConnection.query(getUserSettingsSqlString,function(error,result,fields){
         if(error){
-          return(callback({error:"Error in get LoggedIn user data query",status:400,message:"Error in logged In query"}));
+          return(callback({error:getUserSettingsSqlString,status:400,message:"Error in logged In query"}));
         }else if (result.length == 0) {
           return(callback({error:"No result found for userid:"+userId,status:400,message:"No record found with these parameters"}));
         }else {
