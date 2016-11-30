@@ -260,8 +260,8 @@ export function checkSessionStatus(email, password) {
 				dispatch(checkedSessionStatus(result));
 			})
 			.fail(function(a,b,c,d) {
-			  // console.log('failed to check',a,b,c,d);
-			  dispatch(checkedSessionStatus("TODO find the error..."));
+			   console.log('failed to check',a,b,c,d);
+			  //dispatch(checkedSessionStatus("TODO find the error..."));
 			});
   }
 }

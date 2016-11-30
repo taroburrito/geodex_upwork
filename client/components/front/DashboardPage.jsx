@@ -334,16 +334,14 @@ export default class DashboardPage extends Component {
           out.push(arr[i])
       }
   }
-  return out
+  return out;
 }
 
   renderComments(postId){
     const{comments} = this.props;
-    if(comments && comments.length >0)
     var commentElement = [];
-
-
-
+    if(comments && comments.length >0){
+      console.log("fffffff");
     // var data = {
     //     "menu": [
     //         {"id":5,"name":"Dashboard4","parent":1},
@@ -370,14 +368,7 @@ export default class DashboardPage extends Component {
 
     Object.keys(comments).forEach((id)=>{
       var item = comments[id];
-      var commentElement = [];
-      if(item.parent_id > 0){
-        var children = this.getNestedChildren(comments,item.parent_id);
-        if(children){
-          console.log(children);
-        }
-      }
-
+      console.log(commentElement);
       commentElement.push(
         <li>
             <article className="uk-comment">
@@ -390,9 +381,13 @@ export default class DashboardPage extends Component {
                     <p>{item.comment}</p>
                 </div>
             </article>
+
       </li>
-      )
+    );
     });
+  }else{
+
+  }
 
     return(
       {commentElement}
