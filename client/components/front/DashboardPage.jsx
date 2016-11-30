@@ -299,75 +299,75 @@ export default class DashboardPage extends Component {
 
   }
 
-  add(item) {
-    console.log(item);
-    console.log("*****");
-       var parent;
-      // var ul = this.refs.commentsul.getDOMNode();
-      // if(item.parent > 0) {
-      //     parent = ul.find('#n' + item.parent + ' > ul');
-      //     if(parent.length < 1) {
-      //         $.each(items, function(i) {
-      //             if(this.id === item.parent) {
-      //               parent = add(items.splice(i, 1)[0]);
-      //                 return false;
-      //             }
-      //         });
-      //     }
-      // } else {
-      //     parent = ul;
-      // }
-      // parent.append('<li id="n' + item.id + '">' + item.name + '<ul></ul></li>');
-      // return parent.children().last().children();
-
-  };
+  // add(item) {
+  //   console.log(item);
+  //   console.log("*****");
+  //      var parent;
+  //     // var ul = this.refs.commentsul.getDOMNode();
+  //     // if(item.parent > 0) {
+  //     //     parent = ul.find('#n' + item.parent + ' > ul');
+  //     //     if(parent.length < 1) {
+  //     //         $.each(items, function(i) {
+  //     //             if(this.id === item.parent) {
+  //     //               parent = add(items.splice(i, 1)[0]);
+  //     //                 return false;
+  //     //             }
+  //     //         });
+  //     //     }
+  //     // } else {
+  //     //     parent = ul;
+  //     // }
+  //     // parent.append('<li id="n' + item.id + '">' + item.name + '<ul></ul></li>');
+  //     // return parent.children().last().children();
+  //
+  // };
 
   renderComments(postId){
     const{comments} = this.props;
     if(comments && comments.length >0)
     var commentElement = [];
-    var data = {
-        "menu": [
-            {"id":5,"name":"Dashboard4","parent":1},
-            {"id":1,"name":"Dashboard","parent":0},
-            {"id":2,"name":"Dashboard1","parent":0 },
-            {"id":3,"name":"Dashboard2","parent":0},
-            {"id":4,"name":"Dashboard3","parent":0},
-            {"id":6,"name":"Dashboard5","parent":1},
-            {"id":7,"name":"Dashboard6","parent":1},
-            {"id":8,"name":"Dashboard7","parent":2},
-            {"id":9,"name":"Dashboard8","parent":5}
-        ]
-    };
-
-
-    var items = data.menu;
-
-
-    while(items.length > 0) {
-
-        this.add(items.shift());
-
-    }
-
-    // Object.keys(comments).forEach((id)=>{
-    //   var item = comments[id];
+    // var data = {
+    //     "menu": [
+    //         {"id":5,"name":"Dashboard4","parent":1},
+    //         {"id":1,"name":"Dashboard","parent":0},
+    //         {"id":2,"name":"Dashboard1","parent":0 },
+    //         {"id":3,"name":"Dashboard2","parent":0},
+    //         {"id":4,"name":"Dashboard3","parent":0},
+    //         {"id":6,"name":"Dashboard5","parent":1},
+    //         {"id":7,"name":"Dashboard6","parent":1},
+    //         {"id":8,"name":"Dashboard7","parent":2},
+    //         {"id":9,"name":"Dashboard8","parent":5}
+    //     ]
+    // };
     //
-    //   commentElement.push(
-    //     <li>
-    //         <article className="uk-comment">
-    //             <header className="uk-comment-header">
-    //                 <img className="uk-comment-avatar" src="public/images/user.jpg" alt="" width="40" height="40"/>
-    //                 <h4 className="uk-comment-title">Author</h4>
-    //                 <div className="uk-comment-meta"><span>email@gmail.com</span> | Los Angeles, CA</div>
-    //             </header>
-    //             <div className="uk-comment-body">
-    //                 <p>{item.comment}</p>
-    //             </div>
-    //         </article>
-    //   </li>
-    //   )
-    // });
+    //
+    // var items = data.menu;
+    //
+    //
+    // while(items.length > 0) {
+    //
+    //     this.add(items.shift());
+    //
+    // }
+
+    Object.keys(comments).forEach((id)=>{
+      var item = comments[id];
+      var commentElement = [];
+      commentElement.push(
+        <li>
+            <article className="uk-comment">
+                <header className="uk-comment-header">
+                    <img className="uk-comment-avatar" src="public/images/user.jpg" alt="" width="40" height="40"/>
+                    <h4 className="uk-comment-title">Author</h4>
+                    <div className="uk-comment-meta"><span>email@gmail.com</span> | Los Angeles, CA</div>
+                </header>
+                <div className="uk-comment-body">
+                    <p>{item.comment}</p>
+                </div>
+            </article>
+      </li>
+      )
+    });
 
     return(
       {commentElement}

@@ -17,7 +17,7 @@ export default class FriendsList extends Component{
    Object.keys(friends).forEach((id)=> {
      if(friends[id].status !=0){
      var user_id = friends[id].user_id;
-     if(categorizedFriendList[user_id]){
+     if(categorizedFriendList && categorizedFriendList[user_id]){
        var categoryContent = categorizedFriendList[user_id];
      }else{
        var categoryContent = null;
@@ -26,7 +26,7 @@ export default class FriendsList extends Component{
                   categoryData={categoryContent}
                   onChangeFriendCat={this.props.onChangeFriendCat}
                   userAuthSession={this.props.userAuthSession}
-                
+
                   categories={this.props.categories}
                   onClickBlock={this.props.onClickBlock}
                   onDeleteClick={this.props.onDeleteClick}
