@@ -33,7 +33,7 @@ var userModel = {
           return(callback({error:"No result found for userid:"+userId,status:400,message:"No record found with these parameters"}));
         }else {
             var userObject = userModel.convertRowsToUserProfileObject(result[0]);
-            return (callback({userObject,status:200,message:"Login success"}));
+            return (callback({userObject:userObject, status:200, message:"Login success"}));
         }
       });
     },
