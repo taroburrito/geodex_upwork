@@ -322,10 +322,28 @@ export default class DashboardPage extends Component {
   //
   // };
 
+   getNestedChildren(arr, parent) {
+  var out = []
+  for(var i in arr) {
+      if(arr[i].parent_id == parent) {
+          var children = this.getNestedChildren(arr, arr[i].id)
+
+          if(children.length) {
+              arr[i].children = children
+          }
+          out.push(arr[i])
+      }
+  }
+  return out
+}
+
   renderComments(postId){
     const{comments} = this.props;
     if(comments && comments.length >0)
     var commentElement = [];
+
+
+
     // var data = {
     //     "menu": [
     //         {"id":5,"name":"Dashboard4","parent":1},
@@ -353,6 +371,13 @@ export default class DashboardPage extends Component {
     Object.keys(comments).forEach((id)=>{
       var item = comments[id];
       var commentElement = [];
+      if(item.parent_id > 0){
+        var children = this.getNestedChildren(comments,item.parent_id);
+        if(children){
+          console.log(children);
+        }
+      }
+
       commentElement.push(
         <li>
             <article className="uk-comment">

@@ -62,7 +62,7 @@ class App extends Component {
 
   } else{
     console.log(userAuthSession);
-    if(userAuthSession.isLoggedIn && userAuthSession.userObject.role=='user'){
+    if(userAuthSession.isLoggedIn && userAuthSession.role=='user'){
     return (
             <div>
               <Navbar
