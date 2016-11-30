@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { Navigation, Link } from 'react-router';
+import { validateDisplayName, } from '../../utilities/RegexValidators';
 var AvatarEditor = require('react-avatar-editor');
 
 function generateUUID(){
@@ -8,8 +9,14 @@ function generateUUID(){
   return (Math.round(Math.random()*10000000000000000).toString()+(Date.now()));
 }
 
+const initialMessageStates={
+  error: null,
+  success:null
+}
+
 export default class DashboardPage extends Component {
   constructor(props) {
+
     super(props);
     this.handleClickAddCategory = this.handleClickAddCategory.bind(this);
     this.handleClickPlus = this.handleClickPlus.bind(this);
@@ -21,7 +28,8 @@ export default class DashboardPage extends Component {
       errorMessage: null,
       image: "public/images/user.jpg",
       post_image:null,
-      active_cat:'all'
+      active_cat:'all',
+      handleMessage:initialMessageStates
 
     }
   }
@@ -58,10 +66,17 @@ export default class DashboardPage extends Component {
     //this.props.fetchInitialData(userAuthSession.userObject.id);
   }
 
+setMessageStateToDefault (){
+  this.setState({handleMessage:{error:null,success:null}});
 
+}
+componentDidUpdate(){
+
+}
   handleClickPlus(){
-    this.setState({errorMessage:null});
-    this.props.handleMessage = null;
+    this.setMessageStateToDefault();
+    this.props.setMessageToDefault();
+    this.refs.categoryName.getDOMNode().value = "";
   }
 
   componentDidMount(){
@@ -80,19 +95,23 @@ export default class DashboardPage extends Component {
   handleClickAddCategory(){
     const{userAuthSession} = this.props;
     var category_name= this.refs.categoryName.getDOMNode().value.trim();
+    var req = {
+    user_id:userAuthSession.userObject.id,
+    category_name: category_name,
+    added_by:'user'
+    };
+
+
     if(category_name === ''){
-      this.setState({errorMessage:"Please Enter category name"});
+      this.setState({handleMessage:{error:"Please enter category name"}});
+    }else if (!validateDisplayName(category_name)) {
+      this.setState({handleMessage:{error:"Please enter alpha numeric value"}});
     }else{
-      this.setState({errorMessage:null});
-      var req = {
-      user_id:userAuthSession.userObject.id,
-      category_name: this.refs.categoryName.getDOMNode().value,
-      added_by:'user'
-      };
+      this.setMessageStateToDefault();
 
       this.props.addCategory(req);
-     this.refs.categoryName.getDOMNode().value = "";
-    }
+    // this.refs.categoryName.getDOMNode().value = "";
+   }
   }
 
 
@@ -492,28 +511,35 @@ export default class DashboardPage extends Component {
   }
 
  renderCategoryModel(){
+   const{dashboardData} = this.props;
+   var categoryMessage;
+   if(this.state.handleMessage.error){
+      categoryMessage = (<div className="uk-alert uk-alert-danger"><p>{this.state.handleMessage.error}</p></div>);
+   }else if (this.state.handleMessage.success) {
+     categoryMessage = (<div className="uk-alert uk-alert-success"><p>{this.state.handleMessage.success}</p></div>);
+   }else if (dashboardData && dashboardData.error) {
+       categoryMessage = (<div className="uk-alert uk-alert-danger"><p>{dashboardData.error}</p></div>);
+   }else if (dashboardData && dashboardData.success) {
+       categoryMessage = (<div className="uk-alert uk-alert-success"><p>{dashboardData.success}</p></div>);
+   }
+
    return(
      <div id="categoryModal" className="uk-modal" ref="modal" >
        <div className="uk-modal-dialog">
           <button type="button" className="uk-modal-close uk-close"></button>
 
             <form className="uk-form uk-margin uk-form-stacked add_category">
+              {categoryMessage}
                   <fieldset>
-                    <div className="uk-grid">
-                        <div className="uk-width-1-1">
-                            <label className="uk-form-label" for="form-gs-street">Add Category</label>
-                        </div>
-                    </div>
 
                     <div className="uk-grid">
                       <div className="uk-width-1-1">
                         <div className="uk-form-controls">
-                          <input id="" placeholder="Categorie name" className="uk-width-8-10" type="text" ref="categoryName"/>
+                          <label className="uk-form-label" for="form-gs-street">Add Category</label>
+                          <input id="" placeholder="Category name" className="uk-width-10-10" type="text" ref="categoryName"/>
 
-                          <div className="uk-width-2-10 uk-float-right add_cat_btn">
-                            <a className="uk-button uk-button-primary " onClick={this.handleClickAddCategory}>Add</a>
+                            <a className="uk-button uk-button-primary" onClick={this.handleClickAddCategory} style={{marginTop:5,float:'right'}}>Add</a>
 
-                          </div>
                         </div>
                       </div>
                     </div>
@@ -589,7 +615,7 @@ export default class DashboardPage extends Component {
             <textarea placeholder="Post to geodex..." className="uk-width-1-1" ref="postContent"></textarea>
 
 
-            <i className="uk-icon-image" data-uk-modal="{target:'#statusImage'}"></i>
+            <i className="uk-icon-image" data-uk-modal="{target:'#statusImage'}" style={{cursor:"pointer"}}></i>
             <a className="uk-button uk-button-primary uk-button-large" onClick={this.handleSavePost}>Post</a>
 
             </div>

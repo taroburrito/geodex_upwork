@@ -12,7 +12,9 @@ import {
           Delete_Friend_Request_Failed,
           Update_Dashboard_Friend_List,
           Search_Users_Result_Success,
-          Clear_Search_List
+          Clear_Search_List,
+          Add_Category_Dashboard_Failed,
+          Set_Message_To_Default
         } from '../actions/UserActions';
 
 
@@ -55,16 +57,26 @@ export function getAllFriendsPosts(friendsPostsState={}, action){
   }
 }
 
-export function updateDashboardData(dashboardDataState={},action){
+export function updateDashboardData(dashboardDataState={error:null,success:null},action){
   switch (action.type) {
     case Fetch_Dashboard_Data:
       return Object.assign({},action.data)
       break;
 
+      case Set_Message_To_Default:
+      var currentData = Object.assign({}, dashboardDataState);
+        return Object.assign({}, currentData,{
+          error:null,
+          success:null
+        });
+        break;
+
       case Post_Added_Dashboard_Success:
       var currentData = Object.assign({}, dashboardDataState);
       currentData.latestPost = action.post;
-        return Object.assign({}, currentData);
+        return Object.assign({}, currentData,{
+          error:null,
+        });
       break;
 
       case Update_Dashboard_Friend_List:
@@ -76,8 +88,19 @@ export function updateDashboardData(dashboardDataState={},action){
       case Category_Added_Dashboard_Success:
       var currentData = Object.assign({}, dashboardDataState);
       currentData.categories[action.category.id] = action.category;
-        return Object.assign({}, currentData);
+        return Object.assign({}, currentData,{
+          error:null,
+          success:action.success
+        });
       break;
+
+      case Add_Category_Dashboard_Failed:
+      var currentData = Object.assign({}, dashboardDataState);
+        return Object.assign({}, currentData,{
+          error:action.error,
+          success:null
+        });
+        break;
     default:
     return dashboardDataState;
 

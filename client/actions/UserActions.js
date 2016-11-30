@@ -17,6 +17,8 @@ export const Delete_Friend_Request_Failed = 'Delete_Friend_Request_Failed';
 export const Update_Dashboard_Friend_List = 'Update_Dashboard_Friend_List';
 export const Search_Users_Result_Success = 'Search_Users_Result_Success';
 export const Clear_Search_List = 'Clear_Search_List';
+export const Add_Category_Dashboard_Failed = 'Add_Category_Dashboard_Failed';
+export const Set_Message_To_Default = 'Set_Message_To_Default';
 
 
 
@@ -170,12 +172,20 @@ export function addPost(formData){
 }
 
 export function addCategorySuccess(category) {
-  return{type: Category_Added_Dashboard_Success, category};
+  return{type: Category_Added_Dashboard_Success, category,success:"Added category successfully"};
+}
+
+export function addCategoryFail(msg){
+  return{type: Add_Category_Dashboard_Failed, error:msg}
+}
+
+export function setMessageToDefault(){
+  return{type: Set_Message_To_Default}
 }
 
 export function addCategory(req) {
   return (dispatch) => {
-
+    dispatch(setMessageToDefault());
     $.ajax({
 			type: 'POST',
 			url: '/api/v1/categories/addCategory',
@@ -184,7 +194,7 @@ export function addCategory(req) {
 			.done(function(data) {
 				if (data.error){
 					console.log("add todo worked but error: ", data);
-        //  dispatch(handleErrorMessage(data.error));
+          dispatch(addCategoryFail(data.error));
 
 					} else {
 						console.log("add todo success", data);
@@ -195,7 +205,7 @@ export function addCategory(req) {
 				})
 			.fail(function(error) {
 				console.log("Failure");
-      //  dispatch(handleErrorMessage(error));
+      dispatch(addCategoryFail(error));
 			});
   }
 }
@@ -298,7 +308,7 @@ export function searchUserSuccess(result){
 }
 
 export function clearSearchList (){
-  
+
   return{type: Clear_Search_List};
 }
 export function searchUser(str){
