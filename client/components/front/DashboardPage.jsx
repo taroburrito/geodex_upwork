@@ -36,7 +36,6 @@ export default class DashboardPage extends Component {
     this.props.fetchInitialData(userAuthSession.userObject.id,null);
     this.setState({active_cat:'all'});
   }
-
   handleSavePostImage(){
     var img = this.refs.postImage.getImage();
     this.setState({post_image: img});
