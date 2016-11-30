@@ -44,13 +44,17 @@ export default class DashboardPage extends Component {
     const{userAuthSession} = this.props;
     var formData = {
       user_id: userAuthSession.userObject.id,
-      content: this.refs.postContent.getDOMNode().value,
+      content: this.refs.postContent.getDOMNode().value.trim(),
       image: this.state.post_image
     }
+    if(!formData.content && !formData.image){
+      alert("enter text or image");
+    }else {
+      this.props.onClickSavePost(formData);
+      this.setState({image:null,post_image:null});
+      this.refs.postContent.getDOMNode().value = "";
+    }
 
-    this.props.onClickSavePost(formData);
-    this.setState({image:null,post_image:null});
-    this.refs.postContent.getDOMNode().value = "";
     //this.props.fetchInitialData(userAuthSession.userObject.id);
   }
 
