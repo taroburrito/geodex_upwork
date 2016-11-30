@@ -22,7 +22,7 @@ import { handleFrontMessage} from './CommonReducer';
 //   }
 // }
 
-const RootReducer = combineReducers({
+const AppReducer = combineReducers({
   // visibilityFilter: updateVisibilityFilter, //TODO implement or remove...
   universalTodos: updateUniversalTodoList,
   universalCategories: updateCategoryList,
@@ -50,5 +50,13 @@ const RootReducer = combineReducers({
   updateProfileData: updateProfileData
 
 });
+
+const RootReducer = (state, action) => {
+  if (action.type === 'Logout_Success') {
+    state = undefined
+  }
+
+  return AppReducer(state, action)
+}
 
 export default RootReducer;
