@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import { searchUser } from '../actions/UserActions';
+import {getVisitedUserDetail} from '../utilities/ServerSocket';
 
 export default class Navbar extends Component {
   constructor(props){
@@ -18,9 +19,12 @@ export default class Navbar extends Component {
     this.props.searchUser(e.target.value);
   }
 
-  handleClickUser(name){
+  handleClickUser(name,profileId){
+    const{dispatch,userAuthSession} = this.props;
+    var userId = userAuthSession.userObject.id;
+    getVisitedUserDetail(userId,profileId);
     this.refs.search.getDOMNode().value = name;
-    this.props.searchUser('');
+  //  this.props.searchUser('');
   }
 
   render() {
@@ -33,7 +37,7 @@ export default class Navbar extends Component {
         var name = item.first_name+" "+item.last_name;
         var link = "/user/"+item.id;
          searchList.push(
-           <li  className="placesSuggest_suggest"><span><Link to={link} onClick={this.handleClickUser.bind(this,name)}>{name}</Link></span></li>
+           <li  className="placesSuggest_suggest"><span><Link to={link} onClick={this.handleClickUser.bind(this,name,item.id)}>{name}</Link></span></li>
          );
       }
     );
@@ -121,3 +125,12 @@ export default class Navbar extends Component {
 }
   }
 }
+
+function select(state) {
+  return {
+
+    visitedUser: state.visitedUser,
+  };
+}
+
+export default connect(select)(Navbar);
