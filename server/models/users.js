@@ -749,7 +749,7 @@ var userModel = {
           results.forEach(function (resultIndex) {
               records[resultIndex.id] = userModel.convertRowsToUserProfileObject(resultIndex);
           });
-          return(callback({searchResult:records,status:200}));
+          return(callback({searchResult:records,status:200,success:"user founds successfully"}));
         }
       });
     },

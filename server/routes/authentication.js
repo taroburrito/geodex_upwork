@@ -57,6 +57,8 @@ module.exports = function (app, passport) {
             //         email: req.user.email
             //     }
             // });
+            
+
             req.user.isLoggedIn = isLoggedIn;
             userModel.getLoggedInUserData(req.user.id, function (result) {
               var final_result = Object.assign({},req.user,result);

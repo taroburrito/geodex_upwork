@@ -204,6 +204,7 @@ export function getUserDetail(userId){
 
 // visited user profile detail
 export function getVisitedUserDetail(userId,profileId){
+  
   socket.emit("visited-user-detail", userId,profileId);
 }
 
