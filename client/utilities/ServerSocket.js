@@ -159,21 +159,21 @@ export function linkSocketToStore(dispatch) {
   socket.on("visitedUserDetail",function(res){
     console.log(res);
     //user profile data
-    var userdata = res.userData[0];
-
-    // user category data
-    var userCategoriesData = res.userCategories;
-    // visited users friendlist
-    var friendList = res.friendList;
-    userdata.categories = userCategoriesData;
-    userdata.friends = friendList;
-    userdata.posts = res.posts;
+    // var userdata = res.userData;
+    //
+    // // user category data
+    // var userCategoriesData = res.userCategories;
+    // // visited users friendlist
+    // var friendList = res.friendList;
+    // userdata.categories = userCategoriesData;
+    // userdata.friends = friendList;
+    // userdata.posts = res.posts;
   //  console.log(userdata);
-		if(userdata.error){
+		if(res.error){
 			console.log("Error in server socket");
 		}else{
 
-			dispatch(getVisitedUserData(userdata));
+			dispatch(getVisitedUserData(res));
 		}
 	});
 
@@ -203,8 +203,8 @@ export function getUserDetail(userId){
 }
 
 // visited user profile detail
-export function getVisitedUserDetail(userId){
-  socket.emit("visited-user-detail", userId);
+export function getVisitedUserDetail(userId,profileId){
+  socket.emit("visited-user-detail", userId,profileId);
 }
 
 export function fetchDashboardData(userId,catId){

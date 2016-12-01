@@ -72,13 +72,14 @@ export function userProfileData(userProfileState = {} , action){
   }
 }
 
-export function visitedUserData(visitedUserState={}, action){
+export function visitedUserData(visitedUserState=null, action){
   switch (action.type) {
     case Get_Visited_User_Data:
       return Object.assign({}, visitedUserState, action.data);
       break;
+
     default:
-    return visitedUserState
+    return visitedUserState;
 
   }
 }

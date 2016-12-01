@@ -8,13 +8,13 @@ export default class Profile extends Component {
           isFriendWithLoggedInUser: false,
         }
         this.handleClickAddFriend = this.handleClickAddFriend.bind(this);
-        this.handleClickRespondToRequest = this.handleClickRespondToRequest.bind(this);
+        // this.handleClickRespondToRequest = this.handleClickRespondToRequest.bind(this);
       //  this.handleClickDenyRequest = this.handleClickDenyRequest.bind(this);
 
 
     }
     componentWillMount() {
-      this.props.fetchInitialData(this.props.userId);
+
     }
     componentDidMount(){
 
@@ -27,91 +27,136 @@ export default class Profile extends Component {
       }
 
     }
-    handleClickDenyRequest(item,event){
-
-      this.props.onClickDenyRequest(item);
-      this.props.fetchInitialData(this.props.userId);
-    }
+    // handleClickDenyRequest(item,event){
+    //
+    //   this.props.onClickDenyRequest(item);
+    //   const{userAuthSession} = this.props;
+    //   this.props.fetchInitialData(userAuthSession.userObject.id,this.props.userId);
+    // }
     handleClickAddFriend(){
-      const{userAuthSession,userProfileData} = this.props;
-      var sender = userAuthSession.userObject;
-      var receiver = userProfileData;
-      this.props.onClickAddFriend(sender,receiver);
-      this.props.fetchInitialData(this.props.userId);
-    }
+      const{userAuthSession,visitedUser} = this.props;
+      var sender;
+      var receiver;
+      if(userAuthSession && userAuthSession.userObject){
+        var sender ={
+          id: userAuthSession.userObject.id,
+          email:userAuthSession.userObject.email,
+        }
+      }
+      if(visitedUser && visitedUser.userProfileData){
+        var receiver ={
+          id: visitedUser.userProfileData.id,
+          email:visitedUser.userProfileData.email,
+        }
+      }
+      if(sender && receiver){
+        this.props.onClickAddFriend(sender,receiver);
+      }else{
+        console.log("Can't find sender and receiver");
+      }
 
-    handleClickRespondToRequest(){
-      const{userAuthSession,userId} = this.props;
-      var senderId = userAuthSession.userObject.id;
-      this.props.onClickRespondFriendRequest(senderId);
-      this.props.fetchInitialData(this.props.userId);
+      //this.props.fetchInitialData(userAuthSession.userObject.id,this.props.userId);
     }
+    //
+    // handleClickRespondToRequest(){
+    //   const{userAuthSession,userId} = this.props;
+    //   var senderId = userAuthSession.userObject.id;
+    //   this.props.onClickRespondFriendRequest(senderId);
+    //   this.props.fetchInitialData(userAuthSession.userObject.id,this.props.userId);
+    // }
 
     renderAddFriendLink(){
-      const{userProfileData, userAuthSession} = this.props;
-      var friends = userProfileData.friends;
+      const{visitedUser, userAuthSession, profileId} = this.props;
+      var userProfileData = visitedUser.userProfileData;
+      var friendStatus = visitedUser.friendStatus;
       var link;
       var denyLink = "";
       var LoggedInUserId = userAuthSession.userObject.id;
-      if(friends && LoggedInUserId){
-      Object.keys(friends).forEach( (id) => {
-      var friendsData = friends[id];
+      if(friendStatus){
+//       Object.keys(friends).forEach( (id) => {
+//       var friendsData = friends[id];
+//
+//       // if there is friend list record for loggedin user and visited user
+//       if(friendsData.sender_id == LoggedInUserId || friendsData.receiver_id == LoggedInUserId){
+// //console.log("LoggedIn:"+LoggedInUserId);
+//         //if visited user and loggedin user are friend
+//         if(friendsData.status == 1){
+//           link =(
+//             <a className="uk-button add_friend_btn">Friends</a>
+//           );
+//
+//         // if visited user and loggedin user are blocked
+//         }else if (friendsData.status == 2) {
+//
+//           // if an friend request is sent either by visited user or by loggedin user
+//         }else {
+//           // If loggedin user sends request
+//           if (friendsData.sender_id == LoggedInUserId) {
+//             link =(
+//               <a className="uk-button add_friend_btn">Friend request sent</a>
+//             );
+//
+//
+//             // if visited user sent friend request
+//           }else {
+//             link =(
+//               <div data-uk-dropdown="" aria-haspopup="true" aria-expanded="false" className="add_friend_btn">
+//                 <a className="uk-button"><i className="uk-icon-chevron-down"></i></a>
+//                 <div className="uk-dropdown uk-dropdown-small uk-dropdown-bottom" aria-hidden="true" tabindex="">
+//
+//                   <ul className="uk-nav uk-nav-dropdown">
+//                      <li><a  onClick={this.handleClickRespondToRequest}>Accept request</a></li>
+//                      <li><a onClick={this.handleClickDenyRequest.bind(this,friendsData.id)}>Deny request</a></li>
+//                    </ul>
+//                  </div>
+//                 </div>
+//
+//
+//               );
+//
+//           }
+//         }
+//
+//       }else{
+//
+//       }
+//       });
 
-      // if there is friend list record for loggedin user and visited user
-      if(friendsData.sender_id == LoggedInUserId || friendsData.receiver_id == LoggedInUserId){
-//console.log("LoggedIn:"+LoggedInUserId);
-        //if visited user and loggedin user are friend
-        if(friendsData.status == 1){
+      if(friendStatus.status == 1){
+        link = (
+          <a className="uk-button add_friend_btn">Friends</a>
+        );
+      }else if (friendStatus.status == 0) {
+
+        // if profile user sent friend request
+        if(friendStatus.sender_id == profileId){
           link =(
-            <a className="uk-button add_friend_btn">Friends</a>
-          );
+            <div data-uk-dropdown="" aria-haspopup="true" aria-expanded="false" className="add_friend_btn">
+              <a className="uk-button"><i className="uk-icon-chevron-down"></i></a>
+              <div className="uk-dropdown uk-dropdown-small uk-dropdown-bottom" aria-hidden="true" tabindex="">
 
-        // if visited user and loggedin user are blocked
-        }else if (friendsData.status == 2) {
+                <ul className="uk-nav uk-nav-dropdown">
+                   <li><a  onClick={this.handleClickRespondToRequest}>Accept request</a></li>
+                   <li><a onClick={this.handleClickDenyRequest.bind(this,friendsData.id)}>Deny request</a></li>
+                 </ul>
+               </div>
+              </div>
 
-          // if an friend request is sent either by visited user or by loggedin user
-        }else {
-          // If loggedin user sends request
-          if (friendsData.sender_id == LoggedInUserId) {
-            link =(
-              <a className="uk-button add_friend_btn">Friend request sent</a>
+
             );
-
-
-            // if visited user sent friend request
-          }else {
-            link =(
-              <div data-uk-dropdown="" aria-haspopup="true" aria-expanded="false" className="add_friend_btn">
-                <a className="uk-button"><i className="uk-icon-chevron-down"></i></a>
-                <div className="uk-dropdown uk-dropdown-small uk-dropdown-bottom" aria-hidden="true" tabindex="">
-
-                  <ul className="uk-nav uk-nav-dropdown">
-                     <li><a  onClick={this.handleClickRespondToRequest}>Accept request</a></li>
-                     <li><a onClick={this.handleClickDenyRequest.bind(this,friendsData.id)}>Deny request</a></li>
-                   </ul>
-                 </div>
-                </div>
-
-
-              );
-
-          }
         }
 
-      }else{
-
+        else {
+          link =(
+              <a className="uk-button add_friend_btn">Friend request sent</a>
+                      );
+        }
       }
-      });
+
     }else{
       link =(
-
-        <a className="uk-button add_friend_btn" onClick={this.handleClickAddFriend}>Add Friend</a>
-      )
-    }
-    if(!link){
-      link = (
           <a className="uk-button add_friend_btn" onClick={this.handleClickAddFriend}>Add Friend</a>
-      )
+        )
     }
 
         return(
@@ -123,9 +168,11 @@ export default class Profile extends Component {
 
 
     render() {
-      const{userProfileData, userAuthSession} = this.props;
-      console.log(userProfileData);
-      if(userProfileData.cover_image){
+      const{visitedUser, userAuthSession} = this.props;
+      if(visitedUser){
+
+      var userProfileData = visitedUser.userProfileData;
+      if(userProfileData && userProfileData.cover_image){
         var background_profile_css ={
           backgroundImage: 'url('+userProfileData.cover_image+')'
         }
@@ -218,7 +265,11 @@ export default class Profile extends Component {
           </div>
       );
 
-
+    }else{
+      return(
+        <div>Profile</div>
+      )
+    }
     }
 
 }

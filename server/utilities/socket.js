@@ -69,8 +69,8 @@ module.exports = {
             });
 
 //          Viseted user detail
-            socket.on('visited-user-detail',function(userId){
-                userModel.getUserProfile(userId,function(result){
+            socket.on('visited-user-detail',function(userId,profileId){
+                userModel.getVisitedProfileData(userId,profileId,function(result){
                   socket.emit("visitedUserDetail",result);
                   // userModel.getAllFriends(userId,function(res){
                   //   var final_result = Object.assign({},result,res);

@@ -19,6 +19,8 @@ export const Search_Users_Result_Success = 'Search_Users_Result_Success';
 export const Clear_Search_List = 'Clear_Search_List';
 export const Add_Category_Dashboard_Failed = 'Add_Category_Dashboard_Failed';
 export const Set_Message_To_Default = 'Set_Message_To_Default';
+export const Add_Friend_Request_Success = 'Add_Friend_Request_Success';
+export const Add_Friend_Request_Failed = 'Add_Friend_Request_Failed';
 
 
 
@@ -82,8 +84,16 @@ export function clickedBlockUser(senderId,receiverId,userId) {
   }
 }
 
-export function clickedAddFriend(sender,receiver) {
+export function addFriendRequestSuccess(success,friendStatus){
+    return{type:Add_Friend_Request_Success, msg:success}
+}
 
+export function addFriendRequestFailed(error){
+  return{type:Add_Friend_Request_Failed, msg:error}
+}
+
+export function clickedAddFriend(sender,receiver) {
+  return(dispatch)=>{
     $.ajax({
       type:'POST',
       url:'/api/v1/user/addFriendRequest',
@@ -91,9 +101,16 @@ export function clickedAddFriend(sender,receiver) {
       data:{sender:sender,receiver:receiver},
     }).done(function(data){
       console.log("Success add friend request :"+ JSON.stringify(data));
+      if(data.error){
+        dispatch(addFriendRequestFailed(data.error));
+      }else{
+        dispatch(addFriendRequestSuccess(data.success,data.friendStatus));
+      }
     }).fail(function(error){
       console.log("Error in add friend request:"+JSON.stringify(error));
+        dispatch(addFriendRequestFailed(error));
     });
+  }
 
 
 }
@@ -172,7 +189,7 @@ export function addPost(formData){
 }
 
 export function addCategorySuccess(category) {
-  return{type: Category_Added_Dashboard_Success, category,success:"Added category successfully"};
+  return{type: Category_Added_Dashboard_Success, category,success:"Added catefg"};
 }
 
 export function addCategoryFail(msg){

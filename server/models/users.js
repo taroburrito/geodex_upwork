@@ -28,7 +28,7 @@ var userModel = {
       var getUserSettingsSqlString = constructGetUserProfileSqlString(userId);
         dbConnection.query(getUserSettingsSqlString,function(error,result,fields){
         if(error){
-          return(callback({error:getUserSettingsSqlString,status:400,message:"Error in logged In query"}));
+          return(callback({error:"Failed to login",status:400,message:"Error in logged In query"}));
         }else if (result.length == 0) {
           return(callback({error:"No result found for userid:"+userId,status:400,message:"No record found with these parameters"}));
         }else {
@@ -556,30 +556,55 @@ var userModel = {
 
     addFriendRequest: function(data, callback){
       var dbConnection = dbConnectionCreator();
-      var addFriendQuery = constructAddFriendQuery(data.sender.id,data.receiver.user_id);
+      var addFriendQuery = constructAddFriendQuery(data.sender.id,data.receiver.id);
+      var checkFriendStatusSqlString = constructFriendStatusSqlString(data.sender.id,data.receiver.id);
+      var friendStatus;
 
-      dbConnection.query(addFriendQuery, function (error, results, fields) {
-          if (error) {
-              dbConnection.destroy();
+      // check if already friend
+      dbConnection.query(checkFriendStatusSqlString,function(error,results,fields){
+        if(error){
+          return(callback({error:error,status:400}))
+        }else if (results.length > 0) {
+          return(callback({error:"You already have sent friend request to this user",status:400}))
+        }else{
 
-              return (callback({error: error}));
-          } else if (results.affectedRows === 1) {
+          // add friend to friend list
+          dbConnection.query(addFriendQuery, function (error, results, fields) {
+              if (error) {
+                  dbConnection.destroy();
+                  return (callback({error: error,status:400}));
+              } else if (results.affectedRows === 1) {
 
-            var mailContent = '<b>Hello,</b><br/><p>You have received new friend request from <b>' + data.sender.email + ' </b></p>' +
-                    '<br/><a href="http://localhost:6969/#/user/' + data.sender.id + '" target="_blank">Click here</a>';
+                var lastInsertId = results.insertId;
+                var getFriendRequestByIdSqlString = constructFriendRequestByIdSqlString(lastInsertId);
 
-            //Send notification email on success
-            //token,from,to,subject,content
+                dbConnection.query(getFriendRequestByIdSqlString,function(error,results,fields){
+                  if(error){
+                    return(callback({error:error, status:400}));
+                  }else if (results.length == 0) {
+                     friendStatus = null;
+                  }else{
+                    friendStatus = userModel.convertRowsToUserProfileObject(results[0]);
+                  }
+                });
+
+                var mailContent = '<b>Hello,</b><br/><p>You have received new friend request from <b>' + data.sender.email + ' </b></p>' +
+                        '<br/><a href="http://localhost:6969/#/user/' + data.sender.id + '" target="_blank">Click here</a>';
+
+                //Send notification email on success
+                //token,from,to,subject,content
 
 
-            if(sendMailToUser('','admin@geodex.com',data.receiver.email,'New friend request',mailContent)){
-              return(callback({success:"Successfully sent friend request"}));
-            }else{
-              return(callback({error:"Error in send friend request email"}));
-            }
-          } else {
-              return (callback({error: results}));
-          }
+                if(sendMailToUser('','admin@geodex.com',data.receiver.email,'New friend request',mailContent)){
+                  return(callback({success:"Successfully sent friend request",status:200,friendStatus:friendStatus}));
+                }else{
+                  return(callback({success:"Success added friend request",status:200,friendStatus:friendStatus}));
+                }
+              } else {
+                  return (callback({error: "error in add request",status:400}));
+              }
+          });
+        }
       });
     },
 
@@ -705,11 +730,72 @@ var userModel = {
           return(callback({searchResult:records,status:200}));
         }
       });
+    },
+
+    /*
+    getVisitedProfileData
+    params:userId,profileId
+    response:userProfileData,posts,friendStatus,status
+    */
+
+    getVisitedProfileData:function(userId,profileId,callback){
+      var dbConnection = dbConnectionCreator();
+      var getUserProfileSqlString = constructGetUserProfileSqlString(profileId);
+      var getPostsByUserSqlString = constructGetPostByUserSqlString(profileId);
+      var getFriendStatusSqlString = constructFriendStatusSqlString(userId,profileId);
+      var userProfileData;
+      var friendStatus;
+      dbConnection.query(getUserProfileSqlString,function(error,results,fields){
+        if(error){
+          return(callback({error:error,status:400}));
+        }else if (results.length == 0) {
+          return(callback({error:"empty result",status:400}));
+        }else{
+          userProfileData = userModel.convertRowsToUserProfileObject(results[0]);
+
+          //Get Friend Status
+          dbConnection.query(getFriendStatusSqlString,function(error,results,fields){
+            if(error){
+              return(callback({error:error,status:400}));
+            }else if (results.length == 0) {
+               friendStatus = null;
+            }else{
+              friendStatus = userModel.convertRowsToUserProfileObject(results[0]);
+            }
+          });
+
+          // get posts of user
+          dbConnection.query(getPostsByUserSqlString,function(error,results,fields){
+            if(error){
+                return(callback({error:error,status:400}));
+            }else if (results.length == 0) {
+                return(callback({userProfileData:userProfileData,status:200,posts:null,friendStatus:friendStatus}));
+            }else{
+              var posts = {};
+                  results.forEach(function (postIndex) {
+                  posts[postIndex.id] = userModel.convertRowsToUserProfileObject(postIndex);
+              });
+              return(callback({userProfileData:userProfileData,status:200,posts:posts,friendStatus:friendStatus}));
+            }
+
+          });
+        }
+      });
     }
 
 
 
 };
+
+function constructFriendRequestByIdSqlString(id){
+  var query = "SELECT * FROM gx_friends_list WHERE id="+id;
+  return query;
+}
+
+function constructFriendStatusSqlString(userId,profileId){
+  var sql = "SELECT * from gx_friends_list WHERE (sender_id="+profileId+" AND receiver_id="+userId+") OR(sender_id="+userId+" AND receiver_id="+profileId+")";
+  return sql;
+}
 
 function constructSearchUserSqlString(str){
 
