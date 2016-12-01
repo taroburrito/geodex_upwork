@@ -20,11 +20,12 @@ export default class Navbar extends Component {
   }
 
   handleClickUser(name,profileId){
+    this.props.searchUser('');
     const{dispatch,userAuthSession} = this.props;
     var userId = userAuthSession.userObject.id;
     getVisitedUserDetail(userId,profileId);
     this.refs.search.getDOMNode().value = name;
-    this.props.searchUser('');
+
   }
 
   render() {
