@@ -4,8 +4,7 @@ import VistiProfileWidget from '../../components/front/VistiProfileWidget';
 import Home from '../../components/front/Home';
 import {getVisitedUserDetail} from '../../utilities/ServerSocket';
 
-import { fetchUserProfile, reloadingProfilePage } from '../../actions/ProfileActions';
-import { clickedAddFriend, respondFriendRequest, clickedDeleteFriend } from '../../actions/UserActions';
+import { clickAddFriend,fetchUserProfile, reloadingProfilePage,clickAcceptRequest, clickDenyFriendRequest } from '../../actions/ProfileActions';
 
 export default class UserProfilePage extends Component {
   constructor(props, context) {
@@ -28,11 +27,11 @@ export default class UserProfilePage extends Component {
       <div className="full_width">
       <VistiProfileWidget
         onClickDenyRequest={(id)=>
-        clickedDeleteFriend(id)}
-        onClickRespondFriendRequest={(id)=>
-          respondFriendRequest(id)}
+        dispatch(clickDenyFriendRequest(id))}
+        clickAcceptRequest={(reqId)=>
+          dispatch(clickAcceptRequest(reqId))}
         onClickAddFriend={(sender,receiver)=>
-        clickedAddFriend(sender,receiver)}
+        dispatch(clickAddFriend(sender,receiver))}
         userAuthSession={this.props.userAuthSession}
         fetchInitialData={(userId,profileId)=>getVisitedUserDetail(userId,profileId)}
         visitedUser={this.props.visitedUser}

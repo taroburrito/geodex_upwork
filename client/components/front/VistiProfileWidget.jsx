@@ -22,6 +22,8 @@ export default class VisitProfileWidget extends Component {
                         visitedUser={this.props.visitedUser}
                         profileId={this.props.profileId}
                         onClickAddFriend={this.props.onClickAddFriend}
+                        clickAcceptRequest={this.props.clickAcceptRequest}
+                        onClickDenyRequest={this.props.onClickDenyRequest}
                         />
 
                     </div>

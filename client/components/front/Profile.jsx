@@ -8,8 +8,8 @@ export default class Profile extends Component {
           isFriendWithLoggedInUser: false,
         }
         this.handleClickAddFriend = this.handleClickAddFriend.bind(this);
-        // this.handleClickRespondToRequest = this.handleClickRespondToRequest.bind(this);
-      //  this.handleClickDenyRequest = this.handleClickDenyRequest.bind(this);
+      //  this.handleClickAcceptRequest = this.handleClickAcceptRequest.bind(this);
+       this.handleClickDenyRequest = this.handleClickDenyRequest.bind(this);
 
 
     }
@@ -27,13 +27,12 @@ export default class Profile extends Component {
       }
 
     }
-    // handleClickDenyRequest(item,event){
-    //
-    //   this.props.onClickDenyRequest(item);
-    //   const{userAuthSession} = this.props;
-    //   this.props.fetchInitialData(userAuthSession.userObject.id,this.props.userId);
-    // }
+    handleClickDenyRequest(reqId){
+
+      this.props.onClickDenyRequest(reqId);
+    }
     handleClickAddFriend(){
+
       const{userAuthSession,visitedUser} = this.props;
       var sender;
       var receiver;
@@ -58,12 +57,11 @@ export default class Profile extends Component {
       //this.props.fetchInitialData(userAuthSession.userObject.id,this.props.userId);
     }
     //
-    // handleClickRespondToRequest(){
-    //   const{userAuthSession,userId} = this.props;
-    //   var senderId = userAuthSession.userObject.id;
-    //   this.props.onClickRespondFriendRequest(senderId);
-    //   this.props.fetchInitialData(userAuthSession.userObject.id,this.props.userId);
-    // }
+    handleClickAcceptRequest(reqId){
+      if(reqId)
+      this.props.clickAcceptRequest(reqId);
+      //this.props.fetchInitialData(userAuthSession.userObject.id,this.props.userId);
+    }
 
     renderAddFriendLink(){
       const{visitedUser, userAuthSession, profileId} = this.props;
@@ -136,17 +134,15 @@ export default class Profile extends Component {
               <div className="uk-dropdown uk-dropdown-small uk-dropdown-bottom" aria-hidden="true" tabindex="">
 
                 <ul className="uk-nav uk-nav-dropdown">
-                   <li><a  onClick={this.handleClickRespondToRequest}>Accept request</a></li>
-                   <li><a onClick={this.handleClickDenyRequest.bind(this,friendsData.id)}>Deny request</a></li>
+                   <li><a  onClick={this.handleClickAcceptRequest.bind(this,friendStatus.id)}>Accept request</a></li>
+                   <li><a onClick={this.handleClickDenyRequest.bind(this,friendStatus.id)}>Deny request</a></li>
                  </ul>
                </div>
               </div>
 
 
             );
-        }
-
-        else {
+        }else {
           link =(
               <a className="uk-button add_friend_btn">Friend request sent</a>
                       );

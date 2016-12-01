@@ -68,11 +68,11 @@ var userModel = {
       var deleteFriendRequestSqlString = constructDeleteFriendRequestSqlString(requestId);
       dbConnection.query(deleteFriendRequestSqlString, function(error,results,fields){
         if(error){
-          return(callback({error:error}));
+          return(callback({error:error,status:400}));
         }else if (results.affectedRows === 0) {
-          return(callback({error:"Not deleted record"}));
+          return(callback({error:"Error in delete friend request",status:400}));
         }else{
-          return(callback({success:"Deleted Friend successfully"}));
+          return(callback({success:"Deny Friend successfully",status:200}));
         }
       });
     },
@@ -581,25 +581,26 @@ var userModel = {
                 dbConnection.query(getFriendRequestByIdSqlString,function(error,results,fields){
                   if(error){
                     return(callback({error:error, status:400}));
-                  }else if (results.length == 0) {
-                     friendStatus = null;
                   }else{
                     friendStatus = userModel.convertRowsToUserProfileObject(results[0]);
+
+
+                    var mailContent = '<b>Hello,</b><br/><p>You have received new friend request from <b>' + data.sender.email + ' </b></p>' +
+                            '<br/><a href="http://localhost:6969/#/user/' + data.sender.id + '" target="_blank">Click here</a>';
+
+                    //Send notification email on success
+                    //token,from,to,subject,content
+
+
+                    if(sendMailToUser('','admin@geodex.com',data.receiver.email,'New friend request',mailContent)){
+                      return(callback({success:"Successfully sent friend request",status:200,friendStatus:friendStatus}));
+                    }else{
+                      return(callback({success:"Success added friend request",status:200,friendStatus:friendStatus}));
+                    }
                   }
                 });
 
-                var mailContent = '<b>Hello,</b><br/><p>You have received new friend request from <b>' + data.sender.email + ' </b></p>' +
-                        '<br/><a href="http://localhost:6969/#/user/' + data.sender.id + '" target="_blank">Click here</a>';
 
-                //Send notification email on success
-                //token,from,to,subject,content
-
-
-                if(sendMailToUser('','admin@geodex.com',data.receiver.email,'New friend request',mailContent)){
-                  return(callback({success:"Successfully sent friend request",status:200,friendStatus:friendStatus}));
-                }else{
-                  return(callback({success:"Success added friend request",status:200,friendStatus:friendStatus}));
-                }
               } else {
                   return (callback({error: "error in add request",status:400}));
               }
@@ -638,6 +639,27 @@ var userModel = {
           } else {
               return (callback({error: results}));
           }
+      });
+    },
+
+    /*
+    acceptFriendRequest
+    params: requestid
+    return: success,status,error
+    */
+
+    acceptFriendRequest: function(reqId,callback){
+      var dbConnection = dbConnectionCreator();
+      var acceptFriendRequestSqlString = constructAcceptFriendRequestSqlString(reqId);
+
+      dbConnection.query(acceptFriendRequestSqlString,function(error,results,fields){
+        if(error){
+          return(callback({error:acceptFriendRequestSqlString, status:400}));
+        }else if (results.affectedRows == 0) {
+          return(callback({error:"Error in accept request query", status:400}));
+        }else{
+          return(callback({success:"Successfully accepted request", status:200}));
+        }
       });
     },
 
@@ -786,6 +808,11 @@ var userModel = {
 
 
 };
+
+function constructAcceptFriendRequestSqlString(reqId){
+  var sql = "UPDATE gx_friends_list set status=1 WHERE id="+reqId;
+  return sql;
+}
 
 function constructFriendRequestByIdSqlString(id){
   var query = "SELECT * FROM gx_friends_list WHERE id="+id;

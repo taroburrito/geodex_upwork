@@ -179,11 +179,20 @@ var setUserRoutes = function (router) {
         router.post('/api/v1/user/updateFriendList/:id',
             function(req,res){
 
-                userModel.updateFriendList(req.body,function(results){
-                  return res.json(results);
-                });
+                // userModel.updateFriendList(req.body,function(results){
+                //   return res.json(results);
+                // });
             }
           );
+
+          router.post('/api/v1/users/acceptFriendRequest/:reqId',
+              function(req,res){
+                  var reqId = req.params.reqId;
+                  userModel.acceptFriendRequest(reqId,function(results){
+                    return res.json(results);
+                  });
+              }
+            );
 
           /* Get all pending friend requests of a user*/
           router.get('/api/v1/users/getFriendRequests/:userId',
@@ -206,6 +215,7 @@ var setUserRoutes = function (router) {
             );
 
             router.delete('/api/v1/users/deleteFriendRequest/:id',
+            
                 function(req,res){
                     userModel.deleteFriendRequest(req.params.id,function(results){
                       return res.json(results);

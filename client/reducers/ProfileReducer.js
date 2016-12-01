@@ -7,6 +7,12 @@ import {  Start_Fetching_User_Profile,
           //Update_Profile_Success,
           Fetch_Freind_List,
           Get_Visited_User_Data,
+          Add_Friend_Request_Success,
+          Add_Friend_Request_Failed,
+          Accept_Request_Failed,
+          Accept_Request_Success,
+          Delete_Friend_Request_Success,
+          Delete_Friend_Request_Failed
         } from '../actions/ProfileActions';
 
 const defaultStartState = { profileLoaded: false, //true even if results failed
@@ -78,6 +84,45 @@ export function visitedUserData(visitedUserState=null, action){
       return Object.assign({}, visitedUserState, action.data);
       break;
 
+      case Add_Friend_Request_Success:
+        var currentData =  Object.assign({},visitedUserState);
+        currentData.friendStatus = action.friendStatus;
+        return Object.assign({}, currentData);
+          break;
+
+        case Add_Friend_Request_Failed:
+        return Object.assign({},visitedUserState,{
+          error:action.msg
+        });
+          break;
+
+        case Accept_Request_Success:
+        var currentData =  Object.assign({},visitedUserState);
+        currentData.friendStatus.status = 1;
+        return Object.assign({}, currentData,{
+          success:action.success
+        });
+          break;
+
+        case Accept_Request_Failed:
+        return Object.assign({},visitedUserState,{
+          error:action.error
+        });
+          break;
+
+          case Delete_Friend_Request_Success:
+          var currentData =  Object.assign({},visitedUserState);
+          currentData.friendStatus = null;
+          return Object.assign({}, currentData,{
+            success:action.success
+          });
+            break;
+
+          case Delete_Friend_Request_Failed:
+          return Object.assign({},visitedUserState,{
+            error:action.error
+          });
+            break;
     default:
     return visitedUserState;
 
