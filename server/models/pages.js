@@ -94,16 +94,16 @@ var pageModel = {
 
         dbConnection.destroy();
             if (error) {
-                return callback({error: sqlString});
+                return callback({error: "Error in get page",status:400});
             } else {
                 if(results.length == 0){
-                    return callback({error: "No record found"});
+                    return callback({error: "No record found",status:400});
                 }
                 var pages = {};
                 results.forEach(function (result) {
                     pages = pageModel.convertRowToObject(result);
                 });
-                return callback({pages: pages});
+                return callback({pages: pages,success:"Successfully get page",status:200});
             }
         });
     }

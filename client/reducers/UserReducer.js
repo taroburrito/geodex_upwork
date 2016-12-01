@@ -87,7 +87,13 @@ export function updateDashboardData(dashboardDataState={error:null,success:null}
 
       case Category_Added_Dashboard_Success:
       var currentData = Object.assign({}, dashboardDataState);
-      currentData.categories[action.category.id] = action.category;
+      if(currentData.categories){
+        currentData.categories[action.category.id] = action.category;
+      }else{
+        currentData.categories = {};
+        currentData.categories[action.category.id] = action.category;
+      }
+
         return Object.assign({}, currentData,{
           error:null,
           success:action.success
