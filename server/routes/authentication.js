@@ -45,7 +45,7 @@ module.exports = function (app, passport) {
     app.post('/logout', authenticationMiddleware.isLoggedIn, function (req, res) {
         req.logout();
         req.session.destroy();
-        return res.json('logged out :)');
+        return res.json({status:200,success:"Logged out successfully"});
     });
 
     app.post('/checkSession', function (req, res) {
@@ -57,7 +57,7 @@ module.exports = function (app, passport) {
             //         email: req.user.email
             //     }
             // });
-            
+
 
             req.user.isLoggedIn = isLoggedIn;
             userModel.getLoggedInUserData(req.user.id, function (result) {

@@ -138,6 +138,8 @@ componentDidUpdate(){
     console.log(this.props);
     const{dashboardData} = this.props;
     var friends = dashboardData.friends;
+    console.log(friends);
+    console.log("*******");
       var newArr = {};
       var fullySorted = _.sortBy(friends, sortBy);
       Object.keys(fullySorted).map((id)=>{
