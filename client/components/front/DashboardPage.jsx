@@ -19,6 +19,7 @@ export default class DashboardPage extends Component {
 
     super(props);
     this.handleClickAddCategory = this.handleClickAddCategory.bind(this);
+    this.handleOnClickSendEmail = this.handleOnClickSendEmail.bind(this);
     this.handleClickPlus = this.handleClickPlus.bind(this);
     this.handleSavePostImage = this.handleSavePostImage.bind(this);
     this.handleSavePost = this.handleSavePost.bind(this);
@@ -47,6 +48,15 @@ export default class DashboardPage extends Component {
   handleSavePostImage(){
     var img = this.refs.postImage.getImage();
     this.setState({post_image: img});
+  }
+
+  handleOnClickSendEmail(){
+    const{userAuthSession} = this.props;
+    var to = this.refs.sendto.getDOMNode().value;
+    var from = userAuthSession.userObject.email;
+    var subject = this.refs.Subject.getDOMNode().value;
+    var content = this.refs.emailBody.getDOMNode().value;
+    this.props.sendEmail(from,to,subject,content);
   }
   handleSavePost(){
     const{userAuthSession} = this.props;
@@ -189,6 +199,10 @@ componentDidUpdate(){
   // console.log(newArr);
 
   }
+  handleOnClickEmailIcon(email){
+      this.refs.sendto.getDOMNode().value = email;
+      console.log(email);
+  }
   sortByCategory(catId){
     const{userAuthSession} = this.props;
     this.setState({active_cat: catId});
@@ -268,6 +282,7 @@ componentDidUpdate(){
 
   }
 
+
   renderFriendList(){
 
     const{dashboardData} = this.props;
@@ -286,7 +301,10 @@ componentDidUpdate(){
               <div className="uk-grid uk-grid-small">
               <div className="uk-width-3-10 user_img_left"><Link to={profile_link}><img src={item.profile_image?item.profile_image:"public/images/user.jpg"} className=""/></Link></div>
               <div className="uk-width-7-10 user_bottom_img_right">
-              <h3 className="capital_first"><Link to={profile_link}>{item.first_name} {item.last_name} </Link> <small className="user_location">{item.address}<i className="uk-icon-envelope"></i></small></h3>
+              <h3 className="capital_first"><Link to={profile_link}>{item.first_name} {item.last_name} </Link> <small className="user_location">{item.address}
+
+                <a data-uk-modal="{target:'#sendEmail'}"   onClick={this.handleOnClickEmailIcon.bind(this,item.email)} data={item.email}  href="#"><i className="uk-icon-envelope"></i></a>
+                </small></h3>
 
 
             <div className="uk-slidenav-position uk-margin" data-uk-slider="{autoplay: true}">
@@ -561,7 +579,9 @@ componentDidUpdate(){
              </form>
 
         </div>
+
       </div>
+
    );
  }
 
@@ -658,6 +678,30 @@ componentDidUpdate(){
           </div>
 
           {this.renderFriendList()}
+          <div id="sendEmail" className="uk-modal" ref="modal" >
+               <div className="uk-modal-dialog">
+                  <button type="button" className="uk-modal-close uk-close"></button>
+
+                  <div className="uk-modal-header">
+                      <h3>Send Email</h3>
+                  </div>
+                 <form className="uk-form">
+                        <div className="uk-form-row">
+                            <input className="uk-width-1-1 uk-form-large" placeholder="To" type="text" ref="sendto" disabled="disabled"/>
+                        </div>
+                        <div className="uk-form-row">
+                            <input className="uk-width-1-1 uk-form-large" placeholder="Subject" type="text" ref="Subject"/>
+                        </div>
+                        <div className="uk-form-row">
+                           <textarea className="uk-width-1-1 uk-form-large" placeholder="Body" rows="8" ref="emailBody"></textarea>
+
+                        </div>
+                        <div className="uk-form-row">
+                            <button className="uk-button uk-button-primary uk-button-large" onClick={this.handleOnClickSendEmail}>Send Mail</button>
+                        </div>
+                    </form>
+               </div>
+             </div>
       </div>
 
 

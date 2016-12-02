@@ -803,6 +803,19 @@ var userModel = {
           });
         }
       });
+    },
+
+    /*
+    sendEmailFromDashboard
+    params: {from,to,subject,content}
+    response:success,error,status
+    */
+    sendEmailFromDashboard:function(data,callback){
+      if (sendMailToUser('',data.from,data.to,data.subject,data.content)) {
+        return(callback({success:"if"}));
+      }else{
+        return(callback({success:"else"}));
+      }
     }
 
 

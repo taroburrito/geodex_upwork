@@ -215,7 +215,7 @@ var setUserRoutes = function (router) {
             );
 
             router.delete('/api/v1/users/deleteFriendRequest/:id',
-            
+
                 function(req,res){
                     userModel.deleteFriendRequest(req.params.id,function(results){
                       return res.json(results);
@@ -243,6 +243,14 @@ var setUserRoutes = function (router) {
                           }
                           );
                       }
+              );
+
+              router.post('api/v1/users/sendEmailFromDashboard',function(req,res){
+                  userModel.sendEmailFromDashboard(req.body,function(result){
+                    return res.json(result);
+                  });
+
+              }
               );
 
 }

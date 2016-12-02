@@ -9,7 +9,7 @@ import { attemptLogout } from '../../actions/AuthActions';
 //import {addCategory} from '../../actions/CategoryActions';
 import {fetchCommentsByPost} from '../../actions/PostActions';
 import {getUserDetail, fetchDashboardData} from '../../utilities/ServerSocket';
-import {updatefriendsList,updateDashboardFriendList, addPost, addCategory,setMessageToDefault} from '../../actions/UserActions';
+import {updatefriendsList,updateDashboardFriendList, addPost, addCategory,setMessageToDefault, sendEmailFromDashboard} from '../../actions/UserActions';
 
 class HomePage extends Component{
   constructor(props){
@@ -44,7 +44,9 @@ class HomePage extends Component{
           fetchInitialData={(id,catId)=>fetchDashboardData(id,catId)}
           userProfileData={this.props.userProfileData}
           handleMessage={this.props.handleMessage}
-          dashboardData={this.props.dashboardData}/>
+          dashboardData={this.props.dashboardData}
+          sendEmail={(from,to,subject,content)=>
+          dispatch(sendEmailFromDashboard(from,to,subject,content))}/>
         </div>
       );
     }else{

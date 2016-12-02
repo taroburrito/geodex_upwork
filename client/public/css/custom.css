@@ -554,6 +554,11 @@ form.uk-search.search_dash_nav {
   margin-bottom: 29px;
   width: 100%;
 }
+.custom-freind img {
+  border: 1px solid #eee;
+  border-radius: 50px;
+  margin: 7px 0 0 7px !important;
+}
 
 .footer.home_foot {
   background: rgba(0, 0, 0, 0) none repeat scroll 0 0;

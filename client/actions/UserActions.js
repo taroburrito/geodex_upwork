@@ -293,3 +293,18 @@ export function searchUser(str){
     })
   }
 }
+
+export function sendEmailFromDashboard(from,to,subject,content){
+  return(dispatch)=>{
+    $.ajax({
+      type:'POST',
+      url: 'api/v1/users/sendEmailFromDashboard',
+      data:{from:from,to:to,subject:subject,content:content},
+      dataType:'json',
+    }).done(function(result){
+      console.log("success send email:"+JSON.stringify(result));
+    }).fail(function(error){
+      console.log("Error in send mail:"+error);
+    });
+  }
+}
