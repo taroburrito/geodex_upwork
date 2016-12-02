@@ -38,11 +38,11 @@ export default class Navbar extends Component {
         var name = item.first_name+" "+item.last_name;
         var link = "/user/"+item.id;
          searchList.push(
-           <li  className="placesSuggest_suggest"><span><Link to={link} onClick={this.handleClickUser.bind(this,name,item.id)}>{name}</Link></span></li>
+          <Link to={link} onClick={this.handleClickUser.bind(this,name,item.id)}> <li  className="placesSuggest_suggest"><span>{name}</span></li></Link>
          );
       }
     );
-    console.log(searchList);
+
     }
     if(this.props.userAuthSession){
       if(this.props.userAuthSession.isLoggedIn){
@@ -52,7 +52,7 @@ export default class Navbar extends Component {
               <Link className="uk-navbar-brand uk-hidden-small" to="dashboard"><img src="public/images/logo.png"/></Link>
 
       <form className="uk-search search_dash_nav">
-              <input className="uk-search-field" placeholder="search..."  type="search" ref="search" onChange={this.handleSearchChange.bind(this)}/>
+              <input className="uk-search-field" placeholder="search..."  type="search" ref="search" onChange={this.handleSearchChange.bind(this)} style={{width:'80%'}}/>
           <div className="uk-dropdown uk-dropdown-search" aria-expanded="false"></div>
             <ul className="placesSuggest_suggests">
 

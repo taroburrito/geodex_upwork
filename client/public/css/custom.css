@@ -551,7 +551,7 @@ form.uk-search.search_dash_nav {
   color: #888;
   float: left;
   font-size: 14px;
-  margin-bottom: 10px;
+  margin-bottom: 29px;
   width: 100%;
 }
 
@@ -1006,32 +1006,32 @@ background: url("../images/bg_line.png") no-repeat left;
 
 
 ul.placesSuggest_suggests {
-    padding: 0;
-    margin-top: 0;
-    position: absolute;
-    background: #fff;
-    width: 100%;
-    z-index: 1;
+  background: #fff none repeat scroll 0 0;
+  margin-top: 0;
+  padding: 0;
+  position: absolute;
+  width: 98%;
+  z-index: 1;
+  box-shadow: 5px 5px 5px rgba(0,0,0,0.2);
+  border-radius: 0 0 5px 5px;
+  overflow: hidden;
+  margin-left: .7%;
 }
-
 ul.placesSuggest_suggests li {
-    list-style: none !important;
-    padding-left: 0 !important;
-    border-bottom: 1px solid #ffffff !important;
-    margin-left: 0 !important;
-    padding: 5px 12px !important;
-    background: rgba(204, 204, 204, 0.45);
-    color: #000;
+  background: #fff none repeat scroll 0 0;
+  border-top: 1px solid #ccc !important;
+  color: #777;
+  list-style: outside none none !important;
+  margin-left: 0 !important;
+  padding: 5px 12px !important;
 }
 
 ul.placesSuggest_suggests li:hover {
-    
-    background: rgba(204, 204, 204, 0.8);
+ background: rgba(204, 204, 204, 0.3) none repeat scroll 0 0;
 }
-
-ul.placesSuggest_suggests li a{
-  color:#000000;
-  text-decoration:none;
+ul.placesSuggest_suggests li a {
+  color: #555;
+  text-decoration: none;
 }
 
 ul.placesSuggest_suggests li svg.placesSuggest_suggestIcon {

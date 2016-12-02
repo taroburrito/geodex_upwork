@@ -68,7 +68,7 @@ export default class Friends extends Component {
     var view_link = "/user/"+this.props.user_id;
 
     return (
-      <div className="uk-width-small-1-3 add_friend">
+      <div className="uk-width-small-1-3 add_friend custom-freind">
         <div className="af_border">
           <div className="uk-grid uk-grid-small">
             <div className="uk-width-2-10 user_img_left"><img src={img} className=""/></div>

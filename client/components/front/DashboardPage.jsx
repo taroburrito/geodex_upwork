@@ -29,7 +29,7 @@ export default class DashboardPage extends Component {
       image: "public/images/user.jpg",
       post_image:null,
       active_cat:'all',
-      handleMessage:initialMessageStates
+      handleMessage:initialMessageStates,
 
     }
   }
@@ -138,10 +138,14 @@ componentDidUpdate(){
     console.log(this.props);
     const{dashboardData} = this.props;
     var friends = dashboardData.friends;
-    console.log(friends);
-    console.log("*******");
+
       var newArr = {};
-      var fullySorted = _.sortBy(friends, sortBy);
+      if(sortBy == 'created'){
+        var fullySorted = _.sortBy(friends, sortBy).reverse();
+      }else{
+        var fullySorted = _.sortBy(friends, sortBy);
+      }
+
       Object.keys(fullySorted).map((id)=>{
         newArr[id] = fullySorted[id];
       });
@@ -149,7 +153,6 @@ componentDidUpdate(){
     //   return Math.sin(n);
     // });
     if(newArr){
-      console.log(newArr);
       this.props.updateDashboardFriendList(newArr);
     }
 
@@ -281,9 +284,9 @@ componentDidUpdate(){
 
             <div className="uk-width-small-1-2">
               <div className="uk-grid uk-grid-small">
-              <div className="uk-width-3-10 user_img_left"><img src={item.profile_image?item.profile_image:"public/images/user.jpg"} className=""/></div>
+              <div className="uk-width-3-10 user_img_left"><Link to={profile_link}><img src={item.profile_image?item.profile_image:"public/images/user.jpg"} className=""/></Link></div>
               <div className="uk-width-7-10 user_bottom_img_right">
-              <h3 className="capital_first"><Link to={profile_link}>{item.NAME} </Link><img className="online_user" src="public/images/online.png"/> <small className="user_location">{item.address}<i className="uk-icon-envelope"></i></small></h3>
+              <h3 className="capital_first"><Link to={profile_link}>{item.first_name} {item.last_name} </Link> <small className="user_location">{item.address}<i className="uk-icon-envelope"></i></small></h3>
 
 
             <div className="uk-slidenav-position uk-margin" data-uk-slider="{autoplay: true}">
@@ -312,10 +315,17 @@ componentDidUpdate(){
          </div>);
 
     });
+
+    if(friendsElement && friendsElement.length > 0){
     return(
       {friendsElement}
 
     )
+  }else {
+      return(
+        <div>No friend is added in this category, <Link to="manage_friends">Manage Freind </Link>here.</div>
+      )
+    }
   }
 
   loadComments(postId){
@@ -638,7 +648,7 @@ componentDidUpdate(){
           <select name="sort" ref="sortFriends" onChange={this.handleChangeSort}>
             <option>Please Select</option>
             <option value="created">Recently added</option>
-            <option value="NAME">Name</option>
+            <option value="first_name">Name</option>
             <option value="email">Email</option>
             <option value="latitude">Location</option>
 

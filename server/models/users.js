@@ -875,18 +875,18 @@ function constructFreindsPostImagesSqlString(friendsIds){
 }
 
 function constructFriendListForDashboardSqlString(userId){
-  var query="SELECT (a.user_id) id,CONCAT(first_name,' ',last_name) NAME,dob,gender,address,latitude,longitude,"+
-             "profile_image,cover_image,MAX(c.id) post_id,(image) post_image,(content) post_content, u.email, (u.date_created) created"+
-            " FROM `gx_user_details` a,(SELECT receiver_id FROM `gx_friends_list` WHERE sender_id ='"+userId+"'  AND STATUS = 1 UNION SELECT sender_id FROM `gx_friends_list` WHERE receiver_id ='"+userId+"' AND STATUS = 1) b,"+
-            " gx_posts c, gx_users u WHERE a.user_id = b.receiver_id AND a.user_id = c.user_id AND a.user_id = u.id GROUP BY a.user_id ORDER BY c.id desc";
+  var query="SELECT (a.user_id) id, LOWER(first_name) first_name, last_name, dob,gender,address,latitude,longitude,"+
+             "profile_image,cover_image,MAX(c.id) post_id,(image) post_image,(content) post_content, u.email, (b.modified) created"+
+            " FROM `gx_user_details` a,(SELECT receiver_id, modified FROM `gx_friends_list` WHERE sender_id ='"+userId+"'  AND STATUS = 1 UNION SELECT sender_id, modified FROM `gx_friends_list` WHERE receiver_id ='"+userId+"' AND STATUS = 1) b,"+
+            " (select id, image, content,user_id from gx_posts order by id desc) c, gx_users u WHERE a.user_id = b.receiver_id AND a.user_id = c.user_id AND a.user_id = u.id GROUP BY a.user_id ORDER BY c.id desc";
             return query;
 }
 
 function constructFriendListByCatForDashboardSqlString(userId,catId){
-  var query="SELECT (a.user_id) id,CONCAT(first_name,' ',last_name) NAME,dob,gender,address,latitude,longitude,"+
-             "profile_image,cover_image,MAX(c.id) post_id,(image) post_image,(content) post_content, u.email, (u.date_created) created, fc.category_id"+
-            " FROM `gx_user_details` a,(SELECT receiver_id FROM `gx_friends_list` WHERE sender_id ='"+userId+"'  AND STATUS = 1 UNION SELECT sender_id FROM `gx_friends_list` WHERE receiver_id ='"+userId+"' AND STATUS = 1) b,"+
-            " gx_posts c, gx_users u, gx_friends_category fc WHERE a.user_id = b.receiver_id AND a.user_id = c.user_id AND a.user_id = u.id AND a.user_id = fc.friend_id AND fc.category_id='"+catId+"' GROUP BY a.user_id ORDER BY c.id desc";
+  var query="SELECT (a.user_id) id, LOWER(first_name) first_name,last_name,dob,gender,address,latitude,longitude,"+
+             "profile_image,cover_image,MAX(c.id) post_id,(image) post_image,(content) post_content, u.email, (b.modified) created, fc.category_id"+
+            " FROM `gx_user_details` a,(SELECT receiver_id, modified FROM `gx_friends_list` WHERE sender_id ='"+userId+"'  AND STATUS = 1 UNION SELECT sender_id, modified FROM `gx_friends_list` WHERE receiver_id ='"+userId+"' AND STATUS = 1) b,"+
+            " (select id, image, content, user_id from gx_posts order by id desc) c,  gx_users u, gx_friends_category fc WHERE a.user_id = b.receiver_id AND a.user_id = c.user_id AND a.user_id = u.id AND a.user_id = fc.friend_id AND fc.category_id='"+catId+"' GROUP BY a.user_id ORDER BY c.id desc";
             return query;
 }
 function constructLatestPostSqlString(userId){
