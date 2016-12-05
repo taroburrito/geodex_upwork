@@ -19,6 +19,8 @@ export const Search_Users_Result_Success = 'Search_Users_Result_Success';
 export const Clear_Search_List = 'Clear_Search_List';
 export const Add_Category_Dashboard_Failed = 'Add_Category_Dashboard_Failed';
 export const Set_Message_To_Default = 'Set_Message_To_Default';
+export const Send_Email_From_Dashboard_Success = 'Send_Email_From_Dashboard_Success';
+export const Send_Email_From_Dashboard_Failed = 'Send_Email_From_Dashboard_Failed';
 
 
 
@@ -294,17 +296,31 @@ export function searchUser(str){
   }
 }
 
+export function sendEmailFromDashboardSuccess(msg){
+  return{type:'Send_Email_From_Dashboard_Success', success:msg}
+}
+
+export function sendEmailFromDashboardFailed(msg){
+  return{type: 'Send_Email_From_Dashboard_Failed', error:msg}
+}
+
 export function sendEmailFromDashboard(from,to,subject,content){
   return(dispatch)=>{
+    dispatch(setMessageToDefault());
     $.ajax({
       type:'POST',
-      url: 'api/v1/users/sendEmailFromDashboard',
+      url:'/api/v1/users/sendEmailFromDashboard',
       data:{from:from,to:to,subject:subject,content:content},
-      dataType:'json',
+      dataType:'json'
     }).done(function(result){
-      console.log("success send email:"+JSON.stringify(result));
+      if(result.error){
+        dispatch(sendEmailFromDashboardFailed(result.error));
+      }else{
+        dispatch(sendEmailFromDashboardSuccess(result.success));
+      }
     }).fail(function(error){
-      console.log("Error in send mail:"+error);
+      console.log("Failed email request");
+      dispatch(sendEmailFromDashboardFailed(error));
     });
   }
 }

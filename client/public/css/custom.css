@@ -520,7 +520,7 @@ form.uk-search.search_dash_nav {
  /* margin: 1.2%;
   width: 20% !important;*/
 }
-.img_slid li img{
+.img_slid .slider_image img{
 	width:100%;
 }
 
@@ -779,7 +779,6 @@ background: url("../images/bg_line.png") no-repeat left;
 
 
 
-
 /*coment popup*/
 
 
@@ -850,6 +849,7 @@ background: url("../images/bg_line.png") no-repeat left;
 .coment_popup .comenting_form {
   float: left;
   margin-top: 15px;
+  padding-left: 10px;
   width: 100%;
 }
 
@@ -896,17 +896,17 @@ background: url("../images/bg_line.png") no-repeat left;
 
 .coment_popup .popup_img_left{
 
-	position:relative;
+ position:relative;
 }
 
 .coment_popup .popup_img_left .uk-width-small-1-1 {
-  background: #ccc none repeat scroll 0 0;
-  height: 100%;
-  padding: 0;
-  position: relative;
-  text-align: center;
-  vertical-align: middle;
-  width: 100%;
+    background: #ccc none repeat scroll 0 0;
+    height: 100%;
+    padding: 0;
+    position: absolute;
+    text-align: center;
+    vertical-align: middle;
+    width: 94%;
 }
 
 .coment_popup .popup_img_left .uk-width-small-1-1 img {
@@ -994,6 +994,28 @@ background: url("../images/bg_line.png") no-repeat left;
   margin-top: 10px;
   width: 100%;
 }
+
+.coment_popup .post_control p {
+  font-family: open sans;
+  font-size: 16px !important;
+  font-weight: 300;
+  line-height: 21px;
+  margin: 0 0 10px;
+}
+
+.popup_img_right > .uk-comment p {
+  font-family: open sans;
+  font-size: 16px;
+  font-weight: 300;
+}
+
+
+.coment_heading .coment_count {
+  border: medium none;
+  color: #999;
+  float: right;
+}
+
 
 .coment_popup .post_control p {
   font-family: open sans;

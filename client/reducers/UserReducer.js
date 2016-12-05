@@ -14,7 +14,9 @@ import {
           Search_Users_Result_Success,
           Clear_Search_List,
           Add_Category_Dashboard_Failed,
-          Set_Message_To_Default
+          Set_Message_To_Default,
+          Send_Email_From_Dashboard_Success,
+          Send_Email_From_Dashboard_Failed
         } from '../actions/UserActions';
 
 
@@ -107,6 +109,20 @@ export function updateDashboardData(dashboardDataState={error:null,success:null}
           success:null
         });
         break;
+
+        case Send_Email_From_Dashboard_Success:
+          return Object.assign({}, dashboardDataState,{
+            error:null,
+            success:action.success
+          });
+          break;
+
+          case Send_Email_From_Dashboard_Failed:
+          return Object.assign({}, dashboardDataState,{
+            error:action.error,
+            success:null
+          });
+            break;
     default:
     return dashboardDataState;
 

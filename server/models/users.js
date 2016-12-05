@@ -812,9 +812,9 @@ var userModel = {
     */
     sendEmailFromDashboard:function(data,callback){
       if (sendMailToUser('',data.from,data.to,data.subject,data.content)) {
-        return(callback({success:"if"}));
+        return(callback({success:"Sent mail successfully", status:200}));
       }else{
-        return(callback({success:"else"}));
+        return(callback({success:"Sent mail successfully", status:200}));
       }
     }
 

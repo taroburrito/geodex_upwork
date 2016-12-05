@@ -245,7 +245,7 @@ var setUserRoutes = function (router) {
                       }
               );
 
-              router.post('api/v1/users/sendEmailFromDashboard',function(req,res){
+              router.post('/api/v1/users/sendEmailFromDashboard',function(req,res){
                   userModel.sendEmailFromDashboard(req.body,function(result){
                     return res.json(result);
                   });

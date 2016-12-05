@@ -54,9 +54,18 @@ export default class DashboardPage extends Component {
     const{userAuthSession} = this.props;
     var to = this.refs.sendto.getDOMNode().value;
     var from = userAuthSession.userObject.email;
-    var subject = this.refs.Subject.getDOMNode().value;
+    var subject = this.refs.Subject.getDOMNode().value.trim();
     var content = this.refs.emailBody.getDOMNode().value;
+
+    if(subject == ''){
+      this.setState({errorMessage:{sendEmail:"Please enter subject"}});
+    }else if (content == '') {
+      this.setState({errorMessage:{sendEmail:"Please enter content"}});
+    }else {
     this.props.sendEmail(from,to,subject,content);
+    this.setState({errorMessage:null});
+    }
+
   }
   handleSavePost(){
     const{userAuthSession} = this.props;
@@ -198,9 +207,16 @@ componentDidUpdate(){
   // console.log('*********');
   // console.log(newArr);
 
-  }
+}
+
+resetEmailForm(){
+  this.refs.Subject.getDOMNode().value = '';
+  this.refs.emailBody.getDOMNode().value = '';
+  this.setState({errorMessage:null});
+}
   handleOnClickEmailIcon(email){
       this.refs.sendto.getDOMNode().value = email;
+      this.resetEmailForm();
       console.log(email);
   }
   sortByCategory(catId){
@@ -265,17 +281,98 @@ componentDidUpdate(){
        if(friendsPost && friendsPost.length){
 
        var friendElement = [];
+       var i = 1;
        Object.keys(friendsPost).forEach((postImage)=> {
 
          var postContent = friendsPost[postImage];
          if(postImage)
          friendElement.push(
-             <li id={postContent.user_id}><img src={postContent.post_image}/></li>
+             <li id={postContent.i} className="slider_image"><a data-uk-modal="{target:'#postImageCommentPop'}"><img src={postContent.post_image}/></a></li>
          );
+         i++;
        });
 
        return(
-         {friendElement}
+         <div>
+           <div id="postImageCommentPop" className="uk-modal coment_popup">
+               <div className="uk-modal-dialog uk-modal-dialog-blank">
+               <button className="uk-modal-close uk-close" type="button"></button>
+                 <div className="uk-grid">
+                   <div className="uk-width-small-1-2 popup_img_left">
+                     <div className="uk-width-small-1-1">
+                     <a href="#" className="uk-slidenav uk-slidenav-contrast uk-slidenav-previous" data-uk-slider-item="previous" draggable="false"></a>
+                     <a href="#" className="uk-slidenav uk-slidenav-contrast uk-slidenav-next" data-uk-slider-item="next" draggable="false"></a>
+                   <img src="public/images/popup_img.jpg"/>
+                   </div>
+                   </div>
+                   <div className="uk-width-small-1-2 popup_img_right">
+
+                   <article className="uk-comment">
+                     <header className="uk-comment-header">
+                         <img className="uk-comment-avatar" src="public/images/user.jpg" alt="" width="60" height="60"/>
+                         <h4 className="uk-comment-title">Author</h4>
+                         <div className="uk-comment-meta">Los Angeles, CA <span>s.dali@gmail.com</span></div>
+                     </header>
+                     <div className="uk-comment-body">
+                         <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr</p>
+                     </div>
+                 </article>
+                   <h5 className="coment_heading">Comments</h5>
+                   <ul className="uk-comment-list">
+                     <li>
+                         <article className="uk-comment">
+                             <header className="uk-comment-header">
+                                 <img className="uk-comment-avatar" src="public/images/user.jpg" alt="" width="40" height="40"/>
+                                 <h4 className="uk-comment-title">Author</h4>
+                                 <div className="uk-comment-meta"><span>email@gmail.com</span> | Los Angeles, CA</div>
+                             </header>
+                             <div className="uk-comment-body">
+                                 <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy</p>
+                             </div>
+                         </article>
+                         <ul>
+                             <li>
+                                 <article className="uk-comment">
+                                     <header className="uk-comment-header">
+                                         <img className="uk-comment-avatar" src="public/images/user.jpg" alt="" width="40" height="40"/>
+                                         <h4 className="uk-comment-title">Author</h4>
+                                         <div className="uk-comment-meta"><span>email@gmail.com</span> | Los Angeles, CA</div>
+                                     </header>
+                                     <div className="uk-comment-body">
+                                         <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.</p>
+                                     </div>
+                                 </article>
+
+                                 <div className="comenting_form">
+                                   <img className="uk-comment-avatar" src="public/images/user.jpg" alt="" width="40" height="40"/>
+                                   <textarea placeholder="Write Comment..."></textarea>
+                                   <input type="submit" value="Send"/>
+                                   </div>
+                                   </li>
+                               </ul>
+                           </li>
+                       </ul>
+
+
+                   <div className="comenting_form border-top_cf">
+                   <img className="uk-comment-avatar" src="public/images/user.jpg" alt="" width="40" height="40"/>
+                   <textarea placeholder="Write Comment..."></textarea>
+                   <input type="submit" value="Send"/>
+                   </div>
+
+
+                   </div>
+                 </div>
+             </div>
+           </div>
+           <ul className="uk-slider uk-grid-small uk-grid-width-medium-1-4">
+             {friendElement}
+           </ul>
+         </div>
+
+
+
+
        );
      }
     console.log(friendsPost);
@@ -294,6 +391,23 @@ componentDidUpdate(){
       var item = friends[key];
       var user_id = friends[key].id;
       var profile_link = "/user/"+user_id;
+
+      var content = item.post_content;
+      console.log(content);
+      if(content && content.length > 0){
+        var content_length = content.length;
+        var post_image = item.post_image;
+        if(post_image){
+          content = content.substring(0,300).concat(' ...');
+        }else {
+          content = content.substring(0,500).concat(' ...');
+        }
+      }else {
+
+      }
+
+
+
       var slider_images = this.renderFriendPostImages(user_id);
       friendsElement.push(  <div className="uk-grid dash_top_head dash_botom_list" id={item.id}>
 
@@ -310,10 +424,7 @@ componentDidUpdate(){
             <div className="uk-slidenav-position uk-margin" data-uk-slider="{autoplay: true}">
 
                     <div className="uk-slider-container img_slid">
-                        <ul className="uk-slider uk-grid-small uk-grid-width-medium-1-4">
-                          {slider_images}
-
-                        </ul>
+                        {slider_images}
                     </div>
 
                     <a href="#" className="uk-slidenav uk-slidenav-contrast uk-slidenav-previous" data-uk-slider-item="previous" draggable="false"></a>
@@ -326,9 +437,10 @@ componentDidUpdate(){
             <div className="uk-width-small-1-2 post_control">
               {item.post_image?<img src={item.post_image} className="uk-float-left img_margin_right"/>:null}
 
-            <p>{item.post_content}</p>
+            <p>{content} <a  href="#" data-uk-modal={"{target:'#content_comment_pop_"+item.post_id+"'}"} onClick={this.loadComments.bind(this,item.post_id)}>LoadMore</a></p>
+
             {this.renderPostComments(item)}
-            <a  href="#" data-uk-modal={"{target:'#content_comment_pop_"+item.post_id+"'}"} onClick={this.loadComments.bind(this,item.post_id)}>more...</a>
+
             </div>
          </div>);
 
@@ -525,16 +637,67 @@ componentDidUpdate(){
   }
 
   renderLatestPost(){
-    const{dashboardData} = this.props;
+    const{dashboardData, userAuthSession} = this.props;
     var content;
     var latestPost = dashboardData.latestPost;
+    var userProfile = userAuthSession.userObject;
 
     if(latestPost){
+      var content = latestPost.content;
+      var content_length = latestPost.content.length;
+      var post_image = latestPost.image;
+      if(post_image){
+        content = content.substring(0,300).concat(' ...');
+      }else {
+        content = content.substring(0,500).concat(' ...');
+      }
+      console.log(content_length);
        return (
-        <div className="uk-width-small-1-2 post_control" style={{maxHeight:200,overflow:"hidden"}}>
+         <div className="uk-width-small-1-2 post_control">
+        <div  style={{maxHeight:200,overflow:"hidden"}}>
         <img src={latestPost.image? latestPost.image: null} className="uk-float-right img_margin_left"/>
-        <p>{latestPost.content}</p>
+        <p>{content} <a href="#" data-uk-modal="{target:'#postContentPop'}">LoadMore</a></p>
         </div>
+        <div id='postContentPop' className="uk-modal coment_popup">
+            <div className="uk-modal-dialog uk-modal-dialog-blank">
+           <button className="uk-modal-close uk-close" type="button"></button>
+             <div className="uk-grid">
+
+               <div className="uk-width-small-1-1 popup_img_right coment_pop_cont">
+
+               <article className="uk-comment">
+                    <header className="uk-comment-header">
+                        {userProfile.profile_image?<img src={userProfile.profile_image} className="uk-comment-avatar" width="60" height="60"/>:null}
+
+                        <h4 className="uk-comment-title">{userProfile.first_name} {userProfile.last_name}</h4>
+                        <div className="uk-comment-meta">{userProfile.address}<span>{userProfile.email}</span></div>
+                    </header>
+
+                    <div className="uk-comment-body">
+                      <div className="uk-width-small-1-1 post_control">
+                        {post_image?<img src={post_image} className="uk-float-left img_margin_right"/>:null}
+                         <p>{latestPost.content}</p>
+                     </div>
+                    </div>
+                </article>
+               <h5 className="coment_heading">Comments</h5>
+               {/* <ul className="uk-comment-list" ref="commentsul">
+                  {comments?this.renderComments(item.post_id):null}
+             </ul> */}
+
+
+             <div className="comenting_form border-top_cf">
+             <img className="uk-comment-avatar" src="public/images/user.jpg" alt="" width="40" height="40"/>
+             <textarea placeholder="Write Comment..."></textarea>
+             <input type="submit" value="Send"/>
+             </div>
+
+
+         </div>
+        </div>
+      </div>
+    </div>
+  </div>
       );
     }
 
@@ -621,9 +784,17 @@ componentDidUpdate(){
     var userProfileData = userAuthSession.userObject;
     var content;
     var errorLabel;
-    if(this.state.errorMessage){
+    if(this.state.errorMessage && this.state.errorMessage.sendEmail){
         errorLabel = (
-          <div className="uk-alert uk-alert-danger"><p>{this.state.errorMessage}</p></div>
+          <div className="uk-alert uk-alert-danger"><p>{this.state.errorMessage.sendEmail}</p></div>
+        )
+      }else if (dashboardData && dashboardData.error) {
+        errorLabel = (
+          <div className="uk-alert uk-alert-danger"><p>{dashboardData.error}</p></div>
+        )
+      }else if (dashboardData && dashboardData.success) {
+        errorLabel = (
+          <div className="uk-alert uk-alert-success"><p>{dashboardData.success}</p></div>
         )
       }
 
@@ -685,6 +856,7 @@ componentDidUpdate(){
                   <div className="uk-modal-header">
                       <h3>Send Email</h3>
                   </div>
+                  {errorLabel}
                  <form className="uk-form">
                         <div className="uk-form-row">
                             <input className="uk-width-1-1 uk-form-large" placeholder="To" type="text" ref="sendto" disabled="disabled"/>
@@ -697,11 +869,12 @@ componentDidUpdate(){
 
                         </div>
                         <div className="uk-form-row">
-                            <button className="uk-button uk-button-primary uk-button-large" onClick={this.handleOnClickSendEmail}>Send Mail</button>
+                            <a className="uk-button uk-button-primary uk-button-large" onClick={this.handleOnClickSendEmail}>Send Mail</a>
                         </div>
                     </form>
                </div>
              </div>
+
       </div>
 
 

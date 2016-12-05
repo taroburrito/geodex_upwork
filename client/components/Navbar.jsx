@@ -74,7 +74,7 @@ export default class Navbar extends Component {
                       <div className="uk-dropdown uk-dropdown-small uk-dropdown-bottom" aria-hidden="true" style={{top:'30px',left:0}} >
                           <ul className="uk-nav uk-nav-dropdown">
 
-                              <li><Link to="settings">Settings </Link><a href="#" ></a></li>
+                              <li><Link to="settings">Settings </Link></li>
                               <li><Link to="manage_friends">Manage friends</Link></li>
                               <li><Link to="manage_requests">Manage friends request</Link></li>
                             <li><a href="#" onClick={this.props.logout}>Logout</a></li>
