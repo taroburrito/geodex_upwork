@@ -23,16 +23,16 @@ var pageModel = {
         var createPageSqlString = constructCreatePageSqlString(slug, title, content, status, meta_tags, meta_description);
         dbConnection.query(createPageSqlString, function (error, results, fields) {
             if (error) {
-                dbConnection.destroy();
-                return (callback({error: error, when: "inserting"}));
+               
+                dbConnection.destroy(); return(callback({error: error, when: "inserting"}));
             } else {
                 var getPageSqlString = getPageDetailSqlString(results.insertId);
                 dbConnection.query(getPageSqlString, function (error, results, fields) {
-                    dbConnection.destroy();
+                   
                     if (error) {
-                        return (callback({error: error, when: "reading"}));
+                        dbConnection.destroy(); return(callback({error: error, when: "reading"}));
                     } else {
-                        return (callback({page: pageModel.convertRowToObject(results[0])}));
+                        dbConnection.destroy(); return(callback({page: pageModel.convertRowToObject(results[0])}));
                     }
                 });
             }
@@ -44,16 +44,16 @@ var pageModel = {
 
         dbConnection.query(updatePageSqlString, function (error, results, fields) {
             if (error) {
-                dbConnection.destroy();
-                return (callback({error: error, when: "updating"}));
+               
+                dbConnection.destroy(); return(callback({error: error, when: "updating"}));
             } else {
                 var getPageSqlString = getPageDetailSqlString(pageId);
                 dbConnection.query(getPageSqlString, function (error, results, fields) {
-                    dbConnection.destroy();
+                   
                     if (error) {
-                        return (callback({error: error, when: "reading"}));
+                        dbConnection.destroy(); return(callback({error: error, when: "reading"}));
                     } else {
-                        return (callback({page: pageModel.convertRowToObject(results[0])}));
+                        dbConnection.destroy(); return(callback({page: pageModel.convertRowToObject(results[0])}));
                     }
                 });
             }
@@ -64,10 +64,10 @@ var pageModel = {
         var deletePageSqlString = constructDeletePageSqlString(pageId);
         dbConnection.query(deletePageSqlString, function (error, results, fields) {
             if (error) {
-                dbConnection.destroy();
-                return (callback({error: error, when: "updating"}));
+               
+                dbConnection.destroy(); return(callback({error: error, when: "updating"}));
             } else {
-                return (callback({success: "deleted successfully"}));
+                dbConnection.destroy(); return(callback({success: "deleted successfully"}));
             }
         });
     },
@@ -75,7 +75,7 @@ var pageModel = {
         var dbConnection = dbConnectionCreator();
         var sqlString = getAllPagesSqlString();
         dbConnection.query(sqlString, function (error, results, fields) {
-            dbConnection.destroy();
+           
             if (error) {
                 return callback({error: error});
             } else {
@@ -92,7 +92,7 @@ var pageModel = {
         var sqlString = getPageDetailSqlString(pageId);
         dbConnection.query(sqlString, function (error, results, fields) {
 
-        dbConnection.destroy();
+       
             if (error) {
                 return callback({error: "Error in get page",status:400});
             } else {
