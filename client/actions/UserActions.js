@@ -7,7 +7,7 @@ export const Fetch_User_Data = 'Fetch_User_Data';
 export const Fetch_Friends_Posts = 'Fetch_Friends_Posts';
 export const Update_Friend_List = 'Update_Friend_List';
 export const Fetch_Dashboard_Data = 'Fetch_Dashboard_Data';
-export const Post_Added_Dashboard_Success = 'Post_Added_Dashboard_Success';
+//export const Post_Added_Dashboard_Success = 'Post_Added_Dashboard_Success';
 export const Category_Added_Dashboard_Success = 'Category_Added_Dashboard_Success';
 export const Fetch_Freind_Requests = 'Fetch_Freind_Requests';
 export const Confirm_Friend_Success = 'Confirm_Friend_Success';
@@ -44,7 +44,7 @@ export const Send_Email_From_Dashboard_Failed = 'Send_Email_From_Dashboard_Faile
 
  export function updateDashboardFriendList(friendList){
    //console.log(friendList);
-   return {type: Update_Dashboard_Friend_List, data: friendList}
+   return {type: Update_Dashboard_Friend_List, friends: friendList}
  }
 
  export function receivedAllFriendsPosts(friendsPosts){
@@ -112,35 +112,7 @@ export function clickedDeleteFriend(id) {
 //}
 }
 
-export function addPostSuccess(post){
-  return{type: Post_Added_Dashboard_Success, post};
-}
 
-/* addPost
-  params: user_id,content,image
-  return: post
-*/
-export function addPost(formData){
-  return (dispatch) => {
-    $.ajax({
-      type:'POST',
-      url:'/api/v1/posts/addPost',
-      dataType:'JSON',
-      data:formData
-    }).done(function(data){
-      if(data.error){
-        console.log(data.error);
-      }else{
-      console.log(data);
-      dispatch(addPostSuccess(data.post));
-
-      }
-
-    }).error(function(error){
-      console.log("Error in posts api call"+JSON.stringify(error));
-    })
-  }
-}
 
 export function addCategorySuccess(category) {
   return{type: Category_Added_Dashboard_Success, category,success:"Added catefg"};

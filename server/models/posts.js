@@ -3,10 +3,10 @@
  */
 var mysql = require('mysql');
 var dbConnectionCreator = require('../utilities/mysqlConnection.js');
+var common = require('../utilities/common.js');
 var moment = require('moment');
 
 var postModel = {
-
   convertRowsToPostObject: function (row) {
     return {
         id: row.id,
@@ -17,9 +17,7 @@ var postModel = {
         created: row.created,
         modified:row.modified
     };
-
   },
-
   convertRowsToObject: function (rows) {
       var objString=JSON.stringify(rows);
       var obj=JSON.parse(objString);
@@ -28,27 +26,53 @@ var postModel = {
   },
 
     createPost: function (formData, callback) {
+      if(!formData.image){
+        var image = null;
+      }else{
+        var uploadImage = common.uploadPostImage(formData.image,formData.user_id);
+        if(uploadImage){
+          formData.image = uploadImage;
+        }else{
+          return(callback({error:"Error in uploading"}));
+        }
+
+        //return(callback({error:uploadImage}));
+        // var image = common.decodeBase64Image(formData.image);
+        // var newPath = 'public/images/test.jpg';
+        //    // make copy of image to new location
+        //    fs.writeFile(newPath, image.data, (err) => {
+        //      if(err){
+        //        return(callback({error:err}));
+        //      }
+        //      return(callback({file:newPath}));
+        //
+        //    });
+          //return(callback({data:image.data}));
+      }
+
+    //  return(callback({success:"die here"}))
+
         var dbConnection = dbConnectionCreator();
         var createPostSqlString = constructCreatePostSqlString(formData);
 
         dbConnection.query(createPostSqlString, function (error, results, fields) {
             if (error) {
                 dbConnection.destroy();
-                return (callback({error: error, when: "inserting"}));
+                return (callback({error: error, when: "inserting", status:400}));
             } else if (results.affectedRows === 1) {
                 var last_insert_id = results.insertId;
                 var createGetPostsByIdSql = constructGetPostById(last_insert_id);
                 dbConnection.query(createGetPostsByIdSql,function(error1,result1,fields1){
                   if(error1){
-                    return (callback({error: "Error while fetching last data"}));
+                    return (callback({error: "Error while fetching last data", status:400}));
                   }else{
                     var posts = {};
-                    return (callback({post: postModel.convertRowsToPostObject(result1[0])}));
+                    return (callback({status:200,post: postModel.convertRowsToPostObject(result1[0])}));
                   }
                 });
 
             }else{
-              return(callback({error:"Error in post query"}));
+              return(callback({error:"Error in post query", status:400}));
             }
         });
     },

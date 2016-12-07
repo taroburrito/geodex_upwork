@@ -4,7 +4,6 @@ import {
           Fetch_Friends_Posts,
           Update_Friend_List,
           Fetch_Dashboard_Data,
-          Post_Added_Dashboard_Success,
           Category_Added_Dashboard_Success,
           Fetch_Freind_Requests,
           Confirm_Friend_Success,
@@ -18,6 +17,8 @@ import {
           Send_Email_From_Dashboard_Success,
           Send_Email_From_Dashboard_Failed
         } from '../actions/UserActions';
+
+        import {Post_Added_Dashboard_Success} from '../actions/PostActions';
 
 
 
@@ -83,7 +84,8 @@ export function updateDashboardData(dashboardDataState={error:null,success:null}
 
       case Update_Dashboard_Friend_List:
       var currentData = Object.assign({}, dashboardDataState);
-      currentData.friends = action.data;
+      currentData.friends = action.friends;
+
         return Object.assign({}, dashboardDataState,currentData);
       break;
 
