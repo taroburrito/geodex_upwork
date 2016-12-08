@@ -57,17 +57,17 @@ var postModel = {
 
         dbConnection.query(createPostSqlString, function (error, results, fields) {
             if (error) {
-                dbConnection.destroy();
-                return (callback({error: error, when: "inserting", status:400}));
+                
+                dbConnection.destroy(); return(callback({error: error, when: "inserting", status:400}));
             } else if (results.affectedRows === 1) {
                 var last_insert_id = results.insertId;
                 var createGetPostsByIdSql = constructGetPostById(last_insert_id);
                 dbConnection.query(createGetPostsByIdSql,function(error1,result1,fields1){
                   if(error1){
-                    return (callback({error: "Error while fetching last data", status:400}));
+                    dbConnection.destroy(); return(callback({error: "Error while fetching last data", status:400}));
                   }else{
                     var posts = {};
-                    return (callback({status:200,post: postModel.convertRowsToPostObject(result1[0])}));
+                    dbConnection.destroy(); return(callback({status:200,post: postModel.convertRowsToPostObject(result1[0])}));
                   }
                 });
 
@@ -83,10 +83,10 @@ var postModel = {
 
       dbConnection.query(createGetPostsByUserSql,function(error, results, fields){
         if(error){
-          return (callback({error: error}));
+          dbConnection.destroy(); return(callback({error: error}));
         }else{
 
-          return (callback({success:results}));
+          dbConnection.destroy(); return(callback({success:results}));
         }
       });
     },
@@ -97,10 +97,10 @@ var postModel = {
 
       dbConnection.query(createGetPostsByIdSql,function(error, results, fields){
         if(error){
-          return (callback({error: error}));
+          dbConnection.destroy(); return(callback({error: error}));
         }else{
 
-          return (callback({success:results}));
+          dbConnection.destroy(); return(callback({success:results}));
         }
       });
     },
@@ -134,7 +134,7 @@ var postModel = {
             // });
 
 
-            return (callback({friendsPost:results}));
+            dbConnection.destroy(); return(callback({friendsPost:results}));
           }
         });
 

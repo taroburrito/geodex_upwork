@@ -19,15 +19,15 @@ var categoryModel = {
         var dbConnection = dbConnectionCreator();
         var checkDuplicatEntry = constructCheckDuplicateEntry(req);
         var createCategorySqlString = constructCreateCategorySqlString(req);
-        //return (callback({success:createCategorySqlString}));
+        //dbConnection.destroy(); return(callback({success:createCategorySqlString}));
 
 
         dbConnection.query(checkDuplicatEntry, function (error, results, fields) {
             if (error) {
-                dbConnection.destroy();
-                return (callback({error: error, status:400}));
+                
+                dbConnection.destroy(); return(callback({error: error, status:400}));
             }else if (results.length > 0) {
-                return (callback({error: "You already added this category", status:400}));
+                dbConnection.destroy(); return(callback({error: "You already added this category", status:400}));
             } else {
 
               dbConnection.query(createCategorySqlString, function (error, results, fields) {
@@ -38,11 +38,11 @@ var categoryModel = {
                 }else{
                   var getCategorySqlString = getCategoryDetailSqlString(results.insertId);
                   dbConnection.query(getCategorySqlString, function (error, results, fields) {
-                      dbConnection.destroy();
+                      
                       if (error) {
-                          return (callback({error: error, when: "reading",status:400}));
+                          dbConnection.destroy(); return(callback({error: error, when: "reading",status:400}));
                       } else {
-                          return (callback({status:200,category: categoryModel.convertRowToObject(results[0])}));
+                          dbConnection.destroy(); return(callback({status:200,category: categoryModel.convertRowToObject(results[0])}));
                       }
                   });
                 }
@@ -61,16 +61,16 @@ var categoryModel = {
         var updatecategorySqlString = constructUpdateCategorySqlString(catId, name, status);
         dbConnection.query(updatecategorySqlString, function (error, results, fields) {
             if (error) {
-                dbConnection.destroy();
-                return (callback({error: error, when: "updating"}));
+                
+                dbConnection.destroy(); return(callback({error: error, when: "updating"}));
             } else {
                 var getCategorySqlString = getCategoryDetailSqlString(catId);
                 dbConnection.query(getCategorySqlString, function (error, results, fields) {
-                    dbConnection.destroy();
+                    
                     if (error) {
-                        return (callback({error: error, when: "reading"}));
+                        dbConnection.destroy(); return(callback({error: error, when: "reading"}));
                     } else {
-                        return (callback({page: categoryModel.convertRowToObject(results[0])}));
+                        dbConnection.destroy(); return(callback({page: categoryModel.convertRowToObject(results[0])}));
                     }
                 });
             }
@@ -81,10 +81,10 @@ var categoryModel = {
         var deleteCategorySqlString = constructDeleteCategorySqlString(pageId);
         dbConnection.query(deleteCategorySqlString, function (error, results, fields) {
             if (error) {
-                dbConnection.destroy();
-                return (callback({error: error, when: "updating"}));
+                
+                dbConnection.destroy(); return(callback({error: error, when: "updating"}));
             } else {
-                return (callback({success: "deleted successfully"}));
+                dbConnection.destroy(); return(callback({success: "deleted successfully"}));
             }
         });
     },
@@ -92,7 +92,7 @@ var categoryModel = {
         var dbConnection = dbConnectionCreator();
         var sqlString = getAllCategoriesSqlString();
         dbConnection.query(sqlString, function (error, results, fields) {
-            dbConnection.destroy();
+            
             if (error) {
                 return callback({error: error});
             } else {
@@ -108,7 +108,7 @@ var categoryModel = {
         var dbConnection = dbConnectionCreator();
         var sqlString = getCategoryDetailSqlString(catId);
         dbConnection.query(sqlString, function (error, results, fields) {
-            dbConnection.destroy();
+            
             if (error) {
                 return callback({error: error});
             } else {
