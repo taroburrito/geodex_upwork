@@ -1,5 +1,5 @@
 var fs = require('fs');
-var lwip = require('lwip');
+var Jimp = require("jimp");
 
 var common = {
 decodeBase64Image: function(dataString) {
@@ -53,35 +53,43 @@ if(!fs.existsSync(thumbs_dir)){
 
 // process image
 
-var processinng = processImage(path,thumbs_path);
+var thumbImage = processImage(path,thumbs_path);
 
   return name;
 },
 
 }
 
-function processImage(img,thumb){
+function processImage(img,dest){
 
 
-    lwip.open(img, function(err, image){
-
-      // check err...
-      // manipulate image:
-      if(err)
-      console.log("Load error");
-      if(image)
-      image.batch()
-
-  .scale(0.20)          // scale to 75%
-
-  .writeFile(thumb, function(err,image){
-    // check err...
-    // done.
-    if(err)
-    console.log("Error here");
+  Jimp.read(img).then(function (image) {
+  // do stuff with the image
+  image.write(img);
+   image.resize(Jimp.AUTO,120)
+        .write(dest); // save
+  }).catch(function (err) {
+  return err;
   });
-    });
 
+}
+
+
+// function to encode file data to base64 encoded string
+function base64_encode(file) {
+    // read binary data
+    var bitmap = fs.readFileSync(file);
+    // convert binary data to base64 encoded string
+    return new Buffer(bitmap).toString('base64');
+}
+
+// function to create file from base64 encoded string
+function base64_decode(base64str, file) {
+    // create buffer object from base64 encoded string, it is important to tell the constructor that the string is base64 encoded
+    var bitmap = new Buffer(base64str, 'base64');
+    // write buffer to file
+    fs.writeFileSync(file, bitmap);
+    console.log('******** File created from base64 encoded string ********');
 }
 
 module.exports = common;
