@@ -529,6 +529,8 @@ form.uk-search.search_dash_nav {
 }
 
 .uk-slider-container.img_slid {
+  float: left;
+  margin-top: 0;
   width: 100%;
 }
 
@@ -538,22 +540,24 @@ form.uk-search.search_dash_nav {
   width: 98% !important;
 }
 
-
 .user_bottom_img_right h3 {
+  display: block;
+  float: left;
   font-family: open sans;
   font-size: 25px;
   font-weight: 400;
   line-height: 30px;
+  margin-bottom: 17px;
   padding-left: 11px;
 }
-
 .user_location {
   color: #888;
   float: left;
   font-size: 14px;
-  margin-bottom: 29px;
+  margin-bottom: 0;
   width: 100%;
 }
+
 .custom-freind img {
   border: 1px solid #eee;
   border-radius: 50px;
@@ -1345,11 +1349,13 @@ form.uk-search.search_dash_nav {
     background-color: buttonface;
     font-size: 13.3333px Arial;
 }
-
-.slider_image{
-  width: 120px !important;
-  height: 100px !important;
+.slider_image {
+  height: auto !important;
+  margin: 0 !important;
+  max-height: 75px;
+  width: auto !important;
 }
+
 .slick-next{
   right: 0px !important;
   background: #000 !important;
@@ -1371,4 +1377,17 @@ form.uk-search.search_dash_nav {
     margin-left: -1px;
     padding: 5px;
     width: 100.3%;
+}
+
+.slick-slide img {
+  display: block;
+  float: left;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.uk-slidenav-position.uk-margin {
+  float: left;
+  margin: 0 !important;
+  width: 100%;
 }
