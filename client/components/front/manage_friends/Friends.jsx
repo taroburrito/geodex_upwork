@@ -38,7 +38,7 @@ export default class Friends extends Component {
         var item = categories[catId];
        category_id = item.id;
 
-        catOptions.push(<option key={item.id} value={item.id} >{item.category_name}</option>);
+        catOptions.push(<option key={item.id} value={item.id}>{item.category_name}</option>);
       });
     }
     return(
@@ -49,6 +49,8 @@ export default class Friends extends Component {
   }
   render() {
     const{categoryData} = this.props;
+    console.log(categoryData);
+    console.log("****");
     var img;
     if(this.props.profile_image){
       img = this.props.profile_image;

@@ -21,6 +21,8 @@ export const Add_Category_Dashboard_Failed = 'Add_Category_Dashboard_Failed';
 export const Set_Message_To_Default = 'Set_Message_To_Default';
 export const Send_Email_From_Dashboard_Success = 'Send_Email_From_Dashboard_Success';
 export const Send_Email_From_Dashboard_Failed = 'Send_Email_From_Dashboard_Failed';
+export const Change_Friend_Cat_Success = 'Change_Friend_Cat_Success';
+export const Change_Friend_Cat_Failed = 'Change_Friend_Cat_Failed';
 
 
 
@@ -231,6 +233,14 @@ export function getCategoryByUserId(userId){
   }
 }
 
+export function changeFriendCatSuccess(result,friendId){
+  return{type: Change_Friend_Cat_Success,data:result,friendId:friendId}
+}
+
+export function changeFriendCatFailed(error){
+  return{type: Change_Friend_Cat_Failed, error:error}
+}
+
 export function changeFriendCat(userId,friendId, catId){
   return(dispatch) => {
     $.ajax({
@@ -240,8 +250,16 @@ export function changeFriendCat(userId,friendId, catId){
       dataType: 'json'
     }).done(function(result){
       console.log("success:"+JSON.stringify(result));
+      if(result.error){
+
+        dispatch(changeFriendCatFailed(result.error));
+      }else {
+        console.log(result);
+        dispatch(changeFriendCatSuccess(result.categorizedFriends,friendId));
+      }
     }).fail(function(error){
       console.log("success:"+JSON.stringify(error));
+      dispatch(changeFriendCatFailed(error));
     });
   }
 }

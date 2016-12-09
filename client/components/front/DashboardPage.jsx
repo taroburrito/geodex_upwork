@@ -184,7 +184,6 @@ componentDidUpdate(){
 
   handleChangeSort(){
     var sortBy = this.refs.sortFriends.getDOMNode().value;
-    console.log(this.props);
     const{dashboardData} = this.props;
     var friends = dashboardData.friends;
 
@@ -198,6 +197,12 @@ componentDidUpdate(){
       Object.keys(fullySorted).map((id)=>{
         newArr[id] = fullySorted[id];
       });
+
+      console.log(friends);
+      console.log("******");
+
+      console.log(fullySorted);
+      console.log(newArr);
     //   var newArr = _.sortBy(friends, 'first_name', function(n) {
     //   return Math.sin(n);
     // });
@@ -336,7 +341,7 @@ resetEmailForm(){
 
 
 
-  
+
       return(
         <div>
           <Slider infinite="false" slidesToShow="3" >
@@ -734,7 +739,7 @@ resetEmailForm(){
 
                     <div className="uk-comment-body">
                       <div className="uk-width-small-1-1 post_control">
-                        {post_image?<img src={this.state.uploadDir+post_image} className="uk-float-left img_margin_right"/>:null}
+                        {post_image?<img src={this.state.uploadDir+"user_"+userProfile.id+"/thumbs/"+post_image} className="uk-float-left img_margin_right"/>:null}
                          <p>{latestPost.content}</p>
                      </div>
                     </div>
@@ -824,11 +829,15 @@ resetEmailForm(){
              ?<div className="img_border"><img src={this.state.image}   ref="postImage"/>
            <textarea placeholder="text about image" className="uk-width-1-1" ref="postImageContent" ></textarea></div>
            :<div className="img_border"><img src="public/images/user.jpg"   ref="postImage"/></div>}
-
-           <input type="file"  ref="file"  onChange={this.handleImageChange.bind(this)}/>
+             <br />
+           <input type="file"  ref="file" className="uk-float-left"  onChange={this.handleImageChange.bind(this)}/>
         <br />
         {this.state.image?
-      <input className="uk-button uk-button-primary uk-button-large uk-modal-close" type="button" onClick={this.handleSavePostImage} value="Save" />
+          <div className="uk-modal-footer uk-text-right">
+                        <button className="uk-button uk-modal-close" type="button">Cancel</button>
+                        <input className="uk-button uk-button-primary uk-modal-close" type="button" onClick={this.handleSavePostImage} value="Save" />
+                    </div>
+
       : null}
       </form>
       </div>

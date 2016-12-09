@@ -15,7 +15,9 @@ import {
           Add_Category_Dashboard_Failed,
           Set_Message_To_Default,
           Send_Email_From_Dashboard_Success,
-          Send_Email_From_Dashboard_Failed
+          Send_Email_From_Dashboard_Failed,
+          Change_Friend_Cat_Success,
+          Change_Friend_Cat_Failed
         } from '../actions/UserActions';
 
         import {Post_Added_Dashboard_Success} from '../actions/PostActions';
@@ -35,6 +37,19 @@ export function getAllFriendsList(friendsListState={}, action){
           friendsList:action.data,
         });
         break;
+
+        case Change_Friend_Cat_Success:
+        var currentData =  Object.assign({}, friendsListState);
+        if(currentData.categorizedFriendList){
+          console.log("userReducer");
+          console.log(action);
+          var friendId = action.friendId;
+        currentData.categorizedFriendList[friendId] = action.data[friendId];
+      }else {
+          currentData.categorizedFriendList = action.data;
+      }
+        return Object.assign({},currentData);
+          break;
       case Delete_friend_Success:
         const newState = Object.assign([], friendsListState);
         console.log(newState);
