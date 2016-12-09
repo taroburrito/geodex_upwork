@@ -4,6 +4,7 @@ import { Navigation, Link } from 'react-router';
 import { validateDisplayName, } from '../../utilities/RegexValidators';
 var AvatarEditor = require('react-avatar-editor');
 var Slider = require('react-slick');
+var Loading = require('react-loading');
 
 
 function generateUUID(){
@@ -38,7 +39,7 @@ export default class DashboardPage extends Component {
       popupImage:null,
       uploadDir:null,
       postLargeImage:null,
-
+      loading:false
 
     }
   }
@@ -47,8 +48,16 @@ export default class DashboardPage extends Component {
     const{userAuthSession} = this.props;
     var userId= userAuthSession.userObject.id;
     var uploadDir = 'uploads/images/';
-    this.setState({uploadDir:uploadDir});
+    this.setState({uploadDir:uploadDir,loading:true});
     this.props.fetchInitialData(userAuthSession.userObject.id,null);
+  }
+  componentDidMount(){
+    console.log("Here");
+    const{dashboardData} = this.props;
+    if(dashboardData){
+
+      this.setState({loading:false});
+    }
   }
 
   sortByAllCategory(){
@@ -140,9 +149,7 @@ componentDidUpdate(){
     this.refs.categoryName.getDOMNode().value = "";
   }
 
-  componentDidMount(){
-
-  }
+  
 
   getProfileImage(img){
      if(img){
@@ -897,6 +904,7 @@ resetEmailForm(){
     var errorLabel;
 
 
+
       if(userProfileData)
     return (
 
@@ -924,7 +932,7 @@ resetEmailForm(){
           </div>
 
            {this.renderLatestPost()}
-
+           {this.state.loading?<Loading type='balls' color='#e3e3e3' />:null}
          </div>
          <div className="uk-width-small-1-1 shortlist_menu">
            <ul>
