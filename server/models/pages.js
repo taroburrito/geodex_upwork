@@ -24,15 +24,15 @@ var pageModel = {
         dbConnection.query(createPageSqlString, function (error, results, fields) {
             if (error) {
                
-                dbConnection.destroy(); return(callback({error: error, when: "inserting"}));
+                dbConnection.end(); return(callback({error: error, when: "inserting"}));
             } else {
                 var getPageSqlString = getPageDetailSqlString(results.insertId);
                 dbConnection.query(getPageSqlString, function (error, results, fields) {
                    
                     if (error) {
-                        dbConnection.destroy(); return(callback({error: error, when: "reading"}));
+                        dbConnection.end(); return(callback({error: error, when: "reading"}));
                     } else {
-                        dbConnection.destroy(); return(callback({page: pageModel.convertRowToObject(results[0])}));
+                        dbConnection.end(); return(callback({page: pageModel.convertRowToObject(results[0])}));
                     }
                 });
             }
@@ -45,15 +45,15 @@ var pageModel = {
         dbConnection.query(updatePageSqlString, function (error, results, fields) {
             if (error) {
                
-                dbConnection.destroy(); return(callback({error: error, when: "updating"}));
+                dbConnection.end(); return(callback({error: error, when: "updating"}));
             } else {
                 var getPageSqlString = getPageDetailSqlString(pageId);
                 dbConnection.query(getPageSqlString, function (error, results, fields) {
                    
                     if (error) {
-                        dbConnection.destroy(); return(callback({error: error, when: "reading"}));
+                        dbConnection.end(); return(callback({error: error, when: "reading"}));
                     } else {
-                        dbConnection.destroy(); return(callback({page: pageModel.convertRowToObject(results[0])}));
+                        dbConnection.end(); return(callback({page: pageModel.convertRowToObject(results[0])}));
                     }
                 });
             }
@@ -65,9 +65,9 @@ var pageModel = {
         dbConnection.query(deletePageSqlString, function (error, results, fields) {
             if (error) {
                
-                dbConnection.destroy(); return(callback({error: error, when: "updating"}));
+                dbConnection.end(); return(callback({error: error, when: "updating"}));
             } else {
-                dbConnection.destroy(); return(callback({success: "deleted successfully"}));
+                dbConnection.end(); return(callback({success: "deleted successfully"}));
             }
         });
     },
