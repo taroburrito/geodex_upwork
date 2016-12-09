@@ -1383,7 +1383,9 @@ form.uk-search.search_dash_nav {
   display: block;
   float: left;
   margin: 0 !important;
+  max-height: 75px;
   padding: 0 !important;
+  width: auto !important;
 }
 
 .uk-slidenav-position.uk-margin {

@@ -1,5 +1,7 @@
 var fs = require('fs');
 var Jimp = require("jimp");
+var path = require('path');
+var clientDir = path.join(__dirname, '../../', 'client/uploads/images');
 
 var common = {
 decodeBase64Image: function(dataString) {
@@ -21,11 +23,11 @@ uploadPostImage:function(imageData,userId){
   var ext = imageData.split(';')[0].match(/jpg|jpeg|png|gif/)[0];
   var name = Date.now()+"."+ext;
 
-  var dir = "images/user_"+userId;
-  var thumbs_dir = "images/user_"+userId+"/thumbs";
+  var dir = clientDir+"/user_"+userId;
+  var thumbs_dir = clientDir+"/user_"+userId+"/thumbs";
   var path = dir+"/"+name;
   var thumbs_path = thumbs_dir+"/"+name;
-
+  console.log(clientDir);
 
   // check if dir already exists
   if(!fs.existsSync(dir)){
@@ -66,7 +68,7 @@ function processImage(img,dest){
   Jimp.read(img).then(function (image) {
   // do stuff with the image
   image.write(img);
-   image.resize(Jimp.AUTO,120)
+   image.resize(185,152)
         .write(dest); // save
   }).catch(function (err) {
   return err;

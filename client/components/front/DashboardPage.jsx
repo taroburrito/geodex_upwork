@@ -35,13 +35,19 @@ export default class DashboardPage extends Component {
       fileData:null,
       active_cat:'all',
       handleMessage:initialMessageStates,
-      popupImage:null
+      popupImage:null,
+      uploadDir:null,
+      postLargeImage:null,
+
 
     }
   }
 
   componentWillMount(){
     const{userAuthSession} = this.props;
+    var userId= userAuthSession.userObject.id;
+    var uploadDir = 'uploads/images/';
+    this.setState({uploadDir:uploadDir});
     this.props.fetchInitialData(userAuthSession.userObject.id,null);
   }
 
@@ -61,7 +67,7 @@ export default class DashboardPage extends Component {
           image: upload.target.result,
           fileData:file
         });
-        
+
       };
   reader.readAsDataURL(file);
 
@@ -82,6 +88,7 @@ export default class DashboardPage extends Component {
       this.props.onClickSavePost(formData);
       this.setState({image:null,post_image:null,fileData:null});
       this.refs.postImageContent.getDOMNode().value = "";
+      this.refs.postContent.getDOMNode().value = "";
     }
   }
 
@@ -308,9 +315,10 @@ resetEmailForm(){
        Object.keys(friendsPost).forEach((postImage)=> {
 
          var postContent = friendsPost[postImage];
+         var postImageSrc = this.state.uploadDir+"user_"+postContent.user_id+"/"+postContent.post_image;
          if(postImage)
          friendElement.push(
-             <div key={postContent.i} className="slider_image uk-grid-small uk-grid-width-medium-1-4"><a data-uk-modal="{target:'#postImageModel'}" onClick={()=>this.setState({postImage:postContent.post_image})} ><img src={postContent.post_image}/></a></div>
+             <div key={postContent.i} className="slider_image uk-grid-small uk-grid-width-medium-1-4"><a data-uk-modal="{target:'#postImageModel'}" onClick={()=>this.setState({postLargeImage:postImageSrc})} ><img src={postImageSrc}/></a></div>
          );
          i++;
 
@@ -328,7 +336,7 @@ resetEmailForm(){
 
 
 
-    if(friendElement.length > 1){
+  
       return(
         <div>
           <Slider infinite="false" slidesToShow="3" >
@@ -340,22 +348,7 @@ resetEmailForm(){
         </div>
 
       );
-    }else{
-      return(
-        <div>
 
-            {friendElement}
-
-          {/* <ul className="uk-slider uk-grid-small uk-grid-width-medium-1-4">
-            {friendElement}
-          </ul> */}
-        </div>
-
-
-
-
-      );
-    }
 
 
      }
@@ -387,7 +380,7 @@ resetEmailForm(){
 					<div className="uk-width-small-1-1">
 					<a href="#" class="uk-slidenav uk-slidenav-contrast uk-slidenav-previous" data-uk-slider-item="previous" draggable="false"></a>
 					<a href="#" class="uk-slidenav uk-slidenav-contrast uk-slidenav-next" data-uk-slider-item="next" draggable="false"></a>
-				<img src={this.state.popupImage?this.state.popupImage:"public/images/popup_img.jpg"}/>
+				<img src={this.state.postLargeImage?this.state.postLargeImage:"public/images/popup_img.jpg"}/>
 				</div>
 				</div>
               <div className="uk-width-small-1-2 popup_img_right">
@@ -503,8 +496,8 @@ resetEmailForm(){
               </div>
             </div>
             <div className="uk-width-small-1-2 post_control">
-              {item.post_image?<img src={item.post_image} className="uk-float-left img_margin_right"/>:null}
-              <p>{content} <a  href="#" data-uk-modal={item.post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={this.loadComments.bind(this,item.post_id)}>LoadMore</a></p>
+              {item.post_image?<img src={this.state.uploadDir+'user_'+user_id+'/thumbs/'+item.post_image} className="uk-float-left img_margin_right"/>:null}
+              <p>{content} <a  href="#" data-uk-modal={item.post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={()=>this.setState({postLargeImage:this.state.uploadDir+'user_'+user_id+'/'+item.post_image})}>LoadMore</a></p>
 
 
             </div>
@@ -707,6 +700,7 @@ resetEmailForm(){
     var latestPost = dashboardData.latestPost;
     var userProfile = userAuthSession.userObject;
 
+
     if(latestPost){
       var content = latestPost.content;
       var content_length = latestPost.content.length;
@@ -720,7 +714,7 @@ resetEmailForm(){
        return (
          <div className="uk-width-small-1-2 post_control">
         <div  style={{maxHeight:200,overflow:"hidden"}}>
-        <img src={latestPost.image? latestPost.image: null} className="uk-float-right img_margin_left"/>
+        <img src={latestPost.image? this.state.uploadDir+"user_"+userProfile.id+"/thumbs/"+latestPost.image: null} className="uk-float-right img_margin_left"/>
         <p>{content} <a href="#" data-uk-modal="{target:'#postContentPop'}">LoadMore</a></p>
         </div>
         <div id='postContentPop' className="uk-modal coment_popup">
@@ -740,7 +734,7 @@ resetEmailForm(){
 
                     <div className="uk-comment-body">
                       <div className="uk-width-small-1-1 post_control">
-                        {post_image?<img src={post_image} className="uk-float-left img_margin_right"/>:null}
+                        {post_image?<img src={this.state.uploadDir+post_image} className="uk-float-left img_margin_right"/>:null}
                          <p>{latestPost.content}</p>
                      </div>
                     </div>
@@ -828,7 +822,7 @@ resetEmailForm(){
           {errorLabel}
            {this.state.image
              ?<div className="img_border"><img src={this.state.image}   ref="postImage"/>
-           <textarea placeholder="text about image" className="uk-width-1-1" ref="postImageContent"></textarea></div>
+           <textarea placeholder="text about image" className="uk-width-1-1" ref="postImageContent" ></textarea></div>
            :<div className="img_border"><img src="public/images/user.jpg"   ref="postImage"/></div>}
 
            <input type="file"  ref="file"  onChange={this.handleImageChange.bind(this)}/>
@@ -934,7 +928,8 @@ resetEmailForm(){
           <select name="sort" ref="sortFriends" onChange={this.handleChangeSort}>
             <option>Please Select</option>
             <option value="created">Recently added</option>
-            <option value="first_name">Name</option>
+            <option value="first_name">First name</option>
+            <option value="last_name">Last name</option>
             <option value="email">Email</option>
             <option value="latitude">Location</option>
 
