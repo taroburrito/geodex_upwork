@@ -28,12 +28,16 @@ var userModel = {
       var getUserSettingsSqlString = constructGetUserProfileSqlString(userId);
         dbConnection.query(getUserSettingsSqlString,function(error,result,fields){
         if(error){
+          dbConnection.end();
           return(callback({error:"Failed to login",status:400,message:"Error in logged In query"}));
         }else if (result.length == 0) {
+          dbConnection.end();
           return(callback({error:"No result found for userid:"+userId,status:400,message:"No record found with these parameters"}));
         }else {
             var userObject = userModel.convertRowsToUserProfileObject(result[0]);
-            dbConnection.end(); return(callback({userObject:userObject, status:200, message:"Login success"}));
+
+          dbConnection.end();
+             return(callback({userObject:userObject, status:200, message:"Login success"}));
         }
       });
     },
@@ -49,10 +53,13 @@ var userModel = {
       var confirmFriendRequestSqlString = constructConfirmFriendRequestSqlString(requestId);
       dbConnection.query(confirmFriendRequestSqlString, function(error,results,fields){
         if(error){
+          dbConnection.end();
           return(callback({error:error}));
         }else if (results.affectedRows === 0) {
+          dbConnection.end();
           return(callback({error:"Not updated record"}));
         }else{
+          dbConnection.end();
           return(callback({success:"Confirm Friend successfully"}));
         }
       });
@@ -68,10 +75,13 @@ var userModel = {
       var deleteFriendRequestSqlString = constructDeleteFriendRequestSqlString(requestId);
       dbConnection.query(deleteFriendRequestSqlString, function(error,results,fields){
         if(error){
+          dbConnection.end();
           return(callback({error:error,status:400}));
         }else if (results.affectedRows === 0) {
+          dbConnection.end();
           return(callback({error:"Error in delete friend request",status:400}));
         }else{
+          dbConnection.end();
           return(callback({success:"Deny Friend successfully",status:200}));
         }
       });
@@ -87,14 +97,17 @@ var userModel = {
         var getFriendRequestsSqlString = constructFriendRequestsSqlString(userId);
         dbConnection.query(getFriendRequestsSqlString,function(error,results,field){
           if(error){
+            dbConnection.end();
             return(callback({error:error}));
           }else if (results.length === 0) {
+            dbConnection.end();
             return(callback({friendRequests:null}));
           }else {
             var friends = {};
             results.forEach(function (result) {
                 friends[result.request_id] = userModel.convertRowsToUserProfileObject(result);
             });
+            dbConnection.end();
             return(callback({friendRequests:friends}));
           }
         });
@@ -315,6 +328,7 @@ var userModel = {
                 results1.forEach(function (result) {
                     categorizedFriends[result.friend_id] = userModel.convertRowsToUserProfileObject(result);
                 });
+                dbConnection.end();
                   return callback({friendList: friends, categorizedFriendList:categorizedFriends});
               }
             });
@@ -654,10 +668,13 @@ var userModel = {
 
       dbConnection.query(acceptFriendRequestSqlString,function(error,results,fields){
         if(error){
+          dbConnection.end();
           return(callback({error:acceptFriendRequestSqlString, status:400}));
         }else if (results.affectedRows == 0) {
+          dbConnection.end();
           return(callback({error:"Error in accept request query", status:400}));
         }else{
+          dbConnection.end();
           return(callback({success:"Successfully accepted request", status:200}));
         }
       });
@@ -682,8 +699,10 @@ var userModel = {
         var getCategoiresByUserSqlString = constructGetUserCategoriesSqlString(userId);
         dbConnection.query(getCategoiresByUserSqlString,function(error,results,fields){
             if(error){
+              dbConnection.end();
               return(callback({error:error}));
             }else if (results.length == 0) {
+              dbConnection.end();
               return(callback({error:"No categories found for this user"}));
             }else {
               /* Create object of all categories*/
@@ -691,7 +710,7 @@ var userModel = {
               results.forEach(function (resultIndex) {
                   categories[resultIndex.id] = userModel.convertRowsToUserProfileObject(resultIndex);
               });
-
+              dbConnection.end();
               return(callback({categories:categories}));
             }
         });
@@ -710,13 +729,16 @@ var userModel = {
       var friendCat = {};
       dbConnection.query(checkFriendCatSqlString,function(error,results,fields){
         if(error){
+          dbConnection.end();
           return(callback({error: error,status:400}));
         }else if (results.length == 0) {
           //Insert New entry
           dbConnection.query(insertFriendCatSqlString,function(error1,result1,field1){
             if(error1){
+              dbConnection.end();
               return(callback({error:error1, status:400}));
             }else if (result1.affectedRows == 0) {
+              dbConnection.end();
               return(callback({error: "Error in inserting friend cat", status:400}));
             }else {
               var lastInsertId = result1.insertId;
@@ -724,11 +746,14 @@ var userModel = {
 
               dbConnection.query(getFriendCatById,function(error,results,fields){
                 if(error){
+                  dbConnection.end();
                   return(callback({error:error, status:400}));
                 }else if (results.length == 0) {
+                  dbConnection.end();
                   return(callback({error:"Error in getting new record",status:400}))
                 }else{
                   friendCat[data.friendId] = userModel.convertRowsToUserProfileObject(results[0]);
+                  dbConnection.end();
                   return(callback({success: "successfully enterd friend cat", status:200,categorizedFriends:friendCat}));
                 }
               });
@@ -740,24 +765,29 @@ var userModel = {
           //update query
           dbConnection.query(updateFriendCatSqlString,function(error1,result1,field1){
             if(error1){
+              dbConnection.end();
               return(callback({error:error1, status:400}));
             }else if (result1.affectedRows == 0) {
+              dbConnection.end();
               return(callback({error: "Error in updating friend cat", status:400}));
             }else {
 
               dbConnection.query(checkFriendCatSqlString,function(error,results,fields){
                 if(error){
+                  dbConnection.end();
                   return(callback({error:error, status:400}));
                 }else if (results.length == 0) {
+                  dbConnection.end();
                   return(callback({error:"Error in getting  record",status:400}))
                 }else{
                   friendCat[data.friendId] = userModel.convertRowsToUserProfileObject(results[0]);
+                  dbConnection.end();
                   return(callback({success: "successfully updated friend cat", status:200,categorizedFriends:friendCat}));
                 }
               });
 
 
-              
+
             }
           });
         }
@@ -769,14 +799,17 @@ var userModel = {
       var searchUserSqlString = constructSearchUserSqlString(str);
       dbConnection.query(searchUserSqlString,function(errors,results,fields){
         if(errors){
+          dbConnection.end();
           return(callback({error:error,status:400}));
         }else if (results.length == 0) {
+          dbConnection.end();
           return(callback({error:"No rrecord found",status:400}));
         }else {
           var records = {};
           results.forEach(function (resultIndex) {
               records[resultIndex.id] = userModel.convertRowsToUserProfileObject(resultIndex);
           });
+          dbConnection.end();
           return(callback({searchResult:records,status:200,success:"user founds successfully"}));
         }
       });
@@ -797,8 +830,10 @@ var userModel = {
       var friendStatus;
       dbConnection.query(getUserProfileSqlString,function(error,results,fields){
         if(error){
+          dbConnection.end();
           return(callback({error:error,status:400}));
         }else if (results.length == 0) {
+          dbConnection.end();
           return(callback({error:"empty result",status:400}));
         }else{
           userProfileData = userModel.convertRowsToUserProfileObject(results[0]);
@@ -806,6 +841,7 @@ var userModel = {
           //Get Friend Status
           dbConnection.query(getFriendStatusSqlString,function(error,results,fields){
             if(error){
+              dbConnection.end();
               return(callback({error:error,status:400}));
             }else if (results.length == 0) {
                friendStatus = null;
@@ -817,14 +853,17 @@ var userModel = {
           // get posts of user
           dbConnection.query(getPostsByUserSqlString,function(error,results,fields){
             if(error){
+              dbConnection.end();
                 return(callback({error:error,status:400}));
             }else if (results.length == 0) {
+              dbConnection.end();
                 return(callback({userProfileData:userProfileData,status:200,posts:null,friendStatus:friendStatus}));
             }else{
               var posts = {};
                   results.forEach(function (postIndex) {
                   posts[postIndex.id] = userModel.convertRowsToUserProfileObject(postIndex);
               });
+              dbConnection.end();
               return(callback({userProfileData:userProfileData,status:200,posts:posts,friendStatus:friendStatus}));
             }
 
@@ -840,8 +879,10 @@ var userModel = {
     */
     sendEmailFromDashboard:function(data,callback){
       if (sendMailToUser('',data.from,data.to,data.subject,data.content)) {
+        dbConnection.end();
         return(callback({success:"Sent mail successfully", status:200}));
       }else{
+        dbConnection.end();
         return(callback({success:"Sent mail successfully", status:200}));
       }
     }

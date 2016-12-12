@@ -757,10 +757,14 @@ background: url("../images/bg_line.png") no-repeat left;
 
 .profile_post_right .post_control {
   background: rgba(0, 0, 0, 0) url("../images/post_divider.jpg") no-repeat scroll center bottom;
-  margin-bottom: -7px;
-  padding-bottom: 15px;
+  padding-bottom: 20px;
+  float: left;
 }
-
+.profile_post_photos {
+  float: left;
+  margin: 1%;
+  width: 31%;
+}
 .profile_bottom h3 {
   font-family: open sans;
   font-size: 25px;
@@ -1398,5 +1402,9 @@ form.uk-search.search_dash_nav {
 
 .slick-next, .slick-prev {
     border-radius: 57px;
-    background: none!important;
+    background: #cecece !important;
+}
+
+.slick-slide.main-box > img {
+  max-height: 100% !important;
 }

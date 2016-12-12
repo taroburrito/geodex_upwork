@@ -39,7 +39,8 @@ export default class DashboardPage extends Component {
       popupImage:null,
       uploadDir:null,
       postLargeImage:null,
-      loading:false
+      loading:false,
+      clickedUser:false
 
     }
   }
@@ -149,7 +150,7 @@ componentDidUpdate(){
     this.refs.categoryName.getDOMNode().value = "";
   }
 
-  
+
 
   getProfileImage(img){
      if(img){
@@ -313,7 +314,8 @@ resetEmailForm(){
     )
   }
 
-  renderFriendPostImages(user_id){
+  renderFriendsPostImagesLargeSlider(user_id){
+    
 
      const{dashboardData} = this.props;
      var friendsPosts = dashboardData.friendsPostImages;
@@ -330,7 +332,48 @@ resetEmailForm(){
          var postImageSrc = this.state.uploadDir+"user_"+postContent.user_id+"/"+postContent.post_image;
          if(postImage)
          friendElement.push(
-             <div key={postContent.i} className="slider_image uk-grid-small uk-grid-width-medium-1-4"><a data-uk-modal="{target:'#postImageModel'}" onClick={()=>this.setState({postLargeImage:postImageSrc})} ><img src={postImageSrc}/></a></div>
+             <div key={postContent.i} className="main-box"><img src={postImageSrc}/></div>
+         );
+         i++;
+
+       });
+
+
+
+
+
+      return(
+        <div>
+          <Slider slidesToShow="1" slidesToScroll="1" infinite="false">
+            {friendElement}
+                </Slider>
+
+        </div>
+
+      );
+     }
+    //console.log(friendsPost);
+
+  }
+
+  renderFriendsPostImagesSmallSlider(user_id){
+
+     const{dashboardData} = this.props;
+     var friendsPosts = dashboardData.friendsPostImages;
+     var friend_post_images;
+     if(friendsPosts)
+     var friendsPost = friendsPosts[user_id];
+       if(friendsPost && friendsPost.length > 0){
+
+       var friendElement = [];
+       var i = 1;
+       Object.keys(friendsPost).forEach((postImage)=> {
+
+         var postContent = friendsPost[postImage];
+         var postImageSrc = this.state.uploadDir+"user_"+postContent.user_id+"/thumbs/"+postContent.post_image;
+         if(postImage)
+         friendElement.push(
+             <div key={postContent.i} className="slider_image uk-grid-small uk-grid-width-medium-1-4"><a data-uk-modal="{target:'#postImageModel'}" onClick={()=>this.setState({postLargeImage:null,clickedUser:user_id})} ><img src={postImageSrc}/></a></div>
          );
          i++;
 
@@ -360,9 +403,6 @@ resetEmailForm(){
         </div>
 
       );
-
-
-
      }
     //console.log(friendsPost);
 
@@ -375,26 +415,10 @@ resetEmailForm(){
           <div className="uk-modal-dialog uk-modal-dialog-blank">
           <button className="uk-modal-close uk-close" type="button"></button>
             <div className="uk-grid">
-              {/* <div className="uk-width-small-2-3 popup_img_left">
-                <div class="uk-slidenav-position uk-margin" data-uk-slider="{autoplay: true}">
-                  <div className="uk-slider-container pro_slid">
-                    <ul class="uk-slider uk-grid-small uk-grid-width-medium-1-1">
-                        <li><img src=/></li>
 
-                      </ul>
-                    </div>
-                    <a href="#" class="uk-slidenav uk-slidenav-contrast uk-slidenav-previous" data-uk-slider-item="previous" draggable="false"></a>
-                    <a href="#" class="uk-slidenav uk-slidenav-contrast uk-slidenav-next" data-uk-slider-item="next" draggable="false"></a>
-
-                    </div>
-              </div> */}
               <div className="uk-width-small-1-2 popup_img_left">
-					<div className="uk-width-small-1-1">
-					<a href="#" class="uk-slidenav uk-slidenav-contrast uk-slidenav-previous" data-uk-slider-item="previous" draggable="false"></a>
-					<a href="#" class="uk-slidenav uk-slidenav-contrast uk-slidenav-next" data-uk-slider-item="next" draggable="false"></a>
-				<img src={this.state.postLargeImage?this.state.postLargeImage:"public/images/popup_img.jpg"}/>
-				</div>
-				</div>
+				            {this.state.postLargeImage?<img src={this.state.postLargeImage}/>:this.renderFriendsPostImagesLargeSlider(this.state.clickedUser)}
+				      </div>
               <div className="uk-width-small-1-2 popup_img_right">
 
               <article className="uk-comment">
@@ -485,7 +509,7 @@ resetEmailForm(){
       }else {
 
       }
-      var slider_images = this.renderFriendPostImages(user_id);
+      var slider_images = this.renderFriendsPostImagesSmallSlider(user_id);
       friendsElement.push(  <div className="uk-grid dash_top_head dash_botom_list" id={item.id}>
 
             <div className="uk-width-small-1-2">
@@ -727,7 +751,8 @@ resetEmailForm(){
          <div className="uk-width-small-1-2 post_control">
         <div  style={{maxHeight:200,overflow:"hidden"}}>
         <img src={latestPost.image? this.state.uploadDir+"user_"+userProfile.id+"/thumbs/"+latestPost.image: null} className="uk-float-right img_margin_left"/>
-        <p>{content} <a href="#" data-uk-modal="{target:'#postContentPop'}">LoadMore</a></p>
+        <p>{content} <a href="#" data-uk-modal={latestPost.image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={()=>this.setState({postLargeImage:this.state.uploadDir+'user_'+userProfile.id+'/'+latestPost.image})}>LoadMore</a></p>
+
         </div>
         <div id='postContentPop' className="uk-modal coment_popup">
             <div className="uk-modal-dialog uk-modal-dialog-blank">
