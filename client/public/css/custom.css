@@ -167,7 +167,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#45484d', end
 
 .middle_content {
   padding-bottom: 25%;
-  padding-top: 100px;
+  padding-top: 80px;
 }
 
 .middle_content h2 {
@@ -456,16 +456,12 @@ form.uk-search.search_dash_nav {
   width: 37%;
 }
 
-
-
-
-
 .shortlist_menu {
   border-bottom: 1px solid #ccc;
   color: #333;
   float: left;
   margin-bottom: 20px;
-  margin-top: 30px;
+  margin-top: 18px;
   padding-bottom: 10px;
 }
 
@@ -1344,7 +1340,7 @@ form.uk-search.search_dash_nav {
 }
 
 .cont_post_btn {
-  background: #e9e9e9 none repeat scroll 0 0;
+  background: #eee none repeat scroll 0 0;
   border-radius: 3px;
   float: left;
   margin-top: 0;
@@ -1467,9 +1463,23 @@ form.post_img_modal_form {
 }
 
 .uk-width-3-10.user_img_left {
-  background: #eee none repeat scroll 0 0;
+  background: #fbfbfb none repeat scroll 0 0;
   border-radius: 3px;
-  line-height: 155px;
+  /*line-height: 155px;*/
   padding: 0;
   text-align: center;
+}
+
+.custom_img_pop_style{
+  display: inline-block !important;
+float: none !important;
+left: 50%;
+margin: 0 !important;
+position: absolute;
+top: 50%;
+transform: translate(-50%, -50%);
+}
+
+small.user_location {
+    margin-top: -10px;
 }

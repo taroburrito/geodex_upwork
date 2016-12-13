@@ -50,7 +50,7 @@ export default class EditProfile extends Component {
    // this.setState({ preview: img});
     const {dispatch, userAuthSession}=this.props;
     var userData = userAuthSession.userObject;
-    userData.profile_image = img;
+    //userData.profile_image = img;
     var req={
       id:userData.id,
       field:'profile_image',
@@ -401,7 +401,7 @@ renderCoverModel(){
 
     const { dispatch,userAuthSession} = this.props;
     var userData = userAuthSession.userObject;
-
+    
     if(!userData.cover_image){
     var background_profile_css ={
       backgroundImage: 'url(public/images/profile_banner.jpg)'

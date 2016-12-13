@@ -509,9 +509,6 @@ var userModel = {
         return(callback({error:"Error in uploading"}));
       }
 
-
-
-
       var dbConnection = dbConnectionCreator();
       var updateUserDataQuery = constructupdateUserDataQuery(req);
       // Update Query for gx_users table
@@ -519,15 +516,29 @@ var userModel = {
 
       dbConnection.query(updateUserDataQuery, function (error, results, fields) {
           if (error) {
-
-
-              dbConnection.end(); return(callback({error: error,status:400}));
+            dbConnection.end(); return(callback({error: error,status:400}));
           } else if (results.affectedRows === 1) {
-            dbConnection.end();
-            return(callback({success:"Successfully updated cover",status:200}));
+            var getUserData = constructGetUserProfileSqlString(req.id);
+            dbConnection.query(getUserData,function(error,results,fields){
+              if(error){
+                dbConnection.end();
+                return(callback({error:error, status:200}));
+              }else if (results.length == 0) {
+                dbConnection.end();
+                return(callback({error:"Error in get user details", status:400}));
+              }else {
+                var userProfile = userModel.convertRowsToUserProfileObject(results[0]);
+                dbConnection.end();
+                return(callback({success:"Successfully updated image",status:200, userData:userProfile}));
+
+              }
+            });
+
           } else {
-              dbConnection.end();
-              return(callback({error: "Error in update data",status:400}));
+
+            dbConnection.end();
+            return(callback({error: "Error in update data",status:400}));
+
           }
       });
     },

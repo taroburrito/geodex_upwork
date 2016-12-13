@@ -40,7 +40,8 @@ export default class DashboardPage extends Component {
       uploadDir:null,
       postLargeImage:null,
       loading:false,
-      clickedUser:false
+      clickedUser:false,
+      getClickedUser: null
 
     }
   }
@@ -374,7 +375,7 @@ resetEmailForm(){
          var postImageSrc = this.state.uploadDir+"user_"+postContent.user_id+"/thumbs/"+postContent.post_image;
          if(postImage)
          friendElement.push(
-             <div key={postContent.i} className="slider_image uk-grid-small uk-grid-width-medium-1-4"><a data-uk-modal="{target:'#postImageModel'}" onClick={()=>this.setState({postLargeImage:null,clickedUser:user_id})} ><img src={postImageSrc}/></a></div>
+             <div key={postContent.i} className="slider_image uk-grid-small uk-grid-width-medium-1-4"><a data-uk-modal="{target:'#postImageModel'}" onClick={()=>this.setState({postLargeImage:null,clickedUser:user_id,getClickedUser:user_id})} ><img src={postImageSrc}/></a></div>
          );
          i++;
 
@@ -418,20 +419,11 @@ resetEmailForm(){
             <div className="uk-grid">
 
               <div className="uk-width-small-1-2 popup_img_left">
-				            {this.state.postLargeImage?<img src={this.state.postLargeImage}/>:this.renderFriendsPostImagesLargeSlider(this.state.clickedUser)}
+				            {this.state.postLargeImage?<img src={this.state.postLargeImage} className="custom_img_pop_style"/>:this.renderFriendsPostImagesLargeSlider(this.state.clickedUser)}
 				      </div>
               <div className="uk-width-small-1-2 popup_img_right">
 
-              <article className="uk-comment">
-                <header className="uk-comment-header">
-                    <img className="uk-comment-avatar" src="public/images/user.jpg" alt="" width="60" height="60"/>
-                    <h4 className="uk-comment-title">Author</h4>
-                    <div className="uk-comment-meta">Los Angeles, CA <span>s.dali@gmail.com</span></div>
-                </header>
-                <div className="uk-comment-body">
-                    <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr</p>
-                </div>
-            </article>
+              {this.loadPostByInfo(this.state.getClickedUser)}
               <h5 className="coment_heading">Comments</h5>
               <ul className="uk-comment-list">
                 <li>
@@ -497,9 +489,7 @@ resetEmailForm(){
       var user_id = friends[key].id;
       var profile_link = "/user/"+user_id;
         var content = item.post_content;
-
-
-      if(content && content.length > 0){
+          if(content && content.length > 0){
         var content_length = content.length;
         var post_image = item.post_image;
         if(post_image){
@@ -517,10 +507,11 @@ resetEmailForm(){
               <div className="uk-grid uk-grid-small">
               <div className="uk-width-3-10 user_img_left"><Link to={profile_link}><img src={this.getProfileImage(item.profile_image,user_id)} className=""/></Link></div>
               <div className="uk-width-7-10 user_bottom_img_right">
-              <h3 className="capital_first"><Link to={profile_link}>{item.first_name} {item.last_name} </Link> <small className="user_location">{item.address}
+              <h3 className="capital_first"><Link to={profile_link}>{item.first_name} {item.last_name} </Link>
+              <a data-uk-modal="{target:'#sendEmail'}"   onClick={this.handleOnClickEmailIcon.bind(this,item.email)} data={item.email}  href="#" className="user_location">{item.email}</a>
+             <small className="user_location">{item.address}</small>
 
-                <a data-uk-modal="{target:'#sendEmail'}"   onClick={this.handleOnClickEmailIcon.bind(this,item.email)} data={item.email}  href="#"><i className="uk-icon-envelope"></i></a>
-                </small></h3>
+                </h3>
 
 
             <div className="uk-slidenav-position uk-margin" data-uk-slider="{autoplay: true}">
@@ -534,7 +525,7 @@ resetEmailForm(){
             </div>
             <div className="uk-width-small-1-2 post_control">
               {item.post_image?<img src={this.state.uploadDir+'user_'+user_id+'/thumbs/'+item.post_image} className="uk-float-left img_margin_right"/>:null}
-              <p>{content} <a  href="#" data-uk-modal={item.post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={()=>this.setState({postLargeImage:this.state.uploadDir+'user_'+user_id+'/'+item.post_image})}>LoadMore</a></p>
+              <p>{content} <a  href="#" data-uk-modal={item.post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={()=>this.setState({getClickedUser:user_id, postLargeImage:this.state.uploadDir+'user_'+user_id+'/'+item.post_image})}>LoadMore</a></p>
 
 
             </div>
@@ -553,7 +544,33 @@ resetEmailForm(){
       )
     }
   }
+  loadPostByInfo(userId){
+    if(userId){
+    const{dashboardData} = this.props;
+    var friendData = dashboardData.friends[userId];
+    console.log(friendData); console.log("****");
+    return(
+      <article className="uk-comment">
+          <header className="uk-comment-header">
+              <img src={this.getProfileImage(friendData.profile_image,userId)} className="uk-comment-avatar" width="60" height="60"/>
 
+              <h4 className="uk-comment-title">{friendData.first_name} {friendData.last_name}</h4>
+              <div className="uk-comment-meta"><span>{friendData.address}</span></div>
+          </header>
+
+          <div className="uk-comment-body">
+            <div className="uk-width-small-1-1 post_control">
+            <p></p>
+            </div>
+          </div>
+      </article>
+    )
+  }else{
+    return(
+      <div>No record</div>
+    )
+  }
+  }
   loadComments(postId){
     const{comments} = this.props;
     this.props.fetchComments(postId);
@@ -697,20 +714,8 @@ resetEmailForm(){
 
       				<div className="uk-width-small-1-1 popup_img_right coment_pop_cont">
 
-      				<article className="uk-comment">
-                  <header className="uk-comment-header">
-                      <img src="" className="uk-comment-avatar" width="60" height="60"/>
 
-                      <h4 className="uk-comment-title"></h4>
-                      <div className="uk-comment-meta"><span></span></div>
-                  </header>
-
-                  <div className="uk-comment-body">
-                    <div className="uk-width-small-1-1 post_control">
-                      <p></p>
-            				</div>
-                  </div>
-              </article>
+      			{this.loadPostByInfo(this.state.getClickedUser)}
       				<h5 className="coment_heading">Comments</h5>
       				<ul className="uk-comment-list" ref="commentsul">
 
@@ -752,7 +757,7 @@ resetEmailForm(){
          <div className="uk-width-small-1-2 post_control">
         <div  style={{maxHeight:200,overflow:"hidden"}}>
         <img src={latestPost.image? this.state.uploadDir+"user_"+userProfile.id+"/thumbs/"+latestPost.image: null} className="uk-float-right img_margin_left"/>
-        <p>{content} <a href="#" data-uk-modal={latestPost.image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={()=>this.setState({postLargeImage:this.state.uploadDir+'user_'+userProfile.id+'/'+latestPost.image})}>LoadMore</a></p>
+        <p>{content} <a href="#postContentPop" data-uk-modal>LoadMore</a></p>
 
         </div>
         <div id='postContentPop' className="uk-modal coment_popup">
@@ -764,7 +769,7 @@ resetEmailForm(){
 
                <article className="uk-comment">
                     <header className="uk-comment-header">
-                        {userProfile.profile_image?<img src={userProfile.profile_image} className="uk-comment-avatar" width="60" height="60"/>:null}
+                        {userProfile.profile_image?<img src={this.getProfileImage(userProfile.profile_image,userProfile.id)} className="uk-comment-avatar" width="60" height="60"/>:null}
 
                         <h4 className="uk-comment-title">{userProfile.first_name} {userProfile.last_name}</h4>
                         <div className="uk-comment-meta">{userProfile.address}<span>{userProfile.email}</span></div>
@@ -935,7 +940,7 @@ resetEmailForm(){
     return (
 
       <div className="uk-container uk-container-center middle_content dashboad">
-         <div className="uk-grid uk-grid-large dash_top_head">
+         <div className="uk-grid dash_top_head">
 
 
           <div className="uk-width-small-1-2">

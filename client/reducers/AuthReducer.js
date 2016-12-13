@@ -80,6 +80,7 @@ export function updateUserInfo(userAuthState = defaultStartState , action) {
     case Update_Profile_Input_Success:
     var prevState = Object.assign({}, userAuthState);
     prevState.userObject = action.data;
+    console.log(prevState.userObject);
     return Object.assign({}, userAuthState, prevState.userObject,{
       isLoggedIn: true,
       fetchingAuthUpdate: false,
