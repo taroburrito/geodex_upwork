@@ -1408,3 +1408,22 @@ form.uk-search.search_dash_nav {
 .slick-slide.main-box > img {
   max-height: 100% !important;
 }
+
+.uk-width-small-1-2.popup_img_left {
+  background: #ccc none repeat scroll 0 0;
+  padding: 0;
+  text-align: center;
+}
+.popup_img_left div {
+  height: 100%;
+  line-height: 100%;
+  /*position: absolute;*/
+  width: 100%;
+}
+
+.popup_img_left .slick-slide img {
+  display: inline-block !important;
+  float: none !important;
+  margin-top: 10% !important;
+  max-height: 90% !important;
+}

@@ -315,7 +315,7 @@ resetEmailForm(){
   }
 
   renderFriendsPostImagesLargeSlider(user_id){
-    
+
 
      const{dashboardData} = this.props;
      var friendsPosts = dashboardData.friendsPostImages;
@@ -344,7 +344,7 @@ resetEmailForm(){
 
       return(
         <div>
-          <Slider slidesToShow="1" slidesToScroll="1" infinite="false">
+          <Slider slidesToShow="1" slidesToScroll="1" infinite="true" centerMode="true">
             {friendElement}
                 </Slider>
 
