@@ -79,7 +79,7 @@ class App extends Component {
           );
         }else{
           if(!landingPage){
-            landingPage = <HomePage/>;
+            //landingPage = <HomePage/>;
           }
           return(
             <div>
