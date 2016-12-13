@@ -856,7 +856,7 @@ resetEmailForm(){
      <div id="statusImageModel" className="uk-modal" >
 
         <div className="uk-modal-dialog uk-text-center" >
-          <form>
+          <form className="post_img_modal_form">
           {errorLabel}
            {this.state.image
              ?<div className="img_border"><img src={this.state.image}   ref="postImage"/>
@@ -947,9 +947,10 @@ resetEmailForm(){
             <div className="uk-width-7-10 user_img_right">
             <h3>{userProfileData.first_name} {userProfileData.last_name}
                <small className="uk-float-right">{userProfileData.email}</small></h3>
-            <textarea placeholder="Post to geodex..." className="uk-width-1-1" ref="postContent"></textarea>
+
 
             <div className="cont_post_btn">
+              <textarea placeholder="Post to geodex..." className="uk-width-1-1" ref="postContent"></textarea>
             <a className="uk-button uk-button-primary uk-button-large" onClick={this.handleSavePost}>Post</a>
             <i className="uk-icon-image" data-uk-modal="{target:'#statusImageModel'}" style={{cursor:"pointer"}}></i>
             </div>

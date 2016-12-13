@@ -428,13 +428,14 @@ text-transform:uppercase;
 .user_img_right textarea {
   background: #fff none repeat scroll 0 0;
   border: 1px solid #ccc;
+  border-radius: 3px;
   box-shadow: 0 0 5px #ccc inset;
   font-family: open sans;
   height: 99px;
+  margin-bottom: 4px;
   padding: 5px 29px 5px 10px;
   resize: none;
   width: 100%;
-
 }
 
 .user_img_right i.uk-icon-image {
@@ -502,9 +503,9 @@ form.uk-search.search_dash_nav {
 
 .shortlist_menu .uk-float-right select {
   border: 1px solid #ccc;
-  border-radius: 2px;
-  margin-left: 5px;
-  padding: 4px 6px;
+  border-radius: 5px;
+  margin-left: 7px;
+  padding: 3px 4px;
 }
 
 
@@ -1343,11 +1344,12 @@ form.uk-search.search_dash_nav {
 }
 
 .cont_post_btn {
-    float: left;
-    width: 97%;
-    background: #eee;
-    padding: 5px;
-    margin-top: -5px;
+  background: #e9e9e9 none repeat scroll 0 0;
+  border-radius: 3px;
+  float: left;
+  margin-top: 0;
+  padding: 5px;
+  width: 97%;
 }
 
 .category-select {
@@ -1381,6 +1383,7 @@ form.uk-search.search_dash_nav {
 
 .img_border {
     border: 1px solid #ccc;
+    background: #fff;
 }
 
 .img_border textarea.uk-width-1-1 {
@@ -1446,6 +1449,27 @@ form.uk-search.search_dash_nav {
 
 
 .user_img_right textarea {
-  height: 65px;
+  height: 63px;
   padding: 2px 5px;
+}
+
+.uk-modal-footer button {
+  margin-right: 10px;
+}
+
+form.post_img_modal_form {
+    background: #eee;
+    /* float: left; */
+    width: 96%;
+    padding: 2%;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+.uk-width-3-10.user_img_left {
+  background: #eee none repeat scroll 0 0;
+  border-radius: 3px;
+  line-height: 155px;
+  padding: 0;
+  text-align: center;
 }
