@@ -344,7 +344,7 @@ resetEmailForm(){
 
       return(
         <div>
-          <Slider slidesToShow="1" slidesToScroll="1" infinite="true" centerMode="true">
+          <Slider slidesToShow="1" infinite="false" centerMode="true">
             {friendElement}
                 </Slider>
 

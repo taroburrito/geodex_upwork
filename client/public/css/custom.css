@@ -1417,13 +1417,19 @@ form.uk-search.search_dash_nav {
 .popup_img_left div {
   height: 100%;
   line-height: 100%;
-  /*position: absolute;*/
+  position: absolute;
   width: 100%;
 }
 
 .popup_img_left .slick-slide img {
   display: inline-block !important;
   float: none !important;
-  margin-top: 10% !important;
-  max-height: 90% !important;
+  left: 50%;
+  margin: 0 !important;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.popup_img_left .slick-initialized .slick-slide {
+    position: relative !important;
 }
