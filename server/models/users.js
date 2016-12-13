@@ -7,6 +7,7 @@ var randtoken = require('rand-token');
 var bcrypt = require('bcryptjs');
 var nodemailer = require('nodemailer');
 var moment = require('moment');
+var common = require('../utilities/common.js');
 
 
 
@@ -499,6 +500,18 @@ var userModel = {
     // update user data
 
     updateUserData(req, callback){
+
+      var uploadImage = common.uploadPostImage(req.val,req.id);
+      if(uploadImage){
+        req.val = uploadImage;
+      }else{
+        dbConnection.end();
+        return(callback({error:"Error in uploading"}));
+      }
+
+
+
+
       var dbConnection = dbConnectionCreator();
       var updateUserDataQuery = constructupdateUserDataQuery(req);
       // Update Query for gx_users table
@@ -510,9 +523,11 @@ var userModel = {
 
               dbConnection.end(); return(callback({error: error,status:400}));
           } else if (results.affectedRows === 1) {
+            dbConnection.end();
             return(callback({success:"Successfully updated cover",status:200}));
           } else {
-              dbConnection.end(); return(callback({error: "Error in update data",status:400}));
+              dbConnection.end();
+              return(callback({error: "Error in update data",status:400}));
           }
       });
     },

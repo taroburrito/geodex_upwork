@@ -152,11 +152,12 @@ componentDidUpdate(){
 
 
 
-  getProfileImage(img){
+  getProfileImage(img,userId){
      if(img){
-      return img;
+       var imageSrc = this.state.uploadDir+"user_"+userId+"/"+img;
+      return imageSrc;
     }else{
-     return "public/images/user.jpg";
+     return "public/images/user.png";
     }
 
   }
@@ -514,7 +515,7 @@ resetEmailForm(){
 
             <div className="uk-width-small-1-2">
               <div className="uk-grid uk-grid-small">
-              <div className="uk-width-3-10 user_img_left"><Link to={profile_link}><img src={item.profile_image?item.profile_image:"public/images/user.jpg"} className=""/></Link></div>
+              <div className="uk-width-3-10 user_img_left"><Link to={profile_link}><img src={this.getProfileImage(item.profile_image,user_id)} className=""/></Link></div>
               <div className="uk-width-7-10 user_bottom_img_right">
               <h3 className="capital_first"><Link to={profile_link}>{item.first_name} {item.last_name} </Link> <small className="user_location">{item.address}
 
@@ -940,7 +941,7 @@ resetEmailForm(){
           <div className="uk-width-small-1-2">
             <div className="uk-grid uk-grid-small">
             <div className="uk-width-3-10 user_img_left">
-              <img src={this.getProfileImage(userProfileData.profile_image)} />
+              <img src={this.getProfileImage(userProfileData.profile_image,userProfileData.id)} />
 
             </div>
             <div className="uk-width-7-10 user_img_right">
@@ -948,9 +949,10 @@ resetEmailForm(){
                <small className="uk-float-right">{userProfileData.email}</small></h3>
             <textarea placeholder="Post to geodex..." className="uk-width-1-1" ref="postContent"></textarea>
 
-
-            <i className="uk-icon-image" data-uk-modal="{target:'#statusImageModel'}" style={{cursor:"pointer"}}></i>
+            <div className="cont_post_btn">
             <a className="uk-button uk-button-primary uk-button-large" onClick={this.handleSavePost}>Post</a>
+            <i className="uk-icon-image" data-uk-modal="{target:'#statusImageModel'}" style={{cursor:"pointer"}}></i>
+            </div>
 
             </div>
             </div>
