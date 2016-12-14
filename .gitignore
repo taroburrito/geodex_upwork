@@ -13,3 +13,5 @@ logs
 **/.DS_STORE
 /nbproject/private/
 /server/config/config.js
+/client/build/main.js
+/client/uploads/
