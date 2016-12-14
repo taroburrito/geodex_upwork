@@ -62,6 +62,7 @@ export function updateUserInfo(userAuthState = defaultStartState , action) {
   switch (action.type){
 
     case Started_Session_Check:
+    return Object.assign({}, userAuthState);
     case Clicked_Login:
     case Clicked_SignUp:
     case Clicked_Logout:

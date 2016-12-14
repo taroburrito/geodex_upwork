@@ -294,6 +294,21 @@ input.myinputcont {
 .myinputcont_btn a {
 color:#ffffff;
 }
+.mu_table .griddle-container {
+  border: medium none !important;
+}
+.mu_table input {
+    background: #fff none repeat scroll 0 0;
+    border: 1px solid #ccc;
+    border-radius: 7px;
+    box-shadow: 0 0 5px #ccc inset;
+    padding: 10px;
+    width: 60%;
+}
+.filter-container {
+    margin-bottom: 15px;
+}
+
 
 @media only screen and (max-width: 767px){
 

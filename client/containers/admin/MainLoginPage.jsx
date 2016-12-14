@@ -31,7 +31,8 @@ class MainLoginPage extends Component {
     return (
       <div>
 
-        <LoginForm onClickLogin={(formData) => {
+        <LoginForm
+           onClickLogin={(formData) => {
                       dispatch(attemptLogin(formData.email, formData.password, formData.role))
                     }}
                     isFetchingData={userAuthSession.fetchingAuthUpdate}

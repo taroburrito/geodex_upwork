@@ -25,7 +25,7 @@ export default class AdminSidebar extends Component {
           </ul>
         </li>
         <li><Link to="/manage_category">Manage Categories</Link></li>
-        <li><Link to="/manage_user">Manage Users</Link></li>
+        <li><Link to="/manage_users">Manage Users</Link></li>
         </ul>
 
       </div>
