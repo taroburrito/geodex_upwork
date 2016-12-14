@@ -45,6 +45,8 @@ class App extends Component {
       landingPage = <HomePage/>;
     }else if (page == 'pages') {
       landingPage = children;
+    }else{
+    //  landingPage = <HomePage/>;
     }
 
     if (baseUrl == 'admin'){
@@ -61,7 +63,7 @@ class App extends Component {
      }
 
   } else{
-    console.log(userAuthSession);
+
     if(userAuthSession.isLoggedIn && userAuthSession.userObject && userAuthSession.userObject.role=='user'){
     return (
             <div>
@@ -76,6 +78,9 @@ class App extends Component {
             </div>
           );
         }else{
+          if(!landingPage){
+            //landingPage = <HomePage/>;
+          }
           return(
             <div>
               <Navbar

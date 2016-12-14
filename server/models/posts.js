@@ -33,6 +33,7 @@ var postModel = {
         if(uploadImage){
           formData.image = uploadImage;
         }else{
+          dbConnection.end();
           return(callback({error:"Error in uploading"}));
         }
 
@@ -57,7 +58,7 @@ var postModel = {
 
         dbConnection.query(createPostSqlString, function (error, results, fields) {
             if (error) {
-                
+
                 dbConnection.end(); return(callback({error: error, when: "inserting", status:400}));
             } else if (results.affectedRows === 1) {
                 var last_insert_id = results.insertId;
@@ -150,14 +151,17 @@ var postModel = {
         var getCommentsByPostSqlString = constructGetCommentsByPostSqlString(postId);
         dbConnection.query(getCommentsByPostSqlString, function(error,results,fields){
           if(error){
+            dbConnection.end();
             return(callback({status:400,error:"Error in comments query"}));
           }else if (results.length == 0) {
+            dbConnection.end();
             return(callback({status:400, error:"No comments found for this post"}));
           }else {
             var comments = {};
             results.forEach(function (result) {
                 comments[result.id] = postModel.convertRowsToObject(result);
             });
+            dbConnection.end();
             return(callback({status:200,comments}));
           }
         })

@@ -167,7 +167,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#45484d', end
 
 .middle_content {
   padding-bottom: 25%;
-  padding-top: 100px;
+  padding-top: 80px;
 }
 
 .middle_content h2 {
@@ -428,13 +428,14 @@ text-transform:uppercase;
 .user_img_right textarea {
   background: #fff none repeat scroll 0 0;
   border: 1px solid #ccc;
+  border-radius: 3px;
   box-shadow: 0 0 5px #ccc inset;
   font-family: open sans;
   height: 99px;
+  margin-bottom: 4px;
   padding: 5px 29px 5px 10px;
   resize: none;
   width: 100%;
-
 }
 
 .user_img_right i.uk-icon-image {
@@ -442,8 +443,8 @@ text-transform:uppercase;
     border-radius: 3px;
     float: right;
     font-size: 26px;
-    margin-right: 59px;
-    margin-top: -31px;
+    margin-right: 8px;
+    /* margin-top: -31px; */
     position: relative;
 }
 
@@ -455,16 +456,12 @@ form.uk-search.search_dash_nav {
   width: 37%;
 }
 
-
-
-
-
 .shortlist_menu {
   border-bottom: 1px solid #ccc;
   color: #333;
   float: left;
   margin-bottom: 20px;
-  margin-top: 30px;
+  margin-top: 18px;
   padding-bottom: 10px;
 }
 
@@ -502,9 +499,9 @@ form.uk-search.search_dash_nav {
 
 .shortlist_menu .uk-float-right select {
   border: 1px solid #ccc;
-  border-radius: 2px;
-  margin-left: 5px;
-  padding: 4px 6px;
+  border-radius: 5px;
+  margin-left: 7px;
+  padding: 3px 4px;
 }
 
 
@@ -757,10 +754,14 @@ background: url("../images/bg_line.png") no-repeat left;
 
 .profile_post_right .post_control {
   background: rgba(0, 0, 0, 0) url("../images/post_divider.jpg") no-repeat scroll center bottom;
-  margin-bottom: -7px;
-  padding-bottom: 15px;
+  padding-bottom: 20px;
+  float: left;
 }
-
+.profile_post_photos {
+  float: left;
+  margin: 1%;
+  width: 31%;
+}
 .profile_bottom h3 {
   font-family: open sans;
   font-size: 25px;
@@ -1330,12 +1331,23 @@ form.uk-search.search_dash_nav {
     float: right;
     padding: 0 10px;
     min-height: 17px;
-    line-height: 26px;
-    margin-top: -33px;
+    line-height: 23px;
+    /* margin-top: -33px; */
     border-radius: 0;
-    position: relative;
-    z-index: 1;
+    /* position: relative; */
+    /* z-index: 1; */
+    border-radius: 3px;
 }
+
+.cont_post_btn {
+  background: #eee none repeat scroll 0 0;
+  border-radius: 3px;
+  float: left;
+  margin-top: 0;
+  padding: 5px;
+  width: 97%;
+}
+
 .category-select {
     float: left;
     padding-left: 15px;
@@ -1367,6 +1379,7 @@ form.uk-search.search_dash_nav {
 
 .img_border {
     border: 1px solid #ccc;
+    background: #fff;
 }
 
 .img_border textarea.uk-width-1-1 {
@@ -1398,5 +1411,75 @@ form.uk-search.search_dash_nav {
 
 .slick-next, .slick-prev {
     border-radius: 57px;
-    background: none!important;
+    background: #cecece !important;
+}
+
+.slick-slide.main-box > img {
+  max-height: 100% !important;
+}
+
+.uk-width-small-1-2.popup_img_left {
+  background: #ccc none repeat scroll 0 0;
+  padding: 0;
+  text-align: center;
+}
+.popup_img_left div {
+  height: 100%;
+  line-height: 100%;
+  position: absolute;
+  width: 100%;
+}
+
+.popup_img_left .slick-slide img {
+  display: inline-block !important;
+  float: none !important;
+  left: 50%;
+  margin: 0 !important;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.popup_img_left .slick-initialized .slick-slide {
+    position: relative !important;
+}
+
+
+.user_img_right textarea {
+  height: 63px;
+  padding: 2px 5px;
+}
+
+.uk-modal-footer button {
+  margin-right: 10px;
+}
+
+form.post_img_modal_form {
+    background: #eee;
+    /* float: left; */
+    width: 96%;
+    padding: 2%;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+.uk-width-3-10.user_img_left {
+  background: #fbfbfb none repeat scroll 0 0;
+  border-radius: 3px;
+  /*line-height: 155px;*/
+  padding: 0;
+  text-align: center;
+}
+
+.custom_img_pop_style{
+  display: inline-block !important;
+float: none !important;
+left: 50%;
+margin: 0 !important;
+position: absolute;
+top: 50%;
+transform: translate(-50%, -50%);
+}
+
+small.user_location {
+    margin-top: -10px;
 }

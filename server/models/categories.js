@@ -24,7 +24,7 @@ var categoryModel = {
 
         dbConnection.query(checkDuplicatEntry, function (error, results, fields) {
             if (error) {
-                
+
                 dbConnection.end(); return(callback({error: error, status:400}));
             }else if (results.length > 0) {
                 dbConnection.end(); return(callback({error: "You already added this category", status:400}));
@@ -38,7 +38,7 @@ var categoryModel = {
                 }else{
                   var getCategorySqlString = getCategoryDetailSqlString(results.insertId);
                   dbConnection.query(getCategorySqlString, function (error, results, fields) {
-                      
+
                       if (error) {
                           dbConnection.end(); return(callback({error: error, when: "reading",status:400}));
                       } else {
@@ -61,12 +61,12 @@ var categoryModel = {
         var updatecategorySqlString = constructUpdateCategorySqlString(catId, name, status);
         dbConnection.query(updatecategorySqlString, function (error, results, fields) {
             if (error) {
-                
+
                 dbConnection.end(); return(callback({error: error, when: "updating"}));
             } else {
                 var getCategorySqlString = getCategoryDetailSqlString(catId);
                 dbConnection.query(getCategorySqlString, function (error, results, fields) {
-                    
+
                     if (error) {
                         dbConnection.end(); return(callback({error: error, when: "reading"}));
                     } else {
@@ -81,7 +81,7 @@ var categoryModel = {
         var deleteCategorySqlString = constructDeleteCategorySqlString(pageId);
         dbConnection.query(deleteCategorySqlString, function (error, results, fields) {
             if (error) {
-                
+
                 dbConnection.end(); return(callback({error: error, when: "updating"}));
             } else {
                 dbConnection.end(); return(callback({success: "deleted successfully"}));
@@ -92,14 +92,16 @@ var categoryModel = {
         var dbConnection = dbConnectionCreator();
         var sqlString = getAllCategoriesSqlString();
         dbConnection.query(sqlString, function (error, results, fields) {
-            
+
             if (error) {
+              dbConnection.end();
                 return callback({error: error});
             } else {
                 var categories = {};
                 results.forEach(function (result) {
                     categories[result.id] = categoryModel.convertRowToObject(result);
                 });
+                dbConnection.end();
                 return callback({categories: categories});
             }
         });
@@ -108,14 +110,16 @@ var categoryModel = {
         var dbConnection = dbConnectionCreator();
         var sqlString = getCategoryDetailSqlString(catId);
         dbConnection.query(sqlString, function (error, results, fields) {
-            
+
             if (error) {
+              dbConnection.end();
                 return callback({error: error});
             } else {
                 var category = {};
                 results.forEach(function (result) {
                     category[result.id] = categoryModel.convertRowToObject(result);
                 });
+                dbConnection.end();
                 return callback({category: category});
             }
         });

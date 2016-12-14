@@ -7,6 +7,7 @@ var randtoken = require('rand-token');
 var bcrypt = require('bcryptjs');
 var nodemailer = require('nodemailer');
 var moment = require('moment');
+var common = require('../utilities/common.js');
 
 
 
@@ -14,8 +15,6 @@ var userModel = {
     convertRowsToUserProfileObject: function (rows) {
         var objString=JSON.stringify(rows);
         var obj=JSON.parse(objString);
-         var dbConnection = dbConnectionCreator();
-         dbConnection.destroy();
         return obj;
 
     },
@@ -30,12 +29,16 @@ var userModel = {
       var getUserSettingsSqlString = constructGetUserProfileSqlString(userId);
         dbConnection.query(getUserSettingsSqlString,function(error,result,fields){
         if(error){
+          dbConnection.end();
           return(callback({error:"Failed to login",status:400,message:"Error in logged In query"}));
         }else if (result.length == 0) {
+          dbConnection.end();
           return(callback({error:"No result found for userid:"+userId,status:400,message:"No record found with these parameters"}));
         }else {
             var userObject = userModel.convertRowsToUserProfileObject(result[0]);
-            dbConnection.destroy(); return(callback({userObject:userObject, status:200, message:"Login success"}));
+
+          dbConnection.end();
+             return(callback({userObject:userObject, status:200, message:"Login success"}));
         }
       });
     },
@@ -51,10 +54,13 @@ var userModel = {
       var confirmFriendRequestSqlString = constructConfirmFriendRequestSqlString(requestId);
       dbConnection.query(confirmFriendRequestSqlString, function(error,results,fields){
         if(error){
+          dbConnection.end();
           return(callback({error:error}));
         }else if (results.affectedRows === 0) {
+          dbConnection.end();
           return(callback({error:"Not updated record"}));
         }else{
+          dbConnection.end();
           return(callback({success:"Confirm Friend successfully"}));
         }
       });
@@ -70,10 +76,13 @@ var userModel = {
       var deleteFriendRequestSqlString = constructDeleteFriendRequestSqlString(requestId);
       dbConnection.query(deleteFriendRequestSqlString, function(error,results,fields){
         if(error){
+          dbConnection.end();
           return(callback({error:error,status:400}));
         }else if (results.affectedRows === 0) {
+          dbConnection.end();
           return(callback({error:"Error in delete friend request",status:400}));
         }else{
+          dbConnection.end();
           return(callback({success:"Deny Friend successfully",status:200}));
         }
       });
@@ -89,14 +98,17 @@ var userModel = {
         var getFriendRequestsSqlString = constructFriendRequestsSqlString(userId);
         dbConnection.query(getFriendRequestsSqlString,function(error,results,field){
           if(error){
+            dbConnection.end();
             return(callback({error:error}));
           }else if (results.length === 0) {
+            dbConnection.end();
             return(callback({friendRequests:null}));
           }else {
             var friends = {};
             results.forEach(function (result) {
                 friends[result.request_id] = userModel.convertRowsToUserProfileObject(result);
             });
+            dbConnection.end();
             return(callback({friendRequests:friends}));
           }
         });
@@ -123,8 +135,8 @@ var userModel = {
 
       dbConnection.query(getLatestPostSqlString, function (error, results, fields) {
           if (error) {
-              
-              dbConnection.destroy(); return(callback({error: "Error in latest post query"}));
+
+              dbConnection.end(); return(callback({error: "Error in latest post query"}));
           }else {
 
             if (results.length === 0) {
@@ -137,9 +149,9 @@ var userModel = {
             /*Get categories result of a user and admin*/
             dbConnection.query(getUsersCategoriesSqlString, function (error1, results1, fields1) {
               if (error1) {
-                  
 
-                  dbConnection.destroy(); return(callback({error: error1}));
+
+                  dbConnection.end(); return(callback({error: error1}));
               }else {
 
                 if (results1.length === 0) {
@@ -193,11 +205,11 @@ var userModel = {
 
                               });
                             }
-                            dbConnection.destroy(); return(callback({latestPost: latestPost,categories: categories,friends:friends,friendsPostImages:postImage}));
+                            dbConnection.end(); return(callback({latestPost: latestPost,categories: categories,friends:friends,friendsPostImages:postImage}));
                           }
                         });
                       }else{
-                        dbConnection.destroy(); return(callback({latestPost: latestPost,categories: categories,friends:null,friendsPostImages:null}));
+                        dbConnection.end(); return(callback({latestPost: latestPost,categories: categories,friends:null,friendsPostImages:null}));
                       }
 
 
@@ -221,23 +233,23 @@ var userModel = {
         var createGetPostsByUserSql = constructGetPostByUserSqlString(userId);
         var profileData;
         var userCategoriesData;
-  //dbConnection.destroy(); return(callback({error: getUsersCategoriesSqlString}));
+  //dbConnection.end(); return(callback({error: getUsersCategoriesSqlString}));
         dbConnection.query(getUserSettingsSqlString, function (error, results, fields) {
             if (error) {
-                
 
-                dbConnection.destroy(); return(callback({error: error}));
+
+                dbConnection.end(); return(callback({error: error}));
             } else if (results.length === 0) {
-                dbConnection.destroy(); return(callback({error: "User not found."}));
+                dbConnection.end(); return(callback({error: "User not found."}));
             } else {
               userProfileData = userModel.convertRowsToUserProfileObject(results[0]);
               dbConnection.query(getUsersCategoriesSqlString, function (error1, results1, fields1) {
                 if (error1) {
-                    
 
-                    dbConnection.destroy(); return(callback({error: error1}));
+
+                    dbConnection.end(); return(callback({error: error1}));
                 } else if (results1.length === 0) {
-                    dbConnection.destroy(); return(callback({error: "User Categories not found."}));
+                    dbConnection.end(); return(callback({error: "User Categories not found."}));
                 }else {
                   var categories = {};
                   results1.forEach(function (resultIndex) {
@@ -246,7 +258,7 @@ var userModel = {
                   dbConnection.query(createGetPostsByUserSql,function(error2,result2,fields2){
                     if(error2){
                       var posts = null;
-                      dbConnection.destroy(); return(callback({userData: userProfileData,userCategories: categories,posts:posts}));
+                      dbConnection.end(); return(callback({userData: userProfileData,userCategories: categories,posts:posts}));
                     }else{
                       var posts = {};
                           result2.forEach(function (postIndex) {
@@ -255,9 +267,9 @@ var userModel = {
 
                       dbConnection.query(getUserFriendsListSqlString,function(error3,result3,fields3){
                         if(error3){
-                          dbConnection.destroy(); return(callback({userData: userProfileData,userCategories: categories,posts:posts,friendList:error3}));
+                          dbConnection.end(); return(callback({userData: userProfileData,userCategories: categories,posts:posts,friendList:error3}));
                         }else if (result3.length === 0) {
-                          dbConnection.destroy(); return(callback({userData: userProfileData,userCategories: categories,posts:posts,friendList:null}));
+                          dbConnection.end(); return(callback({userData: userProfileData,userCategories: categories,posts:posts,friendList:null}));
                         }else {
                           var friends = {};
                           var friendsIds = [];
@@ -267,7 +279,7 @@ var userModel = {
                               friendsIds.push(friendIndex.user_id);
 
                           });
-                          dbConnection.destroy(); return(callback({userData: userProfileData,userCategories: categories,posts:posts,friendList:friends,friendsArray:friendsIds}));
+                          dbConnection.end(); return(callback({userData: userProfileData,userCategories: categories,posts:posts,friendList:friends,friendsArray:friendsIds}));
                         }
                       });
 
@@ -292,15 +304,15 @@ var userModel = {
       var dbConnection = dbConnectionCreator();
       var getUserFriendsListSqlString = constructgetUserFriendsListSqlString(userId);
       var getAllCategorisedFriendSqlString = constructGetAllCategorisedFriendSqlString(userId);
-    //  dbConnection.destroy(); return(callback({error: getUserFriendsListSqlString}));
+    //  dbConnection.end(); return(callback({error: getUserFriendsListSqlString}));
       //console.log("ANGEL: getting user details");
       dbConnection.query(getUserFriendsListSqlString, function (error, results, fields) {
           if (error) {
-              
 
-              dbConnection.destroy(); return(callback({error: error}));
+
+              dbConnection.end(); return(callback({error: error}));
           } else if (results.length === 0) {
-              dbConnection.destroy(); return(callback({error: "Empty friends list"}));
+              dbConnection.end(); return(callback({error: "Empty friends list"}));
           } else {
             var friends = {};
             results.forEach(function (result) {
@@ -317,6 +329,7 @@ var userModel = {
                 results1.forEach(function (result) {
                     categorizedFriends[result.friend_id] = userModel.convertRowsToUserProfileObject(result);
                 });
+                dbConnection.end();
                   return callback({friendList: friends, categorizedFriendList:categorizedFriends});
               }
             });
@@ -330,13 +343,13 @@ var userModel = {
         var getUserSettingsSqlString = constructGetUserProfileByTokenSqlString(token, token_type);
         dbConnection.query(getUserSettingsSqlString, function (error, results, fields) {
             if (error) {
-                
 
-                dbConnection.destroy(); return(callback({error: error}));
+
+                dbConnection.end(); return(callback({error: error}));
             } else if (results.length === 0) {
-                dbConnection.destroy(); return(callback({error: "Token not found."}));
+                dbConnection.end(); return(callback({error: "Token not found."}));
             } else {
-                    dbConnection.destroy(); return(callback({userData: userModel.convertRowsToUserProfileObject(results)}));
+                    dbConnection.end(); return(callback({userData: userModel.convertRowsToUserProfileObject(results)}));
             }
         });
     },
@@ -347,14 +360,14 @@ var userModel = {
 
         dbConnection.query(generateForgotPasswordTokenQuery, function (error, results, fields) {
             if (error) {
-                
 
-                dbConnection.destroy(); return(callback({error: "Error in forget password query", status:400}));
+
+                dbConnection.end(); return(callback({error: "Error in forget password query", status:400}));
             } else if (results.affectedRows === 1) {
-                dbConnection.destroy(); return(callback({result_token: token,status:200}));
+                dbConnection.end(); return(callback({result_token: token,status:200}));
 
             } else {
-                dbConnection.destroy(); return(callback({error: "User not found.",status:400}));
+                dbConnection.end(); return(callback({error: "User not found.",status:400}));
             }
         });
     },
@@ -365,14 +378,14 @@ var userModel = {
       var resetPasswordByTokenQuery = constructresetPasswordByTokenQuery(data.token,data.pwd);
       dbConnection.query(resetPasswordByTokenQuery, function (error, results, fields) {
           if (error) {
-              
 
-              dbConnection.destroy(); return(callback({error: resetPasswordByTokenQuery}));
+
+              dbConnection.end(); return(callback({error: resetPasswordByTokenQuery}));
           } else if (results.affectedRows === 1) {
-              dbConnection.destroy(); return(callback({success: "Success"}));
+              dbConnection.end(); return(callback({success: "Success"}));
 
           } else {
-              dbConnection.destroy(); return(callback({error: "Error in update pwd query"}));
+              dbConnection.end(); return(callback({error: "Error in update pwd query"}));
           }
       });
     },
@@ -383,9 +396,9 @@ var userModel = {
               '<br/><a href="http://localhost:6969/#/admin/resetPassword/' + token + '" target="_blank">Click here</a>';
               var sendMail = sendMailToUser(token,from,to,subject,content);
       if(sendMail == "success"){
-        dbConnection.destroy(); return(callback({success: "Sent forgot password email", status:200}));
+        dbConnection.end(); return(callback({success: "Sent forgot password email", status:200}));
       }else{
-          dbConnection.destroy(); return(callback({success: "Please check your mail to change password",status:200}));
+          dbConnection.end(); return(callback({success: "Please check your mail to change password",status:200}));
       }
 
 
@@ -408,11 +421,11 @@ var userModel = {
        // Signup Query for gx_users table
        dbConnection.query(signUpQuery, function (error, results, fields) {
            if (error) {
-               
+
                if(error.errno == 1062){
-                 dbConnection.destroy(); return(callback({error: "This email is already used.",status:400}));
+                 dbConnection.end(); return(callback({error: "This email is already used.",status:400}));
                }else{
-                   dbConnection.destroy(); return(callback({error: error,status:400}));
+                   dbConnection.end(); return(callback({error: error,status:400}));
                }
 
 
@@ -426,8 +439,8 @@ var userModel = {
 
               if(errors){
 
-                
-                dbConnection.destroy(); return(callback({error: errors}));
+
+                dbConnection.end(); return(callback({error: errors}));
               }else if (result.affectedRows === 1) {
 
                 // Send signup email to user
@@ -435,18 +448,18 @@ var userModel = {
                         '<br/><a href="'+baseUrl+'"/#/verifySignUp/' + data.token + '" target="_blank">Click here</a>';
                 var sendmail = sendMailToUser(data.verify_token,'admin@geodex.com',data.email,'Verify Signup',content);
                 if(sendmail == 'success'){
-                  dbConnection.destroy(); return(callback({success: "Successfully sent verify signup email",status:200}));
+                  dbConnection.end(); return(callback({success: "Successfully sent verify signup email",status:200}));
                 }else{
-                  dbConnection.destroy(); return(callback({success: "send email",status:200}));
+                  dbConnection.end(); return(callback({success: "send email",status:200}));
                 }
 
               }else {
-              dbConnection.destroy(); return(callback({error: "Error in insert user details",status:400}));
+              dbConnection.end(); return(callback({error: "Error in insert user details",status:400}));
               }
             });
 
           } else {
-              dbConnection.destroy(); return(callback({error: "Error in signup ", status:400}));
+              dbConnection.end(); return(callback({error: "Error in signup ", status:400}));
           }
       });
 
@@ -465,18 +478,18 @@ var userModel = {
 
         dbConnection.query(updateUserQuery, function (error, results, fields) {
             if (error) {
-                
 
-                dbConnection.destroy(); return(callback({error: error, status:400}));
+
+                dbConnection.end(); return(callback({error: error, status:400}));
             } else{
 
                 //Update query for gx_user_details table
                 dbConnection.query(updateUserDetailsQuery,function(errors,result,field){
                   if(errors){
-                    
-                        dbConnection.destroy(); return(callback({error: "error in update profile",status:400}));
+
+                        dbConnection.end(); return(callback({error: "error in update profile",status:400}));
                     }else {
-                      dbConnection.destroy(); return(callback({success: "Updated user data successfully", status:200}));
+                      dbConnection.end(); return(callback({success: "Updated user data successfully", status:200}));
                     }
                 });
 
@@ -487,6 +500,15 @@ var userModel = {
     // update user data
 
     updateUserData(req, callback){
+
+      var uploadImage = common.uploadPostImage(req.val,req.id);
+      if(uploadImage){
+        req.val = uploadImage;
+      }else{
+        dbConnection.end();
+        return(callback({error:"Error in uploading"}));
+      }
+
       var dbConnection = dbConnectionCreator();
       var updateUserDataQuery = constructupdateUserDataQuery(req);
       // Update Query for gx_users table
@@ -494,13 +516,29 @@ var userModel = {
 
       dbConnection.query(updateUserDataQuery, function (error, results, fields) {
           if (error) {
-              
-
-              dbConnection.destroy(); return(callback({error: error,status:400}));
+            dbConnection.end(); return(callback({error: error,status:400}));
           } else if (results.affectedRows === 1) {
-            return(callback({success:"Successfully updated cover",status:200}));
+            var getUserData = constructGetUserProfileSqlString(req.id);
+            dbConnection.query(getUserData,function(error,results,fields){
+              if(error){
+                dbConnection.end();
+                return(callback({error:error, status:200}));
+              }else if (results.length == 0) {
+                dbConnection.end();
+                return(callback({error:"Error in get user details", status:400}));
+              }else {
+                var userProfile = userModel.convertRowsToUserProfileObject(results[0]);
+                dbConnection.end();
+                return(callback({success:"Successfully updated image",status:200, userData:userProfile}));
+
+              }
+            });
+
           } else {
-              dbConnection.destroy(); return(callback({error: "Error in update data",status:400}));
+
+            dbConnection.end();
+            return(callback({error: "Error in update data",status:400}));
+
           }
       });
     },
@@ -514,22 +552,22 @@ var userModel = {
       var getUserByEmail = constructGetUserProfileByEmail(data.email);
       dbConnection.query(getUserByEmail, function (error, results, fields) {
           if (error) {
-              
 
-              dbConnection.destroy(); return(callback({error: error}));
+
+              dbConnection.end(); return(callback({error: error}));
           } else {
              var changePasswordQuery = constructchangePasswordQuery(data.email,data.new_pwd);
 
               dbConnection.query(changePasswordQuery, function (error, results, fields) {
                   if (error) {
-                      
 
-                      dbConnection.destroy(); return(callback({error: changePasswordQuery}));
+
+                      dbConnection.end(); return(callback({error: changePasswordQuery}));
                   } else if (results.affectedRows === 1) {
-                      dbConnection.destroy(); return(callback({success: "Success"}));
+                      dbConnection.end(); return(callback({success: "Success"}));
 
                   } else {
-                      dbConnection.destroy(); return(callback({error: "Error in update pwd query"}));
+                      dbConnection.end(); return(callback({error: "Error in update pwd query"}));
                   }
               });
 
@@ -545,13 +583,13 @@ var userModel = {
 
       dbConnection.query(blockUserQuery, function (error, results, fields) {
           if (error) {
-              
 
-              dbConnection.destroy(); return(callback({error: error}));
+
+              dbConnection.end(); return(callback({error: error}));
           } else if (results.affectedRows === 1) {
             return(callback({success:"Successfully blocked user"}));
           } else {
-              dbConnection.destroy(); return(callback({error: "Error in block user "}));
+              dbConnection.end(); return(callback({error: "Error in block user "}));
           }
       });
     },
@@ -573,8 +611,8 @@ var userModel = {
           // add friend to friend list
           dbConnection.query(addFriendQuery, function (error, results, fields) {
               if (error) {
-                  
-                  dbConnection.destroy(); return(callback({error: error,status:400}));
+
+                  dbConnection.end(); return(callback({error: error,status:400}));
               } else if (results.affectedRows === 1) {
 
                 var lastInsertId = results.insertId;
@@ -604,7 +642,7 @@ var userModel = {
 
 
               } else {
-                  dbConnection.destroy(); return(callback({error: "error in add request",status:400}));
+                  dbConnection.end(); return(callback({error: "error in add request",status:400}));
               }
           });
         }
@@ -617,13 +655,13 @@ var userModel = {
       //return callback({success:deleteFriendQuery});
       dbConnection.query(deleteFriendQuery, function (error, results, fields) {
           if (error) {
-              
 
-              dbConnection.destroy(); return(callback({error: error}));
+
+              dbConnection.end(); return(callback({error: error}));
           } else if (results.affectedRows === 1) {
             return(callback({success:"Successfully deleted friend"}));
           } else {
-              dbConnection.destroy(); return(callback({error: results}));
+              dbConnection.end(); return(callback({error: results}));
           }
       });
     },
@@ -633,13 +671,13 @@ var userModel = {
       var updateFriendListQuery = constructUpdateFriendListQuery(data);
       dbConnection.query(updateFriendListQuery, function (error, results, fields) {
           if (error) {
-              
 
-              dbConnection.destroy(); return(callback({error: error}));
+
+              dbConnection.end(); return(callback({error: error}));
           } else if (results.affectedRows === 1) {
             return(callback({success:"Successfully Updated friend list"}));
           } else {
-              dbConnection.destroy(); return(callback({error: results}));
+              dbConnection.end(); return(callback({error: results}));
           }
       });
     },
@@ -656,10 +694,13 @@ var userModel = {
 
       dbConnection.query(acceptFriendRequestSqlString,function(error,results,fields){
         if(error){
+          dbConnection.end();
           return(callback({error:acceptFriendRequestSqlString, status:400}));
         }else if (results.affectedRows == 0) {
+          dbConnection.end();
           return(callback({error:"Error in accept request query", status:400}));
         }else{
+          dbConnection.end();
           return(callback({success:"Successfully accepted request", status:200}));
         }
       });
@@ -684,8 +725,10 @@ var userModel = {
         var getCategoiresByUserSqlString = constructGetUserCategoriesSqlString(userId);
         dbConnection.query(getCategoiresByUserSqlString,function(error,results,fields){
             if(error){
+              dbConnection.end();
               return(callback({error:error}));
             }else if (results.length == 0) {
+              dbConnection.end();
               return(callback({error:"No categories found for this user"}));
             }else {
               /* Create object of all categories*/
@@ -693,7 +736,7 @@ var userModel = {
               results.forEach(function (resultIndex) {
                   categories[resultIndex.id] = userModel.convertRowsToUserProfileObject(resultIndex);
               });
-
+              dbConnection.end();
               return(callback({categories:categories}));
             }
         });
@@ -709,29 +752,68 @@ var userModel = {
       var checkFriendCatSqlString = constructCheckFriendCatSqlString(data.userId, data.friendId);
       var insertFriendCatSqlString = constructInsertFriendCatSqlString(data.userId, data.friendId, data.catId);
       var updateFriendCatSqlString = constructUpdateFriendSqlString(data.userId, data.friendId, data.catId);
+      var friendCat = {};
       dbConnection.query(checkFriendCatSqlString,function(error,results,fields){
         if(error){
-          return(callback({error: error}));
+          dbConnection.end();
+          return(callback({error: error,status:400}));
         }else if (results.length == 0) {
           //Insert New entry
           dbConnection.query(insertFriendCatSqlString,function(error1,result1,field1){
-            if(error1){ dbConnection.destroy();
-              return(callback({error:error1}));
-            }else if (result1.affectedRows == 0) { dbConnection.destroy();
-              return(callback({error: "Error in inserting friend cat"}));
-            }else { dbConnection.destroy();
-              return(callback({success: "successfully enterd friend cat"}));
+            if(error1){
+              dbConnection.end();
+              return(callback({error:error1, status:400}));
+            }else if (result1.affectedRows == 0) {
+              dbConnection.end();
+              return(callback({error: "Error in inserting friend cat", status:400}));
+            }else {
+              var lastInsertId = result1.insertId;
+              var getFriendCatById = constructGetFriendCatById(lastInsertId);
+
+              dbConnection.query(getFriendCatById,function(error,results,fields){
+                if(error){
+                  dbConnection.end();
+                  return(callback({error:error, status:400}));
+                }else if (results.length == 0) {
+                  dbConnection.end();
+                  return(callback({error:"Error in getting new record",status:400}))
+                }else{
+                  friendCat[data.friendId] = userModel.convertRowsToUserProfileObject(results[0]);
+                  dbConnection.end();
+                  return(callback({success: "successfully enterd friend cat", status:200,categorizedFriends:friendCat}));
+                }
+              });
+
+
             }
           });
         }else {
           //update query
           dbConnection.query(updateFriendCatSqlString,function(error1,result1,field1){
-            if(error1){ dbConnection.destroy();
-              return(callback({error:error1}));
-            }else if (result1.affectedRows == 0) { dbConnection.destroy();
-              return(callback({error: "Error in updating friend cat"}));
-            }else { dbConnection.destroy();
-              return(callback({success: "successfully updated friend cat"}));
+            if(error1){
+              dbConnection.end();
+              return(callback({error:error1, status:400}));
+            }else if (result1.affectedRows == 0) {
+              dbConnection.end();
+              return(callback({error: "Error in updating friend cat", status:400}));
+            }else {
+
+              dbConnection.query(checkFriendCatSqlString,function(error,results,fields){
+                if(error){
+                  dbConnection.end();
+                  return(callback({error:error, status:400}));
+                }else if (results.length == 0) {
+                  dbConnection.end();
+                  return(callback({error:"Error in getting  record",status:400}))
+                }else{
+                  friendCat[data.friendId] = userModel.convertRowsToUserProfileObject(results[0]);
+                  dbConnection.end();
+                  return(callback({success: "successfully updated friend cat", status:200,categorizedFriends:friendCat}));
+                }
+              });
+
+
+
             }
           });
         }
@@ -743,14 +825,17 @@ var userModel = {
       var searchUserSqlString = constructSearchUserSqlString(str);
       dbConnection.query(searchUserSqlString,function(errors,results,fields){
         if(errors){
+          dbConnection.end();
           return(callback({error:error,status:400}));
         }else if (results.length == 0) {
+          dbConnection.end();
           return(callback({error:"No rrecord found",status:400}));
         }else {
           var records = {};
           results.forEach(function (resultIndex) {
               records[resultIndex.id] = userModel.convertRowsToUserProfileObject(resultIndex);
           });
+          dbConnection.end();
           return(callback({searchResult:records,status:200,success:"user founds successfully"}));
         }
       });
@@ -771,8 +856,10 @@ var userModel = {
       var friendStatus;
       dbConnection.query(getUserProfileSqlString,function(error,results,fields){
         if(error){
+          dbConnection.end();
           return(callback({error:error,status:400}));
         }else if (results.length == 0) {
+          dbConnection.end();
           return(callback({error:"empty result",status:400}));
         }else{
           userProfileData = userModel.convertRowsToUserProfileObject(results[0]);
@@ -780,6 +867,7 @@ var userModel = {
           //Get Friend Status
           dbConnection.query(getFriendStatusSqlString,function(error,results,fields){
             if(error){
+              dbConnection.end();
               return(callback({error:error,status:400}));
             }else if (results.length == 0) {
                friendStatus = null;
@@ -791,14 +879,17 @@ var userModel = {
           // get posts of user
           dbConnection.query(getPostsByUserSqlString,function(error,results,fields){
             if(error){
+              dbConnection.end();
                 return(callback({error:error,status:400}));
             }else if (results.length == 0) {
+              dbConnection.end();
                 return(callback({userProfileData:userProfileData,status:200,posts:null,friendStatus:friendStatus}));
             }else{
               var posts = {};
                   results.forEach(function (postIndex) {
                   posts[postIndex.id] = userModel.convertRowsToUserProfileObject(postIndex);
               });
+              dbConnection.end();
               return(callback({userProfileData:userProfileData,status:200,posts:posts,friendStatus:friendStatus}));
             }
 
@@ -814,8 +905,10 @@ var userModel = {
     */
     sendEmailFromDashboard:function(data,callback){
       if (sendMailToUser('',data.from,data.to,data.subject,data.content)) {
+        dbConnection.end();
         return(callback({success:"Sent mail successfully", status:200}));
       }else{
+        dbConnection.end();
         return(callback({success:"Sent mail successfully", status:200}));
       }
     }
@@ -866,6 +959,11 @@ function constructCheckFriendCatSqlString(userId,friendId){
   return query;
 }
 
+function  constructGetFriendCatById(id){
+  var query = "Select * from gx_friends_category WHERE id="+id;
+  return query;
+}
+
 function constructDeleteFriendRequestSqlString(requestId){
   var query = "DELETE from  gx_friends_list  WHERE id="+requestId;
   return query;
@@ -890,7 +988,7 @@ function constructFreindsPostImagesSqlString(friendsIds){
 }
 
 function constructFriendListForDashboardSqlString(userId){
-  var query="SELECT (a.user_id) id, LOWER(first_name) first_name, last_name, dob,gender,address,latitude,longitude,"+
+  var query="SELECT (a.user_id) id, LOWER(first_name) first_name, LOWER(last_name) last_name, dob,gender,address,latitude,longitude,"+
              "profile_image,cover_image,MAX(c.id) post_id,(image) post_image,(content) post_content, u.email, (b.modified) created"+
             " FROM `gx_user_details` a,(SELECT receiver_id, modified FROM `gx_friends_list` WHERE sender_id ='"+userId+"'  AND STATUS = 1 UNION SELECT sender_id, modified FROM `gx_friends_list` WHERE receiver_id ='"+userId+"' AND STATUS = 1) b,"+
             " (select id, image, content,user_id from gx_posts order by id desc) c, gx_users u WHERE a.user_id = b.receiver_id AND a.user_id = c.user_id AND a.user_id = u.id GROUP BY a.user_id ORDER BY c.id desc";

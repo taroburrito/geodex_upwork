@@ -21,7 +21,9 @@ export default class ProfileWidget extends Component {
                     <div>
                         <EditProfile
                           userdetail={this.props.userdetail}
-                          userAuthSession={this.props.userAuthSession}/>
+                          userAuthSession={this.props.userAuthSession}
+                          updateUserImage={this.props.updateUserImage}
+                          />
 
                     </div>
 

@@ -118,8 +118,8 @@ export function updateUserProfileData(userData){
   }
 }
 
-export function updateProfileInputSuccess(userObject){
-  return{type: Update_Profile_Input_Success, data:userObject}
+export function updateProfileInputSuccess(userData){
+  return{type: Update_Profile_Input_Success, data:userData}
 }
 
 export function updateProfileInputFailed(error){
@@ -142,7 +142,7 @@ export function updateUserData(userData){
       }else{
         console.log("success update user data api");
         console.log(data);
-        dispatch(updateProfileInputSuccess(userData));
+        dispatch(updateProfileInputSuccess(data.userData));
       // /  dispatch(handleSuccessMessage("Updated Successfully"));
 
       }
