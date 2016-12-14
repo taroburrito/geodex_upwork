@@ -81,7 +81,7 @@ export function updateUserInfo(userAuthState = defaultStartState , action) {
     var prevState = Object.assign({}, userAuthState);
     prevState.userObject = action.data;
     console.log(prevState.userObject);
-    return Object.assign({}, userAuthState, prevState.userObject,{
+    return Object.assign({}, prevState,{
       isLoggedIn: true,
       fetchingAuthUpdate: false,
         error: null

@@ -7,7 +7,7 @@ import Datetime from 'react-datetime'
 import ChangePassword from './ChangePassword';
 import { validateEmail, validateDisplayName, validatePassword,validateDate } from '../../utilities/RegexValidators';
 require('react-datetime/css/react-datetime.css');
-import {updateProfileInput,updateUserProfileData,updateUserData} from '../../actions/ProfileActions';
+import {updateProfileInput,updateUserProfileData} from '../../actions/ProfileActions';
 var AvatarEditor = require('react-avatar-editor');
 
 const initialFormState ={
@@ -57,9 +57,7 @@ export default class EditProfile extends Component {
       val: img
     }
     //if(dispatch(updateUserProfileData(userData))){
-    if(dispatch(updateUserData(req))){
-
-    }
+    this.props.updateUserImage(req);
     //}
 
   }
@@ -79,9 +77,7 @@ export default class EditProfile extends Component {
     }
 
     // update user data for specific field
-     if(dispatch(updateUserData(req))){
-     //dispatch(updateProfileInput('cover_image',img));
-     }
+     this.props.updateUserImage(req);
 
   }
 
@@ -183,6 +179,7 @@ dateVal(date){
 
 
 getProfileImage(img,userId){
+
      if(img){
        var imageSrc = "uploads/images/user_"+userId+"/"+img;
       return imageSrc;
@@ -401,15 +398,16 @@ renderCoverModel(){
 
     const { dispatch,userAuthSession} = this.props;
     var userData = userAuthSession.userObject;
-    
+
     if(!userData.cover_image){
     var background_profile_css ={
       backgroundImage: 'url(public/images/profile_banner.jpg)'
     }
   }else{
+    var coverImage = "uploads/images/user_"+userData.id+"/"+userData.cover_image;
     var background_profile_css ={
-    //  var coverImage = "uploads/images/user_"+userData.id+"/"+userData.cover_image;
-      backgroundImage: 'url(' + userData.cover_image + ')'
+
+      backgroundImage: 'url(' + coverImage + ')'
     }
   }
 

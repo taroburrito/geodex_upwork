@@ -4,7 +4,7 @@ import Home from '../../components/front/Home';
 import ProfileWidget from '../../components/front/ProfileWidget';
 import Navbar from '../../components/Navbar';
 import { attemptLogout } from '../../actions/AuthActions';
-import {fetchUserProfile} from '../../actions/ProfileActions';
+import {fetchUserProfile,updateUserData} from '../../actions/ProfileActions';
 import {getUserDetail} from '../../utilities/ServerSocket';
 
 
@@ -19,10 +19,12 @@ class UserSettings extends Component{
     if(userAuthSession.isLoggedIn){
     return(
         <div className="full_width">
-        <ProfileWidget fetchInitialData={(id)=>getUserDetail(id)}
-                        userdetail={this.props.profileData}
-                       userAuthSession={userAuthSession}
-                      />
+        <ProfileWidget
+           fetchInitialData={(id)=>getUserDetail(id)}
+           userdetail={this.props.profileData}
+           userAuthSession={userAuthSession}
+           updateUserImage={(req)=>dispatch(updateUserData(req))}
+           />
         </div>
       );
     }
