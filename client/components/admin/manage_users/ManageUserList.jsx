@@ -82,13 +82,7 @@ test(data){
           columnMetadata={columnMetaData}
           showPager={true}/>
    </div>
-   {/* This is the modal */}
-<div id="my-id" class="uk-modal">
-    <div class="uk-modal-dialog">
-        <a class="uk-modal-close uk-close"></a>
-        Hello
-    </div>
-</div>
+
   </div>
 
     )
