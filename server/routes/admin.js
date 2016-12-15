@@ -10,6 +10,18 @@ var setAdminRoutes = function (router) {
 
           }
   );
+
+  router.get('/api/v1/admin/fetchProfile/:id',//authenticationMiddleware.isLoggedIn,
+          function (req, res) {
+              var userId = req.params.id;
+
+              adminModel.fetchProfile(userId,function(result){
+                return res.json(result);
+              })
+
+          }
+  );
+
 }
 
 module.exports = setAdminRoutes;
