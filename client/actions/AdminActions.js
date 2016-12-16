@@ -5,6 +5,8 @@ export const Get_All_User_Success = "Get_All_User_Success";
 export const Get_All_User_Failed = "Get_All_User_Failed"
 export const Fetch_Profile_Success = "Fetch_Profile_Success";
 export const Fetch_Profile_Failed = "Fetch_Profile_Failed";
+export const Delete_User_Success = "Delete_User_Success";
+export const Change_User_Status_Success = "Change_User_Status_Success";
 
 
 /*
@@ -62,6 +64,59 @@ export function fetchUserProfile(userId){
     }).error(function(error){
       console.log("Error in get all pages api call");
       dispatch(fetchProfileFailed(error));
+    })
+  }
+}
+
+export  function deleteUserSuccess(userId){
+  return{type: Delete_User_Success, userId:userId};
+}
+
+export function deleteUser(userId){
+  return(dispatch) => {
+    $.ajax({
+      type:'post',
+      url:'/api/v1/admin/delete_user',
+      data: {id:userId},
+      dataType:'json',
+    }).done(function(data){
+      console.log(data);
+      if(data.error){
+      //  dispatch(deleteUserFaile(data.error));
+      }else {
+        dispatch(deleteUserSuccess(userId));
+      }
+    }).error(function(error){
+      console.log("Error in get all pages api call");
+    //  dispatch(fetchProfileFailed(error));
+    })
+  }
+}
+
+
+export  function changeUserStatusSuccess(userId,status){
+  return{type: Change_User_Status_Success, userId:userId,status:status};
+}
+
+
+export function changeUserStatus(userId,status){
+  return(dispatch) => {
+    $.ajax({
+      type:'post',
+      url:'/api/v1/admin/change_user_status',
+      data:{id:userId,status:status},
+      dataType:'JSON',
+
+    }).done(function(data){
+      console.log(data);
+      if(data.error){
+      //  dispatch(deleteUserFaile(data.error));
+      }else {
+        dispatch(changeUserStatusSuccess(userId,status));
+      }
+    }).error(function(error){
+      console.log("Error in get all pages api call");
+    //  dispatch(fetchProfileFailed(error));
     })
   }
 }

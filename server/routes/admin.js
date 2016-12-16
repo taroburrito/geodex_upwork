@@ -22,6 +22,29 @@ var setAdminRoutes = function (router) {
           }
   );
 
+  router.post('/api/v1/admin/delete_user',//authenticationMiddleware.isLoggedIn,
+          function (req, res) {
+              var userId = req.body.id;
+
+              adminModel.deleteUser(userId,function(result){
+                return res.json(result);
+              })
+
+          }
+  );
+
+  router.post('/api/v1/admin/change_user_status',//authenticationMiddleware.isLoggedIn,
+          function (req, res) {
+              var userId = req.body.id;
+              var status = req.body.status;
+
+              adminModel.updateUserStatus(userId,status,function(result){
+                return res.json(result);
+              })
+
+          }
+  );
+
 }
 
 module.exports = setAdminRoutes;

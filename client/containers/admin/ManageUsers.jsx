@@ -5,7 +5,7 @@ import { Navigation } from 'react-router';
 import ManageUserWidget from '../../components/admin/manage_users/ManageUserWidget';
 
 /*Actions*/
-import {getAllUsers} from '../../actions/AdminActions';
+import {getAllUsers,deleteUser,changeUserStatus} from '../../actions/AdminActions';
 
 class ManageUsers extends Component {
   constructor(props) {
@@ -19,8 +19,11 @@ class ManageUsers extends Component {
     const { dispatch } = this.props;
     return (
       <ManageUserWidget
+
         fetchInitialData={()=>{dispatch(getAllUsers())}}
-        userList={this.props.userList}/>
+        userList={this.props.userList}
+        deleteUser={(userId)=>{dispatch(deleteUser(userId))}}
+        changeUserStatus={(userId,status)=>{dispatch(changeUserStatus(userId,status))}}/>
     );
   }
 }

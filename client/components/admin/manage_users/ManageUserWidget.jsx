@@ -13,8 +13,8 @@ export default class ManageUserWidget extends Component {
   }
   componentWillMount() {
     this.props.fetchInitialData();
-  }
 
+  }
   render() {
 
 
@@ -24,7 +24,10 @@ export default class ManageUserWidget extends Component {
           <div data-uk-grid-margin="" className="uk-grid">
             <AdminSidebar/>
             <ManageUserList
-              userList={this.props.userList}/>
+              userList={this.props.userList}
+
+              changeUserStatus={this.props.changeUserStatus}
+              deleteUser={this.props.deleteUser}/>
           </div>
         </div>
       </div>

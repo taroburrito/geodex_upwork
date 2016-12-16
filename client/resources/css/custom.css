@@ -376,4 +376,10 @@ color:#ffffff;
     height: 16px;
     min-height: 22px;
     margin: 2px;
+    font-size: 11px;
+}
+
+.Login_page_admin .login_form {
+    padding-top: 10%;
+    padding-bottom: 20%;
 }

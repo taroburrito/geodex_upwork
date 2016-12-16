@@ -29,7 +29,7 @@ class MainLoginPage extends Component {
     const { dispatch, userAuthSession, forgotPasswordResult } = this.props;
     // TODO is fetching logged in status, show loader...
     return (
-      <div>
+      <div className="Login_page_admin">
 
         <LoginForm
            onClickLogin={(formData) => {

@@ -1,16 +1,32 @@
 import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
-import {blockUser} from '../../../actions/AdminActions';
+
+
 var Griddle = require('griddle-react');
 export default class ManageUserList extends Component{
   constructor(props){
     super(props);
-
+    this.deleteUser = this.deleteUser.bind(this);
+    this.changeUserStatus = this.changeUserStatus.bind(this);
   }
 
-test(data){
-  console.log("data:"+data);
+changeUserStatus(userId,status){
+  if(status == 'Unblock'){
+    status = "active";
+  }else {
+    status = "blocked";
+  }
+  this.props.changeUserStatus(userId,status);
 }
+deleteUser(userId){
+    this.props.deleteUser(userId);
+}
+
+componentWillMount(){
+//  this.props.test();
+
+}
+
 
   render(){
     const{userList} = this.props;
@@ -65,6 +81,8 @@ test(data){
             'columnName': 'action',
             'customComponent': actionComponent,
             'visible': true,
+            'update': this.changeUserStatus,
+            'delete' : this.deleteUser,
         }
     ];
 
@@ -98,16 +116,27 @@ var LinkComponent = React.createClass({
   }
 });
 
+// export default function withCustomProps(WrappedComponent, customProps) {
+//   return class PP extends React.Component {
+//     constructor(props) {
+//       super(props);
+//     }
+//     render() {
+//       return <WrappedComponent {...customProps} {...this.props} />;
+//     }
+//   };
+// }
+
 var actionComponent = React.createClass({
 
 
   deleteItem(userId) {
-   console.log(userId);
+   this.props.metadata.delete(userId);
  },
  toggleBlockUser(userId,status){
 
+   this.props.metadata.update(userId,status);
 
-   console.log(userId+"|"+status);
 
  },
 
@@ -115,7 +144,7 @@ var actionComponent = React.createClass({
     var userId = this.props.rowData.id;
     return (
       <div>
-        <a className="uk-button uk-button-danger" onClick={(userId)=>{if(confirm('Delete the item?')) this.deleteItem.bind(this,userId)}}>Delete</a>
+        <a className="uk-button uk-button-danger" onClick={()=>{if(confirm("Are you sure")){this.deleteItem.bind(this,userId)}}}>Delete</a>
         <a className="uk-button uk-button-primary" onClick={this.toggleBlockUser.bind(this,userId,this.props.data)}>{this.props.data}</a>
       </div>
     )

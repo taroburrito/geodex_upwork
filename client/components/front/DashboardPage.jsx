@@ -418,10 +418,10 @@ resetEmailForm(){
           <button className="uk-modal-close uk-close" type="button"></button>
             <div className="uk-grid">
 
-              <div className="uk-width-small-1-2 popup_img_left">
+              <div className="uk-width-small-3-5 popup_img_left">
 				            {this.state.postLargeImage?<img src={this.state.postLargeImage} className="custom_img_pop_style"/>:this.renderFriendsPostImagesLargeSlider(this.state.clickedUser)}
 				      </div>
-              <div className="uk-width-small-1-2 popup_img_right">
+              <div className="uk-width-small-2-5 popup_img_right">
 
               {this.loadPostByInfo(this.state.getClickedUser)}
               <h5 className="coment_heading">Comments</h5>
@@ -493,9 +493,17 @@ resetEmailForm(){
         var content_length = content.length;
         var post_image = item.post_image;
         if(post_image){
-          content = content.substring(0,300).concat(' ...');
+          if(content.length > 300){
+          content = content.substring(0,300).concat(' ...LoadMore');
+          }else{
+          content = content;
+          }
         }else {
-          content = content.substring(0,500).concat(' ...');
+          if(content.length > 500){
+          content = content.substring(0,500).concat(' ...LoadMore');
+          }else{
+          content = content;
+          }
         }
       }else {
 
@@ -524,8 +532,11 @@ resetEmailForm(){
               </div>
             </div>
             <div className="uk-width-small-1-2 post_control">
+              <a href="#" className="post_txt_dashboard" data-uk-modal={item.post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={()=>this.setState({getClickedUser:user_id, postLargeImage:this.state.uploadDir+'user_'+user_id+'/'+item.post_image})}>
               {item.post_image?<img src={this.state.uploadDir+'user_'+user_id+'/thumbs/'+item.post_image} className="uk-float-left img_margin_right"/>:null}
-              <p>{content} <a  href="#" data-uk-modal={item.post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={()=>this.setState({getClickedUser:user_id, postLargeImage:this.state.uploadDir+'user_'+user_id+'/'+item.post_image})}>LoadMore</a></p>
+              <p>{content}</p>
+
+              </a>
 
 
             </div>
@@ -748,16 +759,26 @@ resetEmailForm(){
       var content_length = latestPost.content.length;
       var post_image = latestPost.image;
       if(post_image){
-        content = content.substring(0,300).concat(' ...');
+        if(content.length > 300){
+        content = content.substring(0,300).concat(' ...LoadMore');
+        }else{
+        content = content;
+        }
       }else {
-        content = content.substring(0,500).concat(' ...');
+        if(content.length > 500){
+        content = content.substring(0,500).concat(' ...LoadMore');
+        }else{
+        content = content;
+        }
       }
 
        return (
          <div className="uk-width-small-1-2 post_control">
         <div  style={{maxHeight:200,overflow:"hidden"}}>
+        <a href="#postContentPop" data-uk-modal className="post_txt_dashboard">
         <img src={latestPost.image? this.state.uploadDir+"user_"+userProfile.id+"/thumbs/"+latestPost.image: null} className="uk-float-right img_margin_left"/>
-        <p>{content} <a href="#postContentPop" data-uk-modal>LoadMore</a></p>
+        <p>{content}</p>
+        </a>
 
         </div>
         <div id='postContentPop' className="uk-modal coment_popup">

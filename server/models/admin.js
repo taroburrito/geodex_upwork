@@ -64,11 +64,52 @@ var adminModel = {
           return(callback({success:"Succesfully get data",status:200,userProfile:adminModel.convertRowsToObject(results[0])}));
         }
       })
+    },
+
+    deleteUser: function(userId,callback){
+      var dbConnection = dbConnectionCreator();
+      var deleteUserSql = constructChnageUserStatus(userId,'deleted');
+      dbConnection.query(deleteUserSql,function(error,results,fields){
+        if(error){
+          dbConnection.end();
+          return(callback({error:error,status:400,message:"Error  in delete user",query:deleteUserSql}));
+        }else if (results.affectedRows == 0) {
+          dbConnection.end();
+          return(callback({status:400,error:"Error in delete user"}));
+        }else {
+
+          dbConnection.end();
+          return(callback({success:"Succesfully delete user",status:200}));
+        }
+      })
+    },
+
+    updateUserStatus: function(userId,status,callback){
+      var dbConnection = dbConnectionCreator();
+      var changeStatusSql = constructChnageUserStatus(userId,status);
+      dbConnection.query(changeStatusSql,function(error,results,fields){
+        if(error){
+          dbConnection.end();
+          return(callback({error:error,status:400,message:"Error  in update user",query:changeStatusSql}));
+        }else if (results.affectedRows == 0) {
+          dbConnection.end();
+          return(callback({status:400,error:"Error in update user"}));
+        }else {
+
+          dbConnection.end();
+          return(callback({success:"Succesfully updated user",status:200}));
+        }
+      })
     }
 
 
 
 };
+
+function constructChnageUserStatus(userId,status){
+  var sql = "UPDATE gx_users set status='"+status+"' WHERE id="+userId;
+  return sql;
+}
 
 function constructUserProfileSqlString(userId){
   var sql = "SELECT a.id,a.email,a.status,a.date_created,CONCAT(b.first_name, ' ', b.last_name)NAME, b.address,"+
@@ -82,7 +123,7 @@ function constructgetAllUsersSqlString(){
             " (profile_image) image, (created) recent_activity, (a.date_created) join_date"+
             " FROM gx_users as a LEFT JOIN (select first_name,user_id,last_name,address,profile_image from gx_user_details) b"+
             " ON b.user_id = a.id left JOIN (select * from gx_posts ORDER BY created) c"+
-            " ON c.user_id = a.id WHERE a.role = 'user'";
+            " ON c.user_id = a.id WHERE a.role = 'user' AND a.status !='deleted'";
   return sql;
 }
 module.exports = adminModel;
