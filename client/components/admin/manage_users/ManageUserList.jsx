@@ -144,7 +144,7 @@ var actionComponent = React.createClass({
     var userId = this.props.rowData.id;
     return (
       <div>
-        <a className="uk-button uk-button-danger" onClick={()=>{if(confirm("Are you sure")){this.deleteItem.bind(this,userId)}}}>Delete</a>
+        <a className="uk-button uk-button-danger" onClick={this.deleteItem.bind(this,userId)}>Delete</a>
         <a className="uk-button uk-button-primary" onClick={this.toggleBlockUser.bind(this,userId,this.props.data)}>{this.props.data}</a>
       </div>
     )
