@@ -12,6 +12,12 @@ var setPostRoutes = function (router) {
             }
     );
 
+    router.post('/api/v1/posts/postComment',function(req,res){
+      postModel.postComment(req.body,function(result){
+        return res.json(result);
+      })
+    })
+
     router.get('/api/v1/posts/getComments/:id',function(req,res){
         var postId = req.params.id;
         postModel.getComments(postId,function(result){

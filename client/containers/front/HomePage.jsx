@@ -7,7 +7,7 @@ import DashboardPage from '../../components/front/DashboardPage';
 import Navbar from '../../components/Navbar';
 import { attemptLogout } from '../../actions/AuthActions';
 //import {addCategory} from '../../actions/CategoryActions';
-import {fetchCommentsByPost, addPost} from '../../actions/PostActions';
+import {fetchCommentsByPost, addPost,postComment} from '../../actions/PostActions';
 import {getUserDetail, fetchDashboardData} from '../../utilities/ServerSocket';
 import {updatefriendsList,updateDashboardFriendList, addCategory,setMessageToDefault, sendEmailFromDashboar} from '../../actions/UserActions';
 
@@ -46,7 +46,8 @@ class HomePage extends Component{
           handleMessage={this.props.handleMessage}
           dashboardData={this.props.dashboardData}
           sendEmail={(to,from,content)=>
-          dispatch(sendEmail(to,from,content))}/>
+          dispatch(sendEmail(to,from,content))}
+          postComment = {(req)=>dispatch(postComment(req))}/>
         </div>
       );
     }else{
@@ -75,7 +76,7 @@ function select(state) {
   posts:state.postsList,
   friendsPosts: state.friendsPosts,
   dashboardData: state.dashboardData,
-  comments:state.commentsByPost
+  comments:state.postComments,
   };
 }
 

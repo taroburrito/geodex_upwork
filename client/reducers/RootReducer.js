@@ -42,7 +42,7 @@ const AppReducer = combineReducers({
   updateMessage:handleFrontMessage,
   friendRequests:friendRequests,
   searchResult: searchUsersResult,
-  commentsByPost: updateComments,
+  postComments: updateComments,
   userList:updateUserList,
   userProfile:viewProfile,
 

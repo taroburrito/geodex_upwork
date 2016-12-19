@@ -1489,3 +1489,15 @@ small.user_location {
     text-decoration: none;
 
 }
+.comment_btn {
+    float: right;
+    background: #2ba3d4 none repeat scroll 0 0;
+    border: medium none;
+    border-radius: 3px;
+    color: #fff;
+    float: right;
+    font-size: 16px;
+    margin-right: 5px;
+    margin-top: 5px;
+    padding: 3px 10px;
+}

@@ -28,6 +28,7 @@ export default class DashboardPage extends Component {
     this.handleSavePost = this.handleSavePost.bind(this);
     this.handleChangeSort = this.handleChangeSort.bind(this);
     this.sortByAllCategory = this.sortByAllCategory.bind(this);
+    this.handleClickPostComment = this.handleClickPostComment.bind(this);
     this.state ={
       errorMessage: null,
     //  image: "public/images/user.jpg",
@@ -37,11 +38,15 @@ export default class DashboardPage extends Component {
       active_cat:'all',
       handleMessage:initialMessageStates,
       popupImage:null,
+      popupContent:null,
       uploadDir:null,
       postLargeImage:null,
       loading:false,
       clickedUser:false,
-      getClickedUser: null
+      getClickedUser: null,
+      clickedPost:null,
+      showCommentBox:null,
+      replyContent:null
 
     }
   }
@@ -54,12 +59,44 @@ export default class DashboardPage extends Component {
     this.props.fetchInitialData(userAuthSession.userObject.id,null);
   }
   componentDidMount(){
-    console.log("Here");
+
     const{dashboardData} = this.props;
     if(dashboardData){
 
       this.setState({loading:false});
     }
+  }
+
+  handleClickPostComment(){
+
+    const{userAuthSession} = this.props;
+    var req = {
+      comment: this.refs.postCommentContent.getDOMNode().value,
+      parent_id:'',
+      user_id: userAuthSession.userObject.id,
+      post_id:this.state.clickedPost,
+      status:1,
+    }
+    this.props.postComment(req);
+
+    console.log(req);
+
+  }
+
+  handleClickReplyComment(parent_id,post_id){
+    console.log("parent:"+parent_id);
+    this.setState({showCommentBox:null});
+
+    const{userAuthSession} = this.props;
+    var req = {
+      comment: this.state.replyContent,
+      parent_id:parent_id,
+      user_id: userAuthSession.userObject.id,
+      post_id:post_id,
+      status:1,
+    }
+    console.log(req);
+    this.props.postComment(req);
   }
 
   sortByAllCategory(){
@@ -375,7 +412,11 @@ resetEmailForm(){
          var postImageSrc = this.state.uploadDir+"user_"+postContent.user_id+"/thumbs/"+postContent.post_image;
          if(postImage)
          friendElement.push(
-             <div key={postContent.i} className="slider_image uk-grid-small uk-grid-width-medium-1-4"><a data-uk-modal="{target:'#postImageModel'}" onClick={()=>this.setState({postLargeImage:null,clickedUser:user_id,getClickedUser:user_id})} ><img src={postImageSrc}/></a></div>
+             <div key={postContent.i} className="slider_image uk-grid-small uk-grid-width-medium-1-4">
+               <a data-uk-modal="{target:'#postImageModel'}" onClick={()=>this.setState({postLargeImage:null,clickedUser:user_id,getClickedUser:user_id})} >
+                 <img src={postImageSrc}/>
+                </a>
+            </div>
          );
          i++;
 
@@ -411,7 +452,8 @@ resetEmailForm(){
   }
 
   renderImageContentModel(){
-
+    const{userAuthSession} = this.props;
+    var user = userAuthSession.userObject;
     return(
       <div id="postImageModel" className="uk-modal coment_popup">
           <div className="uk-modal-dialog uk-modal-dialog-blank">
@@ -426,45 +468,13 @@ resetEmailForm(){
               {this.loadPostByInfo(this.state.getClickedUser)}
               <h5 className="coment_heading">Comments</h5>
               <ul className="uk-comment-list">
-                <li>
-                    <article className="uk-comment">
-                        <header className="uk-comment-header">
-                            <img className="uk-comment-avatar" src="public/images/user.jpg" alt="" width="40" height="40"/>
-                            <h4 className="uk-comment-title">Author</h4>
-                            <div className="uk-comment-meta"><span>email@gmail.com</span> | Los Angeles, CA</div>
-                        </header>
-                        <div className="uk-comment-body">
-                            <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy</p>
-                        </div>
-                    </article>
-                    <ul>
-                        <li>
-                            <article className="uk-comment">
-                                <header className="uk-comment-header">
-                                    <img className="uk-comment-avatar" src="public/images/user.jpg" alt="" width="40" height="40"/>
-                                    <h4 className="uk-comment-title">Author</h4>
-                                    <div className="uk-comment-meta"><span>email@gmail.com</span> | Los Angeles, CA</div>
-                                </header>
-                                <div className="uk-comment-body">
-                                    <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.</p>
-                                </div>
-                            </article>
-
-                            <div className="comenting_form">
-                              <img className="uk-comment-avatar" src="public/images/user.jpg" alt="" width="40" height="40"/>
-                              <textarea placeholder="Write Comment..."></textarea>
-                              <input type="submit" value="Send"/>
-                              </div>
-                              </li>
-                          </ul>
-                      </li>
+              {this.renderComments(this.state.clickedPost)}
                   </ul>
 
-
-              <div className="comenting_form border-top_cf">
-              <img className="uk-comment-avatar" src="public/images/user.jpg" alt="" width="40" height="40"/>
-              <textarea placeholder="Write Comment..."></textarea>
-              <input type="submit" value="Send"/>
+                  <div className="comenting_form border-top_cf">
+              <img className="uk-comment-avatar" src={this.getProfileImage(user.profile_image,user.id)} alt="" width="40" height="40"/>
+              <textarea placeholder="Write Comment..." ref="postCommentContent"></textarea>
+              <a onClick={this.handleClickPostComment} className="uk-button uk-button-primary comment_btn">Send</a>
               </div>
 
 
@@ -473,6 +483,13 @@ resetEmailForm(){
         </div>
       </div>
     )
+  }
+
+  loadPostContent(postId,userId,popupImage,popupContent){
+    console.log(popupImage);
+    console.log("Here");
+    this.props.fetchComments(postId);
+    this.setState({clickedPost:postId,getClickedUser:userId,postLargeImage:popupImage,popupContent:popupContent});
   }
 
 
@@ -486,19 +503,27 @@ resetEmailForm(){
     Object.keys(friends).map((key)=> {
 
       var item = friends[key];
+
       var user_id = friends[key].id;
       var profile_link = "/user/"+user_id;
-        var content = item.post_content;
-          if(content && content.length > 0){
+      var content = item.post_content;
+
+      if(item){
         var content_length = content.length;
         var post_image = item.post_image;
+        
         if(post_image){
+          var postLargeImage = this.state.uploadDir+'user_'+user_id+'/'+item.post_image;
+
+          var popupContent = null;
           if(content.length > 300){
           content = content.substring(0,300).concat(' ...LoadMore');
           }else{
           content = content;
           }
         }else {
+          var postLargeImage = null;
+          var popupContent = item.post_content;
           if(content.length > 500){
           content = content.substring(0,500).concat(' ...LoadMore');
           }else{
@@ -532,7 +557,7 @@ resetEmailForm(){
               </div>
             </div>
             <div className="uk-width-small-1-2 post_control">
-              <a href="#" className="post_txt_dashboard" data-uk-modal={item.post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={()=>this.setState({getClickedUser:user_id, postLargeImage:this.state.uploadDir+'user_'+user_id+'/'+item.post_image})}>
+              <a href="#" className="post_txt_dashboard" data-uk-modal={item.post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={this.loadPostContent.bind(this,item.post_id,user_id,postLargeImage,popupContent)}>
               {item.post_image?<img src={this.state.uploadDir+'user_'+user_id+'/thumbs/'+item.post_image} className="uk-float-left img_margin_right"/>:null}
               <p>{content}</p>
 
@@ -559,7 +584,7 @@ resetEmailForm(){
     if(userId){
     const{dashboardData} = this.props;
     var friendData = dashboardData.friends[userId];
-    console.log(friendData); console.log("****");
+    //console.log(friendData); console.log("****");
     return(
       <article className="uk-comment">
           <header className="uk-comment-header">
@@ -571,7 +596,7 @@ resetEmailForm(){
 
           <div className="uk-comment-body">
             <div className="uk-width-small-1-1 post_control">
-            <p></p>
+            <p>{this.state.popupContent}</p>
             </div>
           </div>
       </article>
@@ -582,34 +607,6 @@ resetEmailForm(){
     )
   }
   }
-  loadComments(postId){
-    const{comments} = this.props;
-    this.props.fetchComments(postId);
-
-  }
-
-  // add(item) {
-  //   console.log(item);
-  //   console.log("*****");
-  //      var parent;
-  //     // var ul = this.refs.commentsul.getDOMNode();
-  //     // if(item.parent > 0) {
-  //     //     parent = ul.find('#n' + item.parent + ' > ul');
-  //     //     if(parent.length < 1) {
-  //     //         $.each(items, function(i) {
-  //     //             if(this.id === item.parent) {
-  //     //               parent = add(items.splice(i, 1)[0]);
-  //     //                 return false;
-  //     //             }
-  //     //         });
-  //     //     }
-  //     // } else {
-  //     //     parent = ul;
-  //     // }
-  //     // parent.append('<li id="n' + item.id + '">' + item.name + '<ul></ul></li>');
-  //     // return parent.children().last().children();
-  //
-  // };
 
   getNestedChildren(arr, parent) {
   var out = []
@@ -626,57 +623,206 @@ resetEmailForm(){
   return out;
 }
 
-  renderComments(postId){
-    const{comments} = this.props;
-    var commentElement = [];
-    if(comments && comments.length >0){
-      console.log("fffffff");
-    // var data = {
-    //     "menu": [
-    //         {"id":5,"name":"Dashboard4","parent":1},
-    //         {"id":1,"name":"Dashboard","parent":0},
-    //         {"id":2,"name":"Dashboard1","parent":0 },
-    //         {"id":3,"name":"Dashboard2","parent":0},
-    //         {"id":4,"name":"Dashboard3","parent":0},
-    //         {"id":6,"name":"Dashboard5","parent":1},
-    //         {"id":7,"name":"Dashboard6","parent":1},
-    //         {"id":8,"name":"Dashboard7","parent":2},
-    //         {"id":9,"name":"Dashboard8","parent":5}
-    //     ]
-    // };
-    //
-    //
-    // var items = data.menu;
-    //
-    //
-    // while(items.length > 0) {
-    //
-    //     this.add(items.shift());
-    //
-    // }
+ _queryTreeSort(options) {
+   var cfi, e, i, id, o, pid, rfi, ri, thisid, _i, _j, _len, _len1, _ref, _ref1;
 
-    Object.keys(comments).forEach((id)=>{
-      var item = comments[id];
-      console.log(commentElement);
-      commentElement.push(
-        <li>
-            <article className="uk-comment">
-                <header className="uk-comment-header">
-                    <img className="uk-comment-avatar" src="public/images/user.jpg" alt="" width="40" height="40"/>
-                    <h4 className="uk-comment-title">Author</h4>
-                    <div className="uk-comment-meta"><span>email@gmail.com</span> | Los Angeles, CA</div>
-                </header>
-                <div className="uk-comment-body">
-                    <p>{item.comment}</p>
-                </div>
-            </article>
+  ri = [];
+  rfi = {};
+  cfi = {};
+  o = [];
+  _ref = options;
+  for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+  var  id = options[i].id || "id";
+  var  pid = options[i].parentid || "parentid";
+    e = _ref[i];
+    rfi[e[id]] = i;
+    if (cfi[e[pid]] == null) {
+      cfi[e[pid]] = [];
+    }
+    cfi[e[pid]].push(options[i][id]);
+  }
+  _ref1 = options;
+  for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+    var  id = options.id || "id";
+    var  pid = options.parentid || "parentid";
+    e = _ref1[_j];
+    if (rfi[e[pid]] == null) {
+      ri.push(e[id]);
+    }
+  }
+  while (ri.length) {
+    thisid = ri.splice(0, 1);
+    o.push(options.q[rfi[thisid]]);
+    if (cfi[thisid] != null) {
+      ri = cfi[thisid].concat(ri);
+    }
+  }
+  return o;
+};
 
+_makeTree (options) {
+  console.log(options);
+  var children, e, id, o, pid, temp, _i, _len, _ref;
+  id = options.id || "id";
+  pid = options.parentid || "parentid";
+  children = options.children || "children";
+  temp = {};
+  o = [];
+  _ref = options.newArr;
+  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+    e = _ref[_i];
+    e[children] = [];
+    temp[e[id]] = e;
+    if (temp[e[pid]] != null) {
+      temp[e[pid]][children].push(e);
+    } else {
+      o.push(e);
+    }
+  }
+  return o;
+};
+
+ buildHierarchy(arry) {
+
+    var roots = [], children = {};
+
+    // find the top level nodes and hash the children based on parent
+    for (var i = 0, len = arry.length; i < len; ++i) {
+          var item = arry[i];
+            var p = item.parent_id;
+
+            var target = !p ? roots : (children[p] || (children[p] = []));
+
+        target.push({ value: item });
+    }
+
+    // function to recursively build the tree
+    var findChildren = function(parent) {
+        if (children[parent.value.id]) {
+            parent.children = children[parent.value.id];
+            for (var i = 0, len = parent.children.length; i < len; ++i) {
+                findChildren(parent.children[i]);
+            }
+        }
+    };
+
+    // enumerate through to handle the case where there are multiple roots
+    for (var i = 0, len = roots.length; i < len; ++i) {
+        findChildren(roots[i]);
+    }
+
+    return roots;
+}
+
+loadChild(child){
+  const{userAuthSession} = this.props;
+  var childElement = [];
+  if(child)
+  Object.keys(child).forEach((id)=>{
+    var item = child[id]['value'];
+
+    var childArr = child[id]['children'];
+
+    if(item.user_id != userAuthSession.userObject.id && this.state.showCommentBox == item.id){
+      var commentBox = (
+        <div className="comenting_form border-top_cf">
+        <img className="uk-comment-avatar" src={this.getProfileImage(userAuthSession.userObject.profile_image,userAuthSession.userObject.id)} alt="" width="40" height="40"/>
+        <textarea placeholder="Write Comment..." ref="postCommentContent" value={this.state.replyContent} onChange={(e)=>this.setState({replyContent:e.target.value})}></textarea>
+        <a onClick={this.handleClickReplyComment.bind(this,item.id,item.post_id)} className="uk-button uk-button-primary comment_btn">Send</a>
+        </div>
+      );
+    }else{
+      var commentBox = "";
+    }
+
+
+    childElement.push(
+      <li>
+          <article className="uk-comment">
+              <header className="uk-comment-header">
+                  <img className="uk-comment-avatar" src={this.getProfileImage(item.profile_image,item.user_id)} alt="" width="40" height="40"/>
+                  <h4 className="uk-comment-title">{item.NAME}</h4>
+                  <div className="uk-comment-meta"><span>{item.email}</span> | {item.address}</div>
+              </header>
+              <div className="uk-comment-body">
+                  <p>{item.comment}</p>
+              </div>
+          </article>
+          <a onClick={()=>this.setState({showCommentBox:item.id,replyContent:null})}>Reply</a>
+          {commentBox}
+
+          <ul>
+          {this.loadChild(childArr)}
+        </ul>
       </li>
     );
+  });
+  return(
+    {childElement}
+  )
+}
+
+  renderComments(postId){
+    const{comments,userAuthSession} = this.props;
+    var commentElement = [];
+    if(comments){
+    var newArr = [];
+    Object.keys(comments).forEach((id)=>{
+      var item = comments[id];
+      newArr.push(item);
     });
+
   }else{
+    //commentElement = (<div>No comments yet</div>);
+  }
+  var newItem = null;
+  if(newArr){
+    newItem = this.buildHierarchy(newArr);
 
   }
+
+  if(newItem)
+  Object.keys(newItem).forEach((id)=>{
+    var item = newItem[id]['value'];
+    var child = newItem[id]['children'];
+    if(child){
+
+    }
+    if(item.user_id != userAuthSession.userObject.id && this.state.showCommentBox == item.id){
+      var commentBox = (
+        <div className="comenting_form border-top_cf">
+        <img className="uk-comment-avatar" src={this.getProfileImage(userAuthSession.userObject.profile_image,userAuthSession.userObject.id)} alt="" width="40" height="40"/>
+        <textarea placeholder="Write Comment..." ref="postCommentContent" value={this.state.replyContent} onChange={(e)=>this.setState({replyContent:e.target.value})}></textarea>
+        <a onClick={this.handleClickReplyComment.bind(this,item.id,item.post_id)} className="uk-button uk-button-primary comment_btn">Send</a>
+        </div>
+      );
+    }else{
+      var commentBox = "";
+    }
+
+    commentElement.push(
+      <li>
+          <article className="uk-comment">
+              <header className="uk-comment-header">
+                  <img className="uk-comment-avatar" src={this.getProfileImage(item.profile_image,item.user_id)} alt="" width="40" height="40"/>
+                  <h4 className="uk-comment-title">{item.NAME}</h4>
+                  <div className="uk-comment-meta"><span>{item.email}</span> | {item.address}</div>
+              </header>
+              <div className="uk-comment-body">
+                  <p>{item.comment}</p>
+              </div>
+          </article>
+          <a onClick={()=>this.setState({showCommentBox:item.id,replyContent:null})}>Reply</a>
+          {commentBox}
+
+          <ul>
+            {this.loadChild(child)}
+          </ul>
+
+    </li>
+  );
+});
+
 
     return(
       {commentElement}
@@ -716,6 +862,8 @@ resetEmailForm(){
   }
 
   renderPostContentModel(){
+    const{userAuthSession} = this.props;
+    var user = userAuthSession.userObject;
 
     return(
       <div id="postContentModel" className="uk-modal coment_popup">
@@ -729,14 +877,14 @@ resetEmailForm(){
       			{this.loadPostByInfo(this.state.getClickedUser)}
       				<h5 className="coment_heading">Comments</h5>
       				<ul className="uk-comment-list" ref="commentsul">
-
-           </ul>
+                {this.renderComments(this.state.clickedPost)}
+              </ul>
 
 
     				<div className="comenting_form border-top_cf">
-    				<img className="uk-comment-avatar" src="public/images/user.jpg" alt="" width="40" height="40"/>
-    				<textarea placeholder="Write Comment..."></textarea>
-    				<input type="submit" value="Send"/>
+    				<img className="uk-comment-avatar" src={this.getProfileImage(user.profile_image,user.id)} alt="" width="40" height="40"/>
+    				<textarea placeholder="Write Comment..." ref="postCommentContent"></textarea>
+    				<a onClick={this.handleClickPostComment} className="uk-button uk-button-primary comment_btn">Send</a>
     				</div>
 
 
@@ -954,10 +1102,7 @@ resetEmailForm(){
     var userProfileData = userAuthSession.userObject;
     var content;
     var errorLabel;
-
-
-
-      if(userProfileData)
+    if(userProfileData)
     return (
 
       <div className="uk-container uk-container-center middle_content dashboad">

@@ -157,22 +157,57 @@ var postModel = {
             dbConnection.end();
             return(callback({status:400, error:"No comments found for this post"}));
           }else {
-            var comments = {};
+            var comments = [];
             results.forEach(function (result) {
-                comments[result.id] = postModel.convertRowsToObject(result);
+              comments.push(postModel.convertRowsToObject(result));
+                // comments[result.id] = postModel.convertRowsToObject(result);
             });
             dbConnection.end();
             return(callback({status:200,comments}));
           }
         })
-    }
+    },
 
+    postComment: function(data,callback){
+      var dbConnection = dbConnectionCreator();
+      var postCommentSqlString = constructPostCommentSqlString(data);
+      dbConnection.query(postCommentSqlString,function(error,results,fields){
+        if (error) {
+          return(callback({error:"Error in post comment",status:400,query:postCommentSqlString}));
+        }else if (results.affectedRows === 1) {
+          return(callback({success:"Success post comment",status:200}));
+        }else{
+          return(callback({error:"Error in post comment query",status:400}));
+        }
+      });
+    }
 
 
 };
 
+function constructPostCommentSqlString(data){
+  var timestamp = moment();
+  var formatted = timestamp.format('YYYY-MM-DD HH:mm:ss Z');
+  var query = "INSERT INTO gx_post_comments SET " +
+          "  post_id = " + mysql.escape(data.post_id) +
+          ", parent_id = " + mysql.escape(data.parent_id) +
+          ", user_id = " + mysql.escape(data.user_id) +
+          ", comment = " + mysql.escape(data.comment) +
+          ", status = " + mysql.escape(data.status) +
+          ", created = " + mysql.escape(formatted);
+  return query;
+}
+
 function constructGetCommentsByPostSqlString(postId){
-  var sql = "SELECT * from gx_post_comments WHERE post_id="+postId;
+  var sql = "SELECT a.*,"+
+            "CONCAT(b.first_name, ' ', b.last_name) NAME,"+
+            "b.profile_image,b.address, c.email"+
+            " from gx_post_comments as a,"+
+            " gx_user_details as b,"+
+            " gx_users as c"+
+            " WHERE b.user_id = a.user_id"+
+            " AND c.id  = a.user_id"+
+            " AND post_id="+postId;
   return sql;
 }
 

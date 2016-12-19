@@ -39,6 +39,26 @@ export function addPost(formData){
   }
 }
 
+export function postComment(formData){
+  return(dispatch)=>{
+    $.ajax({
+      type:'POST',
+      url: '/api/v1/posts/postComment',
+      data: formData,
+      dataType: 'JSON'
+    }).done(function(data){
+      if(data.error){
+
+      }else{
+        dispatch(fetchCommentsByPost(formData.post_id));
+      }
+      console.log(data);
+    }).fail(function(error){
+      console.log(error);
+    })
+  }
+}
+
 
 
 export function initializeComments(){
@@ -46,7 +66,7 @@ export function initializeComments(){
 }
 
 export function fetchCommentSuccess(comments){
-  return{type: Fetch_Comment_Success, data:comments};
+  return{type: Fetch_Comment_Success, comments};
 }
 
 export function fetchCommentsByPost(postId){
