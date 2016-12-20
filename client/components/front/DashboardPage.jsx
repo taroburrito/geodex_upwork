@@ -378,13 +378,13 @@ resetEmailForm(){
      if(friendsPosts)
      var friendsPost = friendsPosts[user_id];
        if(friendsPost && friendsPost.length > 0){
-        // var newPost = this.sortImages(friendsPost, e => e.id === this.state.clickedPost);
+         var newPost = this.sortImages(friendsPost, e => e.id === this.state.clickedPost);
 
        var friendElement = [];
        var i = 1;
-       Object.keys(friendsPost).forEach((postImage)=> {
+       Object.keys(newPost).forEach((postImage)=> {
 
-         var postContent = friendsPost[postImage];
+         var postContent = newPost[postImage];
          var postImageSrc = this.state.uploadDir+"user_"+postContent.user_id+"/"+postContent.post_image;
          if(postImage)
          friendElement.push(
