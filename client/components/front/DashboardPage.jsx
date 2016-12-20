@@ -378,8 +378,7 @@ resetEmailForm(){
      if(friendsPosts)
      var friendsPost = friendsPosts[user_id];
        if(friendsPost && friendsPost.length > 0){
-         //var friendsPost = this.sortImages(friendsPost, e => e.id === this.state.clickedPost);
-         //console.log(newPost); console.log("new slides");
+        // var newPost = this.sortImages(friendsPost, e => e.id === this.state.clickedPost);
 
        var friendElement = [];
        var i = 1;
@@ -389,7 +388,7 @@ resetEmailForm(){
          var postImageSrc = this.state.uploadDir+"user_"+postContent.user_id+"/"+postContent.post_image;
          if(postImage)
          friendElement.push(
-             <div key={postContent.id} className="main-box"><img src={postImageSrc}/></div>
+             <div key={postContent.i} className="main-box"><img src={postImageSrc}/></div>
          );
          i++;
 
@@ -401,22 +400,12 @@ const settings = {
   infinite:false,
   centerMode:true,
   lazyLoad:true,
-
-  afterChange:function(event){
-    //console.log(this.state); console.log("dd");
-    //var postData = friendsPosts[this.state.clickedUser][event];
-    //var postId = postData.id;
-    //this.setState({clickedPost:postId});
-    console.log(event);
-    console.log("HEHE");
-  }
 }
-console.log(settings); console.log("-----");
 
 
       return(
         <div>
-          <Slider {...settings} ref="slider" >
+          <Slider {...settings}>
             {friendElement}
                 </Slider>
 
@@ -460,10 +449,7 @@ console.log(settings); console.log("-----");
        const settings = {
          slidesToShow:3,
          infinite:false,
-         slickGoTo:function(slide){
-           this.innerSlider.slickGoTo(slide)
-         }
-
+         slikGoTo:this.state.currentSlide
        };
 
 
@@ -471,7 +457,7 @@ console.log(settings); console.log("-----");
 
       return(
         <div>
-          <Slider {...settings} ref="slider1">
+          <Slider {...settings}>
             {friendElement}
                 </Slider>
           {/* <ul className="uk-slider uk-grid-small uk-grid-width-medium-1-4">
@@ -521,13 +507,9 @@ console.log(settings); console.log("-----");
   }
 
   loadPostContent(postId,userId,popupImage,popupContent,currentSlide){
-    console.log('refs');
-    console.log(this.refs.slider1);
-    if(currentSlide){
-      console.log("currentSlide:"+currentSlide);
-      this.setState({currentSlide:currentSlide});
 
-      this.refs.slider1.slickGoTo('2');
+    if(currentSlide){
+      this.setState({currentSlide:currentSlide});
     }
     this.props.fetchComments(postId);
     this.setState({clickedPost:postId,clickedUser:userId,getClickedUser:userId,postLargeImage:popupImage,popupContent:popupContent});
