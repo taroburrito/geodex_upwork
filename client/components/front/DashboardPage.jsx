@@ -46,7 +46,9 @@ export default class DashboardPage extends Component {
       getClickedUser: null,
       clickedPost:null,
       showCommentBox:null,
-      replyContent:null
+      replyContent:null,
+      postComment:null,
+      currentSlide:null
 
     }
   }
@@ -67,16 +69,19 @@ export default class DashboardPage extends Component {
     }
   }
 
-  handleClickPostComment(){
 
+
+  handleClickPostComment(){
     const{userAuthSession} = this.props;
+    this.setState({replyContent:null,postComment:null});
     var req = {
-      comment: this.refs.postCommentContent.getDOMNode().value,
+      comment: this.state.postComment,
       parent_id:'',
       user_id: userAuthSession.userObject.id,
       post_id:this.state.clickedPost,
       status:1,
     }
+
     this.props.postComment(req);
 
     console.log(req);
@@ -84,8 +89,9 @@ export default class DashboardPage extends Component {
   }
 
   handleClickReplyComment(parent_id,post_id){
+
     console.log("parent:"+parent_id);
-    this.setState({showCommentBox:null});
+    this.setState({showCommentBox:null,replyContent:null,postComment:null});
 
     const{userAuthSession} = this.props;
     var req = {
@@ -95,8 +101,9 @@ export default class DashboardPage extends Component {
       post_id:post_id,
       status:1,
     }
-    console.log(req);
+
     this.props.postComment(req);
+
   }
 
   sortByAllCategory(){
@@ -352,6 +359,15 @@ resetEmailForm(){
       {friend_post_content}
     )
   }
+   sortImages(a, fn) {
+  var non_matches = [];
+  var matches = a.filter(function(e, i, a) {
+    var match = fn(e, i, a);
+    if (!match) non_matches.push(e);
+    return match;
+  });
+  return matches.concat(non_matches);
+}
 
   renderFriendsPostImagesLargeSlider(user_id){
 
@@ -362,6 +378,8 @@ resetEmailForm(){
      if(friendsPosts)
      var friendsPost = friendsPosts[user_id];
        if(friendsPost && friendsPost.length > 0){
+         //var friendsPost = this.sortImages(friendsPost, e => e.id === this.state.clickedPost);
+         //console.log(newPost); console.log("new slides");
 
        var friendElement = [];
        var i = 1;
@@ -371,21 +389,37 @@ resetEmailForm(){
          var postImageSrc = this.state.uploadDir+"user_"+postContent.user_id+"/"+postContent.post_image;
          if(postImage)
          friendElement.push(
-             <div key={postContent.i} className="main-box"><img src={postImageSrc}/></div>
+             <div key={postContent.id} className="main-box"><img src={postImageSrc}/></div>
          );
          i++;
 
        });
 
 
+const settings = {
+  slidesToShow:1,
+  infinite:false,
+  centerMode:true,
+  lazyLoad:true,
 
+  afterChange:function(event){
+    //console.log(this.state); console.log("dd");
+    //var postData = friendsPosts[this.state.clickedUser][event];
+    //var postId = postData.id;
+    //this.setState({clickedPost:postId});
+    console.log(event);
+    console.log("HEHE");
+  }
+}
+console.log(settings); console.log("-----");
 
 
       return(
         <div>
-          <Slider slidesToShow="1" infinite="false" centerMode="true">
+          <Slider {...settings} ref="slider" >
             {friendElement}
                 </Slider>
+
 
         </div>
 
@@ -413,7 +447,7 @@ resetEmailForm(){
          if(postImage)
          friendElement.push(
              <div key={postContent.i} className="slider_image uk-grid-small uk-grid-width-medium-1-4">
-               <a data-uk-modal="{target:'#postImageModel'}" onClick={()=>this.setState({postLargeImage:null,clickedUser:user_id,getClickedUser:user_id})} >
+               <a data-uk-modal="{target:'#postImageModel'}"  onClick={this.loadPostContent.bind(this,postContent.id,user_id,null,null,i)}>
                  <img src={postImageSrc}/>
                 </a>
             </div>
@@ -421,23 +455,23 @@ resetEmailForm(){
          i++;
 
        });
-       var settings = {
 
-      infinite: false,
-      speed: 500,
-      slidesToShow: 1,
-      slidesToScroll: 1,
-      arrows:true,
-      nextArrow:true,
-      prevArrow:true,
-    };
+
+       const settings = {
+         slidesToShow:3,
+         infinite:false,
+         slickGoTo:function(slide){
+           this.innerSlider.slickGoTo(slide)
+         }
+
+       };
 
 
 
 
       return(
         <div>
-          <Slider infinite="false" slidesToShow="3" >
+          <Slider {...settings} ref="slider1">
             {friendElement}
                 </Slider>
           {/* <ul className="uk-slider uk-grid-small uk-grid-width-medium-1-4">
@@ -454,6 +488,7 @@ resetEmailForm(){
   renderImageContentModel(){
     const{userAuthSession} = this.props;
     var user = userAuthSession.userObject;
+    console.log(this.state); console.log("***");
     return(
       <div id="postImageModel" className="uk-modal coment_popup">
           <div className="uk-modal-dialog uk-modal-dialog-blank">
@@ -473,7 +508,7 @@ resetEmailForm(){
 
                   <div className="comenting_form border-top_cf">
               <img className="uk-comment-avatar" src={this.getProfileImage(user.profile_image,user.id)} alt="" width="40" height="40"/>
-              <textarea placeholder="Write Comment..." ref="postCommentContent"></textarea>
+              <textarea placeholder="Write Comment..." value={this.state.postComment} onChange={(e)=>this.setState({postComment:e.target.value})}></textarea>
               <a onClick={this.handleClickPostComment} className="uk-button uk-button-primary comment_btn">Send</a>
               </div>
 
@@ -485,11 +520,18 @@ resetEmailForm(){
     )
   }
 
-  loadPostContent(postId,userId,popupImage,popupContent){
-    console.log(popupImage);
-    console.log("Here");
+  loadPostContent(postId,userId,popupImage,popupContent,currentSlide){
+    console.log('refs');
+    console.log(this.refs.slider1);
+    if(currentSlide){
+      console.log("currentSlide:"+currentSlide);
+      this.setState({currentSlide:currentSlide});
+
+      this.refs.slider1.slickGoTo('2');
+    }
     this.props.fetchComments(postId);
-    this.setState({clickedPost:postId,getClickedUser:userId,postLargeImage:popupImage,popupContent:popupContent});
+    this.setState({clickedPost:postId,clickedUser:userId,getClickedUser:userId,postLargeImage:popupImage,popupContent:popupContent});
+
   }
 
 
@@ -511,7 +553,7 @@ resetEmailForm(){
       if(item){
         var content_length = content.length;
         var post_image = item.post_image;
-        
+
         if(post_image){
           var postLargeImage = this.state.uploadDir+'user_'+user_id+'/'+item.post_image;
 
@@ -608,79 +650,79 @@ resetEmailForm(){
   }
   }
 
-  getNestedChildren(arr, parent) {
-  var out = []
-  for(var i in arr) {
-      if(arr[i].parent_id == parent) {
-          var children = this.getNestedChildren(arr, arr[i].id)
+//   getNestedChildren(arr, parent) {
+//   var out = []
+//   for(var i in arr) {
+//       if(arr[i].parent_id == parent) {
+//           var children = this.getNestedChildren(arr, arr[i].id)
+//
+//           if(children.length) {
+//               arr[i].children = children
+//           }
+//           out.push(arr[i])
+//       }
+//   }
+//   return out;
+// }
 
-          if(children.length) {
-              arr[i].children = children
-          }
-          out.push(arr[i])
-      }
-  }
-  return out;
-}
-
- _queryTreeSort(options) {
-   var cfi, e, i, id, o, pid, rfi, ri, thisid, _i, _j, _len, _len1, _ref, _ref1;
-
-  ri = [];
-  rfi = {};
-  cfi = {};
-  o = [];
-  _ref = options;
-  for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
-  var  id = options[i].id || "id";
-  var  pid = options[i].parentid || "parentid";
-    e = _ref[i];
-    rfi[e[id]] = i;
-    if (cfi[e[pid]] == null) {
-      cfi[e[pid]] = [];
-    }
-    cfi[e[pid]].push(options[i][id]);
-  }
-  _ref1 = options;
-  for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-    var  id = options.id || "id";
-    var  pid = options.parentid || "parentid";
-    e = _ref1[_j];
-    if (rfi[e[pid]] == null) {
-      ri.push(e[id]);
-    }
-  }
-  while (ri.length) {
-    thisid = ri.splice(0, 1);
-    o.push(options.q[rfi[thisid]]);
-    if (cfi[thisid] != null) {
-      ri = cfi[thisid].concat(ri);
-    }
-  }
-  return o;
-};
-
-_makeTree (options) {
-  console.log(options);
-  var children, e, id, o, pid, temp, _i, _len, _ref;
-  id = options.id || "id";
-  pid = options.parentid || "parentid";
-  children = options.children || "children";
-  temp = {};
-  o = [];
-  _ref = options.newArr;
-  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-    e = _ref[_i];
-    e[children] = [];
-    temp[e[id]] = e;
-    if (temp[e[pid]] != null) {
-      temp[e[pid]][children].push(e);
-    } else {
-      o.push(e);
-    }
-  }
-  return o;
-};
+//  _queryTreeSort(options) {
+//    var cfi, e, i, id, o, pid, rfi, ri, thisid, _i, _j, _len, _len1, _ref, _ref1;
+//
+//   ri = [];
+//   rfi = {};
+//   cfi = {};
+//   o = [];
+//   _ref = options;
+//   for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+//   var  id = options[i].id || "id";
+//   var  pid = options[i].parentid || "parentid";
+//     e = _ref[i];
+//     rfi[e[id]] = i;
+//     if (cfi[e[pid]] == null) {
+//       cfi[e[pid]] = [];
+//     }
+//     cfi[e[pid]].push(options[i][id]);
+//   }
+//   _ref1 = options;
+//   for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+//     var  id = options.id || "id";
+//     var  pid = options.parentid || "parentid";
+//     e = _ref1[_j];
+//     if (rfi[e[pid]] == null) {
+//       ri.push(e[id]);
+//     }
+//   }
+//   while (ri.length) {
+//     thisid = ri.splice(0, 1);
+//     o.push(options.q[rfi[thisid]]);
+//     if (cfi[thisid] != null) {
+//       ri = cfi[thisid].concat(ri);
+//     }
+//   }
+//   return o;
+// };
+//
+// _makeTree (options) {
+//   console.log(options);
+//   var children, e, id, o, pid, temp, _i, _len, _ref;
+//   id = options.id || "id";
+//   pid = options.parentid || "parentid";
+//   children = options.children || "children";
+//   temp = {};
+//   o = [];
+//   _ref = options.newArr;
+//   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+//     e = _ref[_i];
+//     e[children] = [];
+//     temp[e[id]] = e;
+//     if (temp[e[pid]] != null) {
+//       temp[e[pid]][children].push(e);
+//     } else {
+//       o.push(e);
+//     }
+//   }
+//   return o;
+// };
 
  buildHierarchy(arry) {
 
@@ -727,7 +769,7 @@ loadChild(child){
       var commentBox = (
         <div className="comenting_form border-top_cf">
         <img className="uk-comment-avatar" src={this.getProfileImage(userAuthSession.userObject.profile_image,userAuthSession.userObject.id)} alt="" width="40" height="40"/>
-        <textarea placeholder="Write Comment..." ref="postCommentContent" value={this.state.replyContent} onChange={(e)=>this.setState({replyContent:e.target.value})}></textarea>
+        <textarea placeholder="Write Comment..."  value={this.state.replyContent} onChange={(e)=>this.setState({replyContent:e.target.value})}></textarea>
         <a onClick={this.handleClickReplyComment.bind(this,item.id,item.post_id)} className="uk-button uk-button-primary comment_btn">Send</a>
         </div>
       );
@@ -792,7 +834,7 @@ loadChild(child){
       var commentBox = (
         <div className="comenting_form border-top_cf">
         <img className="uk-comment-avatar" src={this.getProfileImage(userAuthSession.userObject.profile_image,userAuthSession.userObject.id)} alt="" width="40" height="40"/>
-        <textarea placeholder="Write Comment..." ref="postCommentContent" value={this.state.replyContent} onChange={(e)=>this.setState({replyContent:e.target.value})}></textarea>
+        <textarea placeholder="Write Comment..."  value={this.state.replyContent} onChange={(e)=>this.setState({replyContent:e.target.value})}></textarea>
         <a onClick={this.handleClickReplyComment.bind(this,item.id,item.post_id)} className="uk-button uk-button-primary comment_btn">Send</a>
         </div>
       );
@@ -826,38 +868,7 @@ loadChild(child){
 
     return(
       {commentElement}
-    //   <li>
-    //       <article className="uk-comment">
-    //           <header className="uk-comment-header">
-    //               <img className="uk-comment-avatar" src="public/images/user.jpg" alt="" width="40" height="40"/>
-    //               <h4 className="uk-comment-title">Author</h4>
-    //               <div className="uk-comment-meta"><span>email@gmail.com</span> | Los Angeles, CA</div>
-    //           </header>
-    //           <div className="uk-comment-body">
-    //               <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.</p>
-    //           </div>
-    //       </article>
-    //       {/* <ul>
-    //           <li>
-    //               <article className="uk-comment">
-    //                   <header className="uk-comment-header">
-    //                       <img className="uk-comment-avatar" src="public/images/user.jpg" alt="" width="40" height="40"/>
-    //                       <h4 className="uk-comment-title">Author</h4>
-    //                       <div className="uk-comment-meta"><span>email@gmail.com</span> | Los Angeles, CA</div>
-    //                   </header>
-    //                   <div className="uk-comment-body">
-    //                       <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.</p>
-    //                   </div>
-    //               </article>
-    //
-    //               <div className="comenting_form">
-    //                 <img className="uk-comment-avatar" src="public/images/user.jpg" alt="" width="40" height="40"/>
-    //                 <textarea placeholder="Write Comment..."></textarea>
-    //                 <input type="submit" value="Send"/>
-    //               </div>
-    //         </li>
-    //     </ul> */}
-    // </li>
+
     )
   }
 
@@ -883,7 +894,7 @@ loadChild(child){
 
     				<div className="comenting_form border-top_cf">
     				<img className="uk-comment-avatar" src={this.getProfileImage(user.profile_image,user.id)} alt="" width="40" height="40"/>
-    				<textarea placeholder="Write Comment..." ref="postCommentContent"></textarea>
+    				<textarea placeholder="Write Comment..." value={this.state.postComment} onChange={(e)=>this.setState({postComment:e.target.value})}></textarea>
     				<a onClick={this.handleClickPostComment} className="uk-button uk-button-primary comment_btn">Send</a>
     				</div>
 
