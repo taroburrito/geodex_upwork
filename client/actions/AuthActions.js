@@ -238,7 +238,11 @@ export function attemptLogin(email, password, role) {
 				if (data.error){
 					dispatch(loginFail(data.error));
 				} else {
+					var storageData=data;
+					storageData['isLoggedIn']=true;
+					localStorage.setItem("userData",JSON.stringify(storageData));
 					dispatch(loginSuccess(data));
+
 				}
 			})
 			.fail(function(a,b,c,d) {
@@ -249,21 +253,32 @@ export function attemptLogin(email, password, role) {
 }
 
 export function checkSessionStatus(email, password) {
-  return (dispatch) => {
-    dispatch(startedSessionCheck());
-
-    $.ajax({
-			type: 'POST',
-			url: '/checkSession',
-			data: {} })
-			.done(function(result) {
-				dispatch(checkedSessionStatus(result));
-			})
-			.fail(function(a,b,c,d) {
-			   console.log('failed to check',a,b,c,d);
-			  //dispatch(checkedSessionStatus("TODO find the error..."));
-			});
-  }
+	var sessionData=localStorage.getItem("userData");
+	if(sessionData){
+		return (dispatch)=>{
+			//dispatch(startedSessionCheck());
+			dispatch(checkedSessionStatus(JSON.parse(sessionData)));
+		}
+	}else{
+		return (dispatch)=>{
+			dispatch(checkedSessionStatus("TODO find the error..."));
+		}
+		/*return (dispatch) => {
+		    dispatch(startedSessionCheck());
+		    $.ajax({
+					type: 'POST',
+					url: '/checkSession',
+					data: {} })
+					.done(function(result) {
+						dispatch(checkedSessionStatus(result));
+					})
+					.fail(function(a,b,c,d) {
+					   console.log('failed to check',a,b,c,d);
+					  //dispatch(checkedSessionStatus("TODO find the error..."));
+					});
+		  }*/
+	}
+  
 }
 
 export function attemptLogout(){
@@ -274,6 +289,7 @@ export function attemptLogout(){
 	      type: 'POST',
 	      url: '/logout'})
 			  .done(function() {
+			  		localStorage.removeItem("userData");
 					dispatch(logoutSuccess());
 			  })
 			  .fail(function() {
