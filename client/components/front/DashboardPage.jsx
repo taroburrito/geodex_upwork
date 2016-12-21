@@ -4,8 +4,10 @@ import { Navigation, Link } from 'react-router';
 import { validateDisplayName, } from '../../utilities/RegexValidators';
 var AvatarEditor = require('react-avatar-editor');
 var Slider = require('react-slick');
+//import Slider from 'react-image-slider';
 var Loading = require('react-loading');
-var Carousel = require('nuka-carousel');
+
+import ImageGallery from 'react-image-gallery';
 
 function generateUUID(){
   //Note: this is a simple implentation for this project. //TODO create a better one
@@ -29,7 +31,8 @@ export default class DashboardPage extends Component {
     this.handleChangeSort = this.handleChangeSort.bind(this);
     this.sortByAllCategory = this.sortByAllCategory.bind(this);
     this.handleClickPostComment = this.handleClickPostComment.bind(this);
-    this.prevSlide = this.prevSlide.bind(this);
+    this.onSlide = this.onSlide.bind(this);
+    this.clickSlider = this.clickSlider.bind(this);
     this.state ={
       errorMessage: null,
     //  image: "public/images/user.jpg",
@@ -49,7 +52,8 @@ export default class DashboardPage extends Component {
       showCommentBox:null,
       replyContent:null,
       postComment:null,
-      currentSlide:null
+      currentSlide:0,
+      loadPostContent:false,
 
     }
   }
@@ -61,8 +65,16 @@ export default class DashboardPage extends Component {
     this.setState({uploadDir:uploadDir,loading:true});
     this.props.fetchInitialData(userAuthSession.userObject.id,null);
   }
-  prevSlide(){
-    this.refs.test.slickPrev()
+  onSlide(e){
+    var postId = this._imageGallery.props.items[e].postId;
+    this.props.fetchComments(postId);
+    //this.loadPostContent(postId,this.state.clickedUser,null,null,e);
+    this.setState({clickedPost:postId});
+    console.log(e);
+    console.log(this._imageGallery.props.items[e].postId);
+  }
+  clickSlider(e){
+
   }
   componentDidMount(){
 
@@ -372,11 +384,16 @@ resetEmailForm(){
   });
   return matches.concat(non_matches);
 }
-
+imageSlideTo(e){
+  console.log("ee:"+e);
+  this._imageGallery.slideToIndex(e)
+}
   renderFriendsPostImagesLargeSlider(user_id){
 
-    console.log("large slider");
-    console.log(this.state.clickedPost);
+    if(this._imageGallery){
+      //return null;
+    }
+
      const{dashboardData} = this.props;
      var friendsPosts = dashboardData.friendsPostImages;
      var friend_post_images;
@@ -386,54 +403,37 @@ resetEmailForm(){
          var newPost = this.sortImages(friendsPost, e => e.id === this.state.clickedPost);
 
        var friendElement = [];
-       var i = 1;
+       var i = 0;
        Object.keys(newPost).forEach((postImage)=> {
 
          var postContent = newPost[postImage];
          var postImageSrc = this.state.uploadDir+"user_"+postContent.user_id+"/"+postContent.post_image;
          if(postImage)
          friendElement.push(
-             <div key={postContent.i} className="main-box"><img src={postImageSrc}/></div>
+           {
+             original:postImageSrc,
+             postId:postContent.id,
+           }
+
          );
          i++;
 
        });
 
-
-
-       const settings = {
-         slidesToShow:1,
-         infinite:false,
-         centerMode:true,
-         lazyLoad:true,
-        //  afterChange:function(nextSlide){
-        //    console.log(nextSlide);
-        //    console.log(this.porps);
-        //  },
-        //  beforeChange:function(current,next){
-        //    console.log("current:"+current);
-        //    console.log("next:"+next);
-        //  },
-         //
-        //  prevArrow: customPrevIcon,
-        //  nextArrow: customNextIcon,
-       }
-
-
-      return(
-        <div>
-          <Slider {...settings} ref="test">
-            {friendElement}
-            </Slider>
-            <div style={{textAlign: 'center'}}>
-          <button className='button' onClick={this.prevSlide}>Previous</button>
-          <button className='button' onClick={this.prevSlide}>Next</button>
-        </div>
-
-        </div>
+       return(
+        <ImageGallery
+        ref={i => this._imageGallery = i}
+        items={friendElement}
+        slideInterval={2000}
+        startIndex={this.state.currentSlide}
+        onSlide={this.onSlide}
+        //onClick={this.clickSlider}
+      //  onImageLoad={this.imageSlideTo.bind(this,this.state.currentSlide)}
+        />
 
       );
      }
+
     //console.log(friendsPost);
 
   }
@@ -469,13 +469,9 @@ resetEmailForm(){
        const settings = {
          slidesToShow:3,
          infinite:false,
-         slikGoTo:this.state.currentSlide
+        // slikGoTo:this.state.currentSlide
        };
-
-
-
-
-      return(
+       return(
         <div>
           <Slider {...settings}>
             {friendElement}
@@ -494,15 +490,15 @@ resetEmailForm(){
   renderImageContentModel(){
     const{userAuthSession} = this.props;
     var user = userAuthSession.userObject;
-    console.log(this.state); console.log("***");
+
     return(
       <div id="postImageModel" className="uk-modal coment_popup">
           <div className="uk-modal-dialog uk-modal-dialog-blank">
           <button className="uk-modal-close uk-close" type="button"></button>
             <div className="uk-grid">
 
-              <div className="uk-width-small-3-5 popup_img_left">
-				            {this.state.postLargeImage?<img src={this.state.postLargeImage} className="custom_img_pop_style"/>:this.renderFriendsPostImagesLargeSlider(this.state.clickedUser)}
+              <div className="uk-width-small-3-5 popup_img_left" ref="largeSliderContent">
+				            {this.renderFriendsPostImagesLargeSlider(this.state.clickedUser)}
 				      </div>
               <div className="uk-width-small-2-5 popup_img_right">
 
@@ -529,9 +525,15 @@ resetEmailForm(){
   loadPostContent(postId,userId,popupImage,popupContent,currentSlide){
 
     if(currentSlide){
-      this.setState({currentSlide:currentSlide});
+      //this.setState({loadPostContent:true})
+      this.setState({currentSlide:0});
+      //this.refs.largeSliderContent.getDOMNode.innerHtml = "";
+      //ReactDOM.unmountComponentAtNode(this.refs.largeSliderContent);
+
+
     }
     this.props.fetchComments(postId);
+
     this.setState({clickedPost:postId,clickedUser:userId,getClickedUser:userId,postLargeImage:popupImage,popupContent:popupContent});
 
   }
@@ -1115,6 +1117,9 @@ loadChild(child){
     var userProfileData = userAuthSession.userObject;
     var content;
     var errorLabel;
+
+    console.log("all states");
+    console.log(this.state);
     if(userProfileData)
     return (
 
@@ -1173,14 +1178,7 @@ loadChild(child){
             {this.renderStatusModel()}
             {this.renderPostContentModel()}
             {this.renderImageContentModel()}
-            <Carousel>
-        <img src="http://placehold.it/1000x400/ffffff/c0392b/&text=slide1"/>
-        <img src="http://placehold.it/1000x400/ffffff/c0392b/&text=slide2"/>
-        <img src="http://placehold.it/1000x400/ffffff/c0392b/&text=slide3"/>
-        <img src="http://placehold.it/1000x400/ffffff/c0392b/&text=slide4"/>
-        <img src="http://placehold.it/1000x400/ffffff/c0392b/&text=slide5"/>
-        <img src="http://placehold.it/1000x400/ffffff/c0392b/&text=slide6"/>
-      </Carousel>
+
 
       </div>
 
@@ -1215,6 +1213,10 @@ var customNextIcon = React.createClass({
     return  <button className='button-right' {...this.props}>Next</button>
   }
 });
+
+
+
+
 
 // Wrap the component to inject dispatch and state into it
 export default connect(select)(DashboardPage);

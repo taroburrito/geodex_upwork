@@ -1429,7 +1429,16 @@ form.uk-search.search_dash_nav {
   position: absolute;
   width: 100%;
 }
-
+.image-gallery-slide img{
+  display: inline-block !important;
+  float: none !important;
+  left: 50%;
+  margin: 0 !important;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: auto!important;
+}
 .popup_img_left .slick-slide img {
   display: inline-block !important;
   float: none !important;
