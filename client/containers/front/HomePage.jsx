@@ -7,9 +7,9 @@ import DashboardPage from '../../components/front/DashboardPage';
 import Navbar from '../../components/Navbar';
 import { attemptLogout } from '../../actions/AuthActions';
 //import {addCategory} from '../../actions/CategoryActions';
-//import {addPost} from '../../actions/PostActions';
+import {fetchCommentsByPost, addPost,postComment} from '../../actions/PostActions';
 import {getUserDetail, fetchDashboardData} from '../../utilities/ServerSocket';
-import {updatefriendsList, addPost, addCategory} from '../../actions/UserActions';
+import {updatefriendsList,updateDashboardFriendList, addCategory,setMessageToDefault, sendEmailFromDashboar} from '../../actions/UserActions';
 
 class HomePage extends Component{
   constructor(props){
@@ -25,8 +25,13 @@ class HomePage extends Component{
       return(
         <div className="full_width">
         <DashboardPage
-          updateFriendList={(friendList)=>
-          dispatch(updatefriendsList(friendList))}
+          setMessageToDefault={()=>
+          dispatch(setMessageToDefault())}
+          fetchComments={(postId)=>
+          dispatch(fetchCommentsByPost(postId))}
+          comments={this.props.comments}
+          updateDashboardFriendList={(friendList)=>
+          dispatch(updateDashboardFriendList(friendList))}
           posts={this.props.posts}
           friendsPosts={this.props.friendsPosts}
           onClickSavePost={(data)=>
@@ -36,10 +41,13 @@ class HomePage extends Component{
           categories={this.props.categories}
           friends={this.props.friendsList}
           userAuthSession = {this.props.userAuthSession}
-          fetchInitialData={(id)=>fetchDashboardData(id)}
+          fetchInitialData={(id,catId)=>fetchDashboardData(id,catId)}
           userProfileData={this.props.userProfileData}
           handleMessage={this.props.handleMessage}
-          dashboardData={this.props.dashboardData}/>
+          dashboardData={this.props.dashboardData}
+          sendEmail={(to,from,content)=>
+          dispatch(sendEmail(to,from,content))}
+          postComment = {(req)=>dispatch(postComment(req))}/>
         </div>
       );
     }else{
@@ -67,7 +75,8 @@ function select(state) {
   handleMessage: state.handleMessage,
   posts:state.postsList,
   friendsPosts: state.friendsPosts,
-  dashboardData: state.dashboardData
+  dashboardData: state.dashboardData,
+  comments:state.postComments,
   };
 }
 

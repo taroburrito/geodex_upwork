@@ -11,14 +11,17 @@ function addAuthRoute(app, passport, routePath, strategy) {
     app.post(routePath, function (req, res, next) {
         passport.authenticate(strategy, function (err, user, info) {
             if (err) {
+              err.status = 400;
                 return next(err);
             }
             if (!user) {
+              info.status = 400;
                 return res.json(info);
             }
             if (user) {
                 req.logIn(user, function (err) {
                     if (err) {
+                      err.status = 400;
                         return next(err);
                     }else{
 
@@ -42,7 +45,7 @@ module.exports = function (app, passport) {
     app.post('/logout', authenticationMiddleware.isLoggedIn, function (req, res) {
         req.logout();
         req.session.destroy();
-        return res.json('logged out :)');
+        return res.json({status:200,success:"Logged out successfully"});
     });
 
     app.post('/checkSession', function (req, res) {
@@ -54,13 +57,15 @@ module.exports = function (app, passport) {
             //         email: req.user.email
             //     }
             // });
+
+
             req.user.isLoggedIn = isLoggedIn;
             userModel.getLoggedInUserData(req.user.id, function (result) {
               var final_result = Object.assign({},req.user,result);
                 return res.json(final_result);
             });
           }else {
-              return res.json({isLoggedIn: isLoggedIn});
+              return res.json({isLoggedIn: isLoggedIn,status:400,error:"Not logged in"});
             }
 
         //return res.json({isLoggedIn: isLoggedIn});

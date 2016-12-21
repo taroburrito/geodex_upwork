@@ -69,8 +69,8 @@ module.exports = {
             });
 
 //          Viseted user detail
-            socket.on('visited-user-detail',function(userId){
-                userModel.getUserProfile(userId,function(result){
+            socket.on('visited-user-detail',function(userId,profileId){
+                userModel.getVisitedProfileData(userId,profileId,function(result){
                   socket.emit("visitedUserDetail",result);
                   // userModel.getAllFriends(userId,function(res){
                   //   var final_result = Object.assign({},result,res);
@@ -87,13 +87,20 @@ module.exports = {
                 })
               });
 
-              socket.on('fetch-dashboard-data',function(userId){
+              socket.on('fetch-dashboard-data',function(userId,catId){
 
-                userModel.getDashboardData(userId,function(result){
+                userModel.getDashboardData(userId,catId,function(result){
 
                   socket.emit("dashboad-data", result);
                 })
               });
+
+              socket.on('get-categories-by-user', function(userId){
+                userModel.getCategoryByUserId(userId, function (result) {
+                  socket.emit("categories-by-user", result);
+               }
+              );
+              })
 
 
 

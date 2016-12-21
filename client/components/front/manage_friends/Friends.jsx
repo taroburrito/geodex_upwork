@@ -15,13 +15,42 @@ export default class Friends extends Component {
 
   }
   handleClickBlock(){
-    this.props.onClickBlock(this.props.sender_id,this.props.receiver_id,'23');
+  //  this.props.onClickBlock(this.props.sender_id,this.props.receiver_id,'23');
   }
   handleClickUnblock(){
 
   }
-  render() {
+  handleChangeFriendCat(friendId){
+    const {userAuthSession} = this.props;
+    var catId = this.refs.category.getDOMNode().value;
+    var userId = userAuthSession.userObject.id;
+    this.props.onChangeFriendCat(userId,friendId,catId);
+  }
 
+  renderCategoryOption(){
+
+    const{categories} = this.props;
+    var catOptions = [];
+    var category_id;
+    if(categories){
+      Object.keys(categories).forEach((catId)=>{
+
+        var item = categories[catId];
+       category_id = item.id;
+
+        catOptions.push(<option key={item.id} value={item.id}>{item.category_name}</option>);
+      });
+    }
+    return(
+
+      {catOptions}
+
+    )
+  }
+  render() {
+    const{categoryData} = this.props;
+    console.log(categoryData);
+    console.log("****");
     var img;
     if(this.props.profile_image){
       img = this.props.profile_image;
@@ -41,7 +70,7 @@ export default class Friends extends Component {
     var view_link = "/user/"+this.props.user_id;
 
     return (
-      <div className="uk-width-small-1-3 add_friend">
+      <div className="uk-width-small-1-3 add_friend custom-freind">
         <div className="af_border">
           <div className="uk-grid uk-grid-small">
             <div className="uk-width-2-10 user_img_left"><img src={img} className=""/></div>
@@ -62,6 +91,13 @@ export default class Friends extends Component {
                    </div>
                   </div>
                 </div>
+              </div>
+              <div className="category-select">
+                <span>Category:</span>
+                <select ref="category" onChange={this.handleChangeFriendCat.bind(this,this.props.user_id)} value={categoryData?categoryData.category_id:0}>
+                  <option value="0">Please Select</option>
+                {this.renderCategoryOption()}
+              </select>
               </div>
             </div>
           </div>

@@ -10,13 +10,18 @@ constructor(props){
 componentWillMount(){
   const{userAuthSession} = this.props;
   this.props.fetchInitialData(userAuthSession.userObject.id);
+  this.props.getCategories(userAuthSession.userObject.id);
 
 }
 
 render(){
   return(
     <div className="uk-container uk-container-center middle_content dashboad">
-      <FriendsList friendsList={this.props.friendsList}
+      <FriendsList
+        onChangeFriendCat={this.props.onChangeFriendCat}
+        userAuthSession={this.props.userAuthSession}
+        categories = {this.props.categories}
+         friendsData={this.props.friendsData}
          onClickBlock={this.props.onClickBlock}
          onDeleteClick={this.props.onDeleteClick}/>
   </div>

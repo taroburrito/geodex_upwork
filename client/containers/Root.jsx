@@ -32,6 +32,8 @@ import Dashboard from './admin/Dashboard';
 import ManageCategory from './admin/ManageCategory';
 import ManagePages from './admin/ManagePages';
 import Pages from './admin/Pages';
+import ManageUsers from './admin/ManageUsers';
+import ViewProfilePage from './admin/ViewProfilePage';
 
 
 // Static Pages
@@ -59,6 +61,8 @@ var routes = (
     <Route path="login" component={MainLoginPage} view="admin"/>
     <Route path="manage_category" component={ManageCategory} view="admin"/>
     <Route path="manage_pages" component={ManagePages} view="admin"/>
+    <Route path="manage_users" component={ManageUsers} view="admin"/>
+    <Route path="profile/:id" component={ViewProfilePage} view="admin"/>
     <Route path="addPage" component={Pages} view="user"/>
     <Route path="editPage/:id" component={EditPage}/>
     <Route path="dash" component={Dashboard} view="admin"/>

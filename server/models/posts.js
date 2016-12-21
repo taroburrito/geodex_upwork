@@ -3,10 +3,10 @@
  */
 var mysql = require('mysql');
 var dbConnectionCreator = require('../utilities/mysqlConnection.js');
+var common = require('../utilities/common.js');
 var moment = require('moment');
 
 var postModel = {
-
   convertRowsToPostObject: function (row) {
     return {
         id: row.id,
@@ -17,9 +17,7 @@ var postModel = {
         created: row.created,
         modified:row.modified
     };
-
   },
-
   convertRowsToObject: function (rows) {
       var objString=JSON.stringify(rows);
       var obj=JSON.parse(objString);
@@ -28,27 +26,54 @@ var postModel = {
   },
 
     createPost: function (formData, callback) {
+      if(!formData.image){
+        var image = null;
+      }else{
+        var uploadImage = common.uploadPostImage(formData.image,formData.user_id);
+        if(uploadImage){
+          formData.image = uploadImage;
+        }else{
+          dbConnection.end();
+          return(callback({error:"Error in uploading"}));
+        }
+
+        //return(callback({error:uploadImage}));
+        // var image = common.decodeBase64Image(formData.image);
+        // var newPath = 'public/images/test.jpg';
+        //    // make copy of image to new location
+        //    fs.writeFile(newPath, image.data, (err) => {
+        //      if(err){
+        //        return(callback({error:err}));
+        //      }
+        //      return(callback({file:newPath}));
+        //
+        //    });
+          //return(callback({data:image.data}));
+      }
+
+    //  return(callback({success:"die here"}))
+
         var dbConnection = dbConnectionCreator();
         var createPostSqlString = constructCreatePostSqlString(formData);
 
         dbConnection.query(createPostSqlString, function (error, results, fields) {
             if (error) {
-                dbConnection.destroy();
-                return (callback({error: error, when: "inserting"}));
+
+                dbConnection.end(); return(callback({error: error, when: "inserting", status:400}));
             } else if (results.affectedRows === 1) {
                 var last_insert_id = results.insertId;
                 var createGetPostsByIdSql = constructGetPostById(last_insert_id);
                 dbConnection.query(createGetPostsByIdSql,function(error1,result1,fields1){
                   if(error1){
-                    return (callback({error: "Error while fetching last data"}));
+                    dbConnection.end(); return(callback({error: "Error while fetching last data", status:400}));
                   }else{
                     var posts = {};
-                    return (callback({post: postModel.convertRowsToPostObject(result1[0])}));
+                    dbConnection.end(); return(callback({status:200,post: postModel.convertRowsToPostObject(result1[0])}));
                   }
                 });
 
             }else{
-              return(callback({error:"Error in post query"}));
+              return(callback({error:"Error in post query", status:400}));
             }
         });
     },
@@ -59,10 +84,10 @@ var postModel = {
 
       dbConnection.query(createGetPostsByUserSql,function(error, results, fields){
         if(error){
-          return (callback({error: error}));
+          dbConnection.end(); return(callback({error: error}));
         }else{
 
-          return (callback({success:results}));
+          dbConnection.end(); return(callback({success:results}));
         }
       });
     },
@@ -73,10 +98,10 @@ var postModel = {
 
       dbConnection.query(createGetPostsByIdSql,function(error, results, fields){
         if(error){
-          return (callback({error: error}));
+          dbConnection.end(); return(callback({error: error}));
         }else{
 
-          return (callback({success:results}));
+          dbConnection.end(); return(callback({success:results}));
         }
       });
     },
@@ -110,15 +135,81 @@ var postModel = {
             // });
 
 
-            return (callback({friendsPost:results}));
+            dbConnection.end(); return(callback({friendsPost:results}));
           }
         });
 
+    },
+
+    /*
+    getComments
+    params:postId
+    return:comments object or error
+    */
+    getComments: function(postId,callback){
+        var dbConnection = dbConnectionCreator();
+        var getCommentsByPostSqlString = constructGetCommentsByPostSqlString(postId);
+        dbConnection.query(getCommentsByPostSqlString, function(error,results,fields){
+          if(error){
+            dbConnection.end();
+            return(callback({status:400,error:"Error in comments query"}));
+          }else if (results.length == 0) {
+            dbConnection.end();
+            return(callback({status:400, error:"No comments found for this post"}));
+          }else {
+            var comments = [];
+            results.forEach(function (result) {
+              comments.push(postModel.convertRowsToObject(result));
+                // comments[result.id] = postModel.convertRowsToObject(result);
+            });
+            dbConnection.end();
+            return(callback({status:200,comments}));
+          }
+        })
+    },
+
+    postComment: function(data,callback){
+      var dbConnection = dbConnectionCreator();
+      var postCommentSqlString = constructPostCommentSqlString(data);
+      dbConnection.query(postCommentSqlString,function(error,results,fields){
+        if (error) {
+          return(callback({error:"Error in post comment",status:400,query:postCommentSqlString}));
+        }else if (results.affectedRows === 1) {
+          return(callback({success:"Success post comment",status:200}));
+        }else{
+          return(callback({error:"Error in post comment query",status:400}));
+        }
+      });
     }
 
 
-
 };
+
+function constructPostCommentSqlString(data){
+  var timestamp = moment();
+  var formatted = timestamp.format('YYYY-MM-DD HH:mm:ss Z');
+  var query = "INSERT INTO gx_post_comments SET " +
+          "  post_id = " + mysql.escape(data.post_id) +
+          ", parent_id = " + mysql.escape(data.parent_id) +
+          ", user_id = " + mysql.escape(data.user_id) +
+          ", comment = " + mysql.escape(data.comment) +
+          ", status = " + mysql.escape(data.status) +
+          ", created = " + mysql.escape(formatted);
+  return query;
+}
+
+function constructGetCommentsByPostSqlString(postId){
+  var sql = "SELECT a.*,"+
+            "CONCAT(b.first_name, ' ', b.last_name) NAME,"+
+            "b.profile_image,b.address, c.email"+
+            " from gx_post_comments as a,"+
+            " gx_user_details as b,"+
+            " gx_users as c"+
+            " WHERE b.user_id = a.user_id"+
+            " AND c.id  = a.user_id"+
+            " AND post_id="+postId;
+  return sql;
+}
 
 function constructGetAllFriendsPostsSql(friends){
   var friends_str = friends.toString();

@@ -2,11 +2,12 @@ import { combineReducers } from 'redux';
 import { updateUserInfo, verifyToken, forgotPasswordResult, updateError} from './AuthReducer';
 import { updateUniversalTodoList, updateUniversalUnsavedTodoList } from './TodoReducer';
 import { updateProfileData,userProfileData, visitedUserData } from './ProfileReducer';
-import {getAllFriendsList, getUserData, getAllFriendsPosts, updateDashboardData, friendRequests} from './UserReducer';
+import {getAllFriendsList, getUserData, getAllFriendsPosts, updateDashboardData, friendRequests, searchUsersResult} from './UserReducer';
 import { updateCategoryList, handleMessage} from './CategoryReducer';
 import { updatePagesList, getPageData } from './PageReducer';
-import { updatePostsList} from './PostReducer';
+import { updatePostsList, updateComments} from './PostReducer';
 import { handleFrontMessage} from './CommonReducer';
+import {updateUserList, viewProfile} from './AdminReducer';
 // import { Add_Todo, Complete_Todo, Set_Visibility_Filter, VisibilityFilters  } from '../actions/TodoActions';
 // const { Show_All } = VisibilityFilters;
 
@@ -22,7 +23,7 @@ import { handleFrontMessage} from './CommonReducer';
 //   }
 // }
 
-const RootReducer = combineReducers({
+const AppReducer = combineReducers({
   // visibilityFilter: updateVisibilityFilter, //TODO implement or remove...
   universalTodos: updateUniversalTodoList,
   universalCategories: updateCategoryList,
@@ -40,6 +41,10 @@ const RootReducer = combineReducers({
   dashboardData:updateDashboardData,
   updateMessage:handleFrontMessage,
   friendRequests:friendRequests,
+  searchResult: searchUsersResult,
+  postComments: updateComments,
+  userList:updateUserList,
+  userProfile:viewProfile,
 
   //For viewing profiles.
   userProfileData:userProfileData,
@@ -48,5 +53,13 @@ const RootReducer = combineReducers({
   updateProfileData: updateProfileData
 
 });
+
+const RootReducer = (state, action) => {
+  if (action.type === 'Logout_Success') {
+    state = undefined
+  }
+
+  return AppReducer(state, action)
+}
 
 export default RootReducer;

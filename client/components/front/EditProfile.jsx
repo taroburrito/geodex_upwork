@@ -7,7 +7,7 @@ import Datetime from 'react-datetime'
 import ChangePassword from './ChangePassword';
 import { validateEmail, validateDisplayName, validatePassword,validateDate } from '../../utilities/RegexValidators';
 require('react-datetime/css/react-datetime.css');
-import {updateProfileInput,updateUserProfileData,updateUserData} from '../../actions/ProfileActions';
+import {updateProfileInput,updateUserProfileData} from '../../actions/ProfileActions';
 var AvatarEditor = require('react-avatar-editor');
 
 const initialFormState ={
@@ -50,16 +50,14 @@ export default class EditProfile extends Component {
    // this.setState({ preview: img});
     const {dispatch, userAuthSession}=this.props;
     var userData = userAuthSession.userObject;
-    userData.profile_image = img;
+    //userData.profile_image = img;
     var req={
       id:userData.id,
       field:'profile_image',
       val: img
     }
     //if(dispatch(updateUserProfileData(userData))){
-    if(dispatch(updateUserData(req))){
-
-    }
+    this.props.updateUserImage(req);
     //}
 
   }
@@ -79,9 +77,7 @@ export default class EditProfile extends Component {
     }
 
     // update user data for specific field
-     if(dispatch(updateUserData(req))){
-     //dispatch(updateProfileInput('cover_image',img));
-     }
+     this.props.updateUserImage(req);
 
   }
 
@@ -181,14 +177,26 @@ dateVal(date){
     return year+'/'+month+'/'+day;
 }
 
-getProfileImage(img){
-   if(img){
-    return img;
-  }else{
-   return "public/images/user.jpg";
+
+getProfileImage(img,userId){
+
+     if(img){
+       var imageSrc = "uploads/images/user_"+userId+"/"+img;
+      return imageSrc;
+    }else{
+     return "public/images/user.png";
+    }
+
   }
 
-}
+  getImageSrc(img){
+    if(img){
+
+     return img;
+   }else{
+    return "public/images/user.png";
+   }
+  }
 
 handleImageChange(evt) {
     var self = this;
@@ -325,7 +333,7 @@ renderProfileModel(){
     <div id="profilepic" className="uk-modal profile-modal" >
        <div className="uk-modal-dialog">
            <AvatarEditor
-             image={this.getProfileImage(this.state.profile_image)}
+             image={this.getImageSrc(this.state.profile_image)}
              ref="avatar"
              width={250}
              height={250}
@@ -361,7 +369,7 @@ renderCoverModel(){
     <div id="coverImage" className="uk-modal profile-modal" >
        <div className="uk-modal-dialog custom-width">
            <AvatarEditor
-             image={this.getProfileImage(this.state.cover_image)}
+             image={this.getImageSrc(this.state.cover_image)}
              ref="cover"
              width={1300}
              height={215}
@@ -390,13 +398,16 @@ renderCoverModel(){
 
     const { dispatch,userAuthSession} = this.props;
     var userData = userAuthSession.userObject;
+
     if(!userData.cover_image){
     var background_profile_css ={
       backgroundImage: 'url(public/images/profile_banner.jpg)'
     }
   }else{
+    var coverImage = "uploads/images/user_"+userData.id+"/"+userData.cover_image;
     var background_profile_css ={
-      backgroundImage: 'url(' + userData.cover_image + ')'
+
+      backgroundImage: 'url(' + coverImage + ')'
     }
   }
 
@@ -418,16 +429,13 @@ renderCoverModel(){
          return (
 
             <div>
-
-             {this.renderProfileModel()}
-             {this.renderCoverModel()}
-                <div className="background_profile" style={background_profile_css}>
+              <div className="background_profile" style={background_profile_css}>
                     <div className="uk-container uk-container-center">
                         <div className="uk-grid uk-grid-large dash_top_head">
                             <div className="uk-width-small-1-2">
                                 <div className="uk-grid uk-grid-small">
                                     <div className="uk-width-3-10 user_img_left">
-                                        <img src={this.getProfileImage(userData.profile_image)} style={{borderRadius: this.state.borderRadius + 5 /* because of the 5px padding */}} />
+                                        <img src={this.getProfileImage(userData.profile_image,userData.id)} style={{borderRadius: this.state.borderRadius + 5 /* because of the 5px padding */}} />
                                         <a data-uk-modal="{target:'#profilepic'}" href="#" className="edit_profile_img_btn">Edit <i className="uk-icon-file-image-o"></i></a>
                                     </div>
                                     <div className="uk-width-7-10 pro_right">
@@ -465,6 +473,8 @@ renderCoverModel(){
                     </div>
 
                 </div>
+                {this.renderProfileModel()}
+                {this.renderCoverModel()}
             </div>
 
 

@@ -62,6 +62,7 @@ export function updateUserInfo(userAuthState = defaultStartState , action) {
   switch (action.type){
 
     case Started_Session_Check:
+    return Object.assign({}, userAuthState);
     case Clicked_Login:
     case Clicked_SignUp:
     case Clicked_Logout:
@@ -80,14 +81,19 @@ export function updateUserInfo(userAuthState = defaultStartState , action) {
     case Update_Profile_Input_Success:
     var prevState = Object.assign({}, userAuthState);
     prevState.userObject = action.data;
-    return Object.assign({}, userAuthState, prevState.userObject,{
+    console.log(prevState.userObject);
+    return Object.assign({}, prevState,{
       isLoggedIn: true,
       fetchingAuthUpdate: false,
         error: null
     });
       break;
 
-    case Login_Success:
+    case Login_Success:return Object.assign({}, userAuthState, action.userObject,{
+        isLoggedIn: true,
+        fetchingAuthUpdate: false,
+        error: null
+      });
     case SignUp_Success:
       return Object.assign({}, userAuthState, action.userObject,{
         isLoggedIn: true,
@@ -105,6 +111,8 @@ export function updateUserInfo(userAuthState = defaultStartState , action) {
       });
 
     case Checked_Session_Status:
+    console.log(action);
+    console.log("***");
       if (action.result.isLoggedIn){
         return Object.assign({}, userAuthState, {
           isLoggedIn: true,

@@ -3,10 +3,10 @@ import { connect } from 'react-redux';
 import { Navigation } from 'react-router';
 import ManageFriendsWidget from '../../components/front/ManageFriendsWidget';
 import Home from '../../components/front/Home';
-import {clickedBlockUser, clickedDeleteFriend} from '../../actions/UserActions';
+import {clickedBlockUser, clickedDeleteFriend, changeFriendCat} from '../../actions/UserActions';
 
 
-import { fetchFriendList } from '../../utilities/ServerSocket';
+import { fetchFriendList, getCategoryByUserId } from '../../utilities/ServerSocket';
 
 
 export default class ManageFriends extends Component {
@@ -22,8 +22,14 @@ export default class ManageFriends extends Component {
 
       return(
         <div className="full_width">
-        <ManageFriendsWidget fetchInitialData={(id)=>fetchFriendList(id)}
-                        friendsList={this.props.friendsList}
+        <ManageFriendsWidget
+                        onChangeFriendCat={(userId,friendId,catId)=>
+                          dispatch(changeFriendCat(userId,friendId,catId))}
+                        categories={this.props.categories}
+                        fetchInitialData={(id)=>fetchFriendList(id)}
+                        getCategories={(userId)=>
+                        getCategoryByUserId(userId)}
+                        friendsData={this.props.friendsData}
                        userAuthSession={userAuthSession}
                        onClickBlock={(senderId,receiverId,UserId)=>
                        dispatch(clickedBlockUser(senderId,receiverId,UserId))}
@@ -46,7 +52,8 @@ export default class ManageFriends extends Component {
 function select(state) {
   return {
     userAuthSession: state.userAuthSession,
-    friendsList: state.friendsListState,
+    friendsData: state.friendsListState,
+    categories: state.universalCategories
   };
 }
 

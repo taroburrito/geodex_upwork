@@ -13,6 +13,12 @@ export const Fetch_Freind_List = 'Fetch_Freind_List';
 export const Get_Visited_User_Data = 'Get_Visited_User_Data';
 export const Update_Profile_Input_Success = 'Update_Profile_Input_Success';
 export const Update_Profile_Input_Failed = 'Update_Profile_Input_Failed';
+export const Add_Friend_Request_Success = 'Add_Friend_Request_Success';
+export const Add_Friend_Request_Failed = 'Add_Friend_Request_Failed';
+export const Accept_Request_Success = 'Accept_Request_Success';
+export const Accept_Request_Failed = 'Accept_Request_Failed';
+export const Delete_Friend_Request_Success = 'Delete_Friend_Request_Success';
+export const Delete_Friend_Request_Failed = 'Delete_Friend_Request_Failed';
 
 	/*
      * other constants
@@ -89,10 +95,11 @@ export function handleSuccessMessage(msg){
 }
 
 export function updateUserProfileData(userData){
+  console.log(userData);
   return(dispatch) => {
     $.ajax({
       type:'Post',
-      url:'/api/v1/users/update/'+userData.id,
+      url:'/api/v1/users/update/',
       dataType:'JSON',
       data:userData,
     }).done(function(data){
@@ -111,8 +118,8 @@ export function updateUserProfileData(userData){
   }
 }
 
-export function updateProfileInputSuccess(userObject){
-  return{type: Update_Profile_Input_Success, data:userObject}
+export function updateProfileInputSuccess(userData){
+  return{type: Update_Profile_Input_Success, data:userData}
 }
 
 export function updateProfileInputFailed(error){
@@ -135,7 +142,7 @@ export function updateUserData(userData){
       }else{
         console.log("success update user data api");
         console.log(data);
-        dispatch(updateProfileInputSuccess(userData));
+        dispatch(updateProfileInputSuccess(data.userData));
       // /  dispatch(handleSuccessMessage("Updated Successfully"));
 
       }
@@ -144,4 +151,96 @@ export function updateUserData(userData){
     dispatch(updateProfileInputFailed("Error in update profiel"));
     })
   }
+}
+
+export function addFriendRequestSuccess(success,friendStatus){
+    return{type:Add_Friend_Request_Success, msg:success,friendStatus:friendStatus}
+}
+
+export function addFriendRequestFailed(error){
+  return{type:Add_Friend_Request_Failed, msg:error}
+}
+
+export function clickAddFriend(sender,receiver){
+
+  return(dispatch) => {
+
+    $.ajax({
+      type:'POST',
+      url:'/api/v1/user/addFriendRequest',
+      dataType:'json',
+      data:{sender:sender,receiver:receiver},
+    }).done(function(data){
+      console.log("Success add friend request :"+ JSON.stringify(data));
+      if(data.error){
+        dispatch(addFriendRequestFailed(data.error));
+      }else{
+        dispatch(addFriendRequestSuccess(data.success,data.friendStatus));
+      }
+    }).fail(function(error){
+      console.log("Error in add friend request:"+JSON.stringify(error));
+        dispatch(addFriendRequestFailed(error));
+    });
+  }
+}
+
+export function acceptRequestSuccess(msg){
+  return{type: Accept_Request_Success, success:msg}
+}
+
+export function acceptRequestFailed(msg){
+  return{type: Accept_Request_Failed, error:msg}
+}
+
+export function clickAcceptRequest(reqId){
+
+  return(dispatch) => {
+
+    $.ajax({
+      type:'POST',
+      url:'/api/v1/users/acceptFriendRequest/'+reqId,
+    }).done(function(data){
+      console.log("Success accept request :"+ JSON.stringify(data));
+      if(data.error){
+        dispatch(acceptRequestFailed(data.error));
+      }else{
+        dispatch(acceptRequestSuccess(data.success));
+      }
+    }).fail(function(error){
+      console.log("Error in accept request:"+JSON.stringify(error));
+      dispatch(acceptRequestFailed(error));
+    });
+
+  }
+}
+
+export function deleteFriendRequestSuccess(success){
+  return{type:Delete_Friend_Request_Success,success:success}
+}
+
+export function deleteFriendRequestFailed(error){
+  return{type:Delete_Friend_Request_Failed,error:error}
+}
+
+export function clickDenyFriendRequest(reqId) {
+
+  return (dispatch) => {
+
+    $.ajax({
+			type: 'DELETE',
+			url: '/api/v1/users/deleteFriendRequest/'+reqId
+    }).done(function(data) {
+				if (data.error){
+					console.log("delete friend works but error: ", data);
+						dispatch(deleteFriendRequestFailed(data.error));
+					} else {
+						console.log("delete friend success", data);
+						dispatch(deleteFriendRequestSuccess(data.success));
+					}
+				})
+			.fail(function(error) {
+				console.log("delete failure: ");
+			  dispatch(deleteFriendRequestFailed(error));
+			});
+    }
 }

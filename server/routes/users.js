@@ -54,6 +54,15 @@ var setUserRoutes = function (router) {
             }
     );
 
+    router.post('/api/v1/users/changeFriendCat',
+            function (req, res) {
+                userModel.changeFriendCat(req.body, function (result) {
+                   return res.json(result);
+                }
+                );
+            }
+    );
+
     router.post('/api/v1/users/changePassword',
             function (req, res) {
                 var email = req.body.email;
@@ -81,16 +90,12 @@ var setUserRoutes = function (router) {
             function (req, res) {
 
                 var email = req.body.email;
-                console.log(email);
                 userModel.generateForgotPasswordToken(email, function (result) {
                     if (result.result_token) {
                         var token = result.result_token;
                       userModel.sendForgotPasswordMail(token,'admin@geodex.com',email,'Reset Password',function(results){
-                        if(results.success){
-                            return res.json("success");
-                        }else{
-                          return res.json(results);
-                        }
+                        return res.json(results);
+
                     //return res.json("success");
                       });
 
@@ -101,7 +106,7 @@ var setUserRoutes = function (router) {
                 });
             }
     );
-    router.post('/api/v1/users/update/:id',
+    router.post('/api/v1/users/update/',
         function (req, res) {
 
           //  console.log(req.body);
@@ -117,11 +122,8 @@ var setUserRoutes = function (router) {
         function (req, res) {
 
             userModel.updateUserData(req.body, function(results){
-                if(results.success){
-                    return res.json(results);
-                }else{
-                    return res.json(results);
-                }
+              return res.json(results);
+
             });
 
         }
@@ -177,11 +179,20 @@ var setUserRoutes = function (router) {
         router.post('/api/v1/user/updateFriendList/:id',
             function(req,res){
 
-                userModel.updateFriendList(req.body,function(results){
-                  return res.json(results);
-                });
+                // userModel.updateFriendList(req.body,function(results){
+                //   return res.json(results);
+                // });
             }
           );
+
+          router.post('/api/v1/users/acceptFriendRequest/:reqId',
+              function(req,res){
+                  var reqId = req.params.reqId;
+                  userModel.acceptFriendRequest(reqId,function(results){
+                    return res.json(results);
+                  });
+              }
+            );
 
           /* Get all pending friend requests of a user*/
           router.get('/api/v1/users/getFriendRequests/:userId',
@@ -204,11 +215,42 @@ var setUserRoutes = function (router) {
             );
 
             router.delete('/api/v1/users/deleteFriendRequest/:id',
+
                 function(req,res){
                     userModel.deleteFriendRequest(req.params.id,function(results){
                       return res.json(results);
                     });
                 }
+              );
+
+              router.get('/api/v1/users/getCategoryByUserId/:userId',
+
+                      function (req, res) {
+                        return res.json({success:"Sdsds"});
+                          var userId = req.params.userId;
+                          // userModel.getCategoryByUserId(userId, function (result) {
+                          //    return res.json(result);
+                          // }
+                        //  );
+                      }
+              );
+
+              router.get('/api/v1/users/searchUser/:str',
+                      function (req, res) {
+                          var str = req.params.str;
+                          userModel.searchUser(str, function (result) {
+                              return res.json(result);
+                          }
+                          );
+                      }
+              );
+
+              router.post('/api/v1/users/sendEmailFromDashboard',function(req,res){
+                  userModel.sendEmailFromDashboard(req.body,function(result){
+                    return res.json(result);
+                  });
+
+              }
               );
 
 }

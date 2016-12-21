@@ -8,6 +8,9 @@ logs
 # Dependency directory
 **/node_modules
 
+
 **/.DS_STORE
 /nbproject/private/
 /server/config/config.js
+/client/uploads/
+/client/build/

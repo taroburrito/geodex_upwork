@@ -6,6 +6,7 @@ export const Hide_Message = 'Hide_Message';
 export const Handle_Error_Message = 'Handle_Error_Message';
 export const Update_Category_Failed = 'Update_Category_Failed';
 export const Update_Category_Success = 'Update_Category_Success';
+export const Fetch_Categories_By_User = 'Fetch_Categories_By_User';
 
 
 
@@ -37,6 +38,12 @@ export const Update_Category_Success = 'Update_Category_Success';
  export function updatedCategorySuccess(data){
    return{type: Update_Category_Success, data}
  }
+
+ export function fetchcategoriesByUserId(categories){
+   return{type: Fetch_Categories_By_User, categories};
+ }
+
+
 
 
 /*     Add Category           */

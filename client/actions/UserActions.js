@@ -7,13 +7,23 @@ export const Fetch_User_Data = 'Fetch_User_Data';
 export const Fetch_Friends_Posts = 'Fetch_Friends_Posts';
 export const Update_Friend_List = 'Update_Friend_List';
 export const Fetch_Dashboard_Data = 'Fetch_Dashboard_Data';
-export const Post_Added_Dashboard_Success = 'Post_Added_Dashboard_Success';
+//export const Post_Added_Dashboard_Success = 'Post_Added_Dashboard_Success';
 export const Category_Added_Dashboard_Success = 'Category_Added_Dashboard_Success';
 export const Fetch_Freind_Requests = 'Fetch_Freind_Requests';
 export const Confirm_Friend_Success = 'Confirm_Friend_Success';
 export const Confirm_Friend_Failed = 'Confirm_Friend_Failed';
 export const Delete_Friend_Request_Success = 'Delete_Friend_Request_Success';
 export const Delete_Friend_Request_Failed = 'Delete_Friend_Request_Failed';
+export const Update_Dashboard_Friend_List = 'Update_Dashboard_Friend_List';
+export const Search_Users_Result_Success = 'Search_Users_Result_Success';
+export const Clear_Search_List = 'Clear_Search_List';
+export const Add_Category_Dashboard_Failed = 'Add_Category_Dashboard_Failed';
+export const Set_Message_To_Default = 'Set_Message_To_Default';
+export const Send_Email_From_Dashboard_Success = 'Send_Email_From_Dashboard_Success';
+export const Send_Email_From_Dashboard_Failed = 'Send_Email_From_Dashboard_Failed';
+export const Change_Friend_Cat_Success = 'Change_Friend_Cat_Success';
+export const Change_Friend_Cat_Failed = 'Change_Friend_Cat_Failed';
+
 
 
 
@@ -24,14 +34,19 @@ export const Delete_Friend_Request_Failed = 'Delete_Friend_Request_Failed';
 /*
  * action creators
  */
- export function receivedAllfriendsList(friendList){
+ export function receivedAllfriendsList(friendList,categorizedFriendList){
    //console.log(friendList);
-   return {type: Fetch_Freind_List, data: friendList}
+   return {type: Fetch_Freind_List, friendList: friendList, categorizedFriendList:categorizedFriendList}
  }
 
  export function updatefriendsList(friendList){
    //console.log(friendList);
    return {type: Update_Friend_List, data: friendList}
+ }
+
+ export function updateDashboardFriendList(friendList){
+   //console.log(friendList);
+   return {type: Update_Dashboard_Friend_List, friends: friendList}
  }
 
  export function receivedAllFriendsPosts(friendsPosts){
@@ -72,38 +87,6 @@ export function clickedBlockUser(senderId,receiverId,userId) {
   }
 }
 
-export function clickedAddFriend(sender,receiver) {
-
-    $.ajax({
-      type:'POST',
-      url:'/api/v1/user/addFriendRequest',
-      dataType:'json',
-      data:{sender:sender,receiver:receiver},
-    }).done(function(data){
-      console.log("Success add friend request :"+ JSON.stringify(data));
-    }).fail(function(error){
-      console.log("Error in add friend request:"+JSON.stringify(error));
-    });
-
-
-}
-
-export function respondFriendRequest(id) {
-
-    $.ajax({
-      type:'POST',
-      url:'/api/v1/user/updateFriendList/'+id,
-      dataType:'json',
-      data:{field:"status", val:1,id:id},
-    }).done(function(data){
-      console.log("Success add friend request :"+ JSON.stringify(data));
-    }).fail(function(error){
-      console.log("Error in add friend request:"+JSON.stringify(error));
-    });
-
-
-}
-
 export function deleteFriendSuccess(id){
   return {type: Delete_friend_Success, id:id}
 }
@@ -131,39 +114,23 @@ export function clickedDeleteFriend(id) {
 //}
 }
 
-export function addPostSuccess(post){
-  return{type: Post_Added_Dashboard_Success, post};
-}
 
-export function addPost(formData){
-  return (dispatch) => {
-    $.ajax({
-      type:'POST',
-      url:'/api/v1/posts/addPost',
-      dataType:'JSON',
-      data:formData
-    }).done(function(data){
-      if(data.error){
-        console.log(data.error);
-      }else{
-      console.log(data);
-      dispatch(addPostSuccess(data.post));
-
-      }
-
-    }).error(function(error){
-      console.log("Error in posts api call"+JSON.stringify(error));
-    })
-  }
-}
 
 export function addCategorySuccess(category) {
-  return{type: Category_Added_Dashboard_Success, category};
+  return{type: Category_Added_Dashboard_Success, category,success:"Added catefg"};
+}
+
+export function addCategoryFail(msg){
+  return{type: Add_Category_Dashboard_Failed, error:msg}
+}
+
+export function setMessageToDefault(){
+  return{type: Set_Message_To_Default}
 }
 
 export function addCategory(req) {
   return (dispatch) => {
-
+    dispatch(setMessageToDefault());
     $.ajax({
 			type: 'POST',
 			url: '/api/v1/categories/addCategory',
@@ -172,7 +139,7 @@ export function addCategory(req) {
 			.done(function(data) {
 				if (data.error){
 					console.log("add todo worked but error: ", data);
-        //  dispatch(handleErrorMessage(data.error));
+          dispatch(addCategoryFail(data.error));
 
 					} else {
 						console.log("add todo success", data);
@@ -183,7 +150,7 @@ export function addCategory(req) {
 				})
 			.fail(function(error) {
 				console.log("Failure");
-      //  dispatch(handleErrorMessage(error));
+      dispatch(addCategoryFail(error));
 			});
   }
 }
@@ -248,6 +215,102 @@ export function deleteFriendRequest(requestId){
       }
     }).fail(function(error){
       dispatch(deleteFriendRequestFailed("Error in confirm request call"));
+    });
+  }
+}
+
+export function getCategoryByUserId(userId){
+  console.log("Here");
+  return (dispatch) => {
+    $.ajax({
+      type:'GET',
+      url: 'api/v1/users/getCategoryByUserId/'+userId,
+    }).done(function(result){
+      console.log("Success get cat by user id");
+    }).fail(function(error){
+      console.log("Error in get cat by user id");
+    });
+  }
+}
+
+export function changeFriendCatSuccess(result,friendId){
+  return{type: Change_Friend_Cat_Success,data:result,friendId:friendId}
+}
+
+export function changeFriendCatFailed(error){
+  return{type: Change_Friend_Cat_Failed, error:error}
+}
+
+export function changeFriendCat(userId,friendId, catId){
+  return(dispatch) => {
+    $.ajax({
+      type: 'POST',
+      url: '/api/v1/users/changeFriendCat',
+      data:{userId:userId,friendId:friendId,catId:catId},
+      dataType: 'json'
+    }).done(function(result){
+      console.log("success:"+JSON.stringify(result));
+      if(result.error){
+
+        dispatch(changeFriendCatFailed(result.error));
+      }else {
+        console.log(result);
+        dispatch(changeFriendCatSuccess(result.categorizedFriends,friendId));
+      }
+    }).fail(function(error){
+      console.log("success:"+JSON.stringify(error));
+      dispatch(changeFriendCatFailed(error));
+    });
+  }
+}
+
+export function searchUserSuccess(result){
+  return{type:Search_Users_Result_Success,data:result};
+}
+
+export function clearSearchList (){
+
+  return{type: Clear_Search_List};
+}
+export function searchUser(str){
+  return(dispatch) => {
+    $.ajax({
+      type:'GET',
+      url: 'api/v1/users/searchUser/'+str,
+
+    }).done(function(result){
+      dispatch(searchUserSuccess(result.searchResult));
+    }).fail(function(error){
+      console.log(error);
+    })
+  }
+}
+
+export function sendEmailFromDashboardSuccess(msg){
+  return{type:'Send_Email_From_Dashboard_Success', success:msg}
+}
+
+export function sendEmailFromDashboardFailed(msg){
+  return{type: 'Send_Email_From_Dashboard_Failed', error:msg}
+}
+
+export function sendEmailFromDashboard(from,to,subject,content){
+  return(dispatch)=>{
+    dispatch(setMessageToDefault());
+    $.ajax({
+      type:'POST',
+      url:'/api/v1/users/sendEmailFromDashboard',
+      data:{from:from,to:to,subject:subject,content:content},
+      dataType:'json'
+    }).done(function(result){
+      if(result.error){
+        dispatch(sendEmailFromDashboardFailed(result.error));
+      }else{
+        dispatch(sendEmailFromDashboardSuccess(result.success));
+      }
+    }).fail(function(error){
+      console.log("Failed email request");
+      dispatch(sendEmailFromDashboardFailed(error));
     });
   }
 }

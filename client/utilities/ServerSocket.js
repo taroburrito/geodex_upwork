@@ -1,5 +1,5 @@
 import { receivedAllUniversalTodos, optimisticUniversalAddSuccess } from '../actions/TodoActions';
-import { receivedAllUniversalCategories } from '../actions/CategoryActions';
+import { receivedAllUniversalCategories, fetchcategoriesByUserId } from '../actions/CategoryActions';
 import { receivedAllUniversalPages } from '../actions/PageActions';
 import {getVisitedUserData, getUserDetails} from '../actions/ProfileActions';
 import {receivedAllfriendsList, receivedAllFriendsPosts, getDashboardDataSuccess, fetchFriendsRequestsSuccess} from '../actions/UserActions';
@@ -55,6 +55,15 @@ export function linkSocketToStore(dispatch) {
 		}
 	});
 
+  socket.on('categories-by-user',function(result){
+    console.log(result);
+    if(result.error){
+
+    }else{
+      dispatch(fetchcategoriesByUserId(result.categories));
+    }
+  });
+
 	socket.on("allCategories",function(result){
 		if(result.error){
 
@@ -71,7 +80,8 @@ export function linkSocketToStore(dispatch) {
 		console.log("Error in server socket line 68:"+JSON.stringify(result.error));
 		} else {
 			console.log(result);
-			dispatch(receivedAllfriendsList(result.friendList));
+			//dispatch(receivedAllfriendsList(result.friendList));
+      dispatch(receivedAllfriendsList(result.friendList, result.categorizedFriendList));
 		}
 	});
 
@@ -149,21 +159,21 @@ export function linkSocketToStore(dispatch) {
   socket.on("visitedUserDetail",function(res){
     console.log(res);
     //user profile data
-    var userdata = res.userData[0];
-
-    // user category data
-    var userCategoriesData = res.userCategories;
-    // visited users friendlist
-    var friendList = res.friendList;
-    userdata.categories = userCategoriesData;
-    userdata.friends = friendList;
-    userdata.posts = res.posts;
+    // var userdata = res.userData;
+    //
+    // // user category data
+    // var userCategoriesData = res.userCategories;
+    // // visited users friendlist
+    // var friendList = res.friendList;
+    // userdata.categories = userCategoriesData;
+    // userdata.friends = friendList;
+    // userdata.posts = res.posts;
   //  console.log(userdata);
-		if(userdata.error){
+		if(res.error){
 			console.log("Error in server socket");
 		}else{
 
-			dispatch(getVisitedUserData(userdata));
+			dispatch(getVisitedUserData(res));
 		}
 	});
 
@@ -193,14 +203,20 @@ export function getUserDetail(userId){
 }
 
 // visited user profile detail
-export function getVisitedUserDetail(userId){
-  socket.emit("visited-user-detail", userId);
+export function getVisitedUserDetail(userId,profileId){
+  
+  socket.emit("visited-user-detail", userId,profileId);
 }
 
-export function fetchDashboardData(userId){
-  socket.emit("fetch-dashboard-data", userId);
+export function fetchDashboardData(userId,catId){
+  //console.log(catId);
+  socket.emit("fetch-dashboard-data", userId,catId);
 }
 
 export function fetchFriendsRequests(userId){
   socket.emit("fetch-friend-requests", userId);
+}
+
+export function getCategoryByUserId(userId){
+  socket.emit("get-categories-by-user", userId);
 }

@@ -1,17 +1,49 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
+import { searchUser } from '../actions/UserActions';
+import {getVisitedUserDetail} from '../utilities/ServerSocket';
 
 export default class Navbar extends Component {
   constructor(props){
     super(props);
+
   }
   changeContent(e){
 
     this.props.changeContent(e);
   }
 
+  handleSearchChange(e){
+
+    this.props.searchUser(e.target.value);
+  }
+
+  handleClickUser(name,profileId){
+    this.props.searchUser('');
+    const{dispatch,userAuthSession} = this.props;
+    var userId = userAuthSession.userObject.id;
+    getVisitedUserDetail(userId,profileId);
+    this.refs.search.getDOMNode().value = name;
+
+  }
+
   render() {
+    const{searchResult} = this.props;
+    var searchList  = [];
+    if(searchResult){
+      Object.keys(searchResult).forEach((Id)=>
+      {
+        var item = searchResult[Id];
+        var name = item.first_name+" "+item.last_name;
+        var link = "/user/"+item.id;
+         searchList.push(
+          <Link to={link} onClick={this.handleClickUser.bind(this,name,item.id)}> <li  className="placesSuggest_suggest"><span>{name}</span></li></Link>
+         );
+      }
+    );
+
+    }
     if(this.props.userAuthSession){
       if(this.props.userAuthSession.isLoggedIn){
       return(
@@ -20,8 +52,15 @@ export default class Navbar extends Component {
               <Link className="uk-navbar-brand uk-hidden-small" to="dashboard"><img src="public/images/logo.png"/></Link>
 
       <form className="uk-search search_dash_nav">
-              <input className="uk-search-field" placeholder="search..."  type="search"/>
-          <div className="uk-dropdown uk-dropdown-search" aria-expanded="false"></div></form>
+              <input className="uk-search-field" placeholder="search..."  type="search" ref="search" onChange={this.handleSearchChange.bind(this)} style={{width:'80%'}}/>
+          <div className="uk-dropdown uk-dropdown-search" aria-expanded="false"></div>
+            <ul className="placesSuggest_suggests">
+
+            {searchList?searchList:null}
+            </ul>
+          </form>
+
+
 
       <ul className="uk-navbar-nav uk-hidden-small uk-float-right">
                   <li><a href="">Current</a></li>
@@ -35,7 +74,7 @@ export default class Navbar extends Component {
                       <div className="uk-dropdown uk-dropdown-small uk-dropdown-bottom" aria-hidden="true" style={{top:'30px',left:0}} >
                           <ul className="uk-nav uk-nav-dropdown">
 
-                              <li><Link to="settings">Settings </Link><a href="#" ></a></li>
+                              <li><Link to="settings">Settings </Link></li>
                               <li><Link to="manage_friends">Manage friends</Link></li>
                               <li><Link to="manage_requests">Manage friends request</Link></li>
                             <li><a href="#" onClick={this.props.logout}>Logout</a></li>
@@ -87,3 +126,12 @@ export default class Navbar extends Component {
 }
   }
 }
+
+function select(state) {
+  return {
+
+    visitedUser: state.visitedUser,
+  };
+}
+
+export default connect(select)(Navbar);

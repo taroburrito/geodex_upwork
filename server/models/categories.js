@@ -17,22 +17,42 @@ var categoryModel = {
     },
     createCategory: function (req, callback) {
         var dbConnection = dbConnectionCreator();
+        var checkDuplicatEntry = constructCheckDuplicateEntry(req);
         var createCategorySqlString = constructCreateCategorySqlString(req);
-        //return (callback({success:createCategorySqlString}));
-        dbConnection.query(createCategorySqlString, function (error, results, fields) {
+        //dbConnection.end(); return(callback({success:createCategorySqlString}));
+
+
+        dbConnection.query(checkDuplicatEntry, function (error, results, fields) {
             if (error) {
-                dbConnection.destroy();
-                return (callback({error: error, when: "inserting"}));
+
+                dbConnection.end(); return(callback({error: error, status:400}));
+            }else if (results.length > 0) {
+                dbConnection.end(); return(callback({error: "You already added this category", status:400}));
             } else {
-                var getCategorySqlString = getCategoryDetailSqlString(results.insertId);
-                dbConnection.query(getCategorySqlString, function (error, results, fields) {
-                    dbConnection.destroy();
-                    if (error) {
-                        return (callback({error: error, when: "reading"}));
-                    } else {
-                        return (callback({category: categoryModel.convertRowToObject(results[0])}));
-                    }
-                });
+
+              dbConnection.query(createCategorySqlString, function (error, results, fields) {
+                if(error){
+                  return(callback({error:"Error in insert category",status:400}));
+                }else if (results.affectedRows == 0) {
+                  return(callback({error:"No category inserted",status:400}));
+                }else{
+                  var getCategorySqlString = getCategoryDetailSqlString(results.insertId);
+                  dbConnection.query(getCategorySqlString, function (error, results, fields) {
+
+                      if (error) {
+                          dbConnection.end(); return(callback({error: error, when: "reading",status:400}));
+                      } else {
+                          dbConnection.end(); return(callback({status:200,category: categoryModel.convertRowToObject(results[0])}));
+                      }
+                  });
+                }
+
+              });
+
+
+
+
+
             }
         });
     },
@@ -41,16 +61,16 @@ var categoryModel = {
         var updatecategorySqlString = constructUpdateCategorySqlString(catId, name, status);
         dbConnection.query(updatecategorySqlString, function (error, results, fields) {
             if (error) {
-                dbConnection.destroy();
-                return (callback({error: error, when: "updating"}));
+
+                dbConnection.end(); return(callback({error: error, when: "updating"}));
             } else {
                 var getCategorySqlString = getCategoryDetailSqlString(catId);
                 dbConnection.query(getCategorySqlString, function (error, results, fields) {
-                    dbConnection.destroy();
+
                     if (error) {
-                        return (callback({error: error, when: "reading"}));
+                        dbConnection.end(); return(callback({error: error, when: "reading"}));
                     } else {
-                        return (callback({page: categoryModel.convertRowToObject(results[0])}));
+                        dbConnection.end(); return(callback({page: categoryModel.convertRowToObject(results[0])}));
                     }
                 });
             }
@@ -61,10 +81,10 @@ var categoryModel = {
         var deleteCategorySqlString = constructDeleteCategorySqlString(pageId);
         dbConnection.query(deleteCategorySqlString, function (error, results, fields) {
             if (error) {
-                dbConnection.destroy();
-                return (callback({error: error, when: "updating"}));
+
+                dbConnection.end(); return(callback({error: error, when: "updating"}));
             } else {
-                return (callback({success: "deleted successfully"}));
+                dbConnection.end(); return(callback({success: "deleted successfully"}));
             }
         });
     },
@@ -72,14 +92,16 @@ var categoryModel = {
         var dbConnection = dbConnectionCreator();
         var sqlString = getAllCategoriesSqlString();
         dbConnection.query(sqlString, function (error, results, fields) {
-            dbConnection.destroy();
+
             if (error) {
+              dbConnection.end();
                 return callback({error: error});
             } else {
                 var categories = {};
                 results.forEach(function (result) {
                     categories[result.id] = categoryModel.convertRowToObject(result);
                 });
+                dbConnection.end();
                 return callback({categories: categories});
             }
         });
@@ -88,20 +110,27 @@ var categoryModel = {
         var dbConnection = dbConnectionCreator();
         var sqlString = getCategoryDetailSqlString(catId);
         dbConnection.query(sqlString, function (error, results, fields) {
-            dbConnection.destroy();
+
             if (error) {
+              dbConnection.end();
                 return callback({error: error});
             } else {
                 var category = {};
                 results.forEach(function (result) {
                     category[result.id] = categoryModel.convertRowToObject(result);
                 });
+                dbConnection.end();
                 return callback({category: category});
             }
         });
     }
 
 };
+
+function constructCheckDuplicateEntry(req){
+  var sql = "SELECT * FROM gx_categories  WHERE user_id="+req.user_id+" AND category_name='"+req.category_name+"'";
+  return sql;
+}
 
 function constructCreateCategorySqlString(req) {
     var timestamp = moment();

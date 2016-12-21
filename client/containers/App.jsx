@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 //Actions
 import { attemptLogout } from '../actions/AuthActions';
+import { searchUser, clearSearchList } from '../actions/UserActions';
 
 //Components
 import Navbar from '../components/Navbar';
@@ -23,7 +24,7 @@ class App extends Component {
   }
 
   render() {
-
+    console.log(this.props.userAuthSession);
     var baseUrl = window.location.href.split('#')[0].split('/')[window.location.href.split('#')[0].split('/').length-1];
 
     // Injected by connect() call:
@@ -44,6 +45,8 @@ class App extends Component {
       landingPage = <HomePage/>;
     }else if (page == 'pages') {
       landingPage = children;
+    }else{
+    //  landingPage = <HomePage/>;
     }
 
     if (baseUrl == 'admin'){
@@ -60,20 +63,31 @@ class App extends Component {
      }
 
   } else{
-    console.log(userAuthSession);
-    if(userAuthSession.isLoggedIn && userAuthSession.userObject.role=='user'){
+
+    if(userAuthSession.isLoggedIn && userAuthSession.userObject && userAuthSession.userObject.role=='user'){
     return (
             <div>
-              <Navbar userAuthSession={userAuthSession} logout={() => dispatch(attemptLogout())}/>
+              <Navbar
+                clearSearchList={this.props.clearSearchList}
+                 userAuthSession={userAuthSession} logout={() => dispatch(attemptLogout())} searchUser={(str)=>
+                dispatch(searchUser(str))}
+                searchResult={this.props.searchResult}/>
               {landingPage}
               { children }
               { content }
             </div>
           );
         }else{
+          if(!landingPage){
+            landingPage = <HomePage/>;
+          }
           return(
             <div>
-              <Navbar userAuthSession={userAuthSession}/>
+              <Navbar
+                clearSearchList={this.props.clearSearchList}
+                userAuthSession={userAuthSession} searchUser={(str)=>
+                dispatch(searchUser(str))}
+                searchResult={this.props.searchResult}/>
               {landingPage}
 
               </div>
@@ -94,6 +108,7 @@ function select(state) {
     unsavedUniversalTodos: state.unsavedUniversalTodos,
     userAuthSession: state.userAuthSession,
     errorMessage: state.errorMessage,
+    searchResult: state.searchResult
   //  universalPages: state.universalPages,
   };
 }

@@ -1,11 +1,10 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import Profile from '../../components/front/Profile';
+import VistiProfileWidget from '../../components/front/VistiProfileWidget';
 import Home from '../../components/front/Home';
 import {getVisitedUserDetail} from '../../utilities/ServerSocket';
 
-import { fetchUserProfile, reloadingProfilePage } from '../../actions/ProfileActions';
-import { clickedAddFriend, respondFriendRequest, clickedDeleteFriend } from '../../actions/UserActions';
+import { clickAddFriend,fetchUserProfile, reloadingProfilePage,clickAcceptRequest, clickDenyFriendRequest } from '../../actions/ProfileActions';
 
 export default class UserProfilePage extends Component {
   constructor(props, context) {
@@ -26,17 +25,17 @@ export default class UserProfilePage extends Component {
     if(userAuthSession.isLoggedIn){
     return (
       <div className="full_width">
-      <Profile
+      <VistiProfileWidget
         onClickDenyRequest={(id)=>
-        clickedDeleteFriend(id)}
-        onClickRespondFriendRequest={(id)=>
-          respondFriendRequest(id)}
+        dispatch(clickDenyFriendRequest(id))}
+        clickAcceptRequest={(reqId)=>
+          dispatch(clickAcceptRequest(reqId))}
         onClickAddFriend={(sender,receiver)=>
-        clickedAddFriend(sender,receiver)}
+        dispatch(clickAddFriend(sender,receiver))}
         userAuthSession={this.props.userAuthSession}
-        fetchInitialData={(id)=>getVisitedUserDetail(id)}
-        userProfileData={this.props.visitedUser}
-         userId={this.props.params.id}/>
+        fetchInitialData={(userId,profileId)=>getVisitedUserDetail(userId,profileId)}
+        visitedUser={this.props.visitedUser}
+         profileId={this.props.params.id}/>
       </div>
     );
   }else {
