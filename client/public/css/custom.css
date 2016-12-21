@@ -1501,3 +1501,11 @@ small.user_location {
     margin-top: 5px;
     padding: 3px 10px;
 }
+.button-left{
+  position: absolute;
+    opacity: 1;
+    padding: 5px;
+    float: left;
+    top: 53px;
+    left: 12px;
+}

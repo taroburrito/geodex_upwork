@@ -5,7 +5,7 @@ import { validateDisplayName, } from '../../utilities/RegexValidators';
 var AvatarEditor = require('react-avatar-editor');
 var Slider = require('react-slick');
 var Loading = require('react-loading');
-
+var Carousel = require('nuka-carousel');
 
 function generateUUID(){
   //Note: this is a simple implentation for this project. //TODO create a better one
@@ -29,6 +29,7 @@ export default class DashboardPage extends Component {
     this.handleChangeSort = this.handleChangeSort.bind(this);
     this.sortByAllCategory = this.sortByAllCategory.bind(this);
     this.handleClickPostComment = this.handleClickPostComment.bind(this);
+    this.prevSlide = this.prevSlide.bind(this);
     this.state ={
       errorMessage: null,
     //  image: "public/images/user.jpg",
@@ -59,6 +60,9 @@ export default class DashboardPage extends Component {
     var uploadDir = 'uploads/images/';
     this.setState({uploadDir:uploadDir,loading:true});
     this.props.fetchInitialData(userAuthSession.userObject.id,null);
+  }
+  prevSlide(){
+    this.refs.test.slickPrev()
   }
   componentDidMount(){
 
@@ -371,7 +375,8 @@ resetEmailForm(){
 
   renderFriendsPostImagesLargeSlider(user_id){
 
-
+    console.log("large slider");
+    console.log(this.state.clickedPost);
      const{dashboardData} = this.props;
      var friendsPosts = dashboardData.friendsPostImages;
      var friend_post_images;
@@ -395,20 +400,35 @@ resetEmailForm(){
        });
 
 
-const settings = {
-  slidesToShow:1,
-  infinite:false,
-  centerMode:true,
-  lazyLoad:true,
-}
+
+       const settings = {
+         slidesToShow:1,
+         infinite:false,
+         centerMode:true,
+         lazyLoad:true,
+        //  afterChange:function(nextSlide){
+        //    console.log(nextSlide);
+        //    console.log(this.porps);
+        //  },
+        //  beforeChange:function(current,next){
+        //    console.log("current:"+current);
+        //    console.log("next:"+next);
+        //  },
+         //
+        //  prevArrow: customPrevIcon,
+        //  nextArrow: customNextIcon,
+       }
 
 
       return(
         <div>
-          <Slider {...settings}>
+          <Slider {...settings} ref="test">
             {friendElement}
-                </Slider>
-
+            </Slider>
+            <div style={{textAlign: 'center'}}>
+          <button className='button' onClick={this.prevSlide}>Previous</button>
+          <button className='button' onClick={this.prevSlide}>Next</button>
+        </div>
 
         </div>
 
@@ -1153,6 +1173,14 @@ loadChild(child){
             {this.renderStatusModel()}
             {this.renderPostContentModel()}
             {this.renderImageContentModel()}
+            <Carousel>
+        <img src="http://placehold.it/1000x400/ffffff/c0392b/&text=slide1"/>
+        <img src="http://placehold.it/1000x400/ffffff/c0392b/&text=slide2"/>
+        <img src="http://placehold.it/1000x400/ffffff/c0392b/&text=slide3"/>
+        <img src="http://placehold.it/1000x400/ffffff/c0392b/&text=slide4"/>
+        <img src="http://placehold.it/1000x400/ffffff/c0392b/&text=slide5"/>
+        <img src="http://placehold.it/1000x400/ffffff/c0392b/&text=slide6"/>
+      </Carousel>
 
       </div>
 
@@ -1174,6 +1202,19 @@ function select(state) {
   return {
   };
 }
+
+var customPrevIcon = React.createClass({
+
+  render(){
+    return  <button className='button-left' {...this.props}>Previous</button>
+  }
+});
+var customNextIcon = React.createClass({
+
+  render(){
+    return  <button className='button-right' {...this.props}>Next</button>
+  }
+});
 
 // Wrap the component to inject dispatch and state into it
 export default connect(select)(DashboardPage);
