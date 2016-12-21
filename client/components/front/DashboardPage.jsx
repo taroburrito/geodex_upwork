@@ -66,6 +66,8 @@ export default class DashboardPage extends Component {
     this.props.fetchInitialData(userAuthSession.userObject.id,null);
   }
   onSlide(e){
+    //React.unmountComponentAtNode(document.getElementById('test'));
+      this._imageGallery.slideToIndex(e);
     var postId = this._imageGallery.props.items[e].postId;
     this.props.fetchComments(postId);
     //this.loadPostContent(postId,this.state.clickedUser,null,null,e);
@@ -386,7 +388,7 @@ resetEmailForm(){
 }
 imageSlideTo(e){
   console.log("ee:"+e);
-  this._imageGallery.slideToIndex(e)
+  //this._imageGallery.slideToIndex(e)
 }
   renderFriendsPostImagesLargeSlider(user_id){
 
@@ -400,13 +402,13 @@ imageSlideTo(e){
      if(friendsPosts)
      var friendsPost = friendsPosts[user_id];
        if(friendsPost && friendsPost.length > 0){
-         var newPost = this.sortImages(friendsPost, e => e.id === this.state.clickedPost);
+         //var newPost = this.sortImages(friendsPost, e => e.id === this.state.clickedPost);
 
        var friendElement = [];
        var i = 0;
-       Object.keys(newPost).forEach((postImage)=> {
+       Object.keys(friendsPost).forEach((postImage)=> {
 
-         var postContent = newPost[postImage];
+         var postContent = friendsPost[postImage];
          var postImageSrc = this.state.uploadDir+"user_"+postContent.user_id+"/"+postContent.post_image;
          if(postImage)
          friendElement.push(
@@ -421,15 +423,17 @@ imageSlideTo(e){
        });
 
        return(
+         <div id="test">
         <ImageGallery
         ref={i => this._imageGallery = i}
         items={friendElement}
-        slideInterval={2000}
+        slideInterval={200}
         startIndex={this.state.currentSlide}
         onSlide={this.onSlide}
         //onClick={this.clickSlider}
       //  onImageLoad={this.imageSlideTo.bind(this,this.state.currentSlide)}
         />
+    </div>
 
       );
      }
@@ -448,7 +452,7 @@ imageSlideTo(e){
        if(friendsPost && friendsPost.length > 0){
 
        var friendElement = [];
-       var i = 1;
+       var i = 0;
        Object.keys(friendsPost).forEach((postImage)=> {
 
          var postContent = friendsPost[postImage];
@@ -526,7 +530,7 @@ imageSlideTo(e){
 
     if(currentSlide){
       //this.setState({loadPostContent:true})
-      this.setState({currentSlide:0});
+      this.setState({currentSlide:currentSlide});
       //this.refs.largeSliderContent.getDOMNode.innerHtml = "";
       //ReactDOM.unmountComponentAtNode(this.refs.largeSliderContent);
 
