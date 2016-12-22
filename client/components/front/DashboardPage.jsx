@@ -8,6 +8,7 @@ var Slider = require('react-slick');
 var Loading = require('react-loading');
 
 import ImageGallery from 'react-image-gallery';
+import CategoryList from './manage_category/CategoryList';
 
 function generateUUID(){
   //Note: this is a simple implentation for this project. //TODO create a better one
@@ -33,6 +34,7 @@ export default class DashboardPage extends Component {
     this.handleClickPostComment = this.handleClickPostComment.bind(this);
     this.onSlide = this.onSlide.bind(this);
     this.clickSlider = this.clickSlider.bind(this);
+
     this.state ={
       errorMessage: null,
     //  image: "public/images/user.jpg",
@@ -67,7 +69,7 @@ export default class DashboardPage extends Component {
   }
   onSlide(e){
     //React.unmountComponentAtNode(document.getElementById('test'));
-      this._imageGallery.slideToIndex(e);
+      //this._imageGallery.slideToIndex(e);
     var postId = this._imageGallery.props.items[e].postId;
     this.props.fetchComments(postId);
     //this.loadPostContent(postId,this.state.clickedUser,null,null,e);
@@ -90,6 +92,7 @@ export default class DashboardPage extends Component {
 
   handleClickPostComment(){
     const{userAuthSession} = this.props;
+    this.refs.commentBox.getDOMNode().value = "";
     this.setState({replyContent:null,postComment:null});
     var req = {
       comment: this.state.postComment,
@@ -206,7 +209,7 @@ setMessageStateToDefault (){
 componentDidUpdate(){
 
 }
-  handleClickPlus(){
+handleClickPlus(){
     this.setMessageStateToDefault();
     this.props.setMessageToDefault();
     this.refs.categoryName.getDOMNode().value = "";
@@ -331,6 +334,8 @@ resetEmailForm(){
     this.props.fetchInitialData(userAuthSession.userObject.id, catId);
   }
 
+
+
   renderCategoriesContent(){
     const{dashboardData} = this.props;
     var categoriesElement = [];
@@ -431,6 +436,10 @@ imageSlideTo(e){
         onSlide={this.onSlide}
         infinite={false}
         showBullets={false}
+        showThumbnails={false}
+        autoPlay={false}
+        showPlayButton={false}
+        showFullscreenButton={false}
       //  showNav={false}
         //onClick={this.clickSlider}
         onImageLoad={this.imageSlideTo.bind(this,this.state.currentSlide)}
@@ -454,7 +463,7 @@ imageSlideTo(e){
        if(friendsPost && friendsPost.length > 0){
 
        var friendElement = [];
-       var i = 0;
+       var i = 1;
        Object.keys(friendsPost).forEach((postImage)=> {
 
          var postContent = friendsPost[postImage];
@@ -508,7 +517,7 @@ imageSlideTo(e){
 				      </div>
               <div className="uk-width-small-2-5 popup_img_right">
 
-              {this.loadPostByInfo(this.state.getClickedUser)}
+              {this.loadPostByInfo(this.state.clickedUser)}
               <h5 className="coment_heading">Comments</h5>
               <ul className="uk-comment-list">
               {this.renderComments(this.state.clickedPost)}
@@ -516,8 +525,8 @@ imageSlideTo(e){
 
                   <div className="comenting_form border-top_cf">
               <img className="uk-comment-avatar" src={this.getProfileImage(user.profile_image,user.id)} alt="" width="40" height="40"/>
-              <textarea placeholder="Write Comment..." value={this.state.postComment} onChange={(e)=>this.setState({postComment:e.target.value})}></textarea>
-              <a onClick={this.handleClickPostComment} className="uk-button uk-button-primary comment_btn">Send</a>
+              <textarea placeholder="Write Comment..." value={this.state.postComment} onChange={(e)=>this.setState({postComment:e.target.value})} ref="commentBox"></textarea>
+              <a onClick={this.handleClickPostComment} className="uk-button uk-button-primary comment_btn">Post</a>
               </div>
 
 
@@ -531,10 +540,12 @@ imageSlideTo(e){
   loadPostContent(postId,userId,popupImage,popupContent,currentSlide){
 
     if(currentSlide){
+      var current = parseInt(currentSlide) - 1;
+      console.log("current:"+current);
       //this.setState({loadPostContent:true})
-      this.setState({currentSlide:currentSlide});
+      this.setState({currentSlide:current});
       if(this._imageGallery){
-        this._imageGallery.slideToIndex(currentSlide);
+        this._imageGallery.slideToIndex(current);
       }
       //this._imageGallery.slideToIndex(currentSlide);
       //console.log(this._imageGallery); console.log("cjed");
@@ -649,10 +660,15 @@ imageSlideTo(e){
     }
   }
   loadPostByInfo(userId){
+
     if(userId){
-    const{dashboardData} = this.props;
+    const{dashboardData,userAuthSession} = this.props;
+    if(userAuthSession.userObject.id === userId){
+        var friendData = userAuthSession.userObject;
+    }else{
     var friendData = dashboardData.friends[userId];
-    //console.log(friendData); console.log("****");
+  }
+    if(friendData)
     return(
       <article className="uk-comment">
           <header className="uk-comment-header">
@@ -816,7 +832,7 @@ loadChild(child){
                   <p>{item.comment}</p>
               </div>
           </article>
-          <a onClick={()=>this.setState({showCommentBox:item.id,replyContent:null})}>Reply</a>
+          <a onClick={()=>this.setState({showCommentBox:item.id,replyContent:null})} className="reply_to_c">Reply</a>
           {commentBox}
 
           <ul>
@@ -856,12 +872,12 @@ loadChild(child){
     if(child){
 
     }
-    if(item.user_id != userAuthSession.userObject.id && this.state.showCommentBox == item.id){
+    if(this.state.showCommentBox == item.id){
       var commentBox = (
         <div className="comenting_form border-top_cf">
         <img className="uk-comment-avatar" src={this.getProfileImage(userAuthSession.userObject.profile_image,userAuthSession.userObject.id)} alt="" width="40" height="40"/>
         <textarea placeholder="Write Comment..."  value={this.state.replyContent} onChange={(e)=>this.setState({replyContent:e.target.value})}></textarea>
-        <a onClick={this.handleClickReplyComment.bind(this,item.id,item.post_id)} className="uk-button uk-button-primary comment_btn">Send</a>
+        <a onClick={this.handleClickReplyComment.bind(this,item.id,item.post_id)} className="uk-button uk-button-primary comment_btn">Reply</a>
         </div>
       );
     }else{
@@ -880,7 +896,7 @@ loadChild(child){
                   <p>{item.comment}</p>
               </div>
           </article>
-          <a onClick={()=>this.setState({showCommentBox:item.id,replyContent:null})}>Reply</a>
+          <a onClick={()=>this.setState({showCommentBox:item.id,replyContent:null})} className="reply_to_c">Reply</a>
           {commentBox}
 
           <ul>
@@ -911,7 +927,7 @@ loadChild(child){
       				<div className="uk-width-small-1-1 popup_img_right coment_pop_cont">
 
 
-      			{this.loadPostByInfo(this.state.getClickedUser)}
+      			{this.loadPostByInfo(this.state.clickedUser)}
       				<h5 className="coment_heading">Comments</h5>
       				<ul className="uk-comment-list" ref="commentsul">
                 {this.renderComments(this.state.clickedPost)}
@@ -920,8 +936,8 @@ loadChild(child){
 
     				<div className="comenting_form border-top_cf">
     				<img className="uk-comment-avatar" src={this.getProfileImage(user.profile_image,user.id)} alt="" width="40" height="40"/>
-    				<textarea placeholder="Write Comment..." value={this.state.postComment} onChange={(e)=>this.setState({postComment:e.target.value})}></textarea>
-    				<a onClick={this.handleClickPostComment} className="uk-button uk-button-primary comment_btn">Send</a>
+    				<textarea placeholder="Write Comment..." value={this.state.postComment} onChange={(e)=>this.setState({postComment:e.target.value})} ref="commentBox"></textarea>
+    				<a onClick={this.handleClickPostComment} className="uk-button uk-button-primary comment_btn">Post</a>
     				</div>
 
 
@@ -938,7 +954,6 @@ loadChild(child){
     var latestPost = dashboardData.latestPost;
     var userProfile = userAuthSession.userObject;
 
-
     if(latestPost){
       var content = latestPost.content;
       var content_length = latestPost.content.length;
@@ -949,24 +964,27 @@ loadChild(child){
         }else{
         content = content;
         }
+        var postImage = this.state.uploadDir+"user_"+userProfile.id+"/thumbs/"+latestPost.image;
       }else {
         if(content.length > 500){
         content = content.substring(0,500).concat(' ...LoadMore');
         }else{
         content = content;
         }
+        var postImage = null;
       }
 
        return (
          <div className="uk-width-small-1-2 post_control">
         <div  style={{maxHeight:200,overflow:"hidden"}}>
-        <a href="#postContentPop" data-uk-modal className="post_txt_dashboard">
+        <a href="#" className="post_txt_dashboard" data-uk-modal={latestPost.image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={this.loadSinglePostContent.bind(this,latestPost.id,userProfile.id,postImage,latestPost.content)}>
+
         <img src={latestPost.image? this.state.uploadDir+"user_"+userProfile.id+"/thumbs/"+latestPost.image: null} className="uk-float-right img_margin_left"/>
         <p>{content}</p>
         </a>
 
         </div>
-        <div id='postContentPop' className="uk-modal coment_popup">
+        {/* <div id='postContentPop' className="uk-modal coment_popup">
             <div className="uk-modal-dialog uk-modal-dialog-blank">
            <button className="uk-modal-close uk-close" type="button"></button>
              <div className="uk-grid">
@@ -991,7 +1009,7 @@ loadChild(child){
                <h5 className="coment_heading">Comments</h5>
                {/* <ul className="uk-comment-list" ref="commentsul">
                   {comments?this.renderComments(item.post_id):null}
-             </ul> */}
+             </ul> }
 
 
              <div className="comenting_form border-top_cf">
@@ -1004,7 +1022,7 @@ loadChild(child){
          </div>
         </div>
       </div>
-    </div>
+    </div> */}
   </div>
       );
     }
@@ -1048,6 +1066,11 @@ loadChild(child){
                 </fieldset>
 
              </form>
+             <CategoryList
+                categories={dashboardData.categories}
+                onDeleteClick={this.props.onDeleteClick}
+                onChange={this.props.onChange}
+                />
 
         </div>
 

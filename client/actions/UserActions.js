@@ -23,6 +23,10 @@ export const Send_Email_From_Dashboard_Success = 'Send_Email_From_Dashboard_Succ
 export const Send_Email_From_Dashboard_Failed = 'Send_Email_From_Dashboard_Failed';
 export const Change_Friend_Cat_Success = 'Change_Friend_Cat_Success';
 export const Change_Friend_Cat_Failed = 'Change_Friend_Cat_Failed';
+export const Delete_Category_Success = 'Delete_Category_Success';
+export const Delete_Category_Failed = 'Delete_Category_Failed';
+export const Update_Category_Failed_Dashboard = 'Update_Category_Failed_Dashboard';
+export const Update_Category_Success_Dashboard = 'Update_Category_Failed_Dashboard';
 
 
 
@@ -312,5 +316,64 @@ export function sendEmailFromDashboard(from,to,subject,content){
       console.log("Failed email request");
       dispatch(sendEmailFromDashboardFailed(error));
     });
+  }
+}
+
+export function deleteCategorySuccess(Id){
+  return{type: Delete_Category_Success, id:Id};
+}
+
+export function deleteCategoryFailed(error){
+  return{type: Delete_Category_Failed, error}
+}
+
+export function deleteCategory(Id) {
+  return (dispatch) => {
+
+    $.ajax({
+			type: 'DELETE',
+			url: '/api/v1/categories/'+Id,
+			data: ''
+     })
+			.done(function(data) {
+				if (data.error){
+					  dispatch(deleteCategoryFailed(data.error));
+        	} else {
+					  dispatch(deleteCategorySuccess(Id));
+          	}
+				})
+			.fail(function(error) {
+				dispatch(deleteCategoryFailed(error));
+			});
+  }
+}
+
+export function updateCategorySuccess(id,category){
+
+  return{type: Update_Category_Success_Dashboard, id:id, category};
+}
+
+export function updateCategoryFailed(error){
+  return{type: Update_Category_Failed_Dashboard, error}
+}
+
+export function updateCategoryById(id, value){
+  return(dispatch) => {
+    $.ajax({
+      type:'Post',
+      url:'/api/v1/categories/editcategory/'+id,
+      dataType:'JSON',
+      data:{category_name:value,status:1},
+    }).done(function(data){
+
+      if(data.error){
+        dispatch(updateCategoryFailed(data.error));
+      }else{
+
+        dispatch(updateCategorySuccess(id,data.category));
+      }
+    }).fail(function(error){
+      dispatch(updateCategoryFailed(error));
+    })
   }
 }

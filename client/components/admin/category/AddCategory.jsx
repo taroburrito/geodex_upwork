@@ -9,6 +9,25 @@ export default class AddCategory extends Component {
     super(props);
     this.state = Object.assign({},initialFormState);
   }
+
+  handleClickAdd(e) {
+    const{userAuthSession} = this.props;
+    const node = findDOMNode(this.refs.categoryName);
+    const text = node.value.trim();
+    if(text === ''){
+      this.setState({errorMessage:"Please enter category name"});
+        node.focus();
+    }else{
+      this.setState({errorMessage:null});
+      var req = {
+      user_id:userAuthSession.userObject.id,
+      category_name: text,
+      added_by:'admin'
+      };
+    this.props.onAddClick(req);
+    node.value = '';
+    }
+  }
   componentDidUpdate(){
     }
   render() {
@@ -48,24 +67,7 @@ export default class AddCategory extends Component {
     );
   }
 
-  handleClickAdd(e) {
-    const{userAuthSession} = this.props;
-    const node = findDOMNode(this.refs.categoryName);
-    const text = node.value.trim();
-    if(text === ''){
-      this.setState({errorMessage:"Please enter category name"});
-        node.focus();
-    }else{
-      this.setState({errorMessage:null});
-      var req = {
-      user_id:userAuthSession.userObject.id,
-      category_name: text,
-      added_by:'admin'
-      };
-    this.props.onAddClick(req);
-    node.value = '';
-  }
-  }
+
 }
 
 AddCategory.propTypes = {

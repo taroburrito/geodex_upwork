@@ -9,8 +9,15 @@ import { attemptLogout } from '../../actions/AuthActions';
 //import {addCategory} from '../../actions/CategoryActions';
 import {fetchCommentsByPost, addPost,postComment} from '../../actions/PostActions';
 import {getUserDetail, fetchDashboardData} from '../../utilities/ServerSocket';
-import {updatefriendsList,updateDashboardFriendList, addCategory,setMessageToDefault, sendEmailFromDashboar} from '../../actions/UserActions';
-
+import {
+  updatefriendsList,
+  updateDashboardFriendList,
+  addCategory,
+  setMessageToDefault,
+  sendEmailFromDashboar,
+  deleteCategory,
+  updateCategoryById
+  } from '../../actions/UserActions';
 class HomePage extends Component{
   constructor(props){
     super(props);
@@ -47,7 +54,10 @@ class HomePage extends Component{
           dashboardData={this.props.dashboardData}
           sendEmail={(to,from,content)=>
           dispatch(sendEmail(to,from,content))}
-          postComment = {(req)=>dispatch(postComment(req))}/>
+          postComment = {(req)=>dispatch(postComment(req))}
+          onDeleteClick={Id => dispatch(deleteCategory(Id))}
+          onChange={(id, value) => {dispatch(updateCategoryById(id,value));}}
+          />
         </div>
       );
     }else{

@@ -226,6 +226,7 @@ export function attemptSignUp(formData) {
 }
 
 export function attemptLogin(email, password, role) {
+	
   return (dispatch) => {
     dispatch(clickedLogin());
 
@@ -278,7 +279,7 @@ export function checkSessionStatus(email, password) {
 					});
 		  }*/
 	}
-  
+
 }
 
 export function attemptLogout(){

@@ -32,7 +32,7 @@ class MainLoginPage extends Component {
       <div className="Login_page_admin">
 
         <LoginForm
-           onClickLogin={(formData) => {
+                    onClickLogin={(formData) => {
                       dispatch(attemptLogin(formData.email, formData.password, formData.role))
                     }}
                     isFetchingData={userAuthSession.fetchingAuthUpdate}
@@ -41,7 +41,8 @@ class MainLoginPage extends Component {
                       dispatch(forgetPasswordSubmit(formData.email))
                     }}
                     serverError={forgotPasswordResult.error}
-                    successMessage={forgotPasswordResult.success}/>
+                    successMessage={forgotPasswordResult.success}
+                    />
       </div>
     );
   }

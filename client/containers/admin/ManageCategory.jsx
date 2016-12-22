@@ -22,18 +22,20 @@ class ManageCategory extends Component {
     const { dispatch } = this.props;
     return (
     <div>
-      <CategoryWidget fetchInitialData={registerCategory}
-                        error={this.props.handleMessage.error}
-                        success={this.props.handleMessage.success}
-                        title = {"Manage Category"}
-                        categories  = {this.props.universalCategories}
-                        onAddClick = {text =>
-                                    dispatch(addCategory(req))
-                                 }
-                        onDeleteClick={Id => dispatch(deleteCategory(Id))}
-                        onChange={(id, value) => {
-                                  dispatch(updateCategoryById(id,value));
-                                    }}
+      <CategoryWidget
+         fetchInitialData={registerCategory}
+         userAuthSession ={this.props.userAuthSession}
+          error={this.props.handleMessage.error}
+          success={this.props.handleMessage.success}
+          title = {"Manage Category"}
+          categories  = {this.props.universalCategories}
+          onAddClick = {(req) =>
+                      dispatch(addCategory(req))
+                   }
+          onDeleteClick={Id => dispatch(deleteCategory(Id))}
+          onChange={(id, value) => {
+                    dispatch(updateCategoryById(id,value));
+                      }}
             />
     </div>
     );
@@ -43,7 +45,8 @@ class ManageCategory extends Component {
 function select(state) {
   return {
  universalCategories: state.universalCategories,
- handleMessage: state.handleMessage
+ handleMessage: state.handleMessage,
+ userAuthSession:state.userAuthSession
   };
 }
 

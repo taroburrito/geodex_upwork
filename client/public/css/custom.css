@@ -389,6 +389,7 @@ text-transform:uppercase;
   line-height: 20px;
   margin-top: 0 !important;
   text-align: justify;
+  word-wrap: break-word;
 }
 
 .img_margin_left {
@@ -827,8 +828,20 @@ background: url("../images/bg_line.png") no-repeat left;
 }
 
 .coment_popup .popup_img_right p {
-  font-size: 13px;
-  line-height: 16px;
+    font-size: 13px;
+    line-height: 16px;
+    color: #000!important;
+    margin-top: 6px!important;
+}
+
+a.reply_to_c {
+    background: #1D8ACB;
+    color: #fff;
+    font-size: 12px;
+    padding: 0px 7px;
+    border-radius: 0 0 2px 2px;
+    float: right;
+    line-height: 18px;
 }
 
 .coment_popup .popup_img_right > article.uk-comment {
@@ -877,7 +890,7 @@ background: url("../images/bg_line.png") no-repeat left;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.1) inset;
   margin-top: 0;
   padding: 5px 10px;
-  width: 87%;
+  width: 88%;
   float:right;
 }
 
@@ -1439,16 +1452,19 @@ form.uk-search.search_dash_nav {
   transform: translate(-50%, -50%);
   width: auto!important;
 }
-.single-slide{
-  display: inline-block !important;
-  float: none !important;
-  left: 50%;
-  margin: 0 !important;
-  position: absolute;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: auto!important;
+.single-slide {
+    display: inline-block !important;
+    float: none !important;
+    left: 50%;
+    margin: 0 !important;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: auto!important;
+    max-height: 100%;
 }
+
+
 .popup_img_left .slick-slide img {
   display: inline-block !important;
   float: none !important;
@@ -1527,4 +1543,29 @@ small.user_location {
     float: left;
     top: 53px;
     left: 12px;
+}
+
+label.uk-form-label.ufl2 {
+    font-weight: bold;
+    margin-bottom: -10px;
+    width: 100%;
+}
+
+ul.uk-nestable.uflul {
+    margin-top: 6px;
+}
+.first-icn{
+  margin-left: 5px;
+}
+
+.myinputcont {
+    border: none;
+    border-bottom: 1px dashed #ccc;
+    margin-bottom: 6px;
+    padding: 3px 0;
+    margin-right: 5px;
+}
+
+.uflul a.uk-icon-trash.uk-float-right {
+    margin-top: 3px;
 }
