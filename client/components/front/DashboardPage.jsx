@@ -72,8 +72,7 @@ export default class DashboardPage extends Component {
     this.props.fetchComments(postId);
     //this.loadPostContent(postId,this.state.clickedUser,null,null,e);
     this.setState({clickedPost:postId});
-    console.log(e);
-    console.log(this._imageGallery.props.items[e].postId);
+
   }
   clickSlider(e){
 
@@ -534,6 +533,11 @@ imageSlideTo(e){
     if(currentSlide){
       //this.setState({loadPostContent:true})
       this.setState({currentSlide:currentSlide});
+      if(this._imageGallery){
+        this._imageGallery.slideToIndex(currentSlide);
+      }
+      //this._imageGallery.slideToIndex(currentSlide);
+      //console.log(this._imageGallery); console.log("cjed");
     //  React.unmountComponentAtNode(document.getElementById('postImageModel'));
       //this.refs.largeSliderContent.getDOMNode.innerHtml = "";
       //ReactDOM.unmountComponentAtNode(this.refs.largeSliderContent);
