@@ -388,7 +388,7 @@ resetEmailForm(){
 }
 imageSlideTo(e){
   console.log("ee:"+e);
-  //this._imageGallery.slideToIndex(e)
+  this._imageGallery.slideToIndex(e);
 }
   renderFriendsPostImagesLargeSlider(user_id){
 
@@ -430,8 +430,11 @@ imageSlideTo(e){
         slideInterval={200}
         startIndex={this.state.currentSlide}
         onSlide={this.onSlide}
+        infinite={false}
+        showBullets={false}
+      //  showNav={false}
         //onClick={this.clickSlider}
-      //  onImageLoad={this.imageSlideTo.bind(this,this.state.currentSlide)}
+        onImageLoad={this.imageSlideTo.bind(this,this.state.currentSlide)}
         />
     </div>
 
@@ -502,7 +505,7 @@ imageSlideTo(e){
             <div className="uk-grid">
 
               <div className="uk-width-small-3-5 popup_img_left" ref="largeSliderContent">
-				            {this.renderFriendsPostImagesLargeSlider(this.state.clickedUser)}
+				            {this.state.postLargeImage?<img className="single-slide" src={this.state.postLargeImage}/>:this.renderFriendsPostImagesLargeSlider(this.state.clickedUser)}
 				      </div>
               <div className="uk-width-small-2-5 popup_img_right">
 
@@ -531,6 +534,7 @@ imageSlideTo(e){
     if(currentSlide){
       //this.setState({loadPostContent:true})
       this.setState({currentSlide:currentSlide});
+    //  React.unmountComponentAtNode(document.getElementById('postImageModel'));
       //this.refs.largeSliderContent.getDOMNode.innerHtml = "";
       //ReactDOM.unmountComponentAtNode(this.refs.largeSliderContent);
 
@@ -541,6 +545,16 @@ imageSlideTo(e){
     this.setState({clickedPost:postId,clickedUser:userId,getClickedUser:userId,postLargeImage:popupImage,popupContent:popupContent});
 
   }
+
+  loadSinglePostContent(postId,userId,popupImage,popupContent){
+
+    this.props.fetchComments(postId);
+
+    this.setState({clickedPost:postId,clickedUser:userId,getClickedUser:userId,postLargeImage:popupImage,popupContent:popupContent});
+
+  }
+
+
 
 
   renderFriendList(){
@@ -607,7 +621,7 @@ imageSlideTo(e){
               </div>
             </div>
             <div className="uk-width-small-1-2 post_control">
-              <a href="#" className="post_txt_dashboard" data-uk-modal={item.post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={this.loadPostContent.bind(this,item.post_id,user_id,postLargeImage,popupContent)}>
+              <a href="#" className="post_txt_dashboard" data-uk-modal={item.post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={this.loadSinglePostContent.bind(this,item.post_id,user_id,postLargeImage,popupContent)}>
               {item.post_image?<img src={this.state.uploadDir+'user_'+user_id+'/thumbs/'+item.post_image} className="uk-float-left img_margin_right"/>:null}
               <p>{content}</p>
 
