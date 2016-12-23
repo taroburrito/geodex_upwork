@@ -807,7 +807,7 @@ loadChild(child){
 
     var childArr = child[id]['children'];
 
-    if(item.user_id != userAuthSession.userObject.id && this.state.showCommentBox == item.id){
+    if(this.state.showCommentBox == item.id){
       var commentBox = (
         <div className="comenting_form border-top_cf">
         <img className="uk-comment-avatar" src={this.getProfileImage(userAuthSession.userObject.profile_image,userAuthSession.userObject.id)} alt="" width="40" height="40"/>
