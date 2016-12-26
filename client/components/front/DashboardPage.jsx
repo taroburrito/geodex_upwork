@@ -1317,16 +1317,12 @@ loadChild(child){
 
             <div className="cont_post_btn">
               <textarea placeholder="Post to geodex..." className="uk-width-1-1" ref="postContent"></textarea>
-<a className="uk-button uk-button-primary uk-button-large" onClick={this.handleSavePost}>Post</a>
-            <div className="yt_img"><i className="uk-icon-image" data-uk-modal="{target:'#statusImageModel'}" style={{cursor:"pointer"}} onClick={()=>this.setState({clickedYouTubeLink:null,clickedImageIcon:true,videoLink:null,image:null})}></i>
-              <a data-uk-modal="{target:'#statusImageModel'}" onClick={()=>this.setState({clickedYouTubeLink:true,clickedImageIcon:null,videoLink:null,image:null})}><img src="public/images/yt.png"></img></a>
+              <a className="uk-button uk-button-primary uk-button-large" onClick={this.handleSavePost}>Post</a>
+              <div className="yt_img"><i data-uk-tooltip title="Upload Image" className="uk-icon-image" data-uk-modal="{target:'#statusImageModel'}" style={{cursor:"pointer"}} onClick={()=>this.setState({clickedYouTubeLink:null,clickedImageIcon:true,videoLink:null,image:null})}></i>
+              <a  title="upload youtube video link" data-uk-modal="{target:'#statusImageModel'}" onClick={()=>this.setState({clickedYouTubeLink:true,clickedImageIcon:null,videoLink:null,image:null})}><img src="public/images/yt.png"></img></a>
             </div>
 
-
-
-
-
-            </div>
+          </div>
 
             </div>
             </div>

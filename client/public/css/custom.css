@@ -617,6 +617,10 @@ form.uk-search.search_dash_nav {
 background: url("../images/bg_line.png") no-repeat left;
 }
 
+.dash_top_head .post_control{
+  background: url("../images/bg_line.png") no-repeat left;
+}
+
 
 .settings .uk-button {
   background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
