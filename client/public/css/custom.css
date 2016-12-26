@@ -1423,8 +1423,8 @@ form.uk-search.search_dash_nav {
 }
 
 .slick-next, .slick-prev {
-    border-radius: 57px;
-    background: #cecece !important;
+    /* border-radius: 57px; */
+    background: transparent !important;
 }
 
 .slick-slide.main-box > img {
@@ -1603,4 +1603,23 @@ ul.uk-nestable.uflul {
 
 img.uk-float-right.img_margin_left {
     width: 180px;
+}
+
+.yt_img a img {
+    margin-right: 6px;
+    margin-top: 3px;
+}
+
+.yt_img {
+    float: right;
+}
+
+.slick-prev:before {
+    content: "\f053" !important;
+    font-family: FontAwesome!important;
+}
+
+.slick-next:before, [dir=rtl] .slick-prev:before {
+    content: "\f054"!important;
+    font-family: FontAwesome!important;
 }

@@ -59,6 +59,8 @@ export default class DashboardPage extends Component {
       loadPostContent:false,
       videoLink:null,
       popupVideo:null,
+      clickedImageIcon:null,
+      clickedYouTubeLink:null
 
     }
   }
@@ -525,9 +527,13 @@ _myImageGalleryRenderer(item) {
        });
 
 
-       const settings = {
+       var settings = {
          slidesToShow:3,
          infinite:false,
+         prevArrow:customPrevIcon,
+         nextArrow:customNextIcon,
+         arrow:false,
+
         // slikGoTo:this.state.currentSlide
        };
        return(
@@ -1219,10 +1225,13 @@ loadChild(child){
             : null}
 
              <br />
+             {this.state.clickedImageIcon?
            <input type="file"  ref="file" className="uk-float-left"  onChange={this.handleImageChange.bind(this)}/>
-           <p>OR</p>
+           :null}
+         {this.state.clickedYouTubeLink?
           <input type="text" ref="videoLink" className="input-img-url"  value={this.state.videoLink} placeholder="Enter youtube url" onChange={this.handleVideoLinkChange}/>
-        {(this.state.image || this.state.videoLink) ?
+          :null}
+      {(this.state.image || this.state.videoLink) ?
           <div className="uk-modal-footer uk-text-right">
                         <button className="uk-button uk-modal-close" type="button">Cancel</button>
                         <input className="uk-button uk-button-primary uk-modal-close" type="button" onClick={this.handleSavePostImage} value="Save" />
@@ -1308,8 +1317,15 @@ loadChild(child){
 
             <div className="cont_post_btn">
               <textarea placeholder="Post to geodex..." className="uk-width-1-1" ref="postContent"></textarea>
-            <a className="uk-button uk-button-primary uk-button-large" onClick={this.handleSavePost}>Post</a>
-            <i className="uk-icon-image" data-uk-modal="{target:'#statusImageModel'}" style={{cursor:"pointer"}}></i>
+<a className="uk-button uk-button-primary uk-button-large" onClick={this.handleSavePost}>Post</a>
+            <div className="yt_img"><i className="uk-icon-image" data-uk-modal="{target:'#statusImageModel'}" style={{cursor:"pointer"}} onClick={()=>this.setState({clickedYouTubeLink:null,clickedImageIcon:true,videoLink:null,image:null})}></i>
+              <a data-uk-modal="{target:'#statusImageModel'}" onClick={()=>this.setState({clickedYouTubeLink:true,clickedImageIcon:null,videoLink:null,image:null})}><img src="public/images/yt.png"></img></a>
+            </div>
+
+
+
+
+
             </div>
 
             </div>
@@ -1372,13 +1388,13 @@ function select(state) {
 var customPrevIcon = React.createClass({
 
   render(){
-    return  <button className='button-left' {...this.props}>Previous</button>
+    return  <button className='button-left' {...this.props}><</button>
   }
 });
 var customNextIcon = React.createClass({
 
   render(){
-    return  <button className='button-right' {...this.props}>Next</button>
+    return  <button className='button-right' {...this.props}>></button>
   }
 });
 
