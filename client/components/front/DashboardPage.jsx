@@ -34,6 +34,7 @@ export default class DashboardPage extends Component {
     this.handleClickPostComment = this.handleClickPostComment.bind(this);
     this.onSlide = this.onSlide.bind(this);
     this.clickSlider = this.clickSlider.bind(this);
+    this.handleVideoLinkChange = this.handleVideoLinkChange.bind(this);
 
     this.state ={
       errorMessage: null,
@@ -56,6 +57,8 @@ export default class DashboardPage extends Component {
       postComment:null,
       currentSlide:0,
       loadPostContent:false,
+      videoLink:null,
+      popupVideo:null,
 
     }
   }
@@ -66,6 +69,9 @@ export default class DashboardPage extends Component {
     var uploadDir = 'uploads/images/';
     this.setState({uploadDir:uploadDir,loading:true});
     this.props.fetchInitialData(userAuthSession.userObject.id,null);
+    document.getElementById("html").className = "";
+    console.log("removed");
+    //htmlTag.classList.remove('uk-modal-page');
   }
   onSlide(e){
     //React.unmountComponentAtNode(document.getElementById('test'));
@@ -140,7 +146,9 @@ export default class DashboardPage extends Component {
       reader.onloadend = function(upload) {
       self.setState({
           image: upload.target.result,
-          fileData:file
+          fileData:file,
+          videoLink:null,
+          videoImage:null
         });
 
       };
@@ -154,14 +162,16 @@ export default class DashboardPage extends Component {
       user_id: userAuthSession.userObject.id,
       content: this.refs.postImageContent.getDOMNode().value.trim(),
       image: this.state.image,
+      youtube_url: this.state.videoLink,
+      youtube_image: this.state.videoImage,
       //fileData:this.state.fileData
     }
 
-    if(!formData.image){
+    if(!formData.image && !formData.youtube_url){
       this.setState({handleMessage:{error:"Please choose image",success:null}});
     }else{
       this.props.onClickSavePost(formData);
-      this.setState({image:null,post_image:null,fileData:null});
+      this.setState({image:null,post_image:null,fileData:null,videoImage:null,videoLink:null});
       this.refs.postImageContent.getDOMNode().value = "";
       this.refs.postContent.getDOMNode().value = "";
     }
@@ -394,6 +404,22 @@ imageSlideTo(e){
   console.log("ee:"+e);
   this._imageGallery.slideToIndex(e);
 }
+
+
+_myImageGalleryRenderer(item) {
+    // your own image error handling
+    const onImageError = this._handleImageError;
+    return (
+      <div className='image-gallery-image'>
+        {item.video?<iframe src={item.video} height="500" width="700"/>:<img src={item.original}/>}
+
+
+
+      </div>
+    )
+  }
+
+
   renderFriendsPostImagesLargeSlider(user_id){
 
     if(this._imageGallery){
@@ -413,12 +439,13 @@ imageSlideTo(e){
        Object.keys(friendsPost).forEach((postImage)=> {
 
          var postContent = friendsPost[postImage];
-         var postImageSrc = this.state.uploadDir+"user_"+postContent.user_id+"/"+postContent.post_image;
-         if(postImage)
+         var postImageSrc = postContent.post_image?this.state.uploadDir+"user_"+postContent.user_id+"/"+postContent.post_image:null;
+         if(postImage || postContent.youtube_url)
          friendElement.push(
            {
              original:postImageSrc,
              postId:postContent.id,
+             video:postContent.youtube_url,
            }
 
          );
@@ -440,6 +467,7 @@ imageSlideTo(e){
         autoPlay={false}
         showPlayButton={false}
         showFullscreenButton={false}
+        //renderItem={this._myImageGalleryRenderer.bind(this)}
       //  showNav={false}
         //onClick={this.clickSlider}
         onImageLoad={this.imageSlideTo.bind(this,this.state.currentSlide)}
@@ -464,15 +492,31 @@ imageSlideTo(e){
 
        var friendElement = [];
        var i = 1;
-       Object.keys(friendsPost).forEach((postImage)=> {
 
-         var postContent = friendsPost[postImage];
-         var postImageSrc = this.state.uploadDir+"user_"+postContent.user_id+"/thumbs/"+postContent.post_image;
-         if(postImage)
+       Object.keys(friendsPost).forEach((friendId)=> {
+
+         var item = friendsPost[friendId];
+         var post_image = item.post_image || item.youtube_image;
+         var postImage = this.state.uploadDir+"user_"+user_id+"/thumbs/"+post_image;
+
+         // Image content
+         if(item.post_image){
+          //var postImage = this.state.uploadDir+"user_"+user_id+"/thumbs/"+post_image;
+         }
+         //Video Content
+         else if (item.youtube_image) {
+          //var  postVideo = item.youtube_url;
+           }
+
+         //text content
+         else {
+
+         }
+         if(post_image)
          friendElement.push(
-             <div key={postContent.i} className="slider_image uk-grid-small uk-grid-width-medium-1-4">
-               <a data-uk-modal="{target:'#postImageModel'}"  onClick={this.loadPostContent.bind(this,postContent.id,user_id,null,null,i)}>
-                 <img src={postImageSrc}/>
+             <div key={item.i} className="slider_image uk-grid-small uk-grid-width-medium-1-4">
+               <a data-uk-modal="{target:'#postImageModel'}"  onClick={this.loadPostContent.bind(this,item.id,user_id,null,null,i,null)}>
+                 <img src={postImage}/>
                 </a>
             </div>
          );
@@ -506,6 +550,22 @@ imageSlideTo(e){
     const{userAuthSession} = this.props;
     var user = userAuthSession.userObject;
 
+    if(this.state.postLargeImage){
+      var imageContent = (
+        <div className="image-gallery-slide">
+        <img className="single-slide" src={this.state.postLargeImage}/>
+        </div>
+      )
+    }else if (this.state.popupVideo) {
+      var imageContent = (
+        <div className="image-gallery-slide">
+        <iframe  src={this.state.popupVideo} height="500" width="700"/>
+        </div>
+        );
+    }else{
+      var imageContent = null;
+    }
+
     return(
       <div id="postImageModel" className="uk-modal coment_popup">
           <div className="uk-modal-dialog uk-modal-dialog-blank">
@@ -513,7 +573,8 @@ imageSlideTo(e){
             <div className="uk-grid">
 
               <div className="uk-width-small-3-5 popup_img_left" ref="largeSliderContent">
-				            {this.state.postLargeImage?<img className="single-slide" src={this.state.postLargeImage}/>:this.renderFriendsPostImagesLargeSlider(this.state.clickedUser)}
+				            {(this.state.postLargeImage || this.state.popupVideo)?
+                      {imageContent}:this.renderFriendsPostImagesLargeSlider(this.state.clickedUser)}
 				      </div>
               <div className="uk-width-small-2-5 popup_img_right">
 
@@ -537,7 +598,7 @@ imageSlideTo(e){
     )
   }
 
-  loadPostContent(postId,userId,popupImage,popupContent,currentSlide){
+  loadPostContent(postId,userId,popupImage,popupContent,currentSlide,postVideo){
 
     if(currentSlide){
       var current = parseInt(currentSlide) - 1;
@@ -557,15 +618,15 @@ imageSlideTo(e){
     }
     this.props.fetchComments(postId);
 
-    this.setState({clickedPost:postId,clickedUser:userId,getClickedUser:userId,postLargeImage:popupImage,popupContent:popupContent});
+    this.setState({clickedPost:postId,clickedUser:userId,getClickedUser:userId,postLargeImage:popupImage,popupContent:popupContent,popupVideo:postVideo});
 
   }
 
-  loadSinglePostContent(postId,userId,popupImage,popupContent){
+  loadSinglePostContent(postId,userId,popupImage,popupContent,postVideo){
 
     this.props.fetchComments(postId);
 
-    this.setState({clickedPost:postId,clickedUser:userId,getClickedUser:userId,postLargeImage:popupImage,popupContent:popupContent});
+    this.setState({clickedPost:postId,clickedUser:userId,getClickedUser:userId,postLargeImage:popupImage,popupContent:popupContent,popupVideo:postVideo});
 
   }
 
@@ -957,29 +1018,47 @@ loadChild(child){
     if(latestPost){
       var content = latestPost.content;
       var content_length = latestPost.content.length;
-      var post_image = latestPost.image;
-      if(post_image){
+      var post_image = latestPost.image || latestPost.youtube_image;
+      var postImage;
+      var postVideo;
+
+
+      // Image content
+      if(latestPost.image){
         if(content.length > 300){
         content = content.substring(0,300).concat(' ...LoadMore');
         }else{
         content = content;
         }
-        var postImage = this.state.uploadDir+"user_"+userProfile.id+"/thumbs/"+latestPost.image;
-      }else {
+         postImage = this.state.uploadDir+"user_"+userProfile.id+"/thumbs/"+post_image;
+      }
+      //Video Content
+      else if (latestPost.youtube_image) {
+        if(content.length > 300){
+        content = content.substring(0,300).concat(' ...LoadMore');
+        }else{
+        content = content;
+        }
+         postVideo = latestPost.youtube_url;
+
+      }
+
+      //text content
+      else {
         if(content.length > 500){
         content = content.substring(0,500).concat(' ...LoadMore');
         }else{
         content = content;
         }
-        var postImage = null;
+
       }
 
        return (
          <div className="uk-width-small-1-2 post_control">
         <div  style={{maxHeight:200,overflow:"hidden"}}>
-        <a href="#" className="post_txt_dashboard" data-uk-modal={latestPost.image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={this.loadSinglePostContent.bind(this,latestPost.id,userProfile.id,postImage,latestPost.content)}>
+        <a href="#" className="post_txt_dashboard" data-uk-modal={post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={this.loadSinglePostContent.bind(this,latestPost.id,userProfile.id,postImage,latestPost.content,postVideo)}>
 
-        <img src={latestPost.image? this.state.uploadDir+"user_"+userProfile.id+"/thumbs/"+latestPost.image: null} className="uk-float-right img_margin_left"/>
+        <img src={post_image? this.state.uploadDir+"user_"+userProfile.id+"/thumbs/"+post_image: null} className="uk-float-right img_margin_left"/>
         <p>{content}</p>
         </a>
 
@@ -1026,7 +1105,26 @@ loadChild(child){
   </div>
       );
     }
+  }
 
+
+
+  handleVideoLinkChange(e){
+
+    var videoid = e.target.value.match(/(?:https?:\/{2})?(?:w{3}\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\?v=|\/)([^\s&]+)/);
+
+    if(videoid != null) {
+      console.log("video id = ",videoid[1]);
+      var videoLink = 'https://www.youtube.com/embed/'+videoid[1];
+      var videoImg = "https://img.youtube.com/vi/"+videoid[1]+"/default.jpg"
+      this.setState({videoLink:videoLink,image:null,videoImage:videoImg});
+      console.log("https://img.youtube.com/vi/"+videoid[1]+"/default.jpg");
+    } else {
+      console.log("The youtube url is not valid.");
+      this.setState({videoLink:null,image:null,videoImage:null})
+    }
+    //if()
+    //this.setState({videoLink:e.target.value,image:null})
   }
 
  renderCategoryModel(){
@@ -1086,6 +1184,7 @@ loadChild(child){
          <div className="uk-alert uk-alert-danger"><p>{this.state.handleMessage.error}</p></div>
        )
      }
+  //var videoSrc = "http://www.youtube.com/embed/" + this.state.videoLink;
    return(
      <div id="statusImageModel" className="uk-modal" >
 
@@ -1094,12 +1193,21 @@ loadChild(child){
           {errorLabel}
            {this.state.image
              ?<div className="img_border"><img src={this.state.image}   ref="postImage"/>
-           <textarea placeholder="text about image" className="uk-width-1-1" ref="postImageContent" ></textarea></div>
-           :<div className="img_border"><img src="public/images/user.jpg"   ref="postImage"/></div>}
+           <textarea placeholder="text about image" className="uk-width-1-1" ref="postImageContent" ></textarea>
+             </div>:null}
+
+            {this.state.videoLink?
+              <div className="img_border">
+              <iframe className="player" type="text/html" width="100%" height="100%" src={this.state.videoLink}/>
+              <textarea placeholder="text about image" className="uk-width-1-1" ref="postImageContent" ></textarea>
+              </div>
+            : null}
+
              <br />
            <input type="file"  ref="file" className="uk-float-left"  onChange={this.handleImageChange.bind(this)}/>
-        <br />
-        {this.state.image?
+           <p>OR</p>
+          <input type="text" ref="videoLink" className="input-img-url"  value={this.state.videoLink} placeholder="Enter youtube url" onChange={this.handleVideoLinkChange}/>
+        {(this.state.image || this.state.videoLink) ?
           <div className="uk-modal-footer uk-text-right">
                         <button className="uk-button uk-modal-close" type="button">Cancel</button>
                         <input className="uk-button uk-button-primary uk-modal-close" type="button" onClick={this.handleSavePostImage} value="Save" />
@@ -1163,8 +1271,8 @@ loadChild(child){
     var content;
     var errorLabel;
 
-    console.log("all states");
-    console.log(this.state);
+
+
     if(userProfileData)
     return (
 

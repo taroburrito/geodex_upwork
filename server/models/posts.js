@@ -13,6 +13,8 @@ var postModel = {
         user_id: row.user_id,
         content: row.content,
         image: row.image,
+        youtube_image: row.youtube_image,
+        youtube_url: row.youtube_url,
         status: row.status,
         created: row.created,
         modified:row.modified
@@ -26,12 +28,19 @@ var postModel = {
   },
 
     createPost: function (formData, callback) {
-      if(!formData.image){
+      if(!formData.image && !formData.youtube_image){
         var image = null;
       }else{
-        var uploadImage = common.uploadPostImage(formData.image,formData.user_id);
-        if(uploadImage){
+        if(formData.image){
+          var uploadImage = common.uploadPostImage(formData.image,formData.user_id);
+        }else if (formData.youtube_image) {
+          var uploadImage = common.uploadYoutubePostImage(formData.youtube_image,formData.user_id);
+        }
+
+        if(uploadImage && formData.image){
           formData.image = uploadImage;
+        }else if(uploadImage && formData.youtube_image){
+          formData.youtube_image = uploadImage;
         }else{
           dbConnection.end();
           return(callback({error:"Error in uploading"}));
@@ -233,6 +242,8 @@ function constructCreatePostSqlString(formData) {
     var query = "INSERT INTO gx_posts SET " +
             "  user_id = " + mysql.escape(formData.user_id) +
             ", content = " + mysql.escape(formData.content) +
+            ", youtube_url = " + mysql.escape(formData.youtube_url) +
+            ", youtube_image = " + mysql.escape(formData.youtube_image) +
             ", image = " + mysql.escape(formData.image) +
             ", status = 1 "+
             ", created = '" + formatted+"'" ;

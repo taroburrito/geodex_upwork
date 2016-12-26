@@ -1452,6 +1452,18 @@ form.uk-search.search_dash_nav {
   transform: translate(-50%, -50%);
   width: auto!important;
 }
+.image-gallery-slide iframe{
+  display: inline-block !important;
+  float: none !important;
+  left: 50%;
+  margin: 0 !important;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: 450px;
+
+}
 .single-slide {
     display: inline-block !important;
     float: none !important;
@@ -1568,4 +1580,23 @@ ul.uk-nestable.uflul {
 
 .uflul a.uk-icon-trash.uk-float-right {
     margin-top: 3px;
+}
+
+.dashboad.middle_content form.post_img_modal_form input.uk-float-left {
+    float: none;
+    margin: auto;
+    font-size: 15px;
+    width: auto !important;
+}
+.dashboad.middle_content form.post_img_modal_form p {
+    float: left;
+    width: 100%;
+    text-align: center !important;
+    font-size: 19px !important;
+    margin: 15px 0 !important;
+}
+.dashboad.middle_content form.post_img_modal_form .input-img-url{
+    width: 80%;
+    padding: 4px 6px;
+    font-size: 15px;
 }

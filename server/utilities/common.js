@@ -2,6 +2,7 @@ var fs = require('fs');
 var Jimp = require("jimp");
 var path = require('path');
 var clientDir = path.join(__dirname, '../../', 'client/uploads/images');
+var httpRequest = require('request');
 
 var common = {
 decodeBase64Image: function(dataString) {
@@ -58,6 +59,56 @@ if(!fs.existsSync(thumbs_dir)){
 var thumbImage = processImage(path,thumbs_path);
 
   return name;
+},
+
+
+uploadYoutubePostImage:function(imageData,userId){
+
+//   fs.readFile(imageData, function(err, data) {
+//   if (err) throw err;
+//
+//   // Encode to base64
+//   var base64Data = new Buffer(imageData, 'binary').toString('base64');
+// });
+//  var base64Data = imageData.replace(/^data:image\/\w+;base64,/, "");
+  var ext = "jpg";
+  var name = Date.now()+"."+ext;
+
+  var dir = clientDir+"/user_"+userId;
+  var thumbs_dir = clientDir+"/user_"+userId+"/thumbs";
+  var path = dir+"/"+name;
+  var thumbs_path = thumbs_dir+"/"+name;
+  //console.log(clientDir);
+
+  // check if dir already exists
+  if(!fs.existsSync(dir)){
+    fs.mkdirSync(dir, 0766, function(err){
+        if(err){
+            console.log(err);
+        }
+    });
+}
+  // check if dir already exists
+if(!fs.existsSync(thumbs_dir)){
+  fs.mkdirSync(thumbs_dir, 0766, function(err){
+      if(err){
+          console.log(err);
+      }
+  });
+}
+
+// simple HTTP GET request for the image URL
+httpRequest.get({url: imageData, encoding: 'binary'}, function (err, httpResponse, body) {
+
+  fs.writeFile(thumbs_path, body, 'binary', function(err) {
+    if(err) {
+      console.log('Error: '+err);
+    } else {
+      console.log('Saved image');
+    }
+  });
+});
+return name;
 },
 
 }
