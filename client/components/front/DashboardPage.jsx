@@ -650,29 +650,41 @@ _myImageGalleryRenderer(item) {
 
       if(item){
         var content_length = content.length;
-        var post_image = item.post_image;
+        var post_image = item.post_image || item.youtube_image;
+        var postVideo;
+        var postImage;
 
-        if(post_image){
-          var postLargeImage = this.state.uploadDir+'user_'+user_id+'/'+item.post_image;
-
-          var popupContent = null;
+        // Image content
+        if(item.post_image){
+          if(content_length > 300){
+          content = content.substring(0,300).concat(' ...LoadMore');
+          }else{
+          content = content;
+          }
+           postImage = this.state.uploadDir+"user_"+user_id+"/thumbs/"+item.post_image;
+        }
+        //Video Content
+        else if (item.youtube_image) {
           if(content.length > 300){
           content = content.substring(0,300).concat(' ...LoadMore');
           }else{
           content = content;
           }
-        }else {
-          var postLargeImage = null;
-          var popupContent = item.post_content;
+           postVideo = item.youtube_url;
+
+        }
+
+        //text content
+        else {
           if(content.length > 500){
           content = content.substring(0,500).concat(' ...LoadMore');
           }else{
           content = content;
           }
-        }
-      }else {
 
+        }
       }
+
       var slider_images = this.renderFriendsPostImagesSmallSlider(user_id);
       friendsElement.push(  <div className="uk-grid dash_top_head dash_botom_list" id={item.id}>
 
@@ -696,15 +708,18 @@ _myImageGalleryRenderer(item) {
                 </div>
               </div>
             </div>
+
             <div className="uk-width-small-1-2 post_control">
-              <a href="#" className="post_txt_dashboard" data-uk-modal={item.post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={this.loadSinglePostContent.bind(this,item.post_id,user_id,postLargeImage,popupContent)}>
-              {item.post_image?<img src={this.state.uploadDir+'user_'+user_id+'/thumbs/'+item.post_image} className="uk-float-left img_margin_right"/>:null}
-              <p>{content}</p>
+              <div>
+                <a href="#" className="post_txt_dashboard" data-uk-modal={post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={this.loadSinglePostContent.bind(this,item.id,user_id,postImage,item.post_content,postVideo)}>
 
-              </a>
+                  <img src={post_image? this.state.uploadDir+"user_"+user_id+"/thumbs/"+post_image: null} className="uk-float-right img_margin_left"/>
+                  <p>{content}</p>
+                </a>
 
+           </div>
+         </div>
 
-            </div>
          </div>);
 
     });
@@ -1116,9 +1131,9 @@ loadChild(child){
     if(videoid != null) {
       console.log("video id = ",videoid[1]);
       var videoLink = 'https://www.youtube.com/embed/'+videoid[1];
-      var videoImg = "https://img.youtube.com/vi/"+videoid[1]+"/default.jpg"
+      var videoImg = "https://img.youtube.com/vi/"+videoid[1]+"/0.jpg"
       this.setState({videoLink:videoLink,image:null,videoImage:videoImg});
-      console.log("https://img.youtube.com/vi/"+videoid[1]+"/default.jpg");
+      console.log("https://img.youtube.com/vi/"+videoid[1]+"/0.jpg");
     } else {
       console.log("The youtube url is not valid.");
       this.setState({videoLink:null,image:null,videoImage:null})

@@ -798,9 +798,9 @@ background: url("../images/bg_line.png") no-repeat left;
 
 
 .coment_popup.uk-modal .uk-modal-dialog {
-  height: 90%;
-  margin: 3%;
-  width: 94%;
+ height: 90%;
+ margin: 3% 2% 3% 4%;
+ width: 94%;
 }
 
 
@@ -1599,4 +1599,8 @@ ul.uk-nestable.uflul {
     width: 80%;
     padding: 4px 6px;
     font-size: 15px;
+}
+
+img.uk-float-right.img_margin_left {
+    width: 180px;
 }
