@@ -1388,13 +1388,13 @@ function select(state) {
 var customPrevIcon = React.createClass({
 
   render(){
-    return  <button className='button-left' {...this.props}><</button>
+    return  <button className='button-left' {...this.props}>Prev</button>
   }
 });
 var customNextIcon = React.createClass({
 
   render(){
-    return  <button className='button-right' {...this.props}>></button>
+    return  <button className='button-right' {...this.props}>Next</button>
   }
 });
 
