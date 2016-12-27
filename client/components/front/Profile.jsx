@@ -575,11 +575,11 @@ renderPostImageModal(){
         <button className="uk-modal-close uk-close" type="button"></button>
           <div className="uk-grid">
 
-            <div className="uk-width-small-3-5 popup_img_left" ref="largeSliderContent">
+            <div className="uk-width-small-3-4 popup_img_left" ref="largeSliderContent">
                   {(this.state.postLargeImage || this.state.popupVideo)?
                     {imageContent}:this.renderFriendsPostImagesLargeSlider(this.state.clickedUser)}
             </div>
-            <div className="uk-width-small-2-5 popup_img_right">
+            <div className="uk-width-small-1-4 popup_img_right">
 
             {this.loadPostByInfo(this.state.clickedUser,this.state.clickedPost)}
             <h5 className="coment_heading">Comments</h5>
