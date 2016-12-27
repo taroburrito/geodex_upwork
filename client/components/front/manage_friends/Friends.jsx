@@ -56,7 +56,7 @@ export default class Friends extends Component {
       img = this.props.profile_image;
 
     }else{
-      img= "public/images/user.jpg";
+      img= "public/images/user.png";
     }
     if(!this.props.blocked_by){
         var block_link = (
@@ -73,7 +73,7 @@ export default class Friends extends Component {
       <div className="uk-width-small-1-3 add_friend custom-freind">
         <div className="af_border">
           <div className="uk-grid uk-grid-small">
-            <div className="uk-width-2-10 user_img_left"><img src={img} className=""/></div>
+            <div className="uk-width-2-10 "><img src={img} className=""/></div>
             <div className="uk-width-6-10 user_bottom_img_right">
               <h3><Link to={view_link}>{this.props.first_name} {this.props.last_name}</Link><small className="user_location"><a>{this.props.address}</a></small></h3>
             </div>

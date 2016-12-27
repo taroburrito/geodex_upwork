@@ -700,9 +700,9 @@ _myImageGalleryRenderer(item) {
       }
 
       var slider_images = this.renderFriendsPostImagesSmallSlider(user_id);
-      friendsElement.push(  <div className="uk-grid dash_top_head dash_botom_list" id={item.id}>
+      friendsElement.push(  <div className="uk-grid dash_top_head dash_botom_list bg_gry_lr" id={item.id}>
 
-            <div className="uk-width-small-1-2">
+            <div className="uk-width-small-1-2 no_mrg_left">
               <div className="uk-grid uk-grid-small">
               <div className="uk-width-3-10 user_img_left"><Link to={profile_link}><img src={this.getProfileImage(item.profile_image,user_id)} className=""/></Link></div>
               <div className="uk-width-7-10 user_bottom_img_right">
@@ -738,7 +738,7 @@ _myImageGalleryRenderer(item) {
 
     });
 
-    if(friendsElement && friendsElement.length > 0){
+  if(friendsElement && friendsElement.length > 0){
     return(
       {friendsElement}
 

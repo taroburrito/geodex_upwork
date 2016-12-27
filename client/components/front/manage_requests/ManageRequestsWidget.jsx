@@ -25,10 +25,18 @@ render(){
              />);
     }
   );
-  return(
-    <div className="uk-container uk-container-center middle_content dashboad">
+
+
+  if(friendElement && friendElement.length > 0){
+   return(
+      <div className="uk-container uk-container-center middle_content dashboad">
             {friendElement}
-    </div>
-  );
-}
+      </div>
+    )
+  }else {
+      return(
+        <div className="uk-container uk-container-center middle_content dashboad"><h3>No friend requests</h3></div>
+      )
+    }
+  }
 }
