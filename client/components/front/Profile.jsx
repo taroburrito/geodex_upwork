@@ -61,9 +61,10 @@ export default class Profile extends Component {
 
 
       }
+        this.setState({clickedPost:postId,clickedUser:userId,getClickedUser:userId,postLargeImage:popupImage,popupContent:popupContent,popupVideo:postVideo});
       this.props.fetchComments(postId);
 
-      this.setState({clickedPost:postId,clickedUser:userId,getClickedUser:userId,postLargeImage:popupImage,popupContent:popupContent,popupVideo:postVideo});
+
 
     }
 
@@ -181,9 +182,10 @@ export default class Profile extends Component {
 
     loadSinglePostContent(postId,userId,popupImage,popupContent,postVideo){
 
+      this.setState({clickedPost:postId,clickedUser:userId,getClickedUser:userId,postLargeImage:popupImage,popupContent:popupContent,popupVideo:postVideo});
       this.props.fetchComments(postId);
 
-      this.setState({clickedPost:postId,clickedUser:userId,getClickedUser:userId,postLargeImage:popupImage,popupContent:popupContent,popupVideo:postVideo});
+
 
     }
 
@@ -275,7 +277,7 @@ renderPhotos(){
 
           <div className="profile_post_photos">
 
-              <a href="#postImageModel" onClick={this.loadPostContent.bind(this,item.id,item.user_id,null,item.content,i,null)} data-uk-modal>
+              <a href="#postImageModel" onClick={this.loadPostContent.bind(this,item.id,item.user_id,null,null,i,null)} data-uk-modal>
                 <img src={this.state.uploadDir+'user_'+item.user_id+'/thumbs/'+post_img}/>
 
               </a>
@@ -300,9 +302,10 @@ onSlide(e){
   //React.unmountComponentAtNode(document.getElementById('test'));
     //this._imageGallery.slideToIndex(e);
   var postId = this._imageGallery.props.items[e].postId;
+  this.setState({clickedPost:postId});
   this.props.fetchComments(postId);
   //this.loadPostContent(postId,this.state.clickedUser,null,null,e);
-  this.setState({clickedPost:postId});
+
 
 }
 
@@ -372,8 +375,13 @@ renderFriendsPostImagesLargeSlider(user_id){
 loadPostByInfo(userId,postId){
 
   const {visitedUser} = this.props;
-  var post = visitedUser.posts[postId];
+  if(postId){
 
+    var post = visitedUser.posts[postId];
+    var postContent = post.content;
+  }else{
+      var postContent = null;
+  }
   if(visitedUser.userProfileData)
   var userProfileData = visitedUser.userProfileData;
   return(
@@ -387,7 +395,7 @@ loadPostByInfo(userId,postId){
 
         <div className="uk-comment-body">
           <div className="uk-width-small-1-1 post_control">
-          <p>{this.state.popupContent}</p>
+          <p>{postContent}</p>
           </div>
         </div>
     </article>
@@ -605,7 +613,7 @@ renderPostContentModal(){
             <div className="uk-width-small-1-1 popup_img_right coment_pop_cont">
 
 
-          {this.loadPostByInfo(this.state.clickedUser)}
+          {this.loadPostByInfo(this.state.clickedUser, this.state.clickedPost)}
             <h5 className="coment_heading">Comments</h5>
             <ul className="uk-comment-list" ref="commentsul">
               {this.renderComments(this.state.clickedPost)}

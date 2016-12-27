@@ -983,7 +983,7 @@ function constructFriendRequestsSqlString(userId){
 }
 
 function constructFreindsPostImagesSqlString(friendsIds){
-  var query = "Select id,user_id, (image) post_image, youtube_image, youtube_url from gx_posts WHERE user_id IN("+friendsIds+") AND (image!='' OR youtube_image!='')";
+  var query = "Select id,user_id, (image) post_image, youtube_image, youtube_url, content from gx_posts WHERE user_id IN("+friendsIds+") AND (image!='' OR youtube_image!='')";
   return query;
 }
 

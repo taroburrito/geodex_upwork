@@ -592,7 +592,7 @@ _myImageGalleryRenderer(item) {
 				      </div>
               <div className="uk-width-small-1-4 popup_img_right">
 
-              {this.loadPostByInfo(this.state.clickedUser)}
+              {this.loadPostByInfo(this.state.clickedUser,this.state.clickedPost)}
               <h5 className="coment_heading">Comments</h5>
               <ul className="uk-comment-list">
               {this.renderComments(this.state.clickedPost)}
@@ -773,15 +773,31 @@ _myImageGalleryRenderer(item) {
     );
   }
 
-  loadPostByInfo(userId){
-
+  loadPostByInfo(userId,postId){
+  const{dashboardData,userAuthSession} = this.props;
     if(userId){
-    const{dashboardData,userAuthSession} = this.props;
     if(userAuthSession.userObject.id === userId){
         var friendData = userAuthSession.userObject;
     }else{
     var friendData = dashboardData.friends[userId];
   }
+  if(postId){
+    var postContent;
+    var friendsImages = dashboardData.friendsPostImages;
+    var friendPost = friendsImages[userId];
+    friendPost.forEach((item)=>{
+    if(item.id === postId){
+        postContent = item.content;
+       return false;
+    }
+    });
+
+    // var post = visitedUser.posts[postId];
+    // var postContent = post.content;
+  }else{
+      var postContent = null;
+  }
+  console.log(postContent); console.log("fff")
     if(friendData)
     return(
       <article className="uk-comment">
@@ -794,7 +810,7 @@ _myImageGalleryRenderer(item) {
 
           <div className="uk-comment-body">
             <div className="uk-width-small-1-1 post_control">
-            <p>{this.state.popupContent}</p>
+            <p>{postContent}</p>
             </div>
           </div>
       </article>
@@ -1041,7 +1057,7 @@ loadChild(child){
       				<div className="uk-width-small-1-1 popup_img_right coment_pop_cont">
 
 
-      			{this.loadPostByInfo(this.state.clickedUser)}
+      			{this.loadPostByInfo(this.state.clickedUser,this.state.clickedPost)}
       				<h5 className="coment_heading">Comments</h5>
       				<ul className="uk-comment-list" ref="commentsul">
                 {this.renderComments(this.state.clickedPost)}
@@ -1331,9 +1347,9 @@ loadChild(child){
 
     if(userProfileData)
     return (
-      
+
       <div className="uk-container uk-container-center middle_content dashboad">
-      
+
 
          <div className="uk-grid dash_top_head">
 
@@ -1363,7 +1379,7 @@ loadChild(child){
           </div>
 
            {this.renderLatestPost()}
-           
+
          </div>
          <div className="uk-width-small-1-1 shortlist_menu">
            <ul>
