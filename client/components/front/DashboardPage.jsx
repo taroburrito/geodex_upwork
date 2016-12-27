@@ -675,7 +675,7 @@ _myImageGalleryRenderer(item) {
           }else{
           content = content;
           }
-           postImage = this.state.uploadDir+"user_"+user_id+"/thumbs/"+item.post_image;
+           postImage = this.state.uploadDir+"user_"+user_id+"/"+item.post_image;
         }
         //Video Content
         else if (item.youtube_image) {
