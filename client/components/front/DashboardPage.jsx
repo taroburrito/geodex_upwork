@@ -540,10 +540,34 @@ resetEmailForm(){
     )
   }else {
       return(
-        <div>No friend is added in this category, <Link to="manage_friends">Manage Freind </Link>here.</div>
+        <div>No friend is added in this category, <Link to="manage_friends">Manage Friends </Link>here.</div>
       )
     }
   }
+
+
+  renderManageCategories(){
+    const{dashboardData,userAuthSession} = this.props;
+    var categoriesElement = [];
+    var categories = dashboardData.categories;
+    var user_id = userAuthSession.userObject.id;
+    if(categories)
+    Object.keys(categories).map(function (key) {
+      var item = categories[key];
+      if(item.user_id == user_id)
+      categoriesElement.push(
+           <div>
+               <input id={item.id} placeholder="Category name" className="uk-width-10-10" type="text" value={item.category_name} ref="updateCategoryName"/>
+                <a className="uk-button uk-button-primary">Update</a>
+                <a className="uk-button uk-button-primary">Delete</a>
+           </div>
+        );
+    }, this);
+    return (
+      {categoriesElement}
+    );
+  }
+
   loadPostByInfo(userId){
     if(userId){
     const{dashboardData} = this.props;
@@ -842,7 +866,7 @@ resetEmailForm(){
                 </fieldset>
 
              </form>
-
+              {this.renderManageCategories()}
         </div>
 
       </div>
