@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import VistiProfileWidget from '../../components/front/VistiProfileWidget';
 import Home from '../../components/front/Home';
 import {getVisitedUserDetail} from '../../utilities/ServerSocket';
+import {fetchCommentsByPost,postComment} from '../../actions/PostActions';
 
 import { clickAddFriend,fetchUserProfile, reloadingProfilePage,clickAcceptRequest, clickDenyFriendRequest } from '../../actions/ProfileActions';
 
@@ -26,6 +27,7 @@ export default class UserProfilePage extends Component {
     return (
       <div className="full_width">
       <VistiProfileWidget
+        comments={this.props.comments}
         onClickDenyRequest={(id)=>
         dispatch(clickDenyFriendRequest(id))}
         clickAcceptRequest={(reqId)=>
@@ -35,7 +37,11 @@ export default class UserProfilePage extends Component {
         userAuthSession={this.props.userAuthSession}
         fetchInitialData={(userId,profileId)=>getVisitedUserDetail(userId,profileId)}
         visitedUser={this.props.visitedUser}
-         profileId={this.props.params.id}/>
+         profileId={this.props.params.id}
+         fetchComments={(postId)=>
+         dispatch(fetchCommentsByPost(postId))}
+        postComment = {(req)=>dispatch(postComment(req))}
+         />
       </div>
     );
   }else {
@@ -53,6 +59,7 @@ function select(state) {
   return {
     userAuthSession: state.userAuthSession,
     visitedUser: state.visitedUser,
+    comments:state.postComments,
   };
 }
 

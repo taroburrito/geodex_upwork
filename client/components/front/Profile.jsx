@@ -1,6 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 var Slider = require('react-slick');
 
+import ImageGallery from 'react-image-gallery';
+
 export default class Profile extends Component {
 
     constructor(props){
@@ -8,19 +10,78 @@ export default class Profile extends Component {
         this.state={
           isFriendWithLoggedInUser: false,
           uploadDir: 'uploads/images/',
+
+          popupContent:null,
+
           postLargeImage:null,
-          clickedUser:null
+          loading:false,
+          clickedUser:false,
+          getClickedUser: null,
+          clickedPost:null,
+          showCommentBox:null,
+          replyContent:null,
+          postComment:null,
+          currentSlide:0,
+          loadPostContent:false,
+          videoLink:null,
+          popupVideo:null,
+          clickedImageIcon:null,
+          clickedYouTubeLink:null
         }
         this.handleClickAddFriend = this.handleClickAddFriend.bind(this);
       //  this.handleClickAcceptRequest = this.handleClickAcceptRequest.bind(this);
        this.handleClickDenyRequest = this.handleClickDenyRequest.bind(this);
+       this.handleClickPostComment = this.handleClickPostComment.bind(this);
+       this.onSlide = this.onSlide.bind(this);
 
 
     }
     componentWillMount() {
-
+      console.log(this.props);
     }
     componentDidMount(){
+
+    }
+
+    loadPostContent(postId,userId,popupImage,popupContent,currentSlide,postVideo){
+
+      if(currentSlide){
+        var current = parseInt(currentSlide) - 1;
+        console.log("current:"+current);
+        //this.setState({loadPostContent:true})
+        this.setState({currentSlide:current});
+        if(this._imageGallery){
+          this._imageGallery.slideToIndex(current);
+        }
+        //this._imageGallery.slideToIndex(currentSlide);
+        //console.log(this._imageGallery); console.log("cjed");
+      //  React.unmountComponentAtNode(document.getElementById('postImageModel'));
+        //this.refs.largeSliderContent.getDOMNode.innerHtml = "";
+        //ReactDOM.unmountComponentAtNode(this.refs.largeSliderContent);
+
+
+      }
+      this.props.fetchComments(postId);
+
+      this.setState({clickedPost:postId,clickedUser:userId,getClickedUser:userId,postLargeImage:popupImage,popupContent:popupContent,popupVideo:postVideo});
+
+    }
+
+    handleClickPostComment(){
+      const{userAuthSession} = this.props;
+      this.refs.commentBox.getDOMNode().value = "";
+      this.setState({replyContent:null,postComment:null});
+      var req = {
+        comment: this.state.postComment,
+        parent_id:'',
+        user_id: userAuthSession.userObject.id,
+        post_id:this.state.clickedPost,
+        status:1,
+      }
+
+      this.props.postComment(req);
+
+      console.log(req);
 
     }
 
@@ -118,38 +179,81 @@ export default class Profile extends Component {
 
     }
 
+    loadSinglePostContent(postId,userId,popupImage,popupContent,postVideo){
+
+      this.props.fetchComments(postId);
+
+      this.setState({clickedPost:postId,clickedUser:userId,getClickedUser:userId,postLargeImage:popupImage,popupContent:popupContent,popupVideo:postVideo});
+
+    }
+
 // Posts of visited user.
     renderPostsContent(){
         const{visitedUser} = this.props;
       var posts = visitedUser.posts;
 
-        var postContent = [];
+        var postItem = [];
         if(posts){
           Object.keys(posts).map((postId)=>{
           //  console.log(posts[key]);
 
             var item = posts[postId];
+            var postContent = item.content;
+            var postImage;
+            var postVideo;
+
+            var post_image = item.image || item.youtube_image;
+
+            // Image content
             if(item.image){
-            var  content = item.content.substring(0,300).concat(' ...');
-            }else {
-            var  content = item.content.substring(0,500).concat(' ...');
+              if(postContent.length > 300){
+              postContent = postContent.substring(0,300).concat(' ...LoadMore');
+              }else{
+              postContent = postContent;
+              }
+               postImage = this.state.uploadDir+"user_"+item.user_id+"/"+item.image;
             }
-            postContent.push(
+            //Video Content
+            else if (item.youtube_image) {
+              if(postContent.length > 300){
+              postContent = postContent.substring(0,300).concat(' ...LoadMore');
+              }else{
+              postContent = postContent;
+              }
+               postVideo = item.youtube_url;
+
+            }
+
+            //text content
+            else {
+              if(postContent.length > 500){
+              postContent = postContent.substring(0,500).concat(' ...LoadMore');
+              }else{
+              postContent = postContent;
+              }
+
+            }
+            postItem.push(
               <div className="uk-width-small-1-1 post_control">
-                {item.image?<img src={this.state.uploadDir+'user_'+item.user_id+'/thumbs/'+item.image} className="uk-float-left img_margin_right"/>:null}
-                <p>{content}<a href={item.image?'#postImageModel':'#postContentModel'} onClick={()=>this.setState({postLargeImage:this.state.uploadDir+'user_'+item.user_id+'/'+item.image})} data-uk-modal>[more]</a></p>
-                <p className="time">{item.created}</p>
-            </div>
+                <div>
+                  <a href="#" className="post_txt_dashboard" data-uk-modal={post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={this.loadSinglePostContent.bind(this,item.id,item.user_id,postImage,item.content,postVideo)}>
+
+                    <img src={post_image? this.state.uploadDir+"user_"+item.user_id+"/thumbs/"+post_image: null} className="uk-float-right img_margin_left"/>
+                    <p>{postContent}</p>
+                  </a>
+
+             </div>
+           </div>
           );
           });
         }else{
-          postContent.push(
+          postItem.push(
             <div><p>No post is found for this user.</p></div>
           )
         }
 
         return(
-          {postContent}
+          {postItem}
         )
 
     }
@@ -161,16 +265,24 @@ renderPhotos(){
 
     var postContent = [];
     if(posts){
+      var i = 1;
       Object.keys(posts).map((postId)=>{
       //  console.log(posts[key]);
         var item = posts[postId];
-        if(item.image && item.content == '')
+        if(item.image || item.youtube_image)
+        var post_img = item.image || item.youtube_image;
         postContent.push(
+
           <div className="profile_post_photos">
-            {item.image?<a href="#postImageModel" onClick={()=>this.setState({postLargeImage:null,clickedUser:item.user_id})} data-uk-modal><img src={this.state.uploadDir+'user_'+item.user_id+'/thumbs/'+item.image}/></a>:null}
+
+              <a href="#postImageModel" onClick={this.loadPostContent.bind(this,item.id,item.user_id,null,item.content,i,null)} data-uk-modal>
+                <img src={this.state.uploadDir+'user_'+item.user_id+'/thumbs/'+post_img}/>
+
+              </a>
 
         </div>
       );
+      i++;
       });
     }else{
       postContent.push(
@@ -184,6 +296,21 @@ renderPhotos(){
 
 }
 
+onSlide(e){
+  //React.unmountComponentAtNode(document.getElementById('test'));
+    //this._imageGallery.slideToIndex(e);
+  var postId = this._imageGallery.props.items[e].postId;
+  this.props.fetchComments(postId);
+  //this.loadPostContent(postId,this.state.clickedUser,null,null,e);
+  this.setState({clickedPost:postId});
+
+}
+
+imageSlideTo(e){
+  console.log("ee:"+e);
+  this._imageGallery.slideToIndex(e);
+}
+
 renderFriendsPostImagesLargeSlider(user_id){
 
 
@@ -191,13 +318,21 @@ renderFriendsPostImagesLargeSlider(user_id){
    var posts = visitedUser.posts;
    if(posts){
      var postImgEle = [];
+     var i = 0;
      Object.keys(posts).forEach((postId)=> {
        var item = posts[postId];
-       var postImageSrc = this.state.uploadDir+"user_"+item.user_id+"/"+item.image;
-       if(postImageSrc)
+       var postContent = item.content;
+       var postImageSrc = item.image?this.state.uploadDir+"user_"+item.user_id+"/"+item.image:null;
+       if(item.image || item.youtube_url)
        postImgEle.push(
-           <div key={item.id} className="main-box"><img src={postImageSrc}/></div>
+         {
+           original:postImageSrc,
+           postId:item.id,
+           video:item.youtube_url,
+         }
+
        );
+       i++;
 
 
      });
@@ -208,9 +343,23 @@ renderFriendsPostImagesLargeSlider(user_id){
 
     return(
       <div>
-        <Slider slidesToShow="1" slidesToScroll="1" infinite="false">
-          {postImgEle}
-              </Slider>
+        <ImageGallery
+        ref={i => this._imageGallery = i}
+        items={postImgEle}
+        slideInterval={200}
+        startIndex={this.state.currentSlide}
+        onSlide={this.onSlide}
+        infinite={false}
+        showBullets={false}
+        showThumbnails={false}
+        autoPlay={false}
+        showPlayButton={false}
+        showFullscreenButton={false}
+        //renderItem={this._myImageGalleryRenderer.bind(this)}
+      //  showNav={false}
+        //onClick={this.clickSlider}
+        onImageLoad={this.imageSlideTo.bind(this,this.state.currentSlide)}
+        />
 
       </div>
 
@@ -220,80 +369,233 @@ renderFriendsPostImagesLargeSlider(user_id){
 
 }
 
-renderPostImageModal(){
+loadPostByInfo(userId,postId){
+
+  const {visitedUser} = this.props;
+  var post = visitedUser.posts[postId];
+
+  if(visitedUser.userProfileData)
+  var userProfileData = visitedUser.userProfileData;
   return(
-  <div id="postImageModel" className="uk-modal coment_popup">
-      <div className="uk-modal-dialog uk-modal-dialog-blank">
-      <button className="uk-modal-close uk-close" type="button"></button>
-        <div className="uk-grid">
+    <article className="uk-comment">
+        <header className="uk-comment-header">
+            <img src={this.getProfileImage(userProfileData.profile_image,userId)} className="uk-comment-avatar" width="60" height="60"/>
 
-          <div className="uk-width-small-1-2 popup_img_left">
-                {this.state.postLargeImage?<img src={this.state.postLargeImage}/>:this.renderFriendsPostImagesLargeSlider(this.state.clickedUser)}
-          </div>
-          <div className="uk-width-small-1-2 popup_img_right">
+            <h4 className="uk-comment-title">{userProfileData.first_name} {userProfileData.last_name}</h4>
+            <div className="uk-comment-meta"><span>{userProfileData.address}</span></div>
+        </header>
 
-          <article className="uk-comment">
-            <header className="uk-comment-header">
-                <img className="uk-comment-avatar" src="public/images/user.jpg" alt="" width="60" height="60"/>
-                <h4 className="uk-comment-title">Author</h4>
-                <div className="uk-comment-meta">Los Angeles, CA <span>s.dali@gmail.com</span></div>
-            </header>
-            <div className="uk-comment-body">
-                <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr</p>
-            </div>
-        </article>
-          <h5 className="coment_heading">Comments</h5>
-          <ul className="uk-comment-list">
-            <li>
-                <article className="uk-comment">
-                    <header className="uk-comment-header">
-                        <img className="uk-comment-avatar" src="public/images/user.jpg" alt="" width="40" height="40"/>
-                        <h4 className="uk-comment-title">Author</h4>
-                        <div className="uk-comment-meta"><span>email@gmail.com</span> | Los Angeles, CA</div>
-                    </header>
-                    <div className="uk-comment-body">
-                        <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy</p>
-                    </div>
-                </article>
-                <ul>
-                    <li>
-                        <article className="uk-comment">
-                            <header className="uk-comment-header">
-                                <img className="uk-comment-avatar" src="public/images/user.jpg" alt="" width="40" height="40"/>
-                                <h4 className="uk-comment-title">Author</h4>
-                                <div className="uk-comment-meta"><span>email@gmail.com</span> | Los Angeles, CA</div>
-                            </header>
-                            <div className="uk-comment-body">
-                                <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.</p>
-                            </div>
-                        </article>
-
-                        <div className="comenting_form">
-                          <img className="uk-comment-avatar" src="public/images/user.jpg" alt="" width="40" height="40"/>
-                          <textarea placeholder="Write Comment..."></textarea>
-                          <input type="submit" value="Send"/>
-                          </div>
-                          </li>
-                      </ul>
-                  </li>
-              </ul>
-
-
-          <div className="comenting_form border-top_cf">
-          <img className="uk-comment-avatar" src="public/images/user.jpg" alt="" width="40" height="40"/>
-          <textarea placeholder="Write Comment..."></textarea>
-          <input type="submit" value="Send"/>
-          </div>
-
-
+        <div className="uk-comment-body">
+          <div className="uk-width-small-1-1 post_control">
+          <p>{this.state.popupContent}</p>
           </div>
         </div>
+    </article>
+  );
+
+}
+
+buildHierarchy(arry) {
+
+   var roots = [], children = {};
+
+   // find the top level nodes and hash the children based on parent
+   for (var i = 0, len = arry.length; i < len; ++i) {
+         var item = arry[i];
+           var p = item.parent_id;
+
+           var target = !p ? roots : (children[p] || (children[p] = []));
+
+       target.push({ value: item });
+   }
+
+   // function to recursively build the tree
+   var findChildren = function(parent) {
+       if (children[parent.value.id]) {
+           parent.children = children[parent.value.id];
+           for (var i = 0, len = parent.children.length; i < len; ++i) {
+               findChildren(parent.children[i]);
+           }
+       }
+   };
+
+   // enumerate through to handle the case where there are multiple roots
+   for (var i = 0, len = roots.length; i < len; ++i) {
+       findChildren(roots[i]);
+   }
+
+   return roots;
+}
+
+loadChild(child){
+ const{userAuthSession} = this.props;
+ var childElement = [];
+ if(child)
+ Object.keys(child).forEach((id)=>{
+   var item = child[id]['value'];
+
+   var childArr = child[id]['children'];
+
+   if(this.state.showCommentBox == item.id){
+     var commentBox = (
+       <div className="comenting_form border-top_cf">
+       <img className="uk-comment-avatar" src={this.getProfileImage(userAuthSession.userObject.profile_image,userAuthSession.userObject.id)} alt="" width="40" height="40"/>
+       <textarea placeholder="Write Comment..."  value={this.state.replyContent} onChange={(e)=>this.setState({replyContent:e.target.value})}></textarea>
+       <a onClick={this.handleClickReplyComment.bind(this,item.id,item.post_id)} className="uk-button uk-button-primary comment_btn">Send</a>
+       </div>
+     );
+   }else{
+     var commentBox = "";
+   }
+
+
+   childElement.push(
+     <li>
+         <article className="uk-comment">
+             <header className="uk-comment-header">
+                 <img className="uk-comment-avatar" src={this.getProfileImage(item.profile_image,item.user_id)} alt="" width="40" height="40"/>
+                 <h4 className="uk-comment-title">{item.NAME}</h4>
+                 <div className="uk-comment-meta"><span>{item.email}</span> | {item.address}</div>
+             </header>
+             <div className="uk-comment-body">
+                 <p>{item.comment}</p>
+             </div>
+         </article>
+         <a onClick={()=>this.setState({showCommentBox:item.id,replyContent:null})} className="reply_to_c">Reply</a>
+         {commentBox}
+
+         <ul>
+         {this.loadChild(childArr)}
+       </ul>
+     </li>
+   );
+ });
+ return(
+   {childElement}
+ )
+}
+
+renderComments(postId){
+  const{comments,userAuthSession} = this.props;
+  var commentElement = [];
+  if(comments){
+  var newArr = [];
+  Object.keys(comments).forEach((id)=>{
+    var item = comments[id];
+    newArr.push(item);
+  });
+
+}else{
+  //commentElement = (<div>No comments yet</div>);
+}
+var newItem = null;
+if(newArr){
+  newItem = this.buildHierarchy(newArr);
+
+}
+
+if(newItem)
+Object.keys(newItem).forEach((id)=>{
+  var item = newItem[id]['value'];
+  var child = newItem[id]['children'];
+  if(child){
+
+  }
+  if(this.state.showCommentBox == item.id){
+    var commentBox = (
+      <div className="comenting_form border-top_cf">
+      <img className="uk-comment-avatar" src={this.getProfileImage(userAuthSession.userObject.profile_image,userAuthSession.userObject.id)} alt="" width="40" height="40"/>
+      <textarea placeholder="Write Comment..."  value={this.state.replyContent} onChange={(e)=>this.setState({replyContent:e.target.value})}></textarea>
+      <a onClick={this.handleClickReplyComment.bind(this,item.id,item.post_id)} className="uk-button uk-button-primary comment_btn">Reply</a>
+      </div>
+    );
+  }else{
+    var commentBox = "";
+  }
+
+  commentElement.push(
+    <li>
+        <article className="uk-comment">
+            <header className="uk-comment-header">
+                <img className="uk-comment-avatar" src={this.getProfileImage(item.profile_image,item.user_id)} alt="" width="40" height="40"/>
+                <h4 className="uk-comment-title">{item.NAME}</h4>
+                <div className="uk-comment-meta"><span>{item.email}</span> | {item.address}</div>
+            </header>
+            <div className="uk-comment-body">
+                <p>{item.comment}</p>
+            </div>
+        </article>
+        <a onClick={()=>this.setState({showCommentBox:item.id,replyContent:null})} className="reply_to_c">Reply</a>
+        {commentBox}
+
+        <ul>
+          {this.loadChild(child)}
+        </ul>
+
+  </li>
+);
+});
+
+
+  return(
+    {commentElement}
+
+  )
+}
+
+renderPostImageModal(){
+  const{userAuthSession} = this.props;
+  var user = userAuthSession.userObject;
+  if(this.state.postLargeImage){
+    var imageContent = (
+      <div className="image-gallery-slide">
+      <img className="single-slide" src={this.state.postLargeImage}/>
+      </div>
+    )
+  }else if (this.state.popupVideo) {
+    var imageContent = (
+      <div className="image-gallery-slide">
+      <iframe  src={this.state.popupVideo} height="500" width="700"/>
+      </div>
+      );
+  }else{
+    var imageContent = null;
+  }
+  return(
+    <div id="postImageModel" className="uk-modal coment_popup">
+        <div className="uk-modal-dialog uk-modal-dialog-blank">
+        <button className="uk-modal-close uk-close" type="button"></button>
+          <div className="uk-grid">
+
+            <div className="uk-width-small-3-5 popup_img_left" ref="largeSliderContent">
+                  {(this.state.postLargeImage || this.state.popupVideo)?
+                    {imageContent}:this.renderFriendsPostImagesLargeSlider(this.state.clickedUser)}
+            </div>
+            <div className="uk-width-small-2-5 popup_img_right">
+
+            {this.loadPostByInfo(this.state.clickedUser,this.state.clickedPost)}
+            <h5 className="coment_heading">Comments</h5>
+            <ul className="uk-comment-list">
+            {this.renderComments(this.state.clickedPost)}
+                </ul>
+
+                <div className="comenting_form border-top_cf">
+            <img className="uk-comment-avatar" src={this.getProfileImage(user.profile_image,user.id)} alt="" width="40" height="40"/>
+            <textarea placeholder="Write Comment..." value={this.state.postComment} onChange={(e)=>this.setState({postComment:e.target.value})} ref="commentBox"></textarea>
+            <a onClick={this.handleClickPostComment} className="uk-button uk-button-primary comment_btn">Post</a>
+            </div>
+
+
+            </div>
+          </div>
+      </div>
     </div>
-  </div>
 );
 }
 
 renderPostContentModal(){
+  const{userAuthSession} = this.props;
+  var user = userAuthSession.userObject;
   return(
     <div id="postContentModel" className="uk-modal coment_popup">
         <div className="uk-modal-dialog uk-modal-dialog-blank">
@@ -302,30 +604,18 @@ renderPostContentModal(){
 
             <div className="uk-width-small-1-1 popup_img_right coment_pop_cont">
 
-            <article className="uk-comment">
-                <header className="uk-comment-header">
-                    <img src="" className="uk-comment-avatar" width="60" height="60"/>
 
-                    <h4 className="uk-comment-title"></h4>
-                    <div className="uk-comment-meta"><span></span></div>
-                </header>
-
-                <div className="uk-comment-body">
-                  <div className="uk-width-small-1-1 post_control">
-                    <p></p>
-                  </div>
-                </div>
-            </article>
+          {this.loadPostByInfo(this.state.clickedUser)}
             <h5 className="coment_heading">Comments</h5>
             <ul className="uk-comment-list" ref="commentsul">
-
-         </ul>
+              {this.renderComments(this.state.clickedPost)}
+            </ul>
 
 
           <div className="comenting_form border-top_cf">
-          <img className="uk-comment-avatar" src="public/images/user.jpg" alt="" width="40" height="40"/>
-          <textarea placeholder="Write Comment..."></textarea>
-          <input type="submit" value="Send"/>
+          <img className="uk-comment-avatar" src={this.getProfileImage(user.profile_image,user.id)} alt="" width="40" height="40"/>
+          <textarea placeholder="Write Comment..." value={this.state.postComment} onChange={(e)=>this.setState({postComment:e.target.value})} ref="commentBox"></textarea>
+          <a onClick={this.handleClickPostComment} className="uk-button uk-button-primary comment_btn">Post</a>
           </div>
 
 

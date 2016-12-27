@@ -18,12 +18,15 @@ export default class VisitProfileWidget extends Component {
           return (
                     <div>
                         <Profile
+                        comments={this.props.comments}
                         userAuthSession={this.props.userAuthSession}
                         visitedUser={this.props.visitedUser}
                         profileId={this.props.profileId}
                         onClickAddFriend={this.props.onClickAddFriend}
                         clickAcceptRequest={this.props.clickAcceptRequest}
                         onClickDenyRequest={this.props.onClickDenyRequest}
+                        fetchComments={this.props.fetchComments}
+                        postComment={this.props.postComment}
                         />
 
                     </div>
