@@ -5,7 +5,7 @@ import { validateDisplayName, } from '../../utilities/RegexValidators';
 var AvatarEditor = require('react-avatar-editor');
 var Slider = require('react-slick');
 //import Slider from 'react-image-slider';
-var Loading = require('react-loading');
+//var Loading = require('react-loading');
 
 import ImageGallery from 'react-image-gallery';
 import CategoryList from './manage_category/CategoryList';
@@ -35,6 +35,7 @@ export default class DashboardPage extends Component {
     this.onSlide = this.onSlide.bind(this);
     this.clickSlider = this.clickSlider.bind(this);
     this.handleVideoLinkChange = this.handleVideoLinkChange.bind(this);
+    this.handlePostMessage = this.handlePostMessage.bind(this);
 
     this.state ={
       errorMessage: null,
@@ -60,7 +61,8 @@ export default class DashboardPage extends Component {
       videoLink:null,
       popupVideo:null,
       clickedImageIcon:null,
-      clickedYouTubeLink:null
+      clickedYouTubeLink:null,
+      postMessage:null
 
     }
   }
@@ -97,8 +99,13 @@ export default class DashboardPage extends Component {
   }
 
 
-
+  handlePostMessage()
+  {
+      //console.log(e.value);
+     this.setState({postMessage:this.refs.postContent.getDOMNode().value.trim()});
+  }
   handleClickPostComment(){
+
     const{userAuthSession} = this.props;
     this.refs.commentBox.getDOMNode().value = "";
     this.setState({replyContent:null,postComment:null});
@@ -135,6 +142,7 @@ export default class DashboardPage extends Component {
   }
 
   sortByAllCategory(){
+
     const{userAuthSession} = this.props;
     this.props.fetchInitialData(userAuthSession.userObject.id,null);
     this.setState({active_cat:'all'});
@@ -172,8 +180,9 @@ export default class DashboardPage extends Component {
     if(!formData.image && !formData.youtube_url){
       this.setState({handleMessage:{error:"Please choose image",success:null}});
     }else{
+      //this.setState({loading:true});
       this.props.onClickSavePost(formData);
-      this.setState({image:null,post_image:null,fileData:null,videoImage:null,videoLink:null});
+      this.setState({image:null,post_image:null,fileData:null,videoImage:null,videoLink:null,postMessage:null});
       this.refs.postImageContent.getDOMNode().value = "";
       this.refs.postContent.getDOMNode().value = "";
     }
@@ -207,7 +216,7 @@ export default class DashboardPage extends Component {
       alert("enter text or image");
     }else {
       this.props.onClickSavePost(formData);
-      this.setState({image:null,post_image:null});
+      this.setState({image:null,post_image:null,postMessage:null});
       this.refs.postContent.getDOMNode().value = "";
     }
 
@@ -216,7 +225,6 @@ export default class DashboardPage extends Component {
 
 setMessageStateToDefault (){
   this.setState({handleMessage:{error:null,success:null}});
-
 }
 componentDidUpdate(){
 
@@ -469,7 +477,7 @@ _myImageGalleryRenderer(item) {
         autoPlay={false}
         showPlayButton={false}
         showFullscreenButton={false}
-        //renderItem={this._myImageGalleryRenderer.bind(this)}
+        renderItem={this._myImageGalleryRenderer.bind(this)}
       //  showNav={false}
         //onClick={this.clickSlider}
         onImageLoad={this.imageSlideTo.bind(this,this.state.currentSlide)}
@@ -578,11 +586,11 @@ _myImageGalleryRenderer(item) {
           <button className="uk-modal-close uk-close" type="button"></button>
             <div className="uk-grid">
 
-              <div className="uk-width-small-3-5 popup_img_left" ref="largeSliderContent">
+              <div className="uk-width-small-3-4 popup_img_left" ref="largeSliderContent">
 				            {(this.state.postLargeImage || this.state.popupVideo)?
                       {imageContent}:this.renderFriendsPostImagesLargeSlider(this.state.clickedUser)}
 				      </div>
-              <div className="uk-width-small-2-5 popup_img_right">
+              <div className="uk-width-small-1-4 popup_img_right">
 
               {this.loadPostByInfo(this.state.clickedUser)}
               <h5 className="coment_heading">Comments</h5>
@@ -737,10 +745,34 @@ _myImageGalleryRenderer(item) {
     )
   }else {
       return(
-        <div>No friend is added in this category, <Link to="manage_friends">Manage Freind </Link>here.</div>
+        <div>No friend is added in this category, <Link to="manage_friends">Manage Friends </Link>here.</div>
       )
     }
   }
+
+
+  renderManageCategories(){
+    const{dashboardData,userAuthSession} = this.props;
+    var categoriesElement = [];
+    var categories = dashboardData.categories;
+    var user_id = userAuthSession.userObject.id;
+    if(categories)
+    Object.keys(categories).map(function (key) {
+      var item = categories[key];
+      if(item.user_id == user_id)
+      categoriesElement.push(
+           <div>
+               <input id={item.id} placeholder="Category name" className="uk-width-10-10" type="text" value={item.category_name} ref="updateCategoryName"/>
+                <a className="uk-button uk-button-primary">Update</a>
+                <a className="uk-button uk-button-primary">Delete</a>
+           </div>
+        );
+    }, this);
+    return (
+      {categoriesElement}
+    );
+  }
+
   loadPostByInfo(userId){
 
     if(userId){
@@ -1214,13 +1246,13 @@ loadChild(child){
           {errorLabel}
            {this.state.image
              ?<div className="img_border"><img src={this.state.image}   ref="postImage"/>
-           <textarea placeholder="text about image" className="uk-width-1-1" ref="postImageContent" ></textarea>
+           <textarea placeholder="text about image" className="uk-width-1-1" ref="postImageContent" >{this.state.postMessage}</textarea>
              </div>:null}
 
             {this.state.videoLink?
               <div className="img_border">
               <iframe className="player" type="text/html" width="100%" height="100%" src={this.state.videoLink}/>
-              <textarea placeholder="text about image" className="uk-width-1-1" ref="postImageContent" ></textarea>
+              <textarea placeholder="text about video" className="uk-width-1-1" ref="postImageContent" >{this.state.postMessage}</textarea>
               </div>
             : null}
 
@@ -1299,8 +1331,10 @@ loadChild(child){
 
     if(userProfileData)
     return (
-
+      
       <div className="uk-container uk-container-center middle_content dashboad">
+      
+
          <div className="uk-grid dash_top_head">
 
 
@@ -1316,7 +1350,7 @@ loadChild(child){
 
 
             <div className="cont_post_btn">
-              <textarea placeholder="Post to geodex..." className="uk-width-1-1" ref="postContent"></textarea>
+              <textarea placeholder="Post to geodex..." className="uk-width-1-1" onChange={this.handlePostMessage} ref="postContent"></textarea>
               <a className="uk-button uk-button-primary uk-button-large" onClick={this.handleSavePost}>Post</a>
               <div className="yt_img"><i data-uk-tooltip title="Upload Image" className="uk-icon-image" data-uk-modal="{target:'#statusImageModel'}" style={{cursor:"pointer"}} onClick={()=>this.setState({clickedYouTubeLink:null,clickedImageIcon:true,videoLink:null,image:null})}></i>
               <a  title="upload youtube video link" data-uk-modal="{target:'#statusImageModel'}" onClick={()=>this.setState({clickedYouTubeLink:true,clickedImageIcon:null,videoLink:null,image:null})}><img src="public/images/yt.png"></img></a>
@@ -1329,7 +1363,7 @@ loadChild(child){
           </div>
 
            {this.renderLatestPost()}
-           {this.state.loading?<Loading type='balls' color='#e3e3e3' />:null}
+           
          </div>
          <div className="uk-width-small-1-1 shortlist_menu">
            <ul>

@@ -23,7 +23,10 @@ export function addPost(formData){
       type:'POST',
       url:'/api/v1/posts/addPost',
       dataType:'JSON',
-      data:formData
+      data:formData,
+      beforeSend: function() {
+          $(".loading").show();
+      }
     }).done(function(data){
       if(data.error){
         console.log(data.error);
@@ -31,9 +34,9 @@ export function addPost(formData){
       console.log(data);
       dispatch(addPostSuccess(data.post));
 
-      }
+      }$(".loading").hide();
 
-    }).error(function(error){
+    }).error(function(error){$(".loading").hide();
       console.log("Error in posts api call"+JSON.stringify(error));
     })
   }
@@ -45,7 +48,10 @@ export function postComment(formData){
       type:'POST',
       url: '/api/v1/posts/postComment',
       data: formData,
-      dataType: 'JSON'
+      dataType: 'JSON',
+      beforeSend: function() {
+          $(".loading").show();
+      }
     }).done(function(data){
       if(data.error){
 
@@ -53,8 +59,10 @@ export function postComment(formData){
         dispatch(fetchCommentsByPost(formData.post_id));
       }
       console.log(data);
+       $(".loading").hide();
     }).fail(function(error){
       console.log(error);
+      $(".loading").hide();
     })
   }
 }
@@ -75,7 +83,9 @@ export function fetchCommentsByPost(postId){
     $.ajax({
       type:'GET',
       url:'/api/v1/posts/getComments/'+postId,
-
+       beforeSend: function() {
+          //$(".loading").hide();
+      }
     }).done(function(result){
 
       if(result.error){
@@ -84,9 +94,11 @@ export function fetchCommentsByPost(postId){
         console.log("Success comments");
         dispatch(fetchCommentSuccess(result.comments));
       }
+      $(".loading").hide();
     }).fail(function(error){
       console.log("Fail comments");
       console.log(error);
+      $(".loading").hide();
     });
   }
 }
