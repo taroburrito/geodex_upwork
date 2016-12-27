@@ -36,7 +36,7 @@ export default class DashboardPage extends Component {
     this.clickSlider = this.clickSlider.bind(this);
     this.handleVideoLinkChange = this.handleVideoLinkChange.bind(this);
     this.handlePostMessage = this.handlePostMessage.bind(this);
-
+    this.pauseAllYoutube = this.pauseAllYoutube.bind(this);
     this.state ={
       errorMessage: null,
     //  image: "public/images/user.jpg",
@@ -84,8 +84,18 @@ export default class DashboardPage extends Component {
     this.props.fetchComments(postId);
     //this.loadPostContent(postId,this.state.clickedUser,null,null,e);
     this.setState({clickedPost:postId});
+    this.pauseAllYoutube();
 
   }
+
+  pauseAllYoutube(){ 
+    console.log('===========23322323==========');
+        $('iframe[src*="youtube.com"]').each(function() {
+            var iframe = $(this)[0].contentWindow;
+            iframe.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+        }); 
+  }
+
   clickSlider(e){
 
   }
@@ -274,8 +284,7 @@ handleClickPlus(){
 
   }
 
-
-
+ 
   handleChangeSort(){
     var sortBy = this.refs.sortFriends.getDOMNode().value;
     const{dashboardData} = this.props;
@@ -303,6 +312,8 @@ handleClickPlus(){
     if(newArr){
       this.props.updateDashboardFriendList(newArr);
     }
+
+   
 
 
 
@@ -412,6 +423,7 @@ resetEmailForm(){
 }
 imageSlideTo(e){
   console.log("ee:"+e);
+  
   this._imageGallery.slideToIndex(e);
 }
 
@@ -421,7 +433,7 @@ _myImageGalleryRenderer(item) {
     const onImageError = this._handleImageError;
     return (
       <div className='image-gallery-image'>
-        {item.video?<iframe src={item.video} height="500" width="700"/>:<img src={item.original}/>}
+        {item.video?<iframe src={item.video+"?enablejsapi=1"} height="500" width="700"/>:<img src={item.original}/>}
 
 
 
