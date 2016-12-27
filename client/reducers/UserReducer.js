@@ -17,7 +17,11 @@ import {
           Send_Email_From_Dashboard_Success,
           Send_Email_From_Dashboard_Failed,
           Change_Friend_Cat_Success,
-          Change_Friend_Cat_Failed
+          Change_Friend_Cat_Failed,
+          Delete_Category_Success,
+          Delete_Category_Failed,
+          Update_Category_Failed_Dashboard,
+          Update_Category_Success_Dashboard
         } from '../actions/UserActions';
 
         import {Post_Added_Dashboard_Success} from '../actions/PostActions';
@@ -134,12 +138,45 @@ export function updateDashboardData(dashboardDataState={error:null,success:null}
           });
           break;
 
-          case Send_Email_From_Dashboard_Failed:
-          return Object.assign({}, dashboardDataState,{
-            error:action.error,
-            success:null
-          });
-            break;
+        case Send_Email_From_Dashboard_Failed:
+        return Object.assign({}, dashboardDataState,{
+          error:action.error,
+          success:null
+        });
+          break;
+
+      case Delete_Category_Success:
+      const newState = Object.assign([], dashboardDataState);
+      delete newState.categories[action.id]
+
+      return Object.assign({}, newState,{
+        error:null,
+        success:'Deleted Successfully'
+      });
+        break;
+
+      case Delete_Category_Failed:
+      return Object.assign({}, dashboardDataState,{
+        error:action.error,
+        success:null
+      });
+        break;
+
+    case Update_Category_Success_Dashboard:
+      var newState = Object.assign({},dashboardDataState);
+      newState.categories[action.id] = action.category;
+      return Object.assign({}, newState,{
+        error:null,
+        success:'update successfull'
+      })
+      break;
+
+    case Update_Category_Failed_Dashboard:
+      return Object.assign({},dashboardDataState,{
+        error:action.error,
+        success:null,
+      })
+      break;
     default:
     return dashboardDataState;
 

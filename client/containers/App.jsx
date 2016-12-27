@@ -24,7 +24,7 @@ class App extends Component {
   }
 
   render() {
-
+    console.log(this.props.userAuthSession);
     var baseUrl = window.location.href.split('#')[0].split('/')[window.location.href.split('#')[0].split('/').length-1];
 
     // Injected by connect() call:
@@ -79,7 +79,7 @@ class App extends Component {
           );
         }else{
           if(!landingPage){
-            //landingPage = <HomePage/>;
+            landingPage = <HomePage/>;
           }
           return(
             <div>

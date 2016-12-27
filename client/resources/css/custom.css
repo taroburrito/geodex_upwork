@@ -294,6 +294,32 @@ input.myinputcont {
 .myinputcont_btn a {
 color:#ffffff;
 }
+.mu_table .griddle-container {
+  border: medium none !important;
+}
+.mu_table input {
+    background: #fff none repeat scroll 0 0;
+    border: 1px solid #ccc;
+    border-radius: 7px;
+    box-shadow: 0 0 5px #ccc inset;
+    padding: 10px;
+    width: 60%;
+}
+.filter-container {
+    margin-bottom: 15px;
+}
+
+.griddle_table > tbody td a {
+    overflow: hidden;
+    width: 100%;
+    display: block;
+    text-overflow: ellipsis;
+}
+
+.griddle-page a {
+    width: auto!important;
+    display: inline!important;
+}
 
 @media only screen and (max-width: 767px){
 
@@ -301,4 +327,59 @@ color:#ffffff;
   padding-left: 45px;
 }
 
+}
+
+
+
+.pro_right h3 {
+    color: #ffffff;
+    margin-bottom: 6px!important;
+    font-size: 22px;
+    padding-top: 10%;
+    font-weight: bold;
+    text-shadow: 0 0 2px black;
+}
+
+.pro_right h4 {
+    color: #ffffff;
+    margin: 0;
+      text-shadow: 0 0 2px black;
+}
+
+.pro_right h5 {
+    color: #fff;
+    margin-top: 10px;
+    font-style: italic;
+      text-shadow: 0 0 2px black;
+}
+
+
+.background_profile {
+    padding: 2%;
+    border-radius: 3px;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+}
+
+.user_img_left {
+    padding: 0;
+    background: #fff;
+    border-radius: 3px;
+    box-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+
+.mu_table .uk-button {
+    float: left;
+    width: auto!important;
+    padding: 4px 8px;
+    line-height: 12px;
+    height: 16px;
+    min-height: 22px;
+    margin: 2px;
+    font-size: 11px;
+}
+
+.Login_page_admin .login_form {
+    padding-top: 10%;
+    padding-bottom: 20%;
 }

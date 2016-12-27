@@ -23,6 +23,10 @@ export const Send_Email_From_Dashboard_Success = 'Send_Email_From_Dashboard_Succ
 export const Send_Email_From_Dashboard_Failed = 'Send_Email_From_Dashboard_Failed';
 export const Change_Friend_Cat_Success = 'Change_Friend_Cat_Success';
 export const Change_Friend_Cat_Failed = 'Change_Friend_Cat_Failed';
+export const Delete_Category_Success = 'Delete_Category_Success';
+export const Delete_Category_Failed = 'Delete_Category_Failed';
+export const Update_Category_Failed_Dashboard = 'Update_Category_Failed_Dashboard';
+export const Update_Category_Success_Dashboard = 'Update_Category_Failed_Dashboard';
 
 
 
@@ -70,8 +74,11 @@ export function clickedBlockUser(senderId,receiverId,userId) {
 			type: 'POST',
 			url: '/api/v1/user/blockUser',
       dataType: 'json',
-			data: {sender:senderId, receiver:receiverId, user:userId} })
-			.done(function(data) {
+			data: {sender:senderId, receiver:receiverId, user:userId},
+      beforeSend: function() {
+          $(".loading").show();
+      } 
+    }).done(function(data) {
 				if (data.error){
 					console.log("block user works but error: ", data);
 						//dispatch(optimisticUniversalAddFail());
@@ -79,9 +86,11 @@ export function clickedBlockUser(senderId,receiverId,userId) {
 						console.log("block user success", data);
 					//	dispatch(deleteFriendSuccess(data));
 					}
+          $(".loading").hide();
 				})
 			.fail(function(a,b,c,d) {
-				console.log("actual failure: ", a, b, c, d)
+				console.log("actual failure: ", a, b, c, d);
+        $(".loading").hide();
 			  //dispatch(optimisticUniversalAddFail()); //TODO figure out what to pass
 			});
   }
@@ -97,8 +106,11 @@ export function clickedDeleteFriend(id) {
 
     $.ajax({
 			type: 'POST',
-			url: '/api/v1/user/deleteFriend/'+id})
-			.done(function(data) {
+			url: '/api/v1/user/deleteFriend/'+id,
+      beforeSend: function() {
+          $(".loading").show();
+      } 
+    }).done(function(data) {
 				if (data.error){
 					console.log("delete friend works but error: ", data);
 						//dispatch(optimisticUniversalAddFail());
@@ -106,9 +118,11 @@ export function clickedDeleteFriend(id) {
 						console.log("delete friend success", data);
 						//dispatch(deleteFriendSuccess(id));
 					}
+          $(".loading").hide();
 				})
 			.fail(function(a,b,c,d) {
-				console.log("delete failure: ", a, b, c, d)
+				console.log("delete failure: ", a, b, c, d);
+        $(".loading").hide();
 			  //dispatch(optimisticUniversalAddFail()); //TODO figure out what to pass
 			});
 //}
@@ -135,8 +149,11 @@ export function addCategory(req) {
 			type: 'POST',
 			url: '/api/v1/categories/addCategory',
       dataType: 'json',
-			data: req })
-			.done(function(data) {
+			data: req,
+      beforeSend: function() {
+          $(".loading").show();
+      } 
+    }).done(function(data) {
 				if (data.error){
 					console.log("add todo worked but error: ", data);
           dispatch(addCategoryFail(data.error));
@@ -147,9 +164,11 @@ export function addCategory(req) {
           //  dispatch(handleSuccessMessage("Added Successfully"));
 
 					}
+          $(".loading").hide();
 				})
 			.fail(function(error) {
 				console.log("Failure");
+        $(".loading").hide();
       dispatch(addCategoryFail(error));
 			});
   }
@@ -177,7 +196,10 @@ export function confirmFriendRequest(requestId){
       type: 'POST',
       url: '/api/v1/users/confirmFriendRequest',
       data:{id:requestId},
-      dataType: 'json'
+      dataType: 'json',
+       beforeSend: function() {
+          $(".loading").show();
+      } 
     }).done(function(result){
       if(result.error){
         console.log("Error in confirm firend request query");
@@ -185,7 +207,9 @@ export function confirmFriendRequest(requestId){
       }else{
         dispatch(confirmFriendSuccess(requestId,result.success));
       }
+      $(".loading").hide();
     }).fail(function(error){
+      $(".loading").hide();
       dispatch(confirmFriendFailed("Error in confirm request call"));
     });
   }
@@ -205,7 +229,9 @@ export function deleteFriendRequest(requestId){
     $.ajax({
       type: 'DELETE',
       url: '/api/v1/users/deleteFriendRequest/'+requestId,
-
+      beforeSend: function() {
+          $(".loading").show();
+      } 
     }).done(function(result){
       if(result.error){
         console.log("Error in confirm firend request query");
@@ -213,8 +239,10 @@ export function deleteFriendRequest(requestId){
       }else{
         dispatch(deleteFriendRequestSuccess(requestId,result.success));
       }
+       $(".loading").hide();
     }).fail(function(error){
       dispatch(deleteFriendRequestFailed("Error in confirm request call"));
+      $(".loading").hide();
     });
   }
 }
@@ -225,9 +253,14 @@ export function getCategoryByUserId(userId){
     $.ajax({
       type:'GET',
       url: 'api/v1/users/getCategoryByUserId/'+userId,
+      beforeSend: function() {
+          $(".loading").show();
+      } 
     }).done(function(result){
       console.log("Success get cat by user id");
+      $(".loading").hide();
     }).fail(function(error){
+      $(".loading").hide();
       console.log("Error in get cat by user id");
     });
   }
@@ -247,7 +280,10 @@ export function changeFriendCat(userId,friendId, catId){
       type: 'POST',
       url: '/api/v1/users/changeFriendCat',
       data:{userId:userId,friendId:friendId,catId:catId},
-      dataType: 'json'
+      dataType: 'json',
+      beforeSend: function() {
+          $(".loading").show();
+      }
     }).done(function(result){
       console.log("success:"+JSON.stringify(result));
       if(result.error){
@@ -257,9 +293,11 @@ export function changeFriendCat(userId,friendId, catId){
         console.log(result);
         dispatch(changeFriendCatSuccess(result.categorizedFriends,friendId));
       }
+      $(".loading").hide();
     }).fail(function(error){
       console.log("success:"+JSON.stringify(error));
       dispatch(changeFriendCatFailed(error));
+      $(".loading").hide();
     });
   }
 }
@@ -301,16 +339,90 @@ export function sendEmailFromDashboard(from,to,subject,content){
       type:'POST',
       url:'/api/v1/users/sendEmailFromDashboard',
       data:{from:from,to:to,subject:subject,content:content},
-      dataType:'json'
+      dataType:'json',
+      beforeSend: function() {
+          $(".loading").show();
+      }
     }).done(function(result){
       if(result.error){
         dispatch(sendEmailFromDashboardFailed(result.error));
       }else{
         dispatch(sendEmailFromDashboardSuccess(result.success));
       }
+      $(".loading").hide();
     }).fail(function(error){
       console.log("Failed email request");
+      $(".loading").hide();
       dispatch(sendEmailFromDashboardFailed(error));
     });
+  }
+}
+
+export function deleteCategorySuccess(Id){
+  return{type: Delete_Category_Success, id:Id};
+}
+
+export function deleteCategoryFailed(error){
+  return{type: Delete_Category_Failed, error}
+}
+
+export function deleteCategory(Id) {
+  return (dispatch) => {
+
+    $.ajax({
+			type: 'DELETE',
+			url: '/api/v1/categories/'+Id,
+			data: '',
+      beforeSend: function() {
+          $(".loading").show();
+      }
+     })
+			.done(function(data) {
+				if (data.error){
+					  dispatch(deleteCategoryFailed(data.error));
+        	} else {
+					  dispatch(deleteCategorySuccess(Id));
+          	}
+            $(".loading").hide();
+				})
+			.fail(function(error) {
+        $(".loading").hide();
+				dispatch(deleteCategoryFailed(error));
+			});
+  }
+}
+
+export function updateCategorySuccess(id,category){
+
+  return{type: Update_Category_Success_Dashboard, id:id, category};
+}
+
+export function updateCategoryFailed(error){
+  return{type: Update_Category_Failed_Dashboard, error}
+}
+
+export function updateCategoryById(id, value){
+  return(dispatch) => {
+    $.ajax({
+      type:'Post',
+      url:'/api/v1/categories/editcategory/'+id,
+      dataType:'JSON',
+      data:{category_name:value,status:1},
+      beforeSend: function() {
+          $(".loading").show();
+      }
+    }).done(function(data){
+
+      if(data.error){
+        dispatch(updateCategoryFailed(data.error));
+      }else{
+
+        dispatch(updateCategorySuccess(id,data.category));
+      }
+      $(".loading").hide();
+    }).fail(function(error){
+      $(".loading").hide();
+      dispatch(updateCategoryFailed(error));
+    })
   }
 }

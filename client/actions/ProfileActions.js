@@ -42,17 +42,22 @@ export function fetchUserProfile(userId) {
 
     $.ajax({
 			type: 'GET',
-			url: ('/api/v1/users/' + userId) })
-			.done(function(data) {
+			url: ('/api/v1/users/' + userId),
+      beforeSend: function() {
+          $(".loading").show();
+      } 
+    }).done(function(data) {
 				if (data.error){
 					dispatch(fetchUserProfileFail(data.error));
 				} else {
 					dispatch(fetchUserProfileSuccess(data.userData));
 				}
+        $(".loading").hide();
 			})
 			.fail(function(a,b,c,d) {
 				console.log("GET '/api/v1/users/' has actual failure: ", a, b, c, d)
 			  dispatch(fetchUserProfileFail()); //TODO figure out what to pass
+        $(".loading").hide();
 			});
   }
 }
@@ -102,8 +107,11 @@ export function updateUserProfileData(userData){
       url:'/api/v1/users/update/',
       dataType:'JSON',
       data:userData,
+      beforeSend: function() {
+          $(".loading").show();
+      } 
     }).done(function(data){
-
+      $(".loading").hide();
       if(data.error){
         console.log("error in update userProfile:"+JSON.stringify(data.error));
       }else{
@@ -113,6 +121,7 @@ export function updateUserProfileData(userData){
 
       }
     }).error(function(error){
+      $(".loading").hide();
     console.log("Error in update profile api"+ error);
     })
   }
@@ -133,8 +142,11 @@ export function updateUserData(userData){
       url:'/api/v1/user/updateData/',
       dataType:'JSON',
       data:userData,
+      beforeSend: function() {
+          $(".loading").show();
+      } 
     }).done(function(data){
-
+      $(".loading").hide();
       if(data.error){
         console.log("error update user data api");
         console.log("error:"+data.error);
@@ -147,6 +159,7 @@ export function updateUserData(userData){
 
       }
     }).error(function(error){
+      $(".loading").hide();
     console.log("Error update user data api call"+ JSON.stringify(error));
     dispatch(updateProfileInputFailed("Error in update profiel"));
     })
@@ -170,7 +183,11 @@ export function clickAddFriend(sender,receiver){
       url:'/api/v1/user/addFriendRequest',
       dataType:'json',
       data:{sender:sender,receiver:receiver},
+      beforeSend: function() {
+          $(".loading").show();
+      } 
     }).done(function(data){
+      $(".loading").hide();
       console.log("Success add friend request :"+ JSON.stringify(data));
       if(data.error){
         dispatch(addFriendRequestFailed(data.error));
@@ -178,6 +195,7 @@ export function clickAddFriend(sender,receiver){
         dispatch(addFriendRequestSuccess(data.success,data.friendStatus));
       }
     }).fail(function(error){
+      $(".loading").hide();
       console.log("Error in add friend request:"+JSON.stringify(error));
         dispatch(addFriendRequestFailed(error));
     });
@@ -199,14 +217,19 @@ export function clickAcceptRequest(reqId){
     $.ajax({
       type:'POST',
       url:'/api/v1/users/acceptFriendRequest/'+reqId,
+       beforeSend: function() {
+          $(".loading").show();
+      } 
     }).done(function(data){
       console.log("Success accept request :"+ JSON.stringify(data));
+      $(".loading").hide();
       if(data.error){
         dispatch(acceptRequestFailed(data.error));
       }else{
         dispatch(acceptRequestSuccess(data.success));
       }
     }).fail(function(error){
+      $(".loading").hide();
       console.log("Error in accept request:"+JSON.stringify(error));
       dispatch(acceptRequestFailed(error));
     });
@@ -228,7 +251,10 @@ export function clickDenyFriendRequest(reqId) {
 
     $.ajax({
 			type: 'DELETE',
-			url: '/api/v1/users/deleteFriendRequest/'+reqId
+			url: '/api/v1/users/deleteFriendRequest/'+reqId,
+      beforeSend: function() {
+          $(".loading").show();
+      }
     }).done(function(data) {
 				if (data.error){
 					console.log("delete friend works but error: ", data);
@@ -237,9 +263,11 @@ export function clickDenyFriendRequest(reqId) {
 						console.log("delete friend success", data);
 						dispatch(deleteFriendRequestSuccess(data.success));
 					}
+          $(".loading").hide();
 				})
 			.fail(function(error) {
 				console.log("delete failure: ");
+        $(".loading").hide();
 			  dispatch(deleteFriendRequestFailed(error));
 			});
     }

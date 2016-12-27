@@ -32,7 +32,8 @@ export default class CategoryWidget extends Component {
                   <h2 className="white_heading">Manage Categories</h2>
                     {message}
                     <AddCategory
-                        onAddClick={this.props.onAddClick} />
+                        onAddClick={this.props.onAddClick}
+                        userAuthSession={this.props.userAuthSession} />
                      <div className="uk-grid cat_shorting">
                       <h3 className="white_heading_small">Manage Categories</h3>
                         <CategoryList

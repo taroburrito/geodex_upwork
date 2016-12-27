@@ -13,6 +13,8 @@ var postModel = {
         user_id: row.user_id,
         content: row.content,
         image: row.image,
+        youtube_image: row.youtube_image,
+        youtube_url: row.youtube_url,
         status: row.status,
         created: row.created,
         modified:row.modified
@@ -26,12 +28,19 @@ var postModel = {
   },
 
     createPost: function (formData, callback) {
-      if(!formData.image){
+      if(!formData.image && !formData.youtube_image){
         var image = null;
       }else{
-        var uploadImage = common.uploadPostImage(formData.image,formData.user_id);
-        if(uploadImage){
+        if(formData.image){
+          var uploadImage = common.uploadPostImage(formData.image,formData.user_id);
+        }else if (formData.youtube_image) {
+          var uploadImage = common.uploadYoutubePostImage(formData.youtube_image,formData.user_id);
+        }
+
+        if(uploadImage && formData.image){
           formData.image = uploadImage;
+        }else if(uploadImage && formData.youtube_image){
+          formData.youtube_image = uploadImage;
         }else{
           dbConnection.end();
           return(callback({error:"Error in uploading"}));
@@ -157,22 +166,57 @@ var postModel = {
             dbConnection.end();
             return(callback({status:400, error:"No comments found for this post"}));
           }else {
-            var comments = {};
+            var comments = [];
             results.forEach(function (result) {
-                comments[result.id] = postModel.convertRowsToObject(result);
+              comments.push(postModel.convertRowsToObject(result));
+                // comments[result.id] = postModel.convertRowsToObject(result);
             });
             dbConnection.end();
             return(callback({status:200,comments}));
           }
         })
-    }
+    },
 
+    postComment: function(data,callback){
+      var dbConnection = dbConnectionCreator();
+      var postCommentSqlString = constructPostCommentSqlString(data);
+      dbConnection.query(postCommentSqlString,function(error,results,fields){
+        if (error) {
+          return(callback({error:"Error in post comment",status:400,query:postCommentSqlString}));
+        }else if (results.affectedRows === 1) {
+          return(callback({success:"Success post comment",status:200}));
+        }else{
+          return(callback({error:"Error in post comment query",status:400}));
+        }
+      });
+    }
 
 
 };
 
+function constructPostCommentSqlString(data){
+  var timestamp = moment();
+  var formatted = timestamp.format('YYYY-MM-DD HH:mm:ss Z');
+  var query = "INSERT INTO gx_post_comments SET " +
+          "  post_id = " + mysql.escape(data.post_id) +
+          ", parent_id = " + mysql.escape(data.parent_id) +
+          ", user_id = " + mysql.escape(data.user_id) +
+          ", comment = " + mysql.escape(data.comment) +
+          ", status = " + mysql.escape(data.status) +
+          ", created = " + mysql.escape(formatted);
+  return query;
+}
+
 function constructGetCommentsByPostSqlString(postId){
-  var sql = "SELECT * from gx_post_comments WHERE post_id="+postId;
+  var sql = "SELECT a.*,"+
+            "CONCAT(b.first_name, ' ', b.last_name) NAME,"+
+            "b.profile_image,b.address, c.email"+
+            " from gx_post_comments as a,"+
+            " gx_user_details as b,"+
+            " gx_users as c"+
+            " WHERE b.user_id = a.user_id"+
+            " AND c.id  = a.user_id"+
+            " AND post_id="+postId;
   return sql;
 }
 
@@ -198,6 +242,8 @@ function constructCreatePostSqlString(formData) {
     var query = "INSERT INTO gx_posts SET " +
             "  user_id = " + mysql.escape(formData.user_id) +
             ", content = " + mysql.escape(formData.content) +
+            ", youtube_url = " + mysql.escape(formData.youtube_url) +
+            ", youtube_image = " + mysql.escape(formData.youtube_image) +
             ", image = " + mysql.escape(formData.image) +
             ", status = 1 "+
             ", created = '" + formatted+"'" ;

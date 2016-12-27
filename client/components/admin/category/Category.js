@@ -38,9 +38,9 @@ export default class Category extends Component {
               <div className="uk-nestable-toggle" data-nestable-action="toggle"></div>
         <input value={content} className ="uk-width-7-10 myinputcont" type="text" onChange={this.handleInputChange.bind(this)}/>
         {!this.state.showButton? '' :
-<div className="uk-button uk-button-primary uk-width-2-10 myinputcont_btn">
+          <div className="uk-button uk-button-primary uk-width-2-10 myinputcont_btn">
           <a title="Edit" alt="edit" className=" " onClick={()=>this.clickUpdateCategory(this)}>Rename</a></div>}
-        <a title="Delete" alt="Delete" className="uk-icon-close uk-float-right" onClick={()=>this.clickHandleDelete(this)}></a>
+            <a title="Delete" alt="Delete" className="uk-icon-close uk-float-right" onClick={()=>this.clickHandleDelete(this)}></a>
 
 
         </div>

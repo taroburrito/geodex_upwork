@@ -7,10 +7,17 @@ import DashboardPage from '../../components/front/DashboardPage';
 import Navbar from '../../components/Navbar';
 import { attemptLogout } from '../../actions/AuthActions';
 //import {addCategory} from '../../actions/CategoryActions';
-import {fetchCommentsByPost, addPost} from '../../actions/PostActions';
+import {fetchCommentsByPost, addPost,postComment} from '../../actions/PostActions';
 import {getUserDetail, fetchDashboardData} from '../../utilities/ServerSocket';
-import {updatefriendsList,updateDashboardFriendList, addCategory,setMessageToDefault, sendEmailFromDashboar} from '../../actions/UserActions';
-
+import {
+  updatefriendsList,
+  updateDashboardFriendList,
+  addCategory,
+  setMessageToDefault,
+  sendEmailFromDashboar,
+  deleteCategory,
+  updateCategoryById
+  } from '../../actions/UserActions';
 class HomePage extends Component{
   constructor(props){
     super(props);
@@ -46,7 +53,11 @@ class HomePage extends Component{
           handleMessage={this.props.handleMessage}
           dashboardData={this.props.dashboardData}
           sendEmail={(to,from,content)=>
-          dispatch(sendEmail(to,from,content))}/>
+          dispatch(sendEmail(to,from,content))}
+          postComment = {(req)=>dispatch(postComment(req))}
+          onDeleteClick={Id => dispatch(deleteCategory(Id))}
+          onChange={(id, value) => {dispatch(updateCategoryById(id,value));}}
+          />
         </div>
       );
     }else{
@@ -75,7 +86,7 @@ function select(state) {
   posts:state.postsList,
   friendsPosts: state.friendsPosts,
   dashboardData: state.dashboardData,
-  comments:state.commentsByPost
+  comments:state.postComments,
   };
 }
 

@@ -20,16 +20,17 @@ export function updatePostsList(postsListState={},action){
   }
 }
 
-export function updateComments(commentsByPostState={}, action){
+export function updateComments(postCommentsState={}, action){
   switch (action.type) {
     case Set_Comments_Null:
     return null;
       break;
 
       case Fetch_Comment_Success:
-        return Object.assign({},commentsByPostState, action.data);
+
+        return Object.assign({}, action.comments);
         break;
     default:
-      return commentsByPostState;
+      return postCommentsState;
   }
 }

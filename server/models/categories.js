@@ -70,7 +70,7 @@ var categoryModel = {
                     if (error) {
                         dbConnection.end(); return(callback({error: error, when: "reading"}));
                     } else {
-                        dbConnection.end(); return(callback({page: categoryModel.convertRowToObject(results[0])}));
+                        dbConnection.end(); return(callback({category: categoryModel.convertRowToObject(results[0])}));
                     }
                 });
             }

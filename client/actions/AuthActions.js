@@ -157,8 +157,12 @@ export function resetPassword(token, pwd){
 		$.ajax({
 			type:'POST',
 			url:'/api/v1/users/resetPassword',
-			data: {token:token,pwd:pwd}
+			data: {token:token,pwd:pwd},
+			beforeSend: function() {
+          		$(".loading").show();
+      		} 
 		}).done(function(data){
+			$(".loading").hide();
 			if(data.error){
 				dispatch(resetPasswordFailed(data.error));
 			}else{
@@ -167,6 +171,7 @@ export function resetPassword(token, pwd){
 			}
 
 		}).error(function(error){
+			$(".loading").hide();
 			console.log("Error in get all pages api call"+JSON.stringify(error));
 			dispatch(resetPasswordFailed(error));
 		});
@@ -180,7 +185,10 @@ export function changePassword(email,newPwd){
 		$.ajax({
 			type:'POST',
 			url:'/api/v1/users/changePassword',
-			data: {email:email,new_pwd:newPwd}
+			data: {email:email,new_pwd:newPwd},
+			beforeSend: function() {
+          		$(".loading").show();
+      		} 
 		}).done(function(data){
 			if(data.error){
 				console.log(data);
@@ -189,9 +197,10 @@ export function changePassword(email,newPwd){
 			console.log(data);
 			dispatch(changePasswordSuccess());
 			}
-
+			$(".loading").hide();
 		}).error(function(error){
 			console.log("Error in change password api call call"+JSON.stringify(error));
+			$(".loading").hide();
 			//dispatch(resetPasswordFailed(error));
 		});
 	}
@@ -205,11 +214,15 @@ export function attemptSignUp(formData) {
     $.ajax({
 			type: 'POST',
 			url: '/api/v1/users/signUp',
-			data: formData
+			data: formData,
+			beforeSend: function() {
+          		$(".loading").show();
+      		} 
 		 })
 			.done(function(data) {
 
 				console.log(data);
+				$(".loading").hide();
 				//return false;
 				if (data.error){
 					dispatch(signUpFail(data.error));
@@ -220,25 +233,34 @@ export function attemptSignUp(formData) {
 			})
 			.fail(function(a,b,c,d) {
 			   dispatch(signUpFail("Error in signup"));
-
+			   $(".loading").hide();
 			});
   }
 }
 
 export function attemptLogin(email, password, role) {
+	
   return (dispatch) => {
     dispatch(clickedLogin());
 
     $.ajax({
 			type: 'POST',
 			url: '/login',
-			data: {email, password, role} })
-			.done(function(data) {
+			data: {email, password, role},
+			beforeSend: function() {
+          		$(".loading").show();
+      		} 
+      		 }).done(function(data) {
 				console.log(data);
+				$(".loading").hide();
 				if (data.error){
 					dispatch(loginFail(data.error));
 				} else {
+					var storageData=data;
+					storageData['isLoggedIn']=true;
+					localStorage.setItem("userData",JSON.stringify(storageData));
 					dispatch(loginSuccess(data));
+
 				}
 			})
 			.fail(function(a,b,c,d) {
@@ -249,21 +271,32 @@ export function attemptLogin(email, password, role) {
 }
 
 export function checkSessionStatus(email, password) {
-  return (dispatch) => {
-    dispatch(startedSessionCheck());
+	var sessionData=localStorage.getItem("userData");
+	if(sessionData){
+		return (dispatch)=>{
+			//dispatch(startedSessionCheck());
+			dispatch(checkedSessionStatus(JSON.parse(sessionData)));
+		}
+	}else{
+		return (dispatch)=>{
+			dispatch(checkedSessionStatus("TODO find the error..."));
+		}
+		/*return (dispatch) => {
+		    dispatch(startedSessionCheck());
+		    $.ajax({
+					type: 'POST',
+					url: '/checkSession',
+					data: {} })
+					.done(function(result) {
+						dispatch(checkedSessionStatus(result));
+					})
+					.fail(function(a,b,c,d) {
+					   console.log('failed to check',a,b,c,d);
+					  //dispatch(checkedSessionStatus("TODO find the error..."));
+					});
+		  }*/
+	}
 
-    $.ajax({
-			type: 'POST',
-			url: '/checkSession',
-			data: {} })
-			.done(function(result) {
-				dispatch(checkedSessionStatus(result));
-			})
-			.fail(function(a,b,c,d) {
-			   console.log('failed to check',a,b,c,d);
-			  //dispatch(checkedSessionStatus("TODO find the error..."));
-			});
-  }
 }
 
 export function attemptLogout(){
@@ -274,6 +307,7 @@ export function attemptLogout(){
 	      type: 'POST',
 	      url: '/logout'})
 			  .done(function() {
+			  		localStorage.removeItem("userData");
 					dispatch(logoutSuccess());
 			  })
 			  .fail(function() {

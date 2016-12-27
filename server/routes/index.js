@@ -8,6 +8,7 @@ require(path.join(__dirname, './', 'users'))(router);
 require(path.join(__dirname, './', 'pages'))(router);
 require(path.join(__dirname, './', 'categories'))(router);
 require(path.join(__dirname, './', 'posts'))(router);
+require(path.join(__dirname, './', 'admin'))(router);
 
 // Homepage/Client
 router.get('/', function (req, res, next) {

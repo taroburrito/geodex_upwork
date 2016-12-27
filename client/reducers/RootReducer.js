@@ -7,6 +7,7 @@ import { updateCategoryList, handleMessage} from './CategoryReducer';
 import { updatePagesList, getPageData } from './PageReducer';
 import { updatePostsList, updateComments} from './PostReducer';
 import { handleFrontMessage} from './CommonReducer';
+import {updateUserList, viewProfile} from './AdminReducer';
 // import { Add_Todo, Complete_Todo, Set_Visibility_Filter, VisibilityFilters  } from '../actions/TodoActions';
 // const { Show_All } = VisibilityFilters;
 
@@ -41,7 +42,9 @@ const AppReducer = combineReducers({
   updateMessage:handleFrontMessage,
   friendRequests:friendRequests,
   searchResult: searchUsersResult,
-  commentsByPost: updateComments,
+  postComments: updateComments,
+  userList:updateUserList,
+  userProfile:viewProfile,
 
   //For viewing profiles.
   userProfileData:userProfileData,

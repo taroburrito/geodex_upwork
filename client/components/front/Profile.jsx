@@ -23,14 +23,17 @@ export default class Profile extends Component {
     componentDidMount(){
 
     }
-    getProfileImage(img){
+
+    getProfileImage(img,userId){
        if(img){
-        return img;
+         var imageSrc = this.state.uploadDir+"user_"+userId+"/"+img;
+        return imageSrc;
       }else{
-       return "public/images/user.jpg";
+       return "public/images/user.png";
       }
 
     }
+
     handleClickDenyRequest(reqId){
 
       this.props.onClickDenyRequest(reqId);
@@ -339,16 +342,17 @@ renderPostContentModal(){
       if(visitedUser){
 
       var userProfileData = visitedUser.userProfileData;
-      if(userProfileData && userProfileData.cover_image){
-        var background_profile_css ={
-          backgroundImage: 'url('+userProfileData.cover_image+')'
-        }
-      }else{
-        var background_profile_css ={
-          backgroundImage: 'url(public/images/profile_banner.jpg)'
-        }
+      if(userProfileData && !userProfileData.cover_image){
+      var background_profile_css ={
+        backgroundImage: 'url(public/images/profile_banner.jpg)'
       }
+    }else{
+      var coverImage = "uploads/images/user_"+userProfileData.id+"/"+userProfileData.cover_image;
+      var background_profile_css ={
 
+        backgroundImage: 'url(' + coverImage + ')'
+      }
+    }
       return(
         <div>
           <div className="full_width">
@@ -359,7 +363,7 @@ renderPostContentModal(){
                   <div className="uk-width-small-1-2">
                     <div className="uk-grid uk-grid-small">
                     <div className="uk-width-3-10 user_img_left">
-                      <img src={this.getProfileImage(userProfileData.profile_image)} />
+                      <img src={this.getProfileImage(userProfileData.profile_image,userProfileData.id)} />
 
                       </div>
                     <div className="uk-width-7-10 pro_right">
