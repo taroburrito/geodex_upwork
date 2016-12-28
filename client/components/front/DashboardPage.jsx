@@ -706,7 +706,7 @@ _myImageGalleryRenderer(item) {
               <div className="uk-grid uk-grid-small">
               <div className="uk-width-3-10 user_img_left"><Link to={profile_link}><img src={this.getProfileImage(item.profile_image,user_id)} className=""/></Link></div>
               <div className="uk-width-7-10 user_bottom_img_right">
-              <h3 className="capital_first"><Link to={profile_link}>{item.first_name} {item.last_name} </Link>
+              <h3 className="capital_first"><Link to={profile_link} className="user-name-anchor">{item.first_name} {item.last_name} </Link>
               <a data-uk-modal="{target:'#sendEmail'}"   onClick={this.handleOnClickEmailIcon.bind(this,item.email)} data={item.email}  href="#" className="user_location">{item.email}</a>
              <small className="user_location">{item.address}</small>
 
@@ -1334,6 +1334,11 @@ loadChild(child){
     var userProfileData = userAuthSession.userObject;
     var content;
     var errorLabel;
+    if(userProfileData){
+    var profile_link = "/user/"+userProfileData.id;
+  }else{
+      var profile_link = null;
+  }
 
 
 
@@ -1349,11 +1354,11 @@ loadChild(child){
           <div className="uk-width-small-1-2">
             <div className="uk-grid uk-grid-small">
             <div className="uk-width-3-10 user_img_left">
-              <img src={this.getProfileImage(userProfileData.profile_image,userProfileData.id)} />
+              <Link to={profile_link}><img src={this.getProfileImage(userProfileData.profile_image,userProfileData.id)}/></Link>
 
             </div>
             <div className="uk-width-7-10 user_img_right">
-            <h3>{userProfileData.first_name} {userProfileData.last_name}
+            <h3><Link to={profile_link}  className="user-name-anchor">{userProfileData.first_name} {userProfileData.last_name}</Link>
                <small className="uk-float-right">{userProfileData.email}</small></h3>
 
 
