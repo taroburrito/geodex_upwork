@@ -37,7 +37,7 @@ export default class Profile extends Component {
 
     }
     componentWillMount() {
-      console.log(this.props);
+      //console.log(this.props);
     }
     componentDidMount(){
 
@@ -47,7 +47,7 @@ export default class Profile extends Component {
 
       if(currentSlide){
         var current = parseInt(currentSlide) - 1;
-        console.log("current:"+current);
+        //console.log("current:"+current);
         //this.setState({loadPostContent:true})
         this.setState({currentSlide:current});
         if(this._imageGallery){
@@ -82,7 +82,7 @@ export default class Profile extends Component {
 
       this.props.postComment(req);
 
-      console.log(req);
+     // console.log(req);
 
     }
 
@@ -139,10 +139,6 @@ export default class Profile extends Component {
       var link;
       var denyLink = "";
       var LoggedInUserId = userAuthSession.userObject.id;
-      console.log("============111111111111=============");
-      console.log(LoggedInUserId);
-      console.log(profileId);
-      console.log("============111111111111=============");
       if(friendStatus){
 
       if(friendStatus.status == 1 && LoggedInUserId != profileId){
@@ -314,7 +310,7 @@ onSlide(e){
 }
 
 imageSlideTo(e){
-  console.log("ee:"+e);
+  //console.log("ee:"+e);
   this._imageGallery.slideToIndex(e);
 }
 

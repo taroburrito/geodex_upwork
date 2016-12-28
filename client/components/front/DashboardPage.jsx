@@ -74,7 +74,7 @@ export default class DashboardPage extends Component {
     this.setState({uploadDir:uploadDir,loading:true});
     this.props.fetchInitialData(userAuthSession.userObject.id,null);
     document.getElementById("html").className = "";
-    console.log("removed");
+    //console.log("removed");
     //htmlTag.classList.remove('uk-modal-page');
   }
   onSlide(e){
@@ -113,8 +113,24 @@ export default class DashboardPage extends Component {
   handlePostMessage()
   {
       //console.log(e.value);
-
-     this.setState({postMessage:this.refs.postContent.getDOMNode().value.trim()});
+      var msg = this.refs.postContent.getDOMNode().value.trim();
+     this.setState({postMessage:msg});
+    // var videoid = msg.match(/(?:https?:\/{2})?(?:w{3}\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\?v=|\/)([^\s&]+)/);
+     var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|\?v=)([^#\&\?]*).*/;
+     var match = msg.match(regExp);
+     var modal = UIkit.modal("#statusImageModel");
+            if (match && match[2].length == 11) {
+                //console.log('https://www.youtube.com/embed/' + match[2] + '?autoplay=0');
+                var videoLink = 'https://www.youtube.com/embed/'+match[2];
+                var videoImg = "https://img.youtube.com/vi/"+match[2]+"/0.jpg"
+                this.setState({clickedYouTubeLink:true,clickedImageIcon:null,videoLink:videoLink,image:null,videoImage:videoImg,postMessage:null});
+                modal.show();
+            }
+            else {
+                this.setState({videoLink:null,image:null,videoImage:null})
+                 //console.log("The youtube url is not valid.");
+            }
+   
   }
 
   
@@ -133,13 +149,13 @@ export default class DashboardPage extends Component {
 
     this.props.postComment(req);
 
-    console.log(req);
+    //console.log(req);
 
   }
 
   handleClickReplyComment(parent_id,post_id){
 
-    console.log("parent:"+parent_id);
+    //console.log("parent:"+parent_id);
     this.setState({showCommentBox:null,replyContent:null,postComment:null});
 
     const{userAuthSession} = this.props;
@@ -306,11 +322,11 @@ handleClickPlus(){
         newArr[id] = fullySorted[id];
       });
 
-      console.log(friends);
-      console.log("******");
+     // console.log(friends);
+     // console.log("******");
 
-      console.log(fullySorted);
-      console.log(newArr);
+     // console.log(fullySorted);
+     // console.log(newArr);
     //   var newArr = _.sortBy(friends, 'first_name', function(n) {
     //   return Math.sin(n);
     // });
@@ -360,7 +376,7 @@ resetEmailForm(){
   handleOnClickEmailIcon(email){
       this.refs.sendto.getDOMNode().value = email;
       this.resetEmailForm();
-      console.log(email);
+     // console.log(email);
   }
   sortByCategory(catId){
     const{userAuthSession} = this.props;
@@ -425,7 +441,7 @@ resetEmailForm(){
   return matches.concat(non_matches);
 }
 imageSlideTo(e){
-  console.log("ee:"+e);
+  //console.log("ee:"+e);
   this._imageGallery.slideToIndex(e);
 }
 
@@ -630,7 +646,7 @@ _myImageGalleryRenderer(item) {
 
     if(currentSlide){
       var current = parseInt(currentSlide) - 1;
-      console.log("current:"+current);
+     // console.log("current:"+current);
       //this.setState({loadPostContent:true})
       this.setState({currentSlide:current});
       if(this._imageGallery){
@@ -1189,13 +1205,13 @@ loadChild(child){
     var videoid = e.target.value.match(/(?:https?:\/{2})?(?:w{3}\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\?v=|\/)([^\s&]+)/);
 
     if(videoid != null) {
-      console.log("video id = ",videoid[1]);
+      //console.log("video id = ",videoid[1]);
       var videoLink = 'https://www.youtube.com/embed/'+videoid[1];
       var videoImg = "https://img.youtube.com/vi/"+videoid[1]+"/0.jpg"
       this.setState({videoLink:videoLink,image:null,videoImage:videoImg});
-      console.log("https://img.youtube.com/vi/"+videoid[1]+"/0.jpg");
+      //console.log("https://img.youtube.com/vi/"+videoid[1]+"/0.jpg");
     } else {
-      console.log("The youtube url is not valid.");
+      //console.log("The youtube url is not valid.");
       this.setState({videoLink:null,image:null,videoImage:null})
     }
     //if()
@@ -1381,7 +1397,7 @@ loadChild(child){
               <textarea placeholder="Post to geodex..." className="uk-width-1-1" onChange={this.handlePostMessage} ref="postContent"></textarea>
               <a className="uk-button uk-button-primary uk-button-large" onClick={this.handleSavePost}>Post</a>
               <div className="yt_img"><i data-uk-tooltip title="Upload Image" className="uk-icon-image" data-uk-modal="{target:'#statusImageModel'}" style={{cursor:"pointer"}} onClick={()=>this.setState({clickedYouTubeLink:null,clickedImageIcon:true,videoLink:null,image:null})}></i>
-              <a  title="upload youtube video link" data-uk-modal="{target:'#statusImageModel'}" onClick={()=>this.setState({clickedYouTubeLink:true,clickedImageIcon:null,videoLink:null,image:null})}><img src="public/images/yt.png"></img></a>
+              
             </div>
 
           </div>

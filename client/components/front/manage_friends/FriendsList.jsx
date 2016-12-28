@@ -8,7 +8,7 @@ export default class FriendsList extends Component{
  }
 
  render() {
-   console.log(this.props);
+   //console.log(this.props);
    const{dispatch} = this.props;
    var friends = this.props.friendsData.friendsList;
    var categorizedFriendList = this.props.friendsData.categorizedFriendList;
