@@ -36,7 +36,7 @@ export default class DashboardPage extends Component {
     this.clickSlider = this.clickSlider.bind(this);
     this.handleVideoLinkChange = this.handleVideoLinkChange.bind(this);
     this.handlePostMessage = this.handlePostMessage.bind(this);
-    this.pauseAllYoutube = this.pauseAllYoutube.bind(this);
+
     this.state ={
       errorMessage: null,
     //  image: "public/images/user.jpg",
@@ -85,7 +85,7 @@ export default class DashboardPage extends Component {
     this.props.fetchComments(postId);
     //this.loadPostContent(postId,this.state.clickedUser,null,null,e);
     this.setState({clickedPost:postId});
-    
+  
 
   }
 
@@ -95,8 +95,8 @@ export default class DashboardPage extends Component {
             var iframe = $(this)[0].contentWindow;
             iframe.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
         });
-  }
 
+  }
   clickSlider(e){
 
   }
@@ -289,6 +289,7 @@ handleClickPlus(){
   }
 
 
+
   handleChangeSort(){
     var sortBy = this.refs.sortFriends.getDOMNode().value;
     const{dashboardData} = this.props;
@@ -316,8 +317,6 @@ handleClickPlus(){
     if(newArr){
       this.props.updateDashboardFriendList(newArr);
     }
-
-
 
 
 
@@ -427,7 +426,6 @@ resetEmailForm(){
 }
 imageSlideTo(e){
   console.log("ee:"+e);
-
   this._imageGallery.slideToIndex(e);
 }
 
@@ -437,7 +435,7 @@ _myImageGalleryRenderer(item) {
     const onImageError = this._handleImageError;
     return (
       <div className='image-gallery-image'>
-        {item.video?<iframe src={item.video+"?enablejsapi=1"} height="500" width="700"/>:<img src={item.original}/>}
+        {item.video?<iframe src={item.video} height="500" width="700"/>:<img src={item.original}/>}
 
 
 
@@ -654,10 +652,9 @@ _myImageGalleryRenderer(item) {
 
   loadSinglePostContent(postId,userId,popupImage,popupContent,postVideo){
 
-      this.setState({clickedPost:postId,clickedUser:userId,getClickedUser:userId,postLargeImage:popupImage,popupContent:popupContent,popupVideo:postVideo});
     this.props.fetchComments(postId);
 
-
+    this.setState({clickedPost:postId,clickedUser:userId,getClickedUser:userId,postLargeImage:popupImage,popupContent:popupContent,popupVideo:postVideo});
 
   }
 
@@ -717,13 +714,13 @@ _myImageGalleryRenderer(item) {
       }
 
       var slider_images = this.renderFriendsPostImagesSmallSlider(user_id);
-      friendsElement.push(  <div className="uk-grid dash_top_head dash_botom_list bg_gry_lr" id={item.id}>
+      friendsElement.push(  <div className="uk-grid dash_top_head dash_botom_list" id={item.id}>
 
-            <div className="uk-width-small-1-2 no_mrg_left">
+            <div className="uk-width-small-1-2">
               <div className="uk-grid uk-grid-small">
               <div className="uk-width-3-10 user_img_left"><Link to={profile_link}><img src={this.getProfileImage(item.profile_image,user_id)} className=""/></Link></div>
               <div className="uk-width-7-10 user_bottom_img_right">
-              <h3 className="capital_first"><Link to={profile_link}>{item.first_name} {item.last_name} </Link>
+              <h3 className="capital_first"><Link to={profile_link} className="user-name-anchor">{item.first_name} {item.last_name} </Link>
               <a data-uk-modal="{target:'#sendEmail'}"   onClick={this.handleOnClickEmailIcon.bind(this,item.email)} data={item.email}  href="#" className="user_location">{item.email}</a>
              <small className="user_location">{item.address}</small>
 
@@ -755,7 +752,7 @@ _myImageGalleryRenderer(item) {
 
     });
 
-  if(friendsElement && friendsElement.length > 0){
+    if(friendsElement && friendsElement.length > 0){
     return(
       {friendsElement}
 
@@ -791,35 +788,22 @@ _myImageGalleryRenderer(item) {
   }
 
   loadPostByInfo(userId,postId){
-  const{dashboardData,userAuthSession} = this.props;
+
     if(userId){
+    const{dashboardData,userAuthSession} = this.props;
+    
     if(userAuthSession.userObject.id === userId){
         var friendData = userAuthSession.userObject;
     }else{
     var friendData = dashboardData.friends[userId];
   }
-  if(postId){
-    var postContent;
-    var friendsImages = dashboardData.friendsPostImages;
-    var friendPost = friendsImages[userId];
-    if(friendPost && friendPost.length > 0){
-      friendPost.forEach((item)=>{
-      if(item.id === postId){
-          postContent = item.content;
-         return false;
-      }
-      });
-    }else{
-      var postContent = dashboardData.latestPost.content;
-    }
-
-
-    // var post = visitedUser.posts[postId];
-    // var postContent = post.content;
-  }else{
-      var postContent = null;
-  }
-
+  // if(postId){
+  //
+  //   var post = visitedUser.posts[postId];
+  //   var postContent = post.content;
+  // }else{
+  //     var postContent = null;
+  // }
     if(friendData)
     return(
       <article className="uk-comment">
@@ -832,7 +816,7 @@ _myImageGalleryRenderer(item) {
 
           <div className="uk-comment-body">
             <div className="uk-width-small-1-1 post_control">
-            <p>{postContent}</p>
+            <p>{this.state.popupContent}</p>
             </div>
           </div>
       </article>
@@ -1121,9 +1105,8 @@ loadChild(child){
         }else{
         content = content;
         }
-         postImage = this.state.uploadDir+"user_"+userProfile.id+"/"+post_image;
+         postImage = this.state.uploadDir+"user_"+userProfile.id+"/thumbs/"+post_image;
       }
-    
       //Video Content
       else if (latestPost.youtube_image) {
         if(content.length > 300){
@@ -1365,6 +1348,11 @@ loadChild(child){
     var userProfileData = userAuthSession.userObject;
     var content;
     var errorLabel;
+    if(userProfileData){
+    var profile_link = "/user/"+userProfileData.id;
+  }else{
+      var profile_link = null;
+  }
 
 
 
@@ -1380,12 +1368,12 @@ loadChild(child){
           <div className="uk-width-small-1-2">
             <div className="uk-grid uk-grid-small">
             <div className="uk-width-3-10 user_img_left">
-              <Link to={"/user/"+userProfileData.id}>
-              <img src={this.getProfileImage(userProfileData.profile_image,userProfileData.id)} />
-              </Link>
+              <Link to={profile_link}><img src={this.getProfileImage(userProfileData.profile_image,userProfileData.id)}/></Link>
+
             </div>
             <div className="uk-width-7-10 user_img_right">
-            <h3><Link to={"/user/"+userProfileData.id}>{userProfileData.first_name} {userProfileData.last_name}</Link>
+            <h3><Link to={profile_link}  className="user-name-anchor">{userProfileData.first_name} {userProfileData.last_name}</Link>
+
                <small className="uk-float-right">{userProfileData.email}</small></h3>
 
 

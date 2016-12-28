@@ -1807,3 +1807,8 @@ img.uk-float-right.img_margin_left {
 .bg_gry_lr .uk-width-small-1-2.no_mrg_left {
     padding-left: 13px;
 }
+
+.user-name-anchor{
+  text-transform: capitalize;
+  color: #444444;
+}
