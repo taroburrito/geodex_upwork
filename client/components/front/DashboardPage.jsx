@@ -88,12 +88,12 @@ export default class DashboardPage extends Component {
 
   }
 
-  pauseAllYoutube(){ 
+  pauseAllYoutube(){
     console.log('===========23322323==========');
         $('iframe[src*="youtube.com"]').each(function() {
             var iframe = $(this)[0].contentWindow;
             iframe.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
-        }); 
+        });
   }
 
   clickSlider(e){
@@ -284,7 +284,7 @@ handleClickPlus(){
 
   }
 
- 
+
   handleChangeSort(){
     var sortBy = this.refs.sortFriends.getDOMNode().value;
     const{dashboardData} = this.props;
@@ -313,7 +313,7 @@ handleClickPlus(){
       this.props.updateDashboardFriendList(newArr);
     }
 
-   
+
 
 
 
@@ -423,7 +423,7 @@ resetEmailForm(){
 }
 imageSlideTo(e){
   console.log("ee:"+e);
-  
+
   this._imageGallery.slideToIndex(e);
 }
 
@@ -650,9 +650,10 @@ _myImageGalleryRenderer(item) {
 
   loadSinglePostContent(postId,userId,popupImage,popupContent,postVideo){
 
+      this.setState({clickedPost:postId,clickedUser:userId,getClickedUser:userId,postLargeImage:popupImage,popupContent:popupContent,popupVideo:postVideo});
     this.props.fetchComments(postId);
 
-    this.setState({clickedPost:postId,clickedUser:userId,getClickedUser:userId,postLargeImage:popupImage,popupContent:popupContent,popupVideo:postVideo});
+
 
   }
 
@@ -797,19 +798,24 @@ _myImageGalleryRenderer(item) {
     var postContent;
     var friendsImages = dashboardData.friendsPostImages;
     var friendPost = friendsImages[userId];
-    friendPost.forEach((item)=>{
-    if(item.id === postId){
-        postContent = item.content;
-       return false;
+    if(friendPost && friendPost.length > 0){
+      friendPost.forEach((item)=>{
+      if(item.id === postId){
+          postContent = item.content;
+         return false;
+      }
+      });
+    }else{
+      var postContent = dashboardData.latestPost.content;
     }
-    });
+
 
     // var post = visitedUser.posts[postId];
     // var postContent = post.content;
   }else{
       var postContent = null;
   }
-  console.log(postContent); console.log("fff")
+
     if(friendData)
     return(
       <article className="uk-comment">
@@ -1111,7 +1117,7 @@ loadChild(child){
         }else{
         content = content;
         }
-         postImage = this.state.uploadDir+"user_"+userProfile.id+"/thumbs/"+post_image;
+         postImage = this.state.uploadDir+"user_"+userProfile.id+"/"+post_image;
       }
       //Video Content
       else if (latestPost.youtube_image) {
