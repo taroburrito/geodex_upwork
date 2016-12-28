@@ -80,16 +80,17 @@ export default class DashboardPage extends Component {
   onSlide(e){
     //React.unmountComponentAtNode(document.getElementById('test'));
       //this._imageGallery.slideToIndex(e);
+    this.pauseAllYoutube();
     var postId = this._imageGallery.props.items[e].postId;
     this.props.fetchComments(postId);
     //this.loadPostContent(postId,this.state.clickedUser,null,null,e);
     this.setState({clickedPost:postId});
-    this.pauseAllYoutube();
+    
 
   }
 
   pauseAllYoutube(){
-    console.log('===========23322323==========');
+    //console.log('===========23322323==========');
         $('iframe[src*="youtube.com"]').each(function() {
             var iframe = $(this)[0].contentWindow;
             iframe.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
@@ -112,8 +113,11 @@ export default class DashboardPage extends Component {
   handlePostMessage()
   {
       //console.log(e.value);
+
      this.setState({postMessage:this.refs.postContent.getDOMNode().value.trim()});
   }
+
+  
   handleClickPostComment(){
 
     const{userAuthSession} = this.props;
@@ -595,7 +599,7 @@ _myImageGalleryRenderer(item) {
     return(
       <div id="postImageModel" className="uk-modal coment_popup">
           <div className="uk-modal-dialog uk-modal-dialog-blank">
-          <button className="uk-modal-close uk-close" type="button"></button>
+          <button className="uk-modal-close uk-close" type="button" onClick={this.pauseAllYoutube}></button>
             <div className="uk-grid">
 
               <div className="uk-width-small-3-4 popup_img_left" ref="largeSliderContent">
@@ -740,7 +744,7 @@ _myImageGalleryRenderer(item) {
               <div>
                 <a href="#" className="post_txt_dashboard" data-uk-modal={post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={this.loadSinglePostContent.bind(this,item.id,user_id,postImage,item.post_content,postVideo)}>
 
-                  <img src={post_image? this.state.uploadDir+"user_"+user_id+"/thumbs/"+post_image: null} className="uk-float-right img_margin_left"/>
+                  <img src={post_image? this.state.uploadDir+"user_"+user_id+"/thumbs/"+post_image: null} className="uk-float-left img_margin_right"/>
                   <p>{content}</p>
                 </a>
 
@@ -1069,7 +1073,7 @@ loadChild(child){
     return(
       <div id="postContentModel" className="uk-modal coment_popup">
           <div className="uk-modal-dialog uk-modal-dialog-blank">
-      		<button className="uk-modal-close uk-close" type="button"></button>
+      		<button className="uk-modal-close uk-close" type="button" onClick={this.pauseAllYoutube}></button>
       			<div className="uk-grid">
 
       				<div className="uk-width-small-1-1 popup_img_right coment_pop_cont">
@@ -1143,10 +1147,10 @@ loadChild(child){
 
        return (
          <div className="uk-width-small-1-2 post_control">
-        <div  style={{maxHeight:200,overflow:"hidden"}}>
+        <div  style={{maxHeight:200,overflow:"hidden",marginTop:8}}>
         <a href="#" className="post_txt_dashboard" data-uk-modal={post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={this.loadSinglePostContent.bind(this,latestPost.id,userProfile.id,postImage,latestPost.content,postVideo)}>
 
-        <img src={post_image? this.state.uploadDir+"user_"+userProfile.id+"/thumbs/"+post_image: null} className="uk-float-right img_margin_left"/>
+        <img src={post_image? this.state.uploadDir+"user_"+userProfile.id+"/thumbs/"+post_image: null} className="uk-float-left img_margin_right"/>
         <p>{content}</p>
         </a>
 
@@ -1231,7 +1235,7 @@ loadChild(child){
    return(
      <div id="categoryModal" className="uk-modal" ref="modal" >
        <div className="uk-modal-dialog">
-          <button type="button" className="uk-modal-close uk-close"></button>
+          <button type="button" className="uk-modal-close uk-close" onClick={this.pauseAllYoutube}></button>
 
             <form className="uk-form uk-margin uk-form-stacked add_category">
               {categoryMessage}
@@ -1330,7 +1334,7 @@ loadChild(child){
    return(
      <div id="sendEmail" className="uk-modal" ref="modal" >
           <div className="uk-modal-dialog">
-             <button type="button" className="uk-modal-close uk-close"></button>
+             <button type="button" className="uk-modal-close uk-close" onClick={this.pauseAllYoutube}></button>
 
              <div className="uk-modal-header">
                  <h3>Send Email</h3>
@@ -1376,11 +1380,12 @@ loadChild(child){
           <div className="uk-width-small-1-2">
             <div className="uk-grid uk-grid-small">
             <div className="uk-width-3-10 user_img_left">
+              <Link to={"/user/"+userProfileData.id}>
               <img src={this.getProfileImage(userProfileData.profile_image,userProfileData.id)} />
-
+              </Link>
             </div>
             <div className="uk-width-7-10 user_img_right">
-            <h3>{userProfileData.first_name} {userProfileData.last_name}
+            <h3><Link to={"/user/"+userProfileData.id}>{userProfileData.first_name} {userProfileData.last_name}</Link>
                <small className="uk-float-right">{userProfileData.email}</small></h3>
 
 

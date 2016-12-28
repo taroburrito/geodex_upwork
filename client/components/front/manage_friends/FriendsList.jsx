@@ -37,7 +37,7 @@ export default class FriendsList extends Component{
      }
    );
    return (
-      <div className="uk-grid uk-grid-large dash_top_head">
+      <div className="uk-grid uk-grid-medium dash_top_head">
          {friendElement}
        </div>
 

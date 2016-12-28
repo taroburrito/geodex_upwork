@@ -31,8 +31,8 @@ export default class FriendRequestsList extends Component{
            </div>
            </div>
            <div className="manage-request-btns-div">
-             <a style={{margin:'3'}} className="uk-button manage-request-btns" onClick={this.handleClickConfirm.bind(this, this.props.request_id)}>Confirm</a>
-             <a className="uk-button manage-request-btns" onClick={this.handleClickDelete.bind(this, this.props.request_id)}>Delete Request</a>
+             <a  className="uk-button manage-request-btns confirm-rqst-btn" onClick={this.handleClickConfirm.bind(this, this.props.request_id)}>Confirm</a>
+             <a className="uk-button manage-request-btns delete-rqst-btn" onClick={this.handleClickDelete.bind(this, this.props.request_id)}>Delete Request</a>
            </div>
          </div>
       </div>

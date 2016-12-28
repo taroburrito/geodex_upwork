@@ -139,13 +139,17 @@ export default class Profile extends Component {
       var link;
       var denyLink = "";
       var LoggedInUserId = userAuthSession.userObject.id;
+      console.log("============111111111111=============");
+      console.log(LoggedInUserId);
+      console.log(profileId);
+      console.log("============111111111111=============");
       if(friendStatus){
 
-      if(friendStatus.status == 1){
+      if(friendStatus.status == 1 && LoggedInUserId != profileId){
         link = (
           <a className="uk-button add_friend_btn">Friends</a>
         );
-      }else if (friendStatus.status == 0) {
+      }else if (friendStatus.status == 0 && LoggedInUserId != profileId) {
 
         // if profile user sent friend request
         if(friendStatus.sender_id == profileId){
@@ -168,7 +172,7 @@ export default class Profile extends Component {
         }
       }
 
-    }else{
+    }else if(LoggedInUserId != profileId){
       link =(
           <a className="uk-button add_friend_btn" onClick={this.handleClickAddFriend}>Add Friend</a>
         )
@@ -240,7 +244,7 @@ export default class Profile extends Component {
                 <div>
                   <a href="#" className="post_txt_dashboard" data-uk-modal={post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={this.loadSinglePostContent.bind(this,item.id,item.user_id,postImage,item.content,postVideo)}>
 
-                    <img src={post_image? this.state.uploadDir+"user_"+item.user_id+"/thumbs/"+post_image: null} className="uk-float-right img_margin_left"/>
+                    <img src={post_image? this.state.uploadDir+"user_"+item.user_id+"/thumbs/"+post_image: null} className="uk-float-left img_margin_right"/>
                     <p>{postContent}</p>
                   </a>
 

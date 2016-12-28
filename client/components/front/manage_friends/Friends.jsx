@@ -53,7 +53,7 @@ export default class Friends extends Component {
     console.log("****");
     var img;
     if(this.props.profile_image){
-      img = this.props.profile_image;
+      img = "uploads/images/user_"+this.props.user_id+"/"+this.props.profile_image;
 
     }else{
       img= "public/images/user.png";
