@@ -36,7 +36,7 @@ export default class DashboardPage extends Component {
     this.clickSlider = this.clickSlider.bind(this);
     this.handleVideoLinkChange = this.handleVideoLinkChange.bind(this);
     this.handlePostMessage = this.handlePostMessage.bind(this);
-    this.pauseAllYoutube = this.pauseAllYoutube.bind(this);
+
     this.state ={
       errorMessage: null,
     //  image: "public/images/user.jpg",
@@ -84,18 +84,8 @@ export default class DashboardPage extends Component {
     this.props.fetchComments(postId);
     //this.loadPostContent(postId,this.state.clickedUser,null,null,e);
     this.setState({clickedPost:postId});
-    this.pauseAllYoutube();
 
   }
-
-  pauseAllYoutube(){
-    console.log('===========23322323==========');
-        $('iframe[src*="youtube.com"]').each(function() {
-            var iframe = $(this)[0].contentWindow;
-            iframe.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
-        });
-  }
-
   clickSlider(e){
 
   }
@@ -285,6 +275,7 @@ handleClickPlus(){
   }
 
 
+
   handleChangeSort(){
     var sortBy = this.refs.sortFriends.getDOMNode().value;
     const{dashboardData} = this.props;
@@ -312,8 +303,6 @@ handleClickPlus(){
     if(newArr){
       this.props.updateDashboardFriendList(newArr);
     }
-
-
 
 
 
@@ -423,7 +412,6 @@ resetEmailForm(){
 }
 imageSlideTo(e){
   console.log("ee:"+e);
-
   this._imageGallery.slideToIndex(e);
 }
 
@@ -433,7 +421,7 @@ _myImageGalleryRenderer(item) {
     const onImageError = this._handleImageError;
     return (
       <div className='image-gallery-image'>
-        {item.video?<iframe src={item.video+"?enablejsapi=1"} height="500" width="700"/>:<img src={item.original}/>}
+        {item.video?<iframe src={item.video} height="500" width="700"/>:<img src={item.original}/>}
 
 
 
@@ -650,10 +638,9 @@ _myImageGalleryRenderer(item) {
 
   loadSinglePostContent(postId,userId,popupImage,popupContent,postVideo){
 
-      this.setState({clickedPost:postId,clickedUser:userId,getClickedUser:userId,postLargeImage:popupImage,popupContent:popupContent,popupVideo:postVideo});
     this.props.fetchComments(postId);
 
-
+    this.setState({clickedPost:postId,clickedUser:userId,getClickedUser:userId,postLargeImage:popupImage,popupContent:popupContent,popupVideo:postVideo});
 
   }
 
@@ -713,9 +700,9 @@ _myImageGalleryRenderer(item) {
       }
 
       var slider_images = this.renderFriendsPostImagesSmallSlider(user_id);
-      friendsElement.push(  <div className="uk-grid dash_top_head dash_botom_list bg_gry_lr" id={item.id}>
+      friendsElement.push(  <div className="uk-grid dash_top_head dash_botom_list" id={item.id}>
 
-            <div className="uk-width-small-1-2 no_mrg_left">
+            <div className="uk-width-small-1-2">
               <div className="uk-grid uk-grid-small">
               <div className="uk-width-3-10 user_img_left"><Link to={profile_link}><img src={this.getProfileImage(item.profile_image,user_id)} className=""/></Link></div>
               <div className="uk-width-7-10 user_bottom_img_right">
@@ -751,7 +738,7 @@ _myImageGalleryRenderer(item) {
 
     });
 
-  if(friendsElement && friendsElement.length > 0){
+    if(friendsElement && friendsElement.length > 0){
     return(
       {friendsElement}
 
@@ -787,35 +774,22 @@ _myImageGalleryRenderer(item) {
   }
 
   loadPostByInfo(userId,postId){
-  const{dashboardData,userAuthSession} = this.props;
+
     if(userId){
+    const{dashboardData,userAuthSession} = this.props;
+    console.log(dashb)
     if(userAuthSession.userObject.id === userId){
         var friendData = userAuthSession.userObject;
     }else{
     var friendData = dashboardData.friends[userId];
   }
-  if(postId){
-    var postContent;
-    var friendsImages = dashboardData.friendsPostImages;
-    var friendPost = friendsImages[userId];
-    if(friendPost && friendPost.length > 0){
-      friendPost.forEach((item)=>{
-      if(item.id === postId){
-          postContent = item.content;
-         return false;
-      }
-      });
-    }else{
-      var postContent = dashboardData.latestPost.dashboardData;
-    }
-
-
-    // var post = visitedUser.posts[postId];
-    // var postContent = post.content;
-  }else{
-      var postContent = null;
-  }
-  console.log(postContent); console.log("fff")
+  // if(postId){
+  //
+  //   var post = visitedUser.posts[postId];
+  //   var postContent = post.content;
+  // }else{
+  //     var postContent = null;
+  // }
     if(friendData)
     return(
       <article className="uk-comment">
@@ -828,7 +802,7 @@ _myImageGalleryRenderer(item) {
 
           <div className="uk-comment-body">
             <div className="uk-width-small-1-1 post_control">
-            <p>{postContent}</p>
+            <p>{this.state.popupContent}</p>
             </div>
           </div>
       </article>
