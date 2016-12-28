@@ -777,7 +777,7 @@ _myImageGalleryRenderer(item) {
 
     if(userId){
     const{dashboardData,userAuthSession} = this.props;
-    console.log(dashb)
+    
     if(userAuthSession.userObject.id === userId){
         var friendData = userAuthSession.userObject;
     }else{
