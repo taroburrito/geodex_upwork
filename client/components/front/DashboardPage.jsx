@@ -806,7 +806,7 @@ _myImageGalleryRenderer(item) {
       }
       });
     }else{
-      var postContent = dashboardData.latestPost.content;
+      var postContent = dashboardData.latestPost.dashboardData;
     }
 
 
@@ -815,7 +815,7 @@ _myImageGalleryRenderer(item) {
   }else{
       var postContent = null;
   }
-
+  console.log(postContent); console.log("fff")
     if(friendData)
     return(
       <article className="uk-comment">
@@ -1117,9 +1117,8 @@ loadChild(child){
         }else{
         content = content;
         }
-         postImage = this.state.uploadDir+"user_"+userProfile.id+"/"+post_image;
+         postImage = this.state.uploadDir+"user_"+userProfile.id+"/thumbs/"+post_image;
       }
-    
       //Video Content
       else if (latestPost.youtube_image) {
         if(content.length > 300){
