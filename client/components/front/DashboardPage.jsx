@@ -1119,6 +1119,7 @@ loadChild(child){
         }
          postImage = this.state.uploadDir+"user_"+userProfile.id+"/"+post_image;
       }
+    
       //Video Content
       else if (latestPost.youtube_image) {
         if(content.length > 300){
