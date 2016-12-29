@@ -1836,6 +1836,6 @@ img.uk-float-right.img_margin_left {
   list-style: outside none none;
   padding-left: 0;
 }
-.image-gallery-slides{
+.image-gallery-slides,.image-gallery-slide{
 background: #fff !important;
 }
