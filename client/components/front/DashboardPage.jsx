@@ -313,7 +313,7 @@ handleClickPlus(){
 
       var newArr = {};
       if(sortBy == 'created'){
-        var fullySorted = _.sortBy(friends, sortBy).reverse();
+        var fullySorted = _.sortBy(friends, 'post_id').reverse();
       }else{
         var fullySorted = _.sortBy(friends, sortBy);
       }
@@ -738,11 +738,18 @@ _myImageGalleryRenderer(item) {
               <div className="uk-width-3-10 user_img_left"><Link to={profile_link}><img src={this.getProfileImage(item.profile_image,user_id)} className=""/></Link></div>
               <div className="uk-width-7-10 user_bottom_img_right">
               <h3 className="capital_first"><Link to={profile_link} className="user-name-anchor">{item.first_name} {item.last_name} </Link>
-              <a data-uk-modal="{target:'#sendEmail'}"   onClick={this.handleOnClickEmailIcon.bind(this,item.email)} data={item.email}  href="#" className="user_location">{item.email}</a>
+              
              <small className="user_location">{item.address}</small>
 
                 </h3>
-
+                <div className="uk-width-7-10 comm-icon-div">
+                <a data-uk-modal="{target:'#sendEmail'}" onClick={this.handleOnClickEmailIcon.bind(this,item.email)} data={item.email}  href="#" className="">
+                <img className="comm-icons" src="public/images/email_icon.png"/>
+                </a>
+                
+                <img className="comm-icons" src="public/images/message_icon.png"/>
+                <img className="comm-icons" src="public/images/phone_icon.png"/>
+                </div>
 
             <div className="uk-slidenav-position uk-margin" data-uk-slider="{autoplay: true}">
 
@@ -812,7 +819,16 @@ _myImageGalleryRenderer(item) {
     if(userAuthSession.userObject.id === userId){
         var friendData = userAuthSession.userObject;
     }else{
-    var friendData = dashboardData.friends[userId];
+      var friendData = {};
+    var friendsData = dashboardData.friends;
+     Object.keys(friendsData).map(function (key) {
+      var item = friendsData[key];
+      if(item.id == userId){
+        friendData = item;
+        return false;
+      }
+    }, this);
+     
   }
   // if(postId){
   //
@@ -1122,7 +1138,7 @@ loadChild(child){
         }else{
         content = content;
         }
-         postImage = this.state.uploadDir+"user_"+userProfile.id+"/thumbs/"+post_image;
+         postImage = this.state.uploadDir+"user_"+userProfile.id+"/"+post_image;
       }
       //Video Content
       else if (latestPost.youtube_image) {
@@ -1419,8 +1435,7 @@ loadChild(child){
         <div className="uk-float-right">
         <label>Sort</label>
           <select name="sort" ref="sortFriends" onChange={this.handleChangeSort}>
-            <option>Please Select</option>
-            <option value="created">Recently added</option>
+            <option selected="true" value="created">Recent</option>
             <option value="first_name">First name</option>
             <option value="last_name">Last name</option>
             <option value="email">Email</option>

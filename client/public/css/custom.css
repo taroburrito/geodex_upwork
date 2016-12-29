@@ -85,7 +85,7 @@ nav.fixed-nav .uk-navbar-nav > li > a {
 }
 
 .fixed-nav  .uk-navbar-nav > li > a:hover {
-	border:none;
+  border:none;
   border-bottom: 4px solid #888;
   color: #fff;
   background:none;
@@ -488,8 +488,8 @@ form.uk-search.search_dash_nav {
 }
 
 .shortlist_menu li:hover , .shortlist_menu li.active_sm {
-	background: #009dd8;
-	color:#fff;
+  background: #009dd8;
+  color:#fff;
 }
 
 
@@ -508,7 +508,7 @@ form.uk-search.search_dash_nav {
 
 
 .dash_botom_list {
-	float:left;
+  float:left;
 }
 
 .img_margin_right {
@@ -520,7 +520,7 @@ form.uk-search.search_dash_nav {
   width: 20% !important;*/
 }
 .img_slid .slider_image img{
-	width:100%;
+  width:100%;
 }
 
 .uk-slidenav-position.uk-margin {
@@ -546,7 +546,7 @@ form.uk-search.search_dash_nav {
   font-size: 25px;
   font-weight: 400;
   line-height: 30px;
-  margin-bottom: 14px;
+  margin-bottom: 1px;
   padding-left: 0;
 }
 
@@ -766,7 +766,7 @@ form.uk-search.search_dash_nav {
 
 .profile_post_right{
  background: rgba(0, 0, 0, 0) url("../images/divider_post.jpg") repeat-y scroll left top;
-	}
+  }
 
 .post_control a {
   color: #b7b7b7;
@@ -928,6 +928,7 @@ a.reply_to_c {
 }
 
 .coment_popup .popup_img_right {
+  border-left: 1px solid #ccc;
   max-height: 100%;
   overflow-y: auto;
   padding: 20px 20px 0;
@@ -1348,7 +1349,7 @@ form.uk-search.search_dash_nav {
 }
 
 .manage-request-btns-div .uk-button.manage-request-btns.confirm-rqst-btn {
-	background: #009dd8 none repeat scroll 0 0;
+  background: #009dd8 none repeat scroll 0 0;
     margin-bottom: 0;
     margin-right: 0 !important;
     margin-top: 0;
@@ -1411,7 +1412,7 @@ form.uk-search.search_dash_nav {
 }
 
 .af_border a {
-	color:#666666;
+  color:#666666;
 }
 
 .slider_image {
@@ -1482,15 +1483,16 @@ form.uk-search.search_dash_nav {
   position: absolute;
   width: 100%;
 }
-.image-gallery-slide img{
+.image-gallery-slide img {
   display: inline-block !important;
   float: none !important;
   left: 50%;
   margin: 0 !important;
+  max-height: 100%;
   position: absolute;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: auto!important;
+  width: auto !important;
 }
 .image-gallery-slide iframe{
   display: inline-block !important;
@@ -1811,4 +1813,26 @@ img.uk-float-right.img_margin_left {
 .user-name-anchor{
   text-transform: capitalize;
   color: #444444;
+}
+
+
+.profile_post_photos img {
+    height: 138px;
+}
+.comm-icons {
+    margin: 3px 10px 0 0;
+    width: 20px;
+}
+.comm-icon-div{
+  float: left;
+  margin-bottom: 13px;
+}
+
+.post_txt_dashboard img {
+    width: 180px;
+}
+
+.popup_img_right .uk-comment-list ul {
+  list-style: outside none none;
+  padding-left: 0;
 }

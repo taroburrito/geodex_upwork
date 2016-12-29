@@ -176,12 +176,17 @@ var userModel = {
                     }else {
                       var friends = {};
                       var friendsIds = [];
+                      var i = 0;
                       result3.forEach(function (friendIndex) {
-                          friends[friendIndex.id] = userModel.convertRowsToUserProfileObject(friendIndex);
+                          friends[i] = userModel.convertRowsToUserProfileObject(friendIndex);
                           //if(friendIndex.status == 1)
                           friendsIds.push(friendIndex.id);
+                          i++;
+
 
                       });
+
+
                     }
                       if(friendsIds && friendsIds.length >0){
                         var getFriendsPostImagesSqlString = constructFreindsPostImagesSqlString(friendsIds);
@@ -991,7 +996,7 @@ function constructFriendListForDashboardSqlString(userId){
   var query="SELECT (a.user_id) id, LOWER(first_name) first_name, LOWER(last_name) last_name, dob,gender,address,latitude,longitude,"+
              "profile_image,cover_image,MAX(c.id) post_id,(image) post_image,(content) post_content, youtube_url, youtube_image, u.email, (b.modified) created"+
             " FROM `gx_user_details` a,(SELECT receiver_id, modified FROM `gx_friends_list` WHERE sender_id ='"+userId+"'  AND STATUS = 1 UNION SELECT sender_id, modified FROM `gx_friends_list` WHERE receiver_id ='"+userId+"' AND STATUS = 1) b,"+
-            " (select * from gx_posts order by id desc) c, gx_users u WHERE a.user_id = b.receiver_id AND a.user_id = c.user_id AND a.user_id = u.id GROUP BY a.user_id ORDER BY c.id desc";
+            " (select * from gx_posts order by id desc) c, gx_users u WHERE a.user_id = b.receiver_id AND a.user_id = c.user_id AND a.user_id = u.id GROUP BY a.user_id ORDER BY post_id desc";
             return query;
 }
 
