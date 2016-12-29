@@ -480,12 +480,12 @@ _myImageGalleryRenderer(item) {
 
          var postContent = friendsPost[postImage];
          var postImageSrc = postContent.post_image?this.state.uploadDir+"user_"+postContent.user_id+"/"+postContent.post_image:null;
-         if(postImage || postContent.youtube_url)
+         if(postImage && postContent.post_image)
          friendElement.push(
            {
              original:postImageSrc,
              postId:postContent.id,
-             video:postContent.youtube_url,
+             //video:postContent.youtube_url,
            }
 
          );
@@ -536,7 +536,8 @@ _myImageGalleryRenderer(item) {
        Object.keys(friendsPost).forEach((friendId)=> {
 
          var item = friendsPost[friendId];
-         var post_image = item.post_image || item.youtube_image;
+         var post_image = item.post_image;
+         //var post_image = item.post_image || item.youtube_image;
          var postImage = this.state.uploadDir+"user_"+user_id+"/thumbs/"+post_image;
 
          // Image content
