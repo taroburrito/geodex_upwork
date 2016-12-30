@@ -36,6 +36,7 @@ export default class DashboardPage extends Component {
     this.clickSlider = this.clickSlider.bind(this);
     this.handleVideoLinkChange = this.handleVideoLinkChange.bind(this);
     this.handlePostMessage = this.handlePostMessage.bind(this);
+    this.handleCloseImagePopUp = this.handleCloseImagePopUp.bind(this);
 
     this.state ={
       errorMessage: null,
@@ -62,7 +63,8 @@ export default class DashboardPage extends Component {
       popupVideo:null,
       clickedImageIcon:null,
       clickedYouTubeLink:null,
-      postMessage:null
+      postMessage:null,
+      showLargeSlider:false
 
     }
   }
@@ -76,6 +78,11 @@ export default class DashboardPage extends Component {
     document.getElementById("html").className = "";
     //console.log("removed");
     //htmlTag.classList.remove('uk-modal-page');
+  }
+   handleCloseImagePopUp(){
+      this.setState({showLargeSlider:false});
+    //console.log(this.refs.largeSliderContent.getDOMNode.innerHtml);
+    console.log("closed");
   }
   onSlide(e){
     //React.unmountComponentAtNode(document.getElementById('test'));
@@ -447,6 +454,8 @@ imageSlideTo(e){
 
 
 _myImageGalleryRenderer(item) {
+  console.log('==============');
+  console.log(item); console.log('==============');
     // your own image error handling
     const onImageError = this._handleImageError;
     return (
@@ -460,11 +469,7 @@ _myImageGalleryRenderer(item) {
   }
 
 
-  renderFriendsPostImagesLargeSlider(user_id){
-
-    if(this._imageGallery){
-      //return null;
-    }
+   renderFriendsPostImagesLargeSlider(user_id){
 
      const{dashboardData} = this.props;
      var friendsPosts = dashboardData.friendsPostImages;
@@ -479,19 +484,22 @@ _myImageGalleryRenderer(item) {
        Object.keys(friendsPost).forEach((postImage)=> {
 
          var postContent = friendsPost[postImage];
-         var postImageSrc = postContent.post_image?this.state.uploadDir+"user_"+postContent.user_id+"/"+postContent.post_image:null;
-         if(postImage && postContent.post_image)
+         var postImageSrc = this.state.uploadDir+"user_"+postContent.user_id+"/"+postContent.post_image;
+         if(postContent.post_image){
          friendElement.push(
            {
              original:postImageSrc,
              postId:postContent.id,
-             //video:postContent.youtube_url,
+
            }
 
          );
          i++;
+       }
 
        });
+
+       if(this.state.showLargeSlider){
 
        return(
          <div id="test">
@@ -507,7 +515,7 @@ _myImageGalleryRenderer(item) {
         autoPlay={false}
         showPlayButton={false}
         showFullscreenButton={false}
-        renderItem={this._myImageGalleryRenderer.bind(this)}
+      //  renderItem={this._myImageGalleryRenderer.bind(this)}
       //  showNav={false}
         //onClick={this.clickSlider}
         onImageLoad={this.imageSlideTo.bind(this,this.state.currentSlide)}
@@ -515,13 +523,18 @@ _myImageGalleryRenderer(item) {
     </div>
 
       );
+     }else{
+      return(
+<div>Loading</div>
+        );
+     }
      }
 
     //console.log(friendsPost);
 
   }
 
-  renderFriendsPostImagesSmallSlider(user_id){
+   renderFriendsPostImagesSmallSlider(user_id){
 
      const{dashboardData} = this.props;
      var friendsPosts = dashboardData.friendsPostImages;
@@ -537,7 +550,6 @@ _myImageGalleryRenderer(item) {
 
          var item = friendsPost[friendId];
          var post_image = item.post_image;
-         //var post_image = item.post_image || item.youtube_image;
          var postImage = this.state.uploadDir+"user_"+user_id+"/thumbs/"+post_image;
 
          // Image content
@@ -553,7 +565,7 @@ _myImageGalleryRenderer(item) {
          else {
 
          }
-         if(post_image)
+         if(post_image){
          friendElement.push(
              <div key={item.i} className="slider_image uk-grid-small uk-grid-width-medium-1-4">
                <a data-uk-modal="{target:'#postImageModel'}"  onClick={this.loadPostContent.bind(this,item.id,user_id,null,null,i,null)}>
@@ -562,17 +574,14 @@ _myImageGalleryRenderer(item) {
             </div>
          );
          i++;
+       }
 
        });
 
 
-       var settings = {
+       const settings = {
          slidesToShow:3,
          infinite:false,
-         prevArrow:customPrevIcon,
-         nextArrow:customNextIcon,
-         arrow:false,
-
         // slikGoTo:this.state.currentSlide
        };
        return(
@@ -614,13 +623,13 @@ _myImageGalleryRenderer(item) {
     return(
       <div id="postImageModel" className="uk-modal coment_popup">
           <div className="uk-modal-dialog uk-modal-dialog-blank">
-          <button className="uk-modal-close uk-close" type="button" onClick={this.pauseAllYoutube}></button>
+          <button className="uk-modal-close uk-close" type="button" onClick={this.handleCloseImagePopUp}></button>
             <div className="uk-grid">
 
               <div className="uk-width-small-3-4 popup_img_left" ref="largeSliderContent">
-				            {(this.state.postLargeImage || this.state.popupVideo)?
+                    {(this.state.postLargeImage || this.state.popupVideo)?
                       {imageContent}:this.renderFriendsPostImagesLargeSlider(this.state.clickedUser)}
-				      </div>
+              </div>
               <div className="uk-width-small-1-4 popup_img_right">
 
               {this.loadPostByInfo(this.state.clickedUser,this.state.clickedPost)}
@@ -663,7 +672,7 @@ _myImageGalleryRenderer(item) {
     }
     this.props.fetchComments(postId);
 
-    this.setState({clickedPost:postId,clickedUser:userId,getClickedUser:userId,postLargeImage:popupImage,popupContent:popupContent,popupVideo:postVideo});
+    this.setState({showLargeSlider:true,clickedPost:postId,clickedUser:userId,getClickedUser:userId,postLargeImage:popupImage,popupContent:popupContent,popupVideo:postVideo});
 
   }
 
@@ -1090,27 +1099,27 @@ loadChild(child){
     return(
       <div id="postContentModel" className="uk-modal coment_popup">
           <div className="uk-modal-dialog uk-modal-dialog-blank">
-      		<button className="uk-modal-close uk-close" type="button" onClick={this.pauseAllYoutube}></button>
-      			<div className="uk-grid">
+          <button className="uk-modal-close uk-close" type="button" onClick={this.pauseAllYoutube}></button>
+            <div className="uk-grid">
 
-      				<div className="uk-width-small-1-1 popup_img_right coment_pop_cont">
+              <div className="uk-width-small-1-1 popup_img_right coment_pop_cont">
 
 
-      			{this.loadPostByInfo(this.state.clickedUser,this.state.clickedPost)}
-      				<h5 className="coment_heading">Comments</h5>
-      				<ul className="uk-comment-list" ref="commentsul">
+            {this.loadPostByInfo(this.state.clickedUser,this.state.clickedPost)}
+              <h5 className="coment_heading">Comments</h5>
+              <ul className="uk-comment-list" ref="commentsul">
                 {this.renderComments(this.state.clickedPost)}
               </ul>
 
 
-    				<div className="comenting_form border-top_cf">
-    				<img className="uk-comment-avatar" src={this.getProfileImage(user.profile_image,user.id)} alt="" width="40" height="40"/>
-    				<textarea placeholder="Write Comment..." value={this.state.postComment} onChange={(e)=>this.setState({postComment:e.target.value})} ref="commentBox"></textarea>
-    				<a onClick={this.handleClickPostComment} className="uk-button uk-button-primary comment_btn">Post</a>
-    				</div>
+            <div className="comenting_form border-top_cf">
+            <img className="uk-comment-avatar" src={this.getProfileImage(user.profile_image,user.id)} alt="" width="40" height="40"/>
+            <textarea placeholder="Write Comment..." value={this.state.postComment} onChange={(e)=>this.setState({postComment:e.target.value})} ref="commentBox"></textarea>
+            <a onClick={this.handleClickPostComment} className="uk-button uk-button-primary comment_btn">Post</a>
+            </div>
 
 
-      	</div>
+        </div>
       </div>
     </div>
   </div>
@@ -1395,7 +1404,7 @@ loadChild(child){
       <div className="uk-container uk-container-center middle_content dashboad">
 
 
-         <div className="uk-grid dash_top_head">
+         <div className="uk-grid dash_top_head my_profile">
 
 
           <div className="uk-width-small-1-2">

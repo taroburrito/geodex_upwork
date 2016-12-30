@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 var Slider = require('react-slick');
-
+var ScrollbarWrapper = require('react-scrollbars').ScrollbarWrapper;
 import ImageGallery from 'react-image-gallery';
 
 export default class Profile extends Component {
@@ -263,8 +263,7 @@ export default class Profile extends Component {
 
     onClickPhotoVideo(postId, currentSlide){
       this.setState({clickedPost:postId}); 
-
-               if(this._imageGallery){
+        if(this._imageGallery){
           this._imageGallery.slideToIndex(currentSlide-1);
         }
     }
@@ -280,8 +279,8 @@ renderPhotos(){
       Object.keys(posts).map((postId)=>{
       //  console.log(posts[key]);
         var item = posts[postId];
-        if(item.image || item.youtube_image){
-        var post_img = item.image || item.youtube_image;
+        if(item.image){
+        var post_img = item.image;
         postContent.push(
 
           <div className="profile_post_photos">
@@ -349,12 +348,11 @@ renderFriendsPostImagesLargeSlider(user_id){
        var item = posts[postId];
        var postContent = item.content;
        var postImageSrc = item.image?this.state.uploadDir+"user_"+item.user_id+"/"+item.image:null;
-       if(item.image || item.youtube_url)
+       if(item.image)
        postImgEle.push(
          {
            original:postImageSrc,
-           postId:item.id,
-           video:item.youtube_url,
+           postId:item.id
          }
 
        );
@@ -734,15 +732,23 @@ renderPostContentModal(){
 
               <div className="uk-width-small-1-2 profile_gallery_left">
               <h3>Photos and Videos</h3>
-
-              {this.renderPhotos()}
+               <ScrollbarWrapper >
+                  <div>
+                      {this.renderPhotos()}
+                </div>
+              </ScrollbarWrapper>
+            
               </div>
 
               <div className="uk-width-small-1-2 profile_post_right">
               <h3>Recent Activity</h3>
+               <ScrollbarWrapper vertical={true} >
+                  <div>
+                    {this.renderPostsContent()}
+                </div>
+              </ScrollbarWrapper>
 
-
-              {this.renderPostsContent()}
+             
               </div>
 
              </div>

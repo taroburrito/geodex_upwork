@@ -24,12 +24,17 @@
 nav.fixed-nav {
   background: rgba(0, 0, 0, 0.6) none repeat scroll 0 0;
   border: medium none;
-  left: 0;
-  position: fixed;  padding: 7px 2% 4px;
-  top: 0;
-  width: 96%;
-  border-radius:0;
-  z-index:5;
+    border-radius: 0;
+    left: 0;
+    padding: 7px 0 4px;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 5;
+}
+
+.uk-container.uk-container-center.top-navigation {
+  padding: 0 20px;
 }
 
 nav.fixed-nav .uk-navbar-nav > li > a {
@@ -464,7 +469,7 @@ form.uk-search.search_dash_nav {
   float: left;
   margin-bottom: 20px;
   margin-top: 18px;
-  padding-bottom: 10px;
+  /*padding-bottom: 10px;*/
 }
 
 .shortlist_menu > ul {
@@ -500,10 +505,15 @@ form.uk-search.search_dash_nav {
 }
 
 .shortlist_menu .uk-float-right select {
-  border: 1px solid #ccc;
+  -moz-appearance: none;
+  background: #e5e5e5 url("../images/arow_down_sl.png") no-repeat scroll 95% center;
+  border: 1px solid transparent;
   border-radius: 5px;
+  color: #444;
+  font-size: 16px;
   margin-left: 7px;
-  padding: 3px 4px;
+  padding: 3px 25px 3px 4px;
+  -webkit-appearance: none;
 }
 
 
@@ -723,7 +733,7 @@ form.uk-search.search_dash_nav {
 }
 
 .middle_content.profile {
-  padding-bottom: 25%;
+  padding-bottom: 5%;
   padding-top: 30px;
 }
 
@@ -744,6 +754,7 @@ form.uk-search.search_dash_nav {
   font-weight: 400;
   line-height: 19px;
   text-align: justify;
+  margin-right: 15px;
 }
 
 
@@ -1076,7 +1087,13 @@ ul.placesSuggest_suggests li svg.placesSuggest_suggestIcon {
 /*edit profile*/
 
 .uk-width-3-10.user_img_left {
-  position: relative;
+    position: relative;
+}
+
+
+.dash_top_head.my_profile .uk-width-3-10.user_img_left {
+    margin-top: 4px;
+    max-height: 164px;
 }
 
 .background_profile {
@@ -1358,7 +1375,7 @@ form.uk-search.search_dash_nav {
 
 .dash_top_head {
   margin-left: 0;
-  width: 100%;
+  width: 98%;
 }
 
 .user_img_right .uk-button-large {
@@ -1374,12 +1391,12 @@ form.uk-search.search_dash_nav {
 }
 
 .cont_post_btn {
-  background: #f3f3f3 none repeat scroll 0 0;
-  border-radius: 3px;
-  float: left;
-  margin-top: 0;
-  padding: 5px;
-  width: 97%;
+    background: #f3f3f3 none repeat scroll 0 0;
+    border-radius: 3px;
+    float: left;
+    margin-top: 0;
+    padding: 7px;
+    width: 97%;
 }
 
 .af_border .custom-freind img {
@@ -1552,13 +1569,13 @@ form.post_img_modal_form {
 }
 
 .user_img_left {
-  background: #fbfbfb none repeat scroll 0 0;
-  border: 1px solid #e5e5e5;
-  border-radius: 3px;
-  max-height: 154px;
-  overflow: hidden;
-  padding: 0;
-  text-align: center;
+    background: #fbfbfb none repeat scroll 0 0;
+    border: 1px solid #e5e5e5;
+    border-radius: 3px;
+    max-height: 160px;
+    overflow: hidden;
+    padding: 0;
+    text-align: center;
 }
 
 .custom_img_pop_style{
@@ -1820,16 +1837,18 @@ img.uk-float-right.img_margin_left {
     height: 138px;
 }
 .comm-icons {
-    margin: 3px 10px 0 0;
-    width: 20px;
+  margin: 3px 10px 0 0;
+  opacity: 0.5;
+  width: 20px;
 }
-.comm-icon-div{
-  float: left;
-  margin-bottom: 13px;
+.comm-icon-div {
+    float: left;
+    margin-bottom: 16px;
 }
 
 .post_txt_dashboard img {
-    width: 180px;
+    width: auto;
+    height: 159px;
 }
 
 .popup_img_right .uk-comment-list ul {
@@ -1839,3 +1858,44 @@ img.uk-float-right.img_margin_left {
 .image-gallery-slides,.image-gallery-slide{
 background: #fff !important;
 }
+
+ .ScrollbarContainer--scrolling {
+    -webkit-touch-callout: none;
+    user-select: none;
+  }
+
+  .ScrollbarContainer>div::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+
+  .ScrollbarContainer>div::scrollbar {
+    width: 0;
+    height: 0;
+  }
+  
+  .slick-next::before, .slick-prev::before {
+  color: #009dd8!important;
+}
+
+
+.ScrollbarContent {
+  width: 100%;
+  height: 600px;
+  overflow: auto;
+  background: rgb(253, 253, 253);
+}
+.Scrollbar{
+  width:5px !important;
+  background: #ccc none repeat scroll 0 0 !important;
+}
+.Scrollbar-stick{
+  background: rgba(0, 0, 0, 0.5) none repeat scroll 0 0 !important;
+  width: 4px !important;
+}
+
+.reorder-wrapper-item {
+  position: relative;
+  transition: top 1s ease-in;
+}
+

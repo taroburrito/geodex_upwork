@@ -49,6 +49,7 @@ export default class Navbar extends Component {
       return(
         <div>
           <nav className="uk-navbar fixed-nav innerpage_nav">
+              <div className="uk-container uk-container-center top-navigation">
               <Link className="uk-navbar-brand uk-hidden-small" to="dashboard"><img src="public/images/logo.png"/></Link>
 
       <form className="uk-search search_dash_nav">
@@ -87,6 +88,7 @@ export default class Navbar extends Component {
               </ul>
               <a href="#offcanvas" className="uk-navbar-toggle uk-visible-small" data-uk-offcanvas></a>
               <div className="uk-navbar-brand uk-navbar-center uk-visible-small"><a className="" href="index.html"><img src="public/images/logo.png"/></a></div>
+          </div>
           </nav>
 
   			</div>
