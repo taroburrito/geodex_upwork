@@ -387,7 +387,7 @@ text-transform:uppercase;
 /******** dashboad************/
 
 .dashboad.middle_content p {
-  color: #898989 !important;
+  color: #000 !important;
   font-family: open sans;
   font-size: 14px;
   font-weight: 400;
@@ -460,7 +460,7 @@ form.uk-search.search_dash_nav {
   background: #fff none repeat scroll 0 0;
   border-radius: 3px;
   margin-top: 5px;
-  width: 37%;
+  width: 33%;
 }
 
 .shortlist_menu {
@@ -486,9 +486,9 @@ form.uk-search.search_dash_nav {
   float: left;
   font-size: 16px;
   margin-bottom: 4px;
-  margin-right: 9px;
+  margin-right: 2px;
   margin-top: 4px;
-  padding: 4px 13px;
+  padding: 2px 7px;
   text-transform: uppercase;
 }
 
@@ -508,12 +508,11 @@ form.uk-search.search_dash_nav {
   -moz-appearance: none;
   background: #e5e5e5 url("../images/arow_down_sl.png") no-repeat scroll 95% center;
   border: 1px solid transparent;
-  border-radius: 5px;
+  border-radius: 3px;
   color: #444;
   font-size: 16px;
   margin-left: 7px;
-  padding: 3px 25px 3px 4px;
-  -webkit-appearance: none;
+  padding: 0 23px 0 4px;
 }
 
 
@@ -613,9 +612,8 @@ form.uk-search.search_dash_nav {
 }
 
 .dash_botom_list {
-  background: #fcfcfc none repeat scroll 0 0;
+  background: #fff none repeat scroll 0 0;
   border: 1px solid #eee;
-  box-shadow: 3px 3px 1px 0 #eaeaea;
   padding: 9px;
 }
 
@@ -809,10 +807,11 @@ form.uk-search.search_dash_nav {
   margin: 0;
 }
 
-.coment_popup .uk-comment  .uk-comment-title {
+.coment_popup .uk-comment .uk-comment-title {
   font-size: 16px;
   line-height: 22px;
   margin: 1px 0 0;
+  text-transform: capitalize;
 }
 
 .coment_popup .uk-comment-list .uk-comment + ul {
@@ -1103,6 +1102,7 @@ ul.placesSuggest_suggests li svg.placesSuggest_suggestIcon {
 .edit_profile_img_btn {
   background: black none repeat scroll 0 0;
   bottom: 0;
+  color: #fff;
   padding: 4px 20px;
   position: absolute;
   right: 0;
@@ -1119,6 +1119,7 @@ ul.placesSuggest_suggests li svg.placesSuggest_suggestIcon {
 .edit_profile_background_btn {
   background: black none repeat scroll 0 0;
   bottom: 0;
+  color: #fff;
   padding: 4px 20px;
   position: absolute;
   right: 0;
@@ -1189,9 +1190,10 @@ p.text-align-left .uk-button-large {
 }
 
 .profile-sidebar ul li a {
-  background: #eee;
-  color: #777;
-  border: none;
+  background: #ccc none repeat scroll 0 0;
+  border: medium none;
+  color: #fff;
+  text-shadow: none;
   width: 92.3%;
 }
 
@@ -1225,9 +1227,9 @@ p.text-align-left .uk-button-large {
 
 /*add friend*/
 .af_border {
-    background: #fcfcfc none repeat scroll 0 0;
-    border: 1px solid #eee;
-    box-shadow: -2px 4px 2px #eaeaea;
+  background: #fff none repeat scroll 0 0;
+  border: 1px solid #eee;
+  box-shadow: -2px 4px 2px #eaeaea;
 }
 
 .af_border .uk-button {
@@ -1248,7 +1250,7 @@ p.text-align-left .uk-button-large {
   font-family: open sans;
   font-size: 19px;
   font-weight: 400;
-  height: 52px;
+  height: 50px;
   line-height: 24px;
   padding-left: 11px;
 }
@@ -1391,7 +1393,7 @@ form.uk-search.search_dash_nav {
 }
 
 .cont_post_btn {
-    background: #f3f3f3 none repeat scroll 0 0;
+    /*background: #f3f3f3 none repeat scroll 0 0;*/
     border-radius: 3px;
     float: left;
     margin-top: 0;
@@ -1633,11 +1635,12 @@ ul.uk-nestable.uflul {
 }
 
 .myinputcont {
-    border: none;
-    border-bottom: 1px dashed #ccc;
-    margin-bottom: 6px;
-    padding: 3px 0;
-    margin-right: 5px;
+  background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
+  border: medium none;
+  font-size: 14px;
+  margin-bottom: 0;
+  margin-right: 5px;
+  padding: 3px 0;
 }
 
 .uflul a.uk-icon-trash.uk-float-right {
@@ -1899,3 +1902,62 @@ background: #fff !important;
   transition: top 1s ease-in;
 }
 
+
+.user_location.post_timestamp {
+    text-align: right;
+}
+
+
+.uk-grid.dash_top_head.my_profile {
+  margin-left: 11px;
+}
+
+.user_location.post_timestamp {
+  float: right;
+  margin-top: 5px;
+  text-align: right;
+  width: auto;
+}
+
+
+.full_width {
+  background: rgb(243, 245, 246) none repeat scroll 0 0;
+}
+
+body.uk-height-1-1 {
+ background: rgb(243, 245, 246) none repeat scroll 0 0;
+  bottom: 0;
+  height: 100%;
+  left: 0;
+  position: absolute;
+  right: 0;
+} 
+
+
+
+.shortlist_menu select option:checked,
+.shortlist_menu select option:hover {
+    box-shadow: 0 0 10px 100px #000 inset;
+}
+
+
+
+.shortlist_menu select:focus > option:checked { 
+    background: #000 !important;
+}
+
+
+.uk-nav-dropdown > li > a:focus, .uk-nav-dropdown > li > a:hover {
+  background: #000 none repeat scroll 0 0;
+}
+
+.uk-grid.dash_top_head.dash_botom_list {
+  margin-top: 10px;
+}
+.latest-post{
+  margin-top: 8px;
+    max-height: 200px;
+    overflow: hidden;
+    background: #ffffff;
+    width: 101.5%;
+}

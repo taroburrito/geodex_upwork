@@ -210,7 +210,7 @@ function constructPostCommentSqlString(data){
 function constructGetCommentsByPostSqlString(postId){
   var sql = "SELECT a.*,"+
             "CONCAT(b.first_name, ' ', b.last_name) NAME,"+
-            "b.profile_image,b.address, c.email"+
+            "b.profile_image,b.address,b.user_id, c.email"+
             " from gx_post_comments as a,"+
             " gx_user_details as b,"+
             " gx_users as c"+

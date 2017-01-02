@@ -1,6 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 var Slider = require('react-slick');
 var ScrollbarWrapper = require('react-scrollbars').ScrollbarWrapper;
+var moment = require('moment');
+import TimeAgo from 'react-timeago';
 import ImageGallery from 'react-image-gallery';
 
 export default class Profile extends Component {
@@ -204,7 +206,8 @@ export default class Profile extends Component {
             var postContent = item.content;
             var postImage;
             var postVideo;
-
+            var timestamp = moment(item.created);
+            var formatted = timestamp.format('YYYY-MM-DD HH:mm:ss');
             var post_image = item.image || item.youtube_image;
 
             // Image content
@@ -243,6 +246,7 @@ export default class Profile extends Component {
 
                     <img src={post_image? this.state.uploadDir+"user_"+item.user_id+"/thumbs/"+post_image: null} className="uk-float-left img_margin_right"/>
                     <p>{postContent}</p>
+                    <small className="user_location post_timestamp"><TimeAgo date={formatted} /></small>
                   </a>
 
              </div>
@@ -731,7 +735,7 @@ renderPostContentModal(){
              <div className="uk-grid uk-grid-large profile_bottom">
 
               <div className="uk-width-small-1-2 profile_gallery_left">
-              <h3>Photos and Videos</h3>
+              <h3>Photos</h3>
                <ScrollbarWrapper >
                   <div>
                       {this.renderPhotos()}

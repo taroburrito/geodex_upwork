@@ -1,14 +1,16 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { Navigation, Link } from 'react-router';
-import { validateDisplayName, } from '../../utilities/RegexValidators';
+import { validateDisplayName } from '../../utilities/RegexValidators';
 var AvatarEditor = require('react-avatar-editor');
 var Slider = require('react-slick');
+var moment = require('moment');
 //import Slider from 'react-image-slider';
 //var Loading = require('react-loading');
 
 import ImageGallery from 'react-image-gallery';
 import CategoryList from './manage_category/CategoryList';
+import TimeAgo from 'react-timeago';
 
 function generateUUID(){
   //Note: this is a simple implentation for this project. //TODO create a better one
@@ -707,7 +709,8 @@ _myImageGalleryRenderer(item) {
         var post_image = item.post_image || item.youtube_image;
         var postVideo;
         var postImage;
-
+        var timestamp = moment(item.post_date);
+        var formatted = timestamp.format('YYYY-MM-DD HH:mm:ss');
         // Image content
         if(item.post_image){
           if(content_length > 300){
@@ -772,10 +775,13 @@ _myImageGalleryRenderer(item) {
 
             <div className="uk-width-small-1-2 post_control">
               <div>
-                <a href="#" className="post_txt_dashboard" data-uk-modal={post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={this.loadSinglePostContent.bind(this,item.id,user_id,postImage,item.post_content,postVideo)}>
+                <a href="#" className="post_txt_dashboard" data-uk-modal={post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={this.loadSinglePostContent.bind(this,item.post_id,user_id,postImage,item.post_content,postVideo)}>
 
                   <img src={post_image? this.state.uploadDir+"user_"+user_id+"/thumbs/"+post_image: null} className="uk-float-left img_margin_right"/>
                   <p>{content}</p>
+                   <small className="user_location post_timestamp">
+                   <TimeAgo date={formatted} />
+                   </small>
                 </a>
 
            </div>
@@ -839,6 +845,8 @@ _myImageGalleryRenderer(item) {
     }, this);
      
   }
+
+  var profile_link = "/user/"+friendData.id;
   // if(postId){
   //
   //   var post = visitedUser.posts[postId];
@@ -851,8 +859,10 @@ _myImageGalleryRenderer(item) {
       <article className="uk-comment">
           <header className="uk-comment-header">
               <img src={this.getProfileImage(friendData.profile_image,userId)} className="uk-comment-avatar" width="60" height="60"/>
-
-              <h4 className="uk-comment-title">{friendData.first_name} {friendData.last_name}</h4>
+              <Link to={profile_link}>
+                <h4 className="uk-comment-title">{friendData.first_name} {friendData.last_name}</h4>
+              </Link>
+              
               <div className="uk-comment-meta"><span>{friendData.address}</span></div>
           </header>
 
@@ -1138,7 +1148,8 @@ loadChild(child){
       var post_image = latestPost.image || latestPost.youtube_image;
       var postImage;
       var postVideo;
-
+      var timestamp = moment(latestPost.created);
+      var formatted = timestamp.format('YYYY-MM-DD HH:mm:ss');
 
       // Image content
       if(latestPost.image){
@@ -1172,11 +1183,13 @@ loadChild(child){
 
        return (
          <div className="uk-width-small-1-2 post_control">
-        <div  style={{maxHeight:200,overflow:"hidden",marginTop:8}}>
+        <div className="latest-post">
         <a href="#" className="post_txt_dashboard" data-uk-modal={post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={this.loadSinglePostContent.bind(this,latestPost.id,userProfile.id,postImage,latestPost.content,postVideo)}>
 
         <img src={post_image? this.state.uploadDir+"user_"+userProfile.id+"/thumbs/"+post_image: null} className="uk-float-left img_margin_right"/>
-        <p>{content}</p>
+        <p style={{paddingTop:3,paddingRight:10}}>{content}</p>
+        <small className="user_location post_timestamp" style={{margin:7}}>
+        <TimeAgo date={formatted} /></small>
         </a>
 
         </div>
@@ -1420,7 +1433,7 @@ loadChild(child){
 
 
             <div className="cont_post_btn">
-              <textarea placeholder="Post to geodex..." className="uk-width-1-1" onChange={this.handlePostMessage} ref="postContent"></textarea>
+              <textarea placeholder="Post to ambulist..." className="uk-width-1-1" onChange={this.handlePostMessage} ref="postContent"></textarea>
               <a className="uk-button uk-button-primary uk-button-large" onClick={this.handleSavePost}>Post</a>
               <div className="yt_img"><i data-uk-tooltip title="Upload Image" className="uk-icon-image" data-uk-modal="{target:'#statusImageModel'}" style={{cursor:"pointer"}} onClick={()=>this.setState({clickedYouTubeLink:null,clickedImageIcon:true,videoLink:null,image:null})}></i>
               

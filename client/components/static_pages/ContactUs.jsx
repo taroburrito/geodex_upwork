@@ -50,13 +50,13 @@ export default class ContactUsPage extends Component {
               <div className="uk-width-small-1-3 cont_details">
                 <h3 className="uk-panel-title">Contact Details</h3>
                   <p>
-                      <strong>GEOdex</strong>
+                      <strong>Ambulist</strong>
                       <br/>Street, Country
                       <br/>Postal Zip Code
                   </p>
                   <p>
-                      <a><i className="uk-icon-envelope"></i> info@geodex.com</a>
-                      <br/><a><i className="uk-icon-twitter"></i> @geodexTwitter</a><br/>
+                      <a><i className="uk-icon-envelope"></i> info@ambulist.com</a>
+                      <br/><a><i className="uk-icon-twitter"></i> @ambulistTwitter</a><br/>
 				                  <a><i className="uk-icon-facebook"></i> Follow Us</a><br/>
                       <i className="uk-icon-phone"></i> P+44 (0) 208 0000 000
                   </p>
