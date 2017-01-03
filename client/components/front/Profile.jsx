@@ -5,6 +5,42 @@ var moment = require('moment');
 import TimeAgo from 'react-timeago';
 import ImageGallery from 'react-image-gallery';
 
+
+const formatter = (value, unit, suffix, rawTime) => {
+  /*if (value !== 1) {
+    unit += 's'
+  }*/
+  var counter = '';
+  var year = unit === ('year') ? value : 0
+  var month = unit === ('month') ? value : 0
+  var week = unit === ('week') ? value : 0
+  var day = unit === ('day') ? value : 0
+  var hour = unit === ('hour') ? value : 0
+  var minute = unit === ('minute') ? value : 0
+  var second = unit === ('second') ? value : 0
+  //console.log(week+ ' week' + day +' day'+ hour +' hour'+ minute +' minute'+ second +' second');
+ 
+  if(year==0 && month==0 && week==0 && day==0 && hour==0 && minute==0){
+     counter = 'Just now';
+  } else if(year==0 && month==0 && week==0 && day==0 && hour==0 && minute>0){
+     counter = `${minute} ${unit} ago`;
+  }else if(year==0 && month==0 && week==0 && day==0 && hour>0){
+     counter = `${hour} ${unit} ago`;
+  }else if(year==0 && month==0 && week==0 && day==1){
+      var timestamp = moment(rawTime);
+      var formatted = timestamp.format('hh a');
+      counter = formatted+' Yesterday';
+  }else{
+    var timestamp = moment(rawTime);
+      var formatted = timestamp.format('DD MMM hh:mma');
+      counter = formatted;
+     //counter = '20 Dec 8:30pm';
+  }
+ // counter = `${day} days: ${hour} hour: ${minute} minute: ${second} seconds`
+  
+  return counter;
+}
+
 export default class Profile extends Component {
 
     constructor(props){
@@ -246,7 +282,9 @@ export default class Profile extends Component {
 
                     <img src={post_image? this.state.uploadDir+"user_"+item.user_id+"/thumbs/"+post_image: null} className="uk-float-left img_margin_right"/>
                     <p>{postContent}</p>
-                    <small className="user_location post_timestamp"><TimeAgo date={formatted} /></small>
+                    <small className="user_location post_timestamp">
+                    <TimeAgo date={formatted} formatter= {formatter}  />
+                    </small>
                   </a>
 
              </div>

@@ -12,6 +12,42 @@ import ImageGallery from 'react-image-gallery';
 import CategoryList from './manage_category/CategoryList';
 import TimeAgo from 'react-timeago';
 
+
+const formatter = (value, unit, suffix, rawTime) => {
+  /*if (value !== 1) {
+    unit += 's'
+  }*/
+  var counter = '';
+  var year = unit === ('year') ? value : 0
+  var month = unit === ('month') ? value : 0
+  var week = unit === ('week') ? value : 0
+  var day = unit === ('day') ? value : 0
+  var hour = unit === ('hour') ? value : 0
+  var minute = unit === ('minute') ? value : 0
+  var second = unit === ('second') ? value : 0
+  //console.log(week+ ' week' + day +' day'+ hour +' hour'+ minute +' minute'+ second +' second');
+ 
+  if(year==0 && month==0 && week==0 && day==0 && hour==0 && minute==0){
+     counter = 'Just now';
+  } else if(year==0 && month==0 && week==0 && day==0 && hour==0 && minute>0){
+     counter = `${minute} ${unit} ago`;
+  }else if(year==0 && month==0 && week==0 && day==0 && hour>0){
+     counter = `${hour} ${unit} ago`;
+  }else if(year==0 && month==0 && week==0 && day==1){
+      var timestamp = moment(rawTime);
+      var formatted = timestamp.format('hh a');
+      counter = formatted+' Yesterday';
+  }else{
+    var timestamp = moment(rawTime);
+      var formatted = timestamp.format('DD MMM hh:mma');
+      counter = formatted;
+     //counter = '20 Dec 8:30pm';
+  }
+ // counter = `${day} days: ${hour} hour: ${minute} minute: ${second} seconds`
+  
+  return counter;
+}
+
 function generateUUID(){
   //Note: this is a simple implentation for this project. //TODO create a better one
   return (Math.round(Math.random()*10000000000000000).toString()+(Date.now()));
@@ -66,7 +102,8 @@ export default class DashboardPage extends Component {
       clickedImageIcon:null,
       clickedYouTubeLink:null,
       postMessage:null,
-      showLargeSlider:false
+      showLargeSlider:false,
+      animation:false
 
     }
   }
@@ -374,7 +411,9 @@ handleClickPlus(){
   // console.log(fullySorted);
   // console.log('*********');
   // console.log(newArr);
-
+   //remove
+  this.setState({animation:true});
+  setTimeout(function() { this.setState({animation: false}); }.bind(this), 1000);
 }
 
 resetEmailForm(){
@@ -456,8 +495,8 @@ imageSlideTo(e){
 
 
 _myImageGalleryRenderer(item) {
-  console.log('==============');
-  console.log(item); console.log('==============');
+  //console.log('==============');
+  //console.log(item); console.log('==============');
     // your own image error handling
     const onImageError = this._handleImageError;
     return (
@@ -553,7 +592,7 @@ _myImageGalleryRenderer(item) {
          var item = friendsPost[friendId];
          var post_image = item.post_image;
          var postImage = this.state.uploadDir+"user_"+user_id+"/thumbs/"+post_image;
-
+       //  console.log(item);
          // Image content
          if(item.post_image){
           //var postImage = this.state.uploadDir+"user_"+user_id+"/thumbs/"+post_image;
@@ -570,7 +609,7 @@ _myImageGalleryRenderer(item) {
          if(post_image){
          friendElement.push(
              <div key={item.i} className="slider_image uk-grid-small uk-grid-width-medium-1-4">
-               <a data-uk-modal="{target:'#postImageModel'}"  onClick={this.loadPostContent.bind(this,item.id,user_id,null,null,i,null)}>
+               <a data-uk-modal="{target:'#postImageModel'}"  onClick={this.loadPostContent.bind(this,item.id,user_id,null,item.content,i,null)}>
                  <img src={postImage}/>
                 </a>
             </div>
@@ -655,7 +694,7 @@ _myImageGalleryRenderer(item) {
   }
 
   loadPostContent(postId,userId,popupImage,popupContent,currentSlide,postVideo){
-
+   
     if(currentSlide){
       var current = parseInt(currentSlide) - 1;
      // console.log("current:"+current);
@@ -743,7 +782,7 @@ _myImageGalleryRenderer(item) {
       }
 
       var slider_images = this.renderFriendsPostImagesSmallSlider(user_id);
-      friendsElement.push(  <div className="uk-grid dash_top_head dash_botom_list" id={item.id}>
+      friendsElement.push(  <div ref="animate"  className={this.state.animation ? "uk-grid dash_top_head dash_botom_list animated flipInX":'uk-grid dash_top_head dash_botom_list animated'} id={item.id}>
 
             <div className="uk-width-small-1-2">
               <div className="uk-grid uk-grid-small">
@@ -763,7 +802,7 @@ _myImageGalleryRenderer(item) {
                 <img className="comm-icons" src="public/images/phone_icon.png"/>
                 </div>
 
-            <div className="uk-slidenav-position uk-margin" data-uk-slider="{autoplay: true}">
+                   <div className="uk-slidenav-position uk-margin" data-uk-slider="{autoplay: true}">
 
                     <div className="uk-slider-container img_slid">
                         {slider_images}
@@ -780,7 +819,7 @@ _myImageGalleryRenderer(item) {
                   <img src={post_image? this.state.uploadDir+"user_"+user_id+"/thumbs/"+post_image: null} className="uk-float-left img_margin_right"/>
                   <p>{content}</p>
                    <small className="user_location post_timestamp">
-                   <TimeAgo date={formatted} />
+                   <TimeAgo date={formatted} formatter= {formatter}  />
                    </small>
                 </a>
 
@@ -1189,7 +1228,8 @@ loadChild(child){
         <img src={post_image? this.state.uploadDir+"user_"+userProfile.id+"/thumbs/"+post_image: null} className="uk-float-left img_margin_right"/>
         <p style={{paddingTop:3,paddingRight:10}}>{content}</p>
         <small className="user_location post_timestamp" style={{margin:7}}>
-        <TimeAgo date={formatted} /></small>
+        <TimeAgo date={formatted} formatter= {formatter} />
+        </small>
         </a>
 
         </div>
@@ -1467,8 +1507,10 @@ loadChild(child){
         </select>
         </div>
           </div>
-
-            {this.renderFriendList()}
+            
+              {this.renderFriendList()}
+           
+            
             {this.renderSendEmailModel()}
             {this.renderCategoryModel()}
             {this.renderStatusModel()}

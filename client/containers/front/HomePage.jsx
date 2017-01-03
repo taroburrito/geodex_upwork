@@ -9,6 +9,7 @@ import { attemptLogout } from '../../actions/AuthActions';
 //import {addCategory} from '../../actions/CategoryActions';
 import {fetchCommentsByPost, addPost,postComment} from '../../actions/PostActions';
 import {getUserDetail, fetchDashboardData} from '../../utilities/ServerSocket';
+import ReactCSSTransitionReplace from 'react-css-transition-replace';
 import {
   updatefriendsList,
   updateDashboardFriendList,
@@ -31,6 +32,7 @@ class HomePage extends Component{
 
       return(
         <div className="full_width">
+         
         <DashboardPage
           setMessageToDefault={()=>
           dispatch(setMessageToDefault())}
@@ -59,6 +61,7 @@ class HomePage extends Component{
           onChange={(id, value) => {dispatch(updateCategoryById(id,value));}}
           />
         </div>
+      
       );
     }else{
     return(
