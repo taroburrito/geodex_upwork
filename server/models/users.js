@@ -179,6 +179,7 @@ var userModel = {
                       var i = 0;
                       result3.forEach(function (friendIndex) {
                           friends[i] = userModel.convertRowsToUserProfileObject(friendIndex);
+                          friends[i].prev = true;
                           //if(friendIndex.status == 1)
                           friendsIds.push(friendIndex.id);
                           i++;

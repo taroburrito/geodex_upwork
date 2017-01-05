@@ -17,7 +17,9 @@ import {
   setMessageToDefault,
   sendEmailFromDashboar,
   deleteCategory,
-  updateCategoryById
+  updateCategoryById,
+  fetchPreviousPost,
+  fetchNextPost
   } from '../../actions/UserActions';
 class HomePage extends Component{
   constructor(props){
@@ -58,7 +60,9 @@ class HomePage extends Component{
           dispatch(sendEmail(to,from,content))}
           postComment = {(req)=>dispatch(postComment(req))}
           onDeleteClick={Id => dispatch(deleteCategory(Id))}
-          onChange={(id, value) => {dispatch(updateCategoryById(id,value));}}
+          onChange={(id, value) => {dispatch(updateCategoryById(id,value))}}
+          onFetchPreviousPost = {(id, value) => {dispatch(fetchPreviousPost(id,value))}}
+          onFetchNextPost = {(id, value) => {dispatch(fetchNextPost(id,value))}}
           />
         </div>
       

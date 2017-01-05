@@ -772,7 +772,7 @@ renderPostContentModal(){
           <div className="uk-container uk-container-center middle_content profile">
              <div className="uk-grid uk-grid-large profile_bottom">
 
-              <div className="uk-width-small-1-2 profile_gallery_left">
+              <div className="uk-width-medium-1-2 profile_gallery_left">
               <h3>Photos</h3>
                <ScrollbarWrapper >
                   <div>
@@ -782,7 +782,7 @@ renderPostContentModal(){
             
               </div>
 
-              <div className="uk-width-small-1-2 profile_post_right">
+              <div className="uk-width-medium-1-2 profile_post_right">
               <h3>Recent Activity</h3>
                <ScrollbarWrapper vertical={true} >
                   <div>

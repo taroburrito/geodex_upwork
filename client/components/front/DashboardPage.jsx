@@ -5,8 +5,6 @@ import { validateDisplayName } from '../../utilities/RegexValidators';
 var AvatarEditor = require('react-avatar-editor');
 var Slider = require('react-slick');
 var moment = require('moment');
-//import Slider from 'react-image-slider';
-//var Loading = require('react-loading');
 
 import ImageGallery from 'react-image-gallery';
 import CategoryList from './manage_category/CategoryList';
@@ -14,9 +12,6 @@ import TimeAgo from 'react-timeago';
 
 
 const formatter = (value, unit, suffix, rawTime) => {
-  /*if (value !== 1) {
-    unit += 's'
-  }*/
   var counter = '';
   var year = unit === ('year') ? value : 0
   var month = unit === ('month') ? value : 0
@@ -25,8 +20,6 @@ const formatter = (value, unit, suffix, rawTime) => {
   var hour = unit === ('hour') ? value : 0
   var minute = unit === ('minute') ? value : 0
   var second = unit === ('second') ? value : 0
-  //console.log(week+ ' week' + day +' day'+ hour +' hour'+ minute +' minute'+ second +' second');
- 
   if(year==0 && month==0 && week==0 && day==0 && hour==0 && minute==0){
      counter = 'Just now';
   } else if(year==0 && month==0 && week==0 && day==0 && hour==0 && minute>0){
@@ -40,17 +33,14 @@ const formatter = (value, unit, suffix, rawTime) => {
   }else{
     var timestamp = moment(rawTime);
       var formatted = timestamp.format('DD MMM hh:mma');
-      counter = formatted;
-     //counter = '20 Dec 8:30pm';
+      counter = formatted;  
   }
- // counter = `${day} days: ${hour} hour: ${minute} minute: ${second} seconds`
   
   return counter;
 }
 
 function generateUUID(){
-  //Note: this is a simple implentation for this project. //TODO create a better one
-  return (Math.round(Math.random()*10000000000000000).toString()+(Date.now()));
+   return (Math.round(Math.random()*10000000000000000).toString()+(Date.now()));
 }
 
 const initialMessageStates={
@@ -115,17 +105,13 @@ export default class DashboardPage extends Component {
     this.setState({uploadDir:uploadDir,loading:true});
     this.props.fetchInitialData(userAuthSession.userObject.id,null);
     document.getElementById("html").className = "";
-    //console.log("removed");
-    //htmlTag.classList.remove('uk-modal-page');
+
   }
    handleCloseImagePopUp(){
       this.setState({showLargeSlider:false});
-    //console.log(this.refs.largeSliderContent.getDOMNode.innerHtml);
-    console.log("closed");
+    //  console.log("closed");
   }
   onSlide(e){
-    //React.unmountComponentAtNode(document.getElementById('test'));
-      //this._imageGallery.slideToIndex(e);
     this.pauseAllYoutube();
     var postId = this._imageGallery.props.items[e].postId;
     this.props.fetchComments(postId);
@@ -136,13 +122,21 @@ export default class DashboardPage extends Component {
   }
 
   pauseAllYoutube(){
-    //console.log('===========23322323==========');
         $('iframe[src*="youtube.com"]').each(function() {
             var iframe = $(this)[0].contentWindow;
             iframe.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
         });
 
   }
+
+  loadPrevPost(postId,userId){
+    this.props.onFetchPreviousPost(postId,userId);
+  }
+
+  loadNextPost(postId,userId){
+    this.props.onFetchNextPost(postId,userId);
+  }
+
   clickSlider(e){
 
   }
@@ -158,7 +152,6 @@ export default class DashboardPage extends Component {
 
   handlePostMessage()
   {
-      //console.log(e.value);
       var msg = this.refs.postContent.getDOMNode().value.trim();
      this.setState({postMessage:msg});
     // var videoid = msg.match(/(?:https?:\/{2})?(?:w{3}\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\?v=|\/)([^\s&]+)/);
@@ -368,49 +361,11 @@ handleClickPlus(){
         newArr[id] = fullySorted[id];
       });
 
-     // console.log(friends);
-     // console.log("******");
-
-     // console.log(fullySorted);
-     // console.log(newArr);
-    //   var newArr = _.sortBy(friends, 'first_name', function(n) {
-    //   return Math.sin(n);
-    // });
+    
     if(newArr){
       this.props.updateDashboardFriendList(newArr);
     }
 
-
-
-  //   const{friends} = this.props;
-  //   var list = [
-  //   { name:'Charlie', age:3},
-  //   { name:'Dog', age:1 },
-  //   { name:'Baker', age:7},
-  //   { name:'Abel', age:9 },
-  //   { name:'Baker', age:5 }
-  //   ];
-  //
-  //
-  //   console.log('*********');
-  //   console.log(friends);
-  //   var newArr = {};
-  //   var fullySorted = _.sortBy( friends, sortBy);
-  //   Object.keys(fullySorted).map((id)=>{
-  //     var sorted = fullySorted[id];
-  //     if(sorted.status == 1)
-  //     newArr[id] = sorted;
-  //   });
-  // //   var newArr = _.sortBy(friends, 'first_name', function(n) {
-  // //   return Math.sin(n);
-  // // });
-  // if(newArr){
-  //   this.props.updateFriendList(newArr);
-  // }
-  // console.log('*********');
-  // console.log(fullySorted);
-  // console.log('*********');
-  // console.log(newArr);
    //remove
   this.setState({animation:true});
   setTimeout(function() { this.setState({animation: false}); }.bind(this), 1000);
@@ -479,7 +434,8 @@ resetEmailForm(){
       {friend_post_content}
     )
   }
-   sortImages(a, fn) {
+
+sortImages(a, fn) {
   var non_matches = [];
   var matches = a.filter(function(e, i, a) {
     var match = fn(e, i, a);
@@ -488,6 +444,7 @@ resetEmailForm(){
   });
   return matches.concat(non_matches);
 }
+
 imageSlideTo(e){
   //console.log("ee:"+e);
   this._imageGallery.slideToIndex(e);
@@ -733,12 +690,11 @@ _myImageGalleryRenderer(item) {
     const{dashboardData} = this.props;
     var friendsElement = [];
     var friends = dashboardData.friends;
-
+   
     if(friends)
     Object.keys(friends).map((key)=> {
 
       var item = friends[key];
-
       var user_id = friends[key].id;
       var profile_link = "/user/"+user_id;
       var content = item.post_content;
@@ -782,7 +738,7 @@ _myImageGalleryRenderer(item) {
       }
 
       var slider_images = this.renderFriendsPostImagesSmallSlider(user_id);
-      friendsElement.push(  <div ref="animate"  className={this.state.animation ? "uk-grid dash_top_head dash_botom_list animated flipInX":'uk-grid dash_top_head dash_botom_list animated'} id={item.id}>
+      friendsElement.push(  <div ref="animate"  className={this.state.animation ? "uk-grid dash_top_head dash_botom_list animated fadeIn":'uk-grid dash_top_head dash_botom_list animated'} id={item.id}>
 
             <div className="uk-width-small-1-2">
               <div className="uk-grid uk-grid-small">
@@ -815,16 +771,21 @@ _myImageGalleryRenderer(item) {
             <div className="uk-width-small-1-2 post_control">
               <div>
                 <a href="#" className="post_txt_dashboard" data-uk-modal={post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={this.loadSinglePostContent.bind(this,item.post_id,user_id,postImage,item.post_content,postVideo)}>
-
                   <img src={post_image? this.state.uploadDir+"user_"+user_id+"/thumbs/"+post_image: null} className="uk-float-left img_margin_right"/>
                   <p>{content}</p>
                    <small className="user_location post_timestamp">
                    <TimeAgo date={formatted} formatter= {formatter}  />
                    </small>
                 </a>
-
-           </div>
-         </div>
+                <p>
+                
+                
+                  {item.prev?<small onClick={this.loadPrevPost.bind(this,item.post_id,user_id)} href="" className="uk-slidenav uk-slidenav-previous"></small>:null}
+                  {item.next?<small onClick={this.loadNextPost.bind(this,item.post_id,user_id)} className="uk-slidenav uk-slidenav-next"></small>:null}
+                  
+                </p>
+              </div>
+            </div>
 
          </div>);
 
@@ -919,79 +880,6 @@ _myImageGalleryRenderer(item) {
   }
   }
 
-//   getNestedChildren(arr, parent) {
-//   var out = []
-//   for(var i in arr) {
-//       if(arr[i].parent_id == parent) {
-//           var children = this.getNestedChildren(arr, arr[i].id)
-//
-//           if(children.length) {
-//               arr[i].children = children
-//           }
-//           out.push(arr[i])
-//       }
-//   }
-//   return out;
-// }
-
-//  _queryTreeSort(options) {
-//    var cfi, e, i, id, o, pid, rfi, ri, thisid, _i, _j, _len, _len1, _ref, _ref1;
-//
-//   ri = [];
-//   rfi = {};
-//   cfi = {};
-//   o = [];
-//   _ref = options;
-//   for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
-//   var  id = options[i].id || "id";
-//   var  pid = options[i].parentid || "parentid";
-//     e = _ref[i];
-//     rfi[e[id]] = i;
-//     if (cfi[e[pid]] == null) {
-//       cfi[e[pid]] = [];
-//     }
-//     cfi[e[pid]].push(options[i][id]);
-//   }
-//   _ref1 = options;
-//   for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-//     var  id = options.id || "id";
-//     var  pid = options.parentid || "parentid";
-//     e = _ref1[_j];
-//     if (rfi[e[pid]] == null) {
-//       ri.push(e[id]);
-//     }
-//   }
-//   while (ri.length) {
-//     thisid = ri.splice(0, 1);
-//     o.push(options.q[rfi[thisid]]);
-//     if (cfi[thisid] != null) {
-//       ri = cfi[thisid].concat(ri);
-//     }
-//   }
-//   return o;
-// };
-//
-// _makeTree (options) {
-//   console.log(options);
-//   var children, e, id, o, pid, temp, _i, _len, _ref;
-//   id = options.id || "id";
-//   pid = options.parentid || "parentid";
-//   children = options.children || "children";
-//   temp = {};
-//   o = [];
-//   _ref = options.newArr;
-//   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-//     e = _ref[_i];
-//     e[children] = [];
-//     temp[e[id]] = e;
-//     if (temp[e[pid]] != null) {
-//       temp[e[pid]][children].push(e);
-//     } else {
-//       o.push(e);
-//     }
-//   }
-//   return o;
-// };
 
  buildHierarchy(arry) {
 
