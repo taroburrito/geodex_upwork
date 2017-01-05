@@ -507,7 +507,7 @@ var userModel = {
 
     updateUserData(req, callback){
 
-      var uploadImage = common.uploadPostImage(req.val,req.id);
+      var uploadImage = common.uploadProfileImage(req.val,req.id);
       if(uploadImage){
         req.val = uploadImage;
       }else{
@@ -519,7 +519,7 @@ var userModel = {
       var updateUserDataQuery = constructupdateUserDataQuery(req);
       // Update Query for gx_users table
 
-
+      
       dbConnection.query(updateUserDataQuery, function (error, results, fields) {
           if (error) {
             dbConnection.end(); return(callback({error: error,status:400}));

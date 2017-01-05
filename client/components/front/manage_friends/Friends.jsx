@@ -49,8 +49,8 @@ export default class Friends extends Component {
   }
   render() {
     const{categoryData} = this.props;
-    console.log(categoryData);
-    console.log("****");
+    //console.log(categoryData);
+   // console.log("****");
     var img;
     if(this.props.profile_image){
       img = "uploads/images/user_"+this.props.user_id+"/"+this.props.profile_image;

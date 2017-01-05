@@ -28,7 +28,7 @@ uploadPostImage:function(imageData,userId){
   var thumbs_dir = clientDir+"/user_"+userId+"/thumbs";
   var path = dir+"/"+name;
   var thumbs_path = thumbs_dir+"/"+name;
-  console.log(clientDir);
+  //console.log(clientDir);
 
   // check if dir already exists
   if(!fs.existsSync(dir)){
@@ -53,12 +53,54 @@ if(!fs.existsSync(thumbs_dir)){
     }
   return name;
 });
-
+//return name;
 // process image
 
-var thumbImage = processImage(path,thumbs_path);
+ var thumbImage = processImage(path,thumbs_path);
 
+   return name;
+},
+
+uploadProfileImage:function(imageData,userId){
+  var base64Data = imageData.replace(/^data:image\/\w+;base64,/, "");
+  var ext = imageData.split(';')[0].match(/jpg|jpeg|png|gif/)[0];
+  var name = Date.now()+"."+ext;
+
+  var dir = clientDir+"/user_"+userId;
+  var thumbs_dir = clientDir+"/user_"+userId+"/thumbs";
+  var path = dir+"/"+name;
+  var thumbs_path = thumbs_dir+"/"+name;
+  //console.log(clientDir);
+
+  // check if dir already exists
+  if(!fs.existsSync(dir)){
+    fs.mkdirSync(dir, 0766, function(err){
+        if(err){
+            console.log(err);
+        }
+    });
+}
+  // check if dir already exists
+if(!fs.existsSync(thumbs_dir)){
+  fs.mkdirSync(thumbs_dir, 0766, function(err){
+      if(err){
+          console.log(err);
+      }
+  });
+}
+
+  fs.writeFileSync(path, base64Data, 'base64',(err,data) => {
+    if(err){
+      return err;
+    }
   return name;
+});
+return name;
+// process image
+
+// var thumbImage = processImage(path,thumbs_path);
+
+//   return name;
 },
 
 

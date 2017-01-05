@@ -2116,4 +2116,8 @@ form.uk-search.search_dash_nav {
 }
 
 
-
+.uk-navbar-brand.uk-hidden-small > img {
+  margin-top: -2px;
+  max-width: 181px;
+  padding: 5px;
+}
