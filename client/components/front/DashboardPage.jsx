@@ -13,6 +13,11 @@ import TimeAgo from 'react-timeago';
 
 const formatter = (value, unit, suffix, rawTime) => {
   var counter = '';
+  //console.log('minnnnnnnnnnn'+value);
+  var minunit = 'minute';
+  if (value > 1) {
+    minunit = 'minutes'
+  }
   var year = unit === ('year') ? value : 0
   var month = unit === ('month') ? value : 0
   var week = unit === ('week') ? value : 0
@@ -23,7 +28,7 @@ const formatter = (value, unit, suffix, rawTime) => {
   if(year==0 && month==0 && week==0 && day==0 && hour==0 && minute==0){
      counter = 'Just now';
   } else if(year==0 && month==0 && week==0 && day==0 && hour==0 && minute>0){
-     counter = `${minute} ${unit} ago`;
+     counter = `${minute} ${minunit} ago`;
   }else if(year==0 && month==0 && week==0 && day==0 && hour>0){
      counter = `${hour} ${unit} ago`;
   }else if(year==0 && month==0 && week==0 && day==1){
@@ -698,7 +703,7 @@ _myImageGalleryRenderer(item) {
       var user_id = friends[key].id;
       var profile_link = "/user/"+user_id;
       var content = item.post_content;
-
+      console.log(item);
       if(item){
         var content_length = content.length;
         var post_image = item.post_image || item.youtube_image;
@@ -780,8 +785,8 @@ _myImageGalleryRenderer(item) {
                 <p>
                 
                 
-                  {item.prev?<small onClick={this.loadPrevPost.bind(this,item.post_id,user_id)} href="" className="uk-slidenav uk-slidenav-previous"></small>:null}
-                  {item.next?<small onClick={this.loadNextPost.bind(this,item.post_id,user_id)} className="uk-slidenav uk-slidenav-next"></small>:null}
+                  {item.prev && item.post_count!=1?<small onClick={this.loadPrevPost.bind(this,item.post_id,user_id)} href="" className="uk-slidenav uk-slidenav-previous"></small>:null}
+                  {item.next && item.post_count!=1?<small onClick={this.loadNextPost.bind(this,item.post_id,user_id)} className="uk-slidenav uk-slidenav-next"></small>:null}
                   
                 </p>
               </div>
