@@ -7,9 +7,10 @@ import ImageGallery from 'react-image-gallery';
 
 
 const formatter = (value, unit, suffix, rawTime) => {
-  /*if (value !== 1) {
-    unit += 's'
-  }*/
+  var minunit = 'minute';
+  if (value > 1) {
+    minunit = 'minutes'
+  }
   var counter = '';
   var year = unit === ('year') ? value : 0
   var month = unit === ('month') ? value : 0
@@ -23,7 +24,7 @@ const formatter = (value, unit, suffix, rawTime) => {
   if(year==0 && month==0 && week==0 && day==0 && hour==0 && minute==0){
      counter = 'Just now';
   } else if(year==0 && month==0 && week==0 && day==0 && hour==0 && minute>0){
-     counter = `${minute} ${unit} ago`;
+     counter = `${minute} ${minunit} ago`;
   }else if(year==0 && month==0 && week==0 && day==0 && hour>0){
      counter = `${hour} ${unit} ago`;
   }else if(year==0 && month==0 && week==0 && day==1){

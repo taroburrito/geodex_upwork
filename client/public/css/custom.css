@@ -771,6 +771,7 @@ form.uk-search.search_dash_nav {
   margin-bottom: 10px;
   padding-bottom: 5px;
   padding-left: 5px;
+  position: relative;
 }
 
 .profile_post_right  p {
