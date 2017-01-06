@@ -12,7 +12,8 @@ import {  Start_Fetching_User_Profile,
           Accept_Request_Failed,
           Accept_Request_Success,
           Delete_Friend_Request_Success,
-          Delete_Friend_Request_Failed
+          Delete_Friend_Request_Failed,
+          Set_Visited_User_Null
         } from '../actions/ProfileActions';
 
 const defaultStartState = { profileLoaded: false, //true even if results failed
@@ -123,6 +124,10 @@ export function visitedUserData(visitedUserState=null, action){
             error:action.error
           });
             break;
+
+            case Set_Visited_User_Null:
+              return null;
+              break;
     default:
     return visitedUserState;
 

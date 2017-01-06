@@ -19,6 +19,7 @@ export const Accept_Request_Success = 'Accept_Request_Success';
 export const Accept_Request_Failed = 'Accept_Request_Failed';
 export const Delete_Friend_Request_Success = 'Delete_Friend_Request_Success';
 export const Delete_Friend_Request_Failed = 'Delete_Friend_Request_Failed';
+export const Set_Visited_User_Null = 'Set_Visited_User_Null';
 
 	/*
      * other constants
@@ -30,6 +31,10 @@ export const Delete_Friend_Request_Failed = 'Delete_Friend_Request_Failed';
 
 export function startFetchingUserProfile() {
   return { type: Start_Fetching_User_Profile };
+}
+
+export function setVisitedUserNull() {
+  return { type: Set_Visited_User_Null };
 }
 
 
@@ -45,7 +50,7 @@ export function fetchUserProfile(userId) {
 			url: ('/api/v1/users/' + userId),
       beforeSend: function() {
           $(".loading").show();
-      } 
+      }
     }).done(function(data) {
 				if (data.error){
 					dispatch(fetchUserProfileFail(data.error));
@@ -109,7 +114,7 @@ export function updateUserProfileData(userData){
       data:userData,
       beforeSend: function() {
           $(".loading").show();
-      } 
+      }
     }).done(function(data){
       $(".loading").hide();
       if(data.error){
@@ -144,7 +149,7 @@ export function updateUserData(userData){
       data:userData,
       beforeSend: function() {
           $(".loading").show();
-      } 
+      }
     }).done(function(data){
       $(".loading").hide();
       if(data.error){
@@ -153,12 +158,12 @@ export function updateUserData(userData){
           dispatch(updateProfileInputFailed(data.error));
       }else{
         console.log("success update user data api");
-       
+
         console.log(data);
         var newResult = {};
         newResult.userObject = data.userData;
         var storageData=newResult;
-         
+
          storageData['isLoggedIn']=true;
         // console.log(storageData);
          //console.log(localStorage.getItem("userData"))
@@ -195,7 +200,7 @@ export function clickAddFriend(sender,receiver){
       data:{sender:sender,receiver:receiver},
       beforeSend: function() {
           $(".loading").show();
-      } 
+      }
     }).done(function(data){
       $(".loading").hide();
       console.log("Success add friend request :"+ JSON.stringify(data));
@@ -229,7 +234,7 @@ export function clickAcceptRequest(reqId){
       url:'/api/v1/users/acceptFriendRequest/'+reqId,
        beforeSend: function() {
           $(".loading").show();
-      } 
+      }
     }).done(function(data){
       console.log("Success accept request :"+ JSON.stringify(data));
       $(".loading").hide();

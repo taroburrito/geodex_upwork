@@ -1,7 +1,7 @@
 import { receivedAllUniversalTodos, optimisticUniversalAddSuccess } from '../actions/TodoActions';
 import { receivedAllUniversalCategories, fetchcategoriesByUserId } from '../actions/CategoryActions';
 import { receivedAllUniversalPages } from '../actions/PageActions';
-import {getVisitedUserData, getUserDetails} from '../actions/ProfileActions';
+import {getVisitedUserData, getUserDetails,setVisitedUserNull} from '../actions/ProfileActions';
 import {receivedAllfriendsList, receivedAllFriendsPosts, getDashboardDataSuccess, fetchFriendsRequestsSuccess} from '../actions/UserActions';
 import {receivedAllposts} from '../actions/PostActions';
 
@@ -157,7 +157,7 @@ export function linkSocketToStore(dispatch) {
 
 // Visited user detail
   socket.on("visitedUserDetail",function(res){
-    console.log(res);
+    dispatch(setVisitedUserNull())
     //user profile data
     // var userdata = res.userData;
     //
@@ -204,7 +204,7 @@ export function getUserDetail(userId){
 
 // visited user profile detail
 export function getVisitedUserDetail(userId,profileId){
-  
+
   socket.emit("visited-user-detail", userId,profileId);
 }
 
