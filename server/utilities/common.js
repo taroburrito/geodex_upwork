@@ -19,8 +19,9 @@ decodeBase64Image: function(dataString) {
   return response;
 },
 
-uploadPostImage:function(imageData,userId){
+uploadPostImage:function(imageData,thumbImg,userId){
   var base64Data = imageData.replace(/^data:image\/\w+;base64,/, "");
+  var base64DataThumb = thumbImg.replace(/^data:image\/\w+;base64,/, "");
   var ext = imageData.split(';')[0].match(/jpg|jpeg|png|gif/)[0];
   var name = Date.now()+"."+ext;
 
@@ -28,6 +29,8 @@ uploadPostImage:function(imageData,userId){
   var thumbs_dir = clientDir+"/user_"+userId+"/thumbs";
   var path = dir+"/"+name;
   var thumbs_path = thumbs_dir+"/"+name;
+  var mediumdir = dir+"/medium";
+  var mediumImg = mediumdir+"/"+name;
   //console.log(clientDir);
 
   // check if dir already exists
@@ -47,16 +50,32 @@ if(!fs.existsSync(thumbs_dir)){
   });
 }
 
+// check if dir already exists
+if(!fs.existsSync(mediumdir)){
+fs.mkdirSync(mediumdir, 0766, function(err){
+    if(err){
+        console.log(err);
+    }
+});
+}
+
   fs.writeFileSync(path, base64Data, 'base64',(err,data) => {
     if(err){
       return err;
     }
   return name;
 });
+//Thumb img
+fs.writeFileSync(thumbs_path, base64DataThumb, 'base64',(err,data) => {
+  if(err){
+    return err;
+  }
+return name;
+});
 //return name;
 // process image
 
- var thumbImage = processImage(path,thumbs_path);
+ var thumbImage = createMediumImage(path,mediumImg);
 
    return name;
 },
@@ -182,17 +201,68 @@ function processImage(img,dest){
   console.log(x+"---"+y);
     if (image.bitmap.width === image.bitmap.height ) {
         if(image.bitmap.width>350){
-          image.resize(350,350);  
+          image.resize(350,350);
         }else{
           image.write(dest);
         }
-        
+
     }else if(image.bitmap.width > 450 || image.bitmap.height > 450){
         image.crop(x,y, 350, 350 ).write(dest); // save
     }else{
         image.crop(0,50,180,150).write(dest); // save
     }
-   
+
+  }).catch(function (err) {
+  return err;
+  });
+
+}
+
+function createMediumImage(img,dest){
+
+  var x = 0; var y = 0;
+
+  Jimp.read(img).then(function (image) {
+  // do stuff with the image
+  image.write(img);
+ //resize large resolution image
+  if(image.bitmap.width> 1200 || image.bitmap.height>900){
+    if(image.bitmap.width < image.bitmap.height){
+           image.resize(Jimp.AUTO,138).write(dest);
+    }else{
+          image.resize(250,Jimp.AUTO).write(dest);
+    }
+  }else {
+    if(image.bitmap.width < image.bitmap.height){
+           image.resize(Jimp.AUTO,138).write(dest);
+    }else{
+          image.resize(250,Jimp.AUTO).write(dest);
+    }
+    
+  }
+  // if (image.bitmap.width > image.bitmap.height ) {
+  //   y = 0;
+  //   x = (image.bitmap.width - image.bitmap.height) / 2;
+  // //  var smallestSide = $height;
+  // } else {
+  //   x = 0;
+  //   y = (image.bitmap.height - image.bitmap.width) / 2;
+  // //  var smallestSide = $width;
+  // }
+  // console.log(x+"---"+y);
+  //   if (image.bitmap.width === image.bitmap.height ) {
+  //       if(image.bitmap.width>350){
+  //         image.resize(350,350);
+  //       }else{
+  //         image.write(dest);
+  //       }
+  //
+  //   }else if(image.bitmap.width > 450 || image.bitmap.height > 450){
+  //       image.crop(x,y, 350, 350 ).write(dest); // save
+  //   }else{
+  //       image.crop(0,50,180,150).write(dest); // save
+  //   }
+
   }).catch(function (err) {
   return err;
   });

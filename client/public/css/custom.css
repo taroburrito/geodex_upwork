@@ -1853,7 +1853,7 @@ img.uk-float-right.img_margin_left {
 
 
 .profile_post_photos img {
-    height: 138px;
+    /*height: 138px;*/
 }
 .comm-icons {
   margin: 3px 10px 0 0;
@@ -1892,7 +1892,7 @@ background: #fff !important;
     width: 0;
     height: 0;
   }
-  
+
   .slick-next::before, .slick-prev::before {
   color: #009dd8!important;
 }
@@ -1951,7 +1951,7 @@ body.uk-height-1-1 {
   left: 0;
   position: absolute;
   right: 0;
-} 
+}
 
 
 
@@ -1962,7 +1962,7 @@ body.uk-height-1-1 {
 
 
 
-.shortlist_menu select:focus > option:checked { 
+.shortlist_menu select:focus > option:checked {
     background: #000 !important;
 	color:#fff;
 }
@@ -2061,7 +2061,7 @@ body.uk-height-1-1 {
 @media (max-width:975px) {
 	.latest-post {
 		padding-left:5px;
-	}	
+	}
 }
 
 

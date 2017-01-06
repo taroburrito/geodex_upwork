@@ -32,7 +32,7 @@ var postModel = {
         var image = null;
       }else{
         if(formData.image){
-          var uploadImage = common.uploadPostImage(formData.image,formData.user_id);
+          var uploadImage = common.uploadPostImage(formData.image,formData.thumbImage,formData.user_id);
         }else if (formData.youtube_image) {
           var uploadImage = common.uploadYoutubePostImage(formData.youtube_image,formData.user_id);
         }
@@ -123,7 +123,7 @@ var postModel = {
         if(error){
           dbConnection.end(); return(callback({error: error}));
         }else{
-          dbConnection.end(); 
+          dbConnection.end();
           return(callback({post: results[0]}));
         }
       });
@@ -136,7 +136,7 @@ var postModel = {
         if(error){
           dbConnection.end(); return(callback({error: error}));
         }else{
-          dbConnection.end(); 
+          dbConnection.end();
           return(callback({post: results[0]}));
         }
       });
