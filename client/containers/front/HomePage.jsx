@@ -34,7 +34,7 @@ class HomePage extends Component{
 
       return(
         <div className="full_width">
-         
+
         <DashboardPage
           setMessageToDefault={()=>
           dispatch(setMessageToDefault())}
@@ -65,7 +65,7 @@ class HomePage extends Component{
           onFetchNextPost = {(id, value) => {dispatch(fetchNextPost(id,value))}}
           />
         </div>
-      
+
       );
     }else{
     return(
