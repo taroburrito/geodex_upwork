@@ -176,12 +176,18 @@ var userModel = {
                     }else {
                       var friends = {};
                       var friendsIds = [];
+                      var i = 0;
                       result3.forEach(function (friendIndex) {
-                          friends[friendIndex.id] = userModel.convertRowsToUserProfileObject(friendIndex);
+                          friends[i] = userModel.convertRowsToUserProfileObject(friendIndex);
+                          friends[i].prev = true;
                           //if(friendIndex.status == 1)
                           friendsIds.push(friendIndex.id);
+                          i++;
+
 
                       });
+
+
                     }
                       if(friendsIds && friendsIds.length >0){
                         var getFriendsPostImagesSqlString = constructFreindsPostImagesSqlString(friendsIds);
@@ -501,7 +507,7 @@ var userModel = {
 
     updateUserData(req, callback){
 
-      var uploadImage = common.uploadPostImage(req.val,req.id);
+      var uploadImage = common.uploadProfileImage(req.val,req.id);
       if(uploadImage){
         req.val = uploadImage;
       }else{
@@ -513,7 +519,7 @@ var userModel = {
       var updateUserDataQuery = constructupdateUserDataQuery(req);
       // Update Query for gx_users table
 
-
+      
       dbConnection.query(updateUserDataQuery, function (error, results, fields) {
           if (error) {
             dbConnection.end(); return(callback({error: error,status:400}));
@@ -983,23 +989,23 @@ function constructFriendRequestsSqlString(userId){
 }
 
 function constructFreindsPostImagesSqlString(friendsIds){
-  var query = "Select id,user_id, (image) post_image, youtube_image, youtube_url, content from gx_posts WHERE user_id IN("+friendsIds+") AND (image!='' OR youtube_image!='')";
+  var query = "Select id,user_id, (image) post_image, youtube_image, youtube_url, content from gx_posts WHERE user_id IN("+friendsIds+") AND (image!='' OR youtube_image!='') order by id DESC";
   return query;
 }
 
 function constructFriendListForDashboardSqlString(userId){
   var query="SELECT (a.user_id) id, LOWER(first_name) first_name, LOWER(last_name) last_name, dob,gender,address,latitude,longitude,"+
-             "profile_image,cover_image,MAX(c.id) post_id,(image) post_image,(content) post_content, youtube_url, youtube_image, u.email, (b.modified) created"+
+             "profile_image,cover_image,c.id post_id,(image) post_image,(content) post_content,(select count(1) from gx_posts where user_id = a.user_id) post_count, youtube_url, youtube_image, u.email, (b.modified) created,(c.created) post_date"+
             " FROM `gx_user_details` a,(SELECT receiver_id, modified FROM `gx_friends_list` WHERE sender_id ='"+userId+"'  AND STATUS = 1 UNION SELECT sender_id, modified FROM `gx_friends_list` WHERE receiver_id ='"+userId+"' AND STATUS = 1) b,"+
-            " (select * from gx_posts order by id desc) c, gx_users u WHERE a.user_id = b.receiver_id AND a.user_id = c.user_id AND a.user_id = u.id GROUP BY a.user_id ORDER BY c.id desc";
+            " (SELECT t1.* FROM gx_posts t1  WHERE t1.id = (SELECT t2.id FROM gx_posts t2 WHERE t2.user_id = t1.user_id ORDER BY t2.id DESC LIMIT 1) ) c, gx_users u WHERE a.user_id = b.receiver_id AND a.user_id = c.user_id AND a.user_id = u.id GROUP BY a.user_id ORDER BY c.id desc";
             return query;
 }
 
 function constructFriendListByCatForDashboardSqlString(userId,catId){
   var query="SELECT (a.user_id) id, LOWER(first_name) first_name,last_name,dob,gender,address,latitude,longitude,"+
-             "profile_image,cover_image,MAX(c.id) post_id,(image) post_image,(content) post_content, u.email, (b.modified) created, fc.category_id"+
+             "profile_image,cover_image,c.id post_id,(image) post_image,(content) post_content,(select count(1) from gx_posts where user_id = a.user_id) post_count, u.email, (b.modified) created, fc.category_id"+
             " FROM `gx_user_details` a,(SELECT receiver_id, modified FROM `gx_friends_list` WHERE sender_id ='"+userId+"'  AND STATUS = 1 UNION SELECT sender_id, modified FROM `gx_friends_list` WHERE receiver_id ='"+userId+"' AND STATUS = 1) b,"+
-            " (select id, image, content, user_id from gx_posts order by id desc) c,  gx_users u, gx_friends_category fc WHERE a.user_id = b.receiver_id AND a.user_id = c.user_id AND a.user_id = u.id AND a.user_id = fc.friend_id AND fc.category_id='"+catId+"' GROUP BY a.user_id ORDER BY c.id desc";
+            " (SELECT t1.* FROM gx_posts t1 WHERE t1.id = (SELECT t2.id FROM gx_posts t2 WHERE t2.user_id = t1.user_id ORDER BY t2.id DESC LIMIT 1) ) c,  gx_users u, gx_friends_category fc WHERE a.user_id = b.receiver_id AND a.user_id = c.user_id AND a.user_id = u.id AND a.user_id = fc.friend_id AND fc.category_id='"+catId+"' GROUP BY a.user_id ORDER BY c.id desc";
             return query;
 }
 function constructLatestPostSqlString(userId){
@@ -1008,7 +1014,7 @@ function constructLatestPostSqlString(userId){
 }
 
 function constructGetPostByUserSqlString(userId){
-    var query = "select * from gx_posts where user_id="+userId;
+    var query = "select * from gx_posts where user_id="+userId+" order by id DESC";
     return query;
 }
 

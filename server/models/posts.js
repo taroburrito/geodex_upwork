@@ -115,6 +115,33 @@ var postModel = {
       });
     },
 
+    fetchPreviousPost: function(data,callback){
+      var dbConnection = dbConnectionCreator();
+      var createGetPostSiblingSql = constructGetPostSibling(data.postid,data.userid);
+
+      dbConnection.query(createGetPostSiblingSql,function(error, results, fields){
+        if(error){
+          dbConnection.end(); return(callback({error: error}));
+        }else{
+          dbConnection.end(); 
+          return(callback({post: results[0]}));
+        }
+      });
+    },
+
+    fetchNextPost: function(data,callback){
+      var dbConnection = dbConnectionCreator();
+      var createGetPostSiblingSql = constructGetNextPost(data.postid,data.userid);
+      dbConnection.query(createGetPostSiblingSql,function(error, results, fields){
+        if(error){
+          dbConnection.end(); return(callback({error: error}));
+        }else{
+          dbConnection.end(); 
+          return(callback({post: results[0]}));
+        }
+      });
+    },
+
     getAllFriendsPost: function(friends, callback){
 
         var dbConnection = dbConnectionCreator();
@@ -210,7 +237,7 @@ function constructPostCommentSqlString(data){
 function constructGetCommentsByPostSqlString(postId){
   var sql = "SELECT a.*,"+
             "CONCAT(b.first_name, ' ', b.last_name) NAME,"+
-            "b.profile_image,b.address, c.email"+
+            "b.profile_image,b.address,b.user_id, c.email"+
             " from gx_post_comments as a,"+
             " gx_user_details as b,"+
             " gx_users as c"+
@@ -233,6 +260,16 @@ function constructGetPostByUserSqlString(userId){
 
 function constructGetPostById(id){
   var query = "select * from gx_posts where id="+id;
+  return query;
+}
+
+function constructGetPostSibling(postid,userId){
+  var query="SELECT (a.user_id) id, LOWER(first_name) first_name, LOWER(last_name) last_name, dob, gender, address, latitude, longitude, profile_image, cover_image, c.id post_id, (image) post_image, (content) post_content,(select count(1) from gx_posts where user_id = a.user_id) post_count, youtube_url, youtube_image, u.email, modified, (c.created) post_date FROM `gx_user_details` a, (SELECT * FROM gx_posts WHERE id = (SELECT MAX(id) FROM gx_posts WHERE id < "+postid+" AND user_id = "+userId+")) c, gx_users u WHERE a.user_id = "+userId+" AND a.user_id = c.user_id AND a.user_id = u.id GROUP BY a.user_id ORDER BY c.id DESC ";
+  return query;
+}
+
+function constructGetNextPost(postid,userId){
+  var query="SELECT (a.user_id) id, LOWER(first_name) first_name, LOWER(last_name) last_name, dob, gender, address, latitude, longitude, profile_image, cover_image, c.id post_id, (image) post_image, (content) post_content,(select count(1) from gx_posts where user_id = a.user_id) post_count, youtube_url, youtube_image, u.email, modified, (c.created) post_date FROM `gx_user_details` a, (SELECT * FROM gx_posts WHERE id = (SELECT MIN(id) FROM gx_posts WHERE id > "+postid+" AND user_id = "+userId+")) c, gx_users u WHERE a.user_id = "+userId+" AND a.user_id = c.user_id AND a.user_id = u.id GROUP BY a.user_id ORDER BY c.id DESC ";
   return query;
 }
 

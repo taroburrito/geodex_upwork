@@ -25,6 +25,7 @@ import UserSettings from './front/UserSettings';
 import DashboardPage from '../components/front/DashboardPage';
 import ManageFriends from './front/ManageFriends';
 import ManageRequests from './front/ManageRequests';
+import Feeds from './front/Feeds';
 
 //backend components
 import MainLoginPage from './admin/MainLoginPage';
@@ -73,7 +74,7 @@ var routes = (
     <Route path="settings" component={UserSettings} view="user"/>
     <Route path="manage_friends" component={ManageFriends}/>
     <Route path="manage_requests" component={ManageRequests}/>
-
+    <Route path="feeds" component={Feeds}/>
   </Route>
 
 

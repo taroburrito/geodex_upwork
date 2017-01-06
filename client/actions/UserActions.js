@@ -27,7 +27,10 @@ export const Delete_Category_Success = 'Delete_Category_Success';
 export const Delete_Category_Failed = 'Delete_Category_Failed';
 export const Update_Category_Failed_Dashboard = 'Update_Category_Failed_Dashboard';
 export const Update_Category_Success_Dashboard = 'Update_Category_Failed_Dashboard';
-
+export const Fetch_Previous_Post_Success = 'Fetch_Previous_Post_Success';
+export const Fetch_Previous_Post_Failed = 'Fetch_Previous_Post_Failed';
+export const Fetch_Next_Post_Success = 'Fetch_Next_Post_Success';
+export const Fetch_Next_Post_Failed = 'Fetch_Next_Post_Failed';
 
 
 
@@ -79,6 +82,7 @@ export function clickedBlockUser(senderId,receiverId,userId) {
           $(".loading").show();
       } 
     }).done(function(data) {
+      $(".loading").hide();
 				if (data.error){
 					console.log("block user works but error: ", data);
 						//dispatch(optimisticUniversalAddFail());
@@ -86,7 +90,7 @@ export function clickedBlockUser(senderId,receiverId,userId) {
 						console.log("block user success", data);
 					//	dispatch(deleteFriendSuccess(data));
 					}
-          $(".loading").hide();
+          
 				})
 			.fail(function(a,b,c,d) {
 				console.log("actual failure: ", a, b, c, d);
@@ -111,6 +115,7 @@ export function clickedDeleteFriend(id) {
           $(".loading").show();
       } 
     }).done(function(data) {
+       $(".loading").hide();
 				if (data.error){
 					console.log("delete friend works but error: ", data);
 						//dispatch(optimisticUniversalAddFail());
@@ -118,7 +123,7 @@ export function clickedDeleteFriend(id) {
 						console.log("delete friend success", data);
 						//dispatch(deleteFriendSuccess(id));
 					}
-          $(".loading").hide();
+         
 				})
 			.fail(function(a,b,c,d) {
 				console.log("delete failure: ", a, b, c, d);
@@ -131,7 +136,7 @@ export function clickedDeleteFriend(id) {
 
 
 export function addCategorySuccess(category) {
-  return{type: Category_Added_Dashboard_Success, category,success:"Added catefg"};
+  return{type: Category_Added_Dashboard_Success, category,success:"Added category Successfully"};
 }
 
 export function addCategoryFail(msg){
@@ -155,7 +160,7 @@ export function addCategory(req) {
       } 
     }).done(function(data) {
 				if (data.error){
-					console.log("add todo worked but error: ", data);
+					$(".loading").hide();
           dispatch(addCategoryFail(data.error));
 
 					} else {
@@ -164,7 +169,7 @@ export function addCategory(req) {
           //  dispatch(handleSuccessMessage("Added Successfully"));
 
 					}
-          $(".loading").hide();
+          
 				})
 			.fail(function(error) {
 				console.log("Failure");
@@ -201,13 +206,14 @@ export function confirmFriendRequest(requestId){
           $(".loading").show();
       } 
     }).done(function(result){
+      $(".loading").hide();
       if(result.error){
-        console.log("Error in confirm firend request query");
+        console.log("Error in confirm friend request query");
         dispatch(confirmFriendFailed(result.error));
       }else{
         dispatch(confirmFriendSuccess(requestId,result.success));
       }
-      $(".loading").hide();
+      
     }).fail(function(error){
       $(".loading").hide();
       dispatch(confirmFriendFailed("Error in confirm request call"));
@@ -233,13 +239,14 @@ export function deleteFriendRequest(requestId){
           $(".loading").show();
       } 
     }).done(function(result){
+      $(".loading").hide();
       if(result.error){
         console.log("Error in confirm firend request query");
         dispatch(deleteFriendRequestFailed(result.error));
       }else{
         dispatch(deleteFriendRequestSuccess(requestId,result.success));
       }
-       $(".loading").hide();
+       
     }).fail(function(error){
       dispatch(deleteFriendRequestFailed("Error in confirm request call"));
       $(".loading").hide();
@@ -285,6 +292,7 @@ export function changeFriendCat(userId,friendId, catId){
           $(".loading").show();
       }
     }).done(function(result){
+       $(".loading").hide();
       console.log("success:"+JSON.stringify(result));
       if(result.error){
 
@@ -293,7 +301,7 @@ export function changeFriendCat(userId,friendId, catId){
         console.log(result);
         dispatch(changeFriendCatSuccess(result.categorizedFriends,friendId));
       }
-      $(".loading").hide();
+     
     }).fail(function(error){
       console.log("success:"+JSON.stringify(error));
       dispatch(changeFriendCatFailed(error));
@@ -344,12 +352,12 @@ export function sendEmailFromDashboard(from,to,subject,content){
           $(".loading").show();
       }
     }).done(function(result){
+      $(".loading").hide();
       if(result.error){
         dispatch(sendEmailFromDashboardFailed(result.error));
       }else{
         dispatch(sendEmailFromDashboardSuccess(result.success));
       }
-      $(".loading").hide();
     }).fail(function(error){
       console.log("Failed email request");
       $(".loading").hide();
@@ -378,12 +386,13 @@ export function deleteCategory(Id) {
       }
      })
 			.done(function(data) {
+        $(".loading").hide();
 				if (data.error){
 					  dispatch(deleteCategoryFailed(data.error));
         	} else {
 					  dispatch(deleteCategorySuccess(Id));
           	}
-            $(".loading").hide();
+            
 				})
 			.fail(function(error) {
         $(".loading").hide();
@@ -412,17 +421,83 @@ export function updateCategoryById(id, value){
           $(".loading").show();
       }
     }).done(function(data){
-
+      $(".loading").hide();
       if(data.error){
         dispatch(updateCategoryFailed(data.error));
       }else{
 
         dispatch(updateCategorySuccess(id,data.category));
       }
-      $(".loading").hide();
+      
     }).fail(function(error){
       $(".loading").hide();
       dispatch(updateCategoryFailed(error));
+    })
+  }
+}
+
+export function fetchPreviousPostSuccess(data) {
+  return {type:Fetch_Previous_Post_Success,data}
+}
+
+export function fetchPreviousPostFailed(data) {
+  return {type:Fetch_Previous_Post_Failed,data}
+}
+
+export function fetchPreviousPost(postid,userid){
+return(dispatch) => {
+    $.ajax({
+      type:'Post',
+      url:'/api/v1/posts/fetchPreviousPost/',
+      dataType:'JSON',
+      data:{postid:postid,userid:userid},
+      beforeSend: function() {
+          $(".loading").show();
+      }
+    }).done(function(data){
+      $(".loading").hide();
+      if(Object.keys(data).length === 0 && data.constructor === Object){
+        dispatch(fetchPreviousPostFailed(userid));
+      }else{
+        dispatch(fetchPreviousPostSuccess(data));
+      }
+    }).fail(function(error){
+      $(".loading").hide();
+      dispatch(fetchPreviousPostFailed(userid));
+    })
+  }
+}
+
+export function fetchNextPostSuccess(data) {
+  return {type:Fetch_Next_Post_Success,data}
+}
+
+export function fetchNextPostFailed(data) {
+  return {type:Fetch_Next_Post_Failed,data}
+}
+
+export function fetchNextPost(postid,userid){
+return(dispatch) => {
+    $.ajax({
+      type:'Post',
+      url:'/api/v1/posts/fetchNextPost/',
+      dataType:'JSON',
+      data:{postid:postid,userid:userid},
+      beforeSend: function() {
+          $(".loading").show();
+      }
+    }).done(function(data){
+     // console.log(data);
+     $(".loading").hide();
+      if(Object.keys(data).length === 0 && data.constructor === Object){
+        dispatch(fetchNextPostFailed(userid));
+      }else{
+        dispatch(fetchNextPostSuccess(data));
+      }
+      
+    }).fail(function(error){
+      $(".loading").hide();
+      dispatch(fetchNextPostFailed(userid));
     })
   }
 }

@@ -153,7 +153,17 @@ export function updateUserData(userData){
           dispatch(updateProfileInputFailed(data.error));
       }else{
         console.log("success update user data api");
+       
         console.log(data);
+        var newResult = {};
+        newResult.userObject = data.userData;
+        var storageData=newResult;
+         
+         storageData['isLoggedIn']=true;
+        // console.log(storageData);
+         //console.log(localStorage.getItem("userData"))
+       localStorage.setItem("userData",JSON.stringify(storageData));
+       //console.log(localStorage.getItem("userData"))
         dispatch(updateProfileInputSuccess(data.userData));
       // /  dispatch(handleSuccessMessage("Updated Successfully"));
 

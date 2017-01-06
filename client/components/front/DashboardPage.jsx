@@ -1,18 +1,52 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { Navigation, Link } from 'react-router';
-import { validateDisplayName, } from '../../utilities/RegexValidators';
+import { validateDisplayName } from '../../utilities/RegexValidators';
 var AvatarEditor = require('react-avatar-editor');
 var Slider = require('react-slick');
-//import Slider from 'react-image-slider';
-var Loading = require('react-loading');
+
+var moment = require('moment');
 
 import ImageGallery from 'react-image-gallery';
 import CategoryList from './manage_category/CategoryList';
+import TimeAgo from 'react-timeago';
+
+
+const formatter = (value, unit, suffix, rawTime) => {
+  var counter = '';
+  //console.log('minnnnnnnnnnn'+value);
+  var minunit = 'minute';
+  if (value > 1) {
+    minunit = 'minutes'
+  }
+  var year = unit === ('year') ? value : 0
+  var month = unit === ('month') ? value : 0
+  var week = unit === ('week') ? value : 0
+  var day = unit === ('day') ? value : 0
+  var hour = unit === ('hour') ? value : 0
+  var minute = unit === ('minute') ? value : 0
+  var second = unit === ('second') ? value : 0
+  if(year==0 && month==0 && week==0 && day==0 && hour==0 && minute==0){
+     counter = 'Just now';
+  } else if(year==0 && month==0 && week==0 && day==0 && hour==0 && minute>0){
+     counter = `${minute} ${minunit} ago`;
+  }else if(year==0 && month==0 && week==0 && day==0 && hour>0){
+     counter = `${hour} ${unit} ago`;
+  }else if(year==0 && month==0 && week==0 && day==1){
+      var timestamp = moment(rawTime);
+      var formatted = timestamp.format('hh a');
+      counter = formatted+' Yesterday';
+  }else{
+    var timestamp = moment(rawTime);
+      var formatted = timestamp.format('DD MMM hh:mma');
+      counter = formatted;
+  }
+
+  return counter;
+}
 
 function generateUUID(){
-  //Note: this is a simple implentation for this project. //TODO create a better one
-  return (Math.round(Math.random()*10000000000000000).toString()+(Date.now()));
+   return (Math.round(Math.random()*10000000000000000).toString()+(Date.now()));
 }
 
 const initialMessageStates={
@@ -35,6 +69,10 @@ export default class DashboardPage extends Component {
     this.onSlide = this.onSlide.bind(this);
     this.clickSlider = this.clickSlider.bind(this);
     this.handleVideoLinkChange = this.handleVideoLinkChange.bind(this);
+
+    this.handlePostMessage = this.handlePostMessage.bind(this);
+    this.handleCloseImagePopUp = this.handleCloseImagePopUp.bind(this);
+
 
     this.state ={
       errorMessage: null,
@@ -59,6 +97,11 @@ export default class DashboardPage extends Component {
       loadPostContent:false,
       videoLink:null,
       popupVideo:null,
+      clickedImageIcon:null,
+      clickedYouTubeLink:null,
+      postMessage:null,
+      showLargeSlider:false,
+      animation:false
 
     }
   }
@@ -70,18 +113,40 @@ export default class DashboardPage extends Component {
     this.setState({uploadDir:uploadDir,loading:true});
     this.props.fetchInitialData(userAuthSession.userObject.id,null);
     document.getElementById("html").className = "";
-    console.log("removed");
-    //htmlTag.classList.remove('uk-modal-page');
+
+
+  }
+   handleCloseImagePopUp(){
+      this.setState({showLargeSlider:false});
+    //  console.log("closed");
   }
   onSlide(e){
-    //React.unmountComponentAtNode(document.getElementById('test'));
-      //this._imageGallery.slideToIndex(e);
+    this.pauseAllYoutube();
     var postId = this._imageGallery.props.items[e].postId;
     this.props.fetchComments(postId);
     //this.loadPostContent(postId,this.state.clickedUser,null,null,e);
     this.setState({clickedPost:postId});
 
+
   }
+
+  pauseAllYoutube(){
+        $('iframe[src*="youtube.com"]').each(function() {
+            var iframe = $(this)[0].contentWindow;
+            iframe.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+        });
+
+
+  }
+
+  loadPrevPost(postId,userId){
+    this.props.onFetchPreviousPost(postId,userId);
+  }
+
+  loadNextPost(postId,userId){
+    this.props.onFetchNextPost(postId,userId);
+  }
+
   clickSlider(e){
 
   }
@@ -94,6 +159,30 @@ export default class DashboardPage extends Component {
     }
   }
 
+
+<<<<<<< HEAD
+=======
+  handlePostMessage()
+  {
+      var msg = this.refs.postContent.getDOMNode().value.trim();
+     this.setState({postMessage:msg});
+    // var videoid = msg.match(/(?:https?:\/{2})?(?:w{3}\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\?v=|\/)([^\s&]+)/);
+     var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|\?v=)([^#\&\?]*).*/;
+     var match = msg.match(regExp);
+     var modal = UIkit.modal("#statusImageModel");
+            if (match && match[2].length == 11) {
+                //console.log('https://www.youtube.com/embed/' + match[2] + '?autoplay=0');
+                var videoLink = 'https://www.youtube.com/embed/'+match[2];
+                var videoImg = "https://img.youtube.com/vi/"+match[2]+"/0.jpg"
+                this.setState({clickedYouTubeLink:true,clickedImageIcon:null,videoLink:videoLink,image:null,videoImage:videoImg,postMessage:null});
+                modal.show();
+            }
+            else {
+                this.setState({videoLink:null,image:null,videoImage:null})
+                 //console.log("The youtube url is not valid.");
+            }
+
+  }
 
 
   handleClickPostComment(){
@@ -273,7 +362,7 @@ handleClickPlus(){
 
       var newArr = {};
       if(sortBy == 'created'){
-        var fullySorted = _.sortBy(friends, sortBy).reverse();
+        var fullySorted = _.sortBy(friends, 'post_id').reverse();
       }else{
         var fullySorted = _.sortBy(friends, sortBy);
       }
@@ -281,51 +370,13 @@ handleClickPlus(){
       Object.keys(fullySorted).map((id)=>{
         newArr[id] = fullySorted[id];
       });
-
-      console.log(friends);
-      console.log("******");
-
-      console.log(fullySorted);
-      console.log(newArr);
-    //   var newArr = _.sortBy(friends, 'first_name', function(n) {
-    //   return Math.sin(n);
-    // });
     if(newArr){
       this.props.updateDashboardFriendList(newArr);
     }
 
-
-
-  //   const{friends} = this.props;
-  //   var list = [
-  //   { name:'Charlie', age:3},
-  //   { name:'Dog', age:1 },
-  //   { name:'Baker', age:7},
-  //   { name:'Abel', age:9 },
-  //   { name:'Baker', age:5 }
-  //   ];
-  //
-  //
-  //   console.log('*********');
-  //   console.log(friends);
-  //   var newArr = {};
-  //   var fullySorted = _.sortBy( friends, sortBy);
-  //   Object.keys(fullySorted).map((id)=>{
-  //     var sorted = fullySorted[id];
-  //     if(sorted.status == 1)
-  //     newArr[id] = sorted;
-  //   });
-  // //   var newArr = _.sortBy(friends, 'first_name', function(n) {
-  // //   return Math.sin(n);
-  // // });
-  // if(newArr){
-  //   this.props.updateFriendList(newArr);
-  // }
-  // console.log('*********');
-  // console.log(fullySorted);
-  // console.log('*********');
-  // console.log(newArr);
-
+   //remove
+  this.setState({animation:true});
+  setTimeout(function() { this.setState({animation: false}); }.bind(this), 1000);
 }
 
 resetEmailForm(){
@@ -391,7 +442,8 @@ resetEmailForm(){
       {friend_post_content}
     )
   }
-   sortImages(a, fn) {
+
+sortImages(a, fn) {
   var non_matches = [];
   var matches = a.filter(function(e, i, a) {
     var match = fn(e, i, a);
@@ -400,6 +452,7 @@ resetEmailForm(){
   });
   return matches.concat(non_matches);
 }
+
 imageSlideTo(e){
   console.log("ee:"+e);
   this._imageGallery.slideToIndex(e);
@@ -407,6 +460,8 @@ imageSlideTo(e){
 
 
 _myImageGalleryRenderer(item) {
+  //console.log('==============');
+  //console.log(item); console.log('==============');
     // your own image error handling
     const onImageError = this._handleImageError;
     return (
@@ -420,11 +475,7 @@ _myImageGalleryRenderer(item) {
   }
 
 
-  renderFriendsPostImagesLargeSlider(user_id){
-
-    if(this._imageGallery){
-      //return null;
-    }
+   renderFriendsPostImagesLargeSlider(user_id){
 
      const{dashboardData} = this.props;
      var friendsPosts = dashboardData.friendsPostImages;
@@ -454,6 +505,8 @@ _myImageGalleryRenderer(item) {
 
        });
 
+       if(this.state.showLargeSlider){
+
        return(
          <div id="test">
         <ImageGallery
@@ -476,13 +529,18 @@ _myImageGalleryRenderer(item) {
     </div>
 
       );
+     }else{
+      return(
+<div>Loading</div>
+        );
+     }
      }
 
     //console.log(friendsPost);
 
   }
 
-  renderFriendsPostImagesSmallSlider(user_id){
+   renderFriendsPostImagesSmallSlider(user_id){
 
      const{dashboardData} = this.props;
      var friendsPosts = dashboardData.friendsPostImages;
@@ -499,7 +557,7 @@ _myImageGalleryRenderer(item) {
          var item = friendsPost[friendId];
          var post_image = item.post_image;
          var postImage = this.state.uploadDir+"user_"+user_id+"/thumbs/"+post_image;
-
+       //  console.log(item);
          // Image content
          if(item.post_image){
           //var postImage = this.state.uploadDir+"user_"+user_id+"/thumbs/"+post_image;
@@ -516,7 +574,7 @@ _myImageGalleryRenderer(item) {
          if(post_image){
          friendElement.push(
              <div key={item.i} className="slider_image uk-grid-small uk-grid-width-medium-1-4">
-               <a data-uk-modal="{target:'#postImageModel'}"  onClick={this.loadPostContent.bind(this,item.id,user_id,null,null,i,null)}>
+               <a data-uk-modal="{target:'#postImageModel'}"  onClick={this.loadPostContent.bind(this,item.id,user_id,null,item.content,i,null)}>
                  <img src={postImage}/>
                 </a>
             </div>
@@ -571,14 +629,16 @@ _myImageGalleryRenderer(item) {
     return(
       <div id="postImageModel" className="uk-modal coment_popup">
           <div className="uk-modal-dialog uk-modal-dialog-blank">
-          <button className="uk-modal-close uk-close" type="button"></button>
+
+          <button className="uk-modal-close uk-close" type="button" onClick={this.handleCloseImagePopUp}></button>
             <div className="uk-grid">
 
-              <div className="uk-width-small-3-5 popup_img_left" ref="largeSliderContent">
-				            {(this.state.postLargeImage || this.state.popupVideo)?
+              <div className="uk-width-small-3-4 popup_img_left" ref="largeSliderContent">
+                    {(this.state.postLargeImage || this.state.popupVideo)?
                       {imageContent}:this.renderFriendsPostImagesLargeSlider(this.state.clickedUser)}
-				      </div>
-              <div className="uk-width-small-2-5 popup_img_right">
+              </div>
+              <div className="uk-width-small-1-4 popup_img_right">
+
 
               {this.loadPostByInfo(this.state.clickedUser)}
               <h5 className="coment_heading">Comments</h5>
@@ -620,7 +680,7 @@ _myImageGalleryRenderer(item) {
     }
     this.props.fetchComments(postId);
 
-    this.setState({clickedPost:postId,clickedUser:userId,getClickedUser:userId,postLargeImage:popupImage,popupContent:popupContent,popupVideo:postVideo});
+    this.setState({showLargeSlider:true,clickedPost:postId,clickedUser:userId,getClickedUser:userId,postLargeImage:popupImage,popupContent:popupContent,popupVideo:postVideo});
 
   }
 
@@ -645,19 +705,29 @@ _myImageGalleryRenderer(item) {
     Object.keys(friends).map((key)=> {
 
       var item = friends[key];
-
       var user_id = friends[key].id;
       var profile_link = "/user/"+user_id;
       var content = item.post_content;
-
+      console.log(item);
       if(item){
         var content_length = content.length;
-        var post_image = item.post_image;
 
-        if(post_image){
-          var postLargeImage = this.state.uploadDir+'user_'+user_id+'/'+item.post_image;
-
-          var popupContent = null;
+        var post_image = item.post_image || item.youtube_image;
+        var postVideo;
+        var postImage;
+        var timestamp = moment(item.post_date);
+        var formatted = timestamp.format('YYYY-MM-DD HH:mm:ss');
+        // Image content
+        if(item.post_image){
+          if(content_length > 300){
+          content = content.substring(0,300).concat(' ...LoadMore');
+          }else{
+          content = content;
+          }
+           postImage = this.state.uploadDir+"user_"+user_id+"/"+item.post_image;
+        }
+        //Video Content
+        else if (item.youtube_image) {
           if(content.length > 300){
           content = content.substring(0,300).concat(' ...LoadMore');
           }else{
@@ -676,20 +746,27 @@ _myImageGalleryRenderer(item) {
 
       }
       var slider_images = this.renderFriendsPostImagesSmallSlider(user_id);
-      friendsElement.push(  <div className="uk-grid dash_top_head dash_botom_list" id={item.id}>
+      friendsElement.push(  <div ref="animate"  className={this.state.animation ? "uk-grid dash_top_head dash_botom_list animated fadeIn":'uk-grid dash_top_head dash_botom_list animated'} id={item.id}>
 
             <div className="uk-width-small-1-2">
               <div className="uk-grid uk-grid-small">
               <div className="uk-width-3-10 user_img_left"><Link to={profile_link}><img src={this.getProfileImage(item.profile_image,user_id)} className=""/></Link></div>
               <div className="uk-width-7-10 user_bottom_img_right">
-              <h3 className="capital_first"><Link to={profile_link}>{item.first_name} {item.last_name} </Link>
-              <a data-uk-modal="{target:'#sendEmail'}"   onClick={this.handleOnClickEmailIcon.bind(this,item.email)} data={item.email}  href="#" className="user_location">{item.email}</a>
+              <h3 className="capital_first"><Link to={profile_link} className="user-name-anchor">{item.first_name} {item.last_name} </Link>
+
              <small className="user_location">{item.address}</small>
 
                 </h3>
+                <div className="uk-width-7-10 comm-icon-div">
+                <a data-uk-modal="{target:'#sendEmail'}" onClick={this.handleOnClickEmailIcon.bind(this,item.email)} data={item.email}  href="#" className="">
+                <img className="comm-icons" src="public/images/email_icon.png"/>
+                </a>
 
+                <img className="comm-icons" src="public/images/message_icon.png"/>
+                <img className="comm-icons" src="public/images/phone_icon.png"/>
+                </div>
 
-            <div className="uk-slidenav-position uk-margin" data-uk-slider="{autoplay: true}">
+                   <div className="uk-slidenav-position uk-margin" data-uk-slider="{autoplay: true}">
 
                     <div className="uk-slider-container img_slid">
                         {slider_images}
@@ -699,11 +776,24 @@ _myImageGalleryRenderer(item) {
               </div>
             </div>
             <div className="uk-width-small-1-2 post_control">
-              <a href="#" className="post_txt_dashboard" data-uk-modal={item.post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={this.loadSinglePostContent.bind(this,item.post_id,user_id,postLargeImage,popupContent)}>
-              {item.post_image?<img src={this.state.uploadDir+'user_'+user_id+'/thumbs/'+item.post_image} className="uk-float-left img_margin_right"/>:null}
-              <p>{content}</p>
 
-              </a>
+              <div>
+                <a href="#" className="post_txt_dashboard" data-uk-modal={post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={this.loadSinglePostContent.bind(this,item.post_id,user_id,postImage,item.post_content,postVideo)}>
+                  <img src={post_image? this.state.uploadDir+"user_"+user_id+"/thumbs/"+post_image: null} className="uk-float-left img_margin_right"/>
+                  <p>{content}</p>
+                   <small className="user_location post_timestamp">
+                   <TimeAgo date={formatted} formatter= {formatter}  />
+                   </small>
+                </a>
+                <p>
+
+
+                  {item.prev && item.post_count!=1?<small onClick={this.loadPrevPost.bind(this,item.post_id,user_id)} href="" className="uk-slidenav uk-slidenav-previous"></small>:null}
+                  {item.next && item.post_count!=1?<small onClick={this.loadNextPost.bind(this,item.post_id,user_id)} className="uk-slidenav uk-slidenav-next"></small>:null}
+
+                </p>
+              </div>
+            </div>
 
 
             </div>
@@ -729,15 +819,29 @@ _myImageGalleryRenderer(item) {
     if(userAuthSession.userObject.id === userId){
         var friendData = userAuthSession.userObject;
     }else{
-    var friendData = dashboardData.friends[userId];
+      var friendData = {};
+    var friendsData = dashboardData.friends;
+     Object.keys(friendsData).map(function (key) {
+      var item = friendsData[key];
+      if(item.id == userId){
+        friendData = item;
+        return false;
+      }
+    }, this);
+
   }
+
+  var profile_link = "/user/"+friendData.id;
+
     if(friendData)
     return(
       <article className="uk-comment">
           <header className="uk-comment-header">
               <img src={this.getProfileImage(friendData.profile_image,userId)} className="uk-comment-avatar" width="60" height="60"/>
+              <Link to={profile_link}>
+                <h4 className="uk-comment-title">{friendData.first_name} {friendData.last_name}</h4>
+              </Link>
 
-              <h4 className="uk-comment-title">{friendData.first_name} {friendData.last_name}</h4>
               <div className="uk-comment-meta"><span>{friendData.address}</span></div>
           </header>
 
@@ -755,79 +859,6 @@ _myImageGalleryRenderer(item) {
   }
   }
 
-//   getNestedChildren(arr, parent) {
-//   var out = []
-//   for(var i in arr) {
-//       if(arr[i].parent_id == parent) {
-//           var children = this.getNestedChildren(arr, arr[i].id)
-//
-//           if(children.length) {
-//               arr[i].children = children
-//           }
-//           out.push(arr[i])
-//       }
-//   }
-//   return out;
-// }
-
-//  _queryTreeSort(options) {
-//    var cfi, e, i, id, o, pid, rfi, ri, thisid, _i, _j, _len, _len1, _ref, _ref1;
-//
-//   ri = [];
-//   rfi = {};
-//   cfi = {};
-//   o = [];
-//   _ref = options;
-//   for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
-//   var  id = options[i].id || "id";
-//   var  pid = options[i].parentid || "parentid";
-//     e = _ref[i];
-//     rfi[e[id]] = i;
-//     if (cfi[e[pid]] == null) {
-//       cfi[e[pid]] = [];
-//     }
-//     cfi[e[pid]].push(options[i][id]);
-//   }
-//   _ref1 = options;
-//   for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-//     var  id = options.id || "id";
-//     var  pid = options.parentid || "parentid";
-//     e = _ref1[_j];
-//     if (rfi[e[pid]] == null) {
-//       ri.push(e[id]);
-//     }
-//   }
-//   while (ri.length) {
-//     thisid = ri.splice(0, 1);
-//     o.push(options.q[rfi[thisid]]);
-//     if (cfi[thisid] != null) {
-//       ri = cfi[thisid].concat(ri);
-//     }
-//   }
-//   return o;
-// };
-//
-// _makeTree (options) {
-//   console.log(options);
-//   var children, e, id, o, pid, temp, _i, _len, _ref;
-//   id = options.id || "id";
-//   pid = options.parentid || "parentid";
-//   children = options.children || "children";
-//   temp = {};
-//   o = [];
-//   _ref = options.newArr;
-//   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-//     e = _ref[_i];
-//     e[children] = [];
-//     temp[e[id]] = e;
-//     if (temp[e[pid]] != null) {
-//       temp[e[pid]][children].push(e);
-//     } else {
-//       o.push(e);
-//     }
-//   }
-//   return o;
-// };
 
  buildHierarchy(arry) {
 
@@ -984,27 +1015,25 @@ loadChild(child){
     return(
       <div id="postContentModel" className="uk-modal coment_popup">
           <div className="uk-modal-dialog uk-modal-dialog-blank">
-      		<button className="uk-modal-close uk-close" type="button"></button>
-      			<div className="uk-grid">
 
-      				<div className="uk-width-small-1-1 popup_img_right coment_pop_cont">
-
-
-      			{this.loadPostByInfo(this.state.clickedUser)}
-      				<h5 className="coment_heading">Comments</h5>
-      				<ul className="uk-comment-list" ref="commentsul">
+          <button className="uk-modal-close uk-close" type="button" onClick={this.pauseAllYoutube}></button>
+            <div className="uk-grid">
+              <div className="uk-width-small-1-1 popup_img_right coment_pop_cont">
+            {this.loadPostByInfo(this.state.clickedUser,this.state.clickedPost)}
+              <h5 className="coment_heading">Comments</h5>
+              <ul className="uk-comment-list" ref="commentsul">
                 {this.renderComments(this.state.clickedPost)}
               </ul>
 
 
-    				<div className="comenting_form border-top_cf">
-    				<img className="uk-comment-avatar" src={this.getProfileImage(user.profile_image,user.id)} alt="" width="40" height="40"/>
-    				<textarea placeholder="Write Comment..." value={this.state.postComment} onChange={(e)=>this.setState({postComment:e.target.value})} ref="commentBox"></textarea>
-    				<a onClick={this.handleClickPostComment} className="uk-button uk-button-primary comment_btn">Post</a>
-    				</div>
+            <div className="comenting_form border-top_cf">
+            <img className="uk-comment-avatar" src={this.getProfileImage(user.profile_image,user.id)} alt="" width="40" height="40"/>
+            <textarea placeholder="Write Comment..." value={this.state.postComment} onChange={(e)=>this.setState({postComment:e.target.value})} ref="commentBox"></textarea>
+            <a onClick={this.handleClickPostComment} className="uk-button uk-button-primary comment_btn">Post</a>
+            </div>
 
 
-      	</div>
+        </div>
       </div>
     </div>
   </div>
@@ -1023,7 +1052,8 @@ loadChild(child){
       var post_image = latestPost.image || latestPost.youtube_image;
       var postImage;
       var postVideo;
-
+      var timestamp = moment(latestPost.created);
+      var formatted = timestamp.format('YYYY-MM-DD HH:mm:ss');
 
       // Image content
       if(latestPost.image){
@@ -1032,7 +1062,7 @@ loadChild(child){
         }else{
         content = content;
         }
-         postImage = this.state.uploadDir+"user_"+userProfile.id+"/thumbs/"+post_image;
+         postImage = this.state.uploadDir+"user_"+userProfile.id+"/"+post_image;
       }
       //Video Content
       else if (latestPost.youtube_image) {
@@ -1057,11 +1087,16 @@ loadChild(child){
 
        return (
          <div className="uk-width-small-1-2 post_control">
-        <div  style={{maxHeight:200,overflow:"hidden"}}>
+
+        <div className="latest-post">
         <a href="#" className="post_txt_dashboard" data-uk-modal={post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={this.loadSinglePostContent.bind(this,latestPost.id,userProfile.id,postImage,latestPost.content,postVideo)}>
 
-        <img src={post_image? this.state.uploadDir+"user_"+userProfile.id+"/thumbs/"+post_image: null} className="uk-float-right img_margin_left"/>
-        <p>{content}</p>
+        <img src={post_image? this.state.uploadDir+"user_"+userProfile.id+"/thumbs/"+post_image: null} className="uk-float-left img_margin_right"/>
+        <p style={{paddingTop:3,paddingRight:10}}>{content}</p>
+        <small className="user_location post_timestamp" style={{margin:7}}>
+        <TimeAgo date={formatted} formatter= {formatter} />
+        </small>
+
         </a>
 
         </div>
@@ -1279,9 +1314,7 @@ loadChild(child){
     return (
 
       <div className="uk-container uk-container-center middle_content dashboad">
-         <div className="uk-grid dash_top_head">
-
-
+        <div className="uk-grid dash_top_head my_profile">
           <div className="uk-width-small-1-2">
             <div className="uk-grid uk-grid-small">
             <div className="uk-width-3-10 user_img_left">
@@ -1294,9 +1327,9 @@ loadChild(child){
 
 
             <div className="cont_post_btn">
-              <textarea placeholder="Post to geodex..." className="uk-width-1-1" ref="postContent"></textarea>
-            <a className="uk-button uk-button-primary uk-button-large" onClick={this.handleSavePost}>Post</a>
-            <i className="uk-icon-image" data-uk-modal="{target:'#statusImageModel'}" style={{cursor:"pointer"}}></i>
+              <textarea placeholder="Post to ambulist..." className="uk-width-1-1" onChange={this.handlePostMessage} ref="postContent"></textarea>
+              <a className="uk-button uk-button-primary uk-button-large" onClick={this.handleSavePost}>Post</a>
+              <div className="yt_img"><i data-uk-tooltip title="Upload Image" className="uk-icon-image" data-uk-modal="{target:'#statusImageModel'}" style={{cursor:"pointer"}} onClick={()=>this.setState({clickedYouTubeLink:null,clickedImageIcon:true,videoLink:null,image:null})}></i>
             </div>
 
             </div>
@@ -1315,8 +1348,7 @@ loadChild(child){
         <div className="uk-float-right">
         <label>Sort</label>
           <select name="sort" ref="sortFriends" onChange={this.handleChangeSort}>
-            <option>Please Select</option>
-            <option value="created">Recently added</option>
+            <option selected="true" value="created">Recent</option>
             <option value="first_name">First name</option>
             <option value="last_name">Last name</option>
             <option value="email">Email</option>
@@ -1327,7 +1359,9 @@ loadChild(child){
         </div>
           </div>
 
-            {this.renderFriendList()}
+              {this.renderFriendList()}
+
+
             {this.renderSendEmailModel()}
             {this.renderCategoryModel()}
             {this.renderStatusModel()}

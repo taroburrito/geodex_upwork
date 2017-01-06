@@ -1,7 +1,46 @@
 import React, { Component, PropTypes } from 'react';
 var Slider = require('react-slick');
-
+var ScrollbarWrapper = require('react-scrollbars').ScrollbarWrapper;
+var moment = require('moment');
+import TimeAgo from 'react-timeago';
 import ImageGallery from 'react-image-gallery';
+
+
+const formatter = (value, unit, suffix, rawTime) => {
+  var minunit = 'minute';
+  if (value > 1) {
+    minunit = 'minutes'
+  }
+  var counter = '';
+  var year = unit === ('year') ? value : 0
+  var month = unit === ('month') ? value : 0
+  var week = unit === ('week') ? value : 0
+  var day = unit === ('day') ? value : 0
+  var hour = unit === ('hour') ? value : 0
+  var minute = unit === ('minute') ? value : 0
+  var second = unit === ('second') ? value : 0
+  //console.log(week+ ' week' + day +' day'+ hour +' hour'+ minute +' minute'+ second +' second');
+
+  if(year==0 && month==0 && week==0 && day==0 && hour==0 && minute==0){
+     counter = 'Just now';
+  } else if(year==0 && month==0 && week==0 && day==0 && hour==0 && minute>0){
+     counter = `${minute} ${minunit} ago`;
+  }else if(year==0 && month==0 && week==0 && day==0 && hour>0){
+     counter = `${hour} ${unit} ago`;
+  }else if(year==0 && month==0 && week==0 && day==1){
+      var timestamp = moment(rawTime);
+      var formatted = timestamp.format('hh a');
+      counter = formatted+' Yesterday';
+  }else{
+    var timestamp = moment(rawTime);
+      var formatted = timestamp.format('DD MMM hh:mma');
+      counter = formatted;
+     //counter = '20 Dec 8:30pm';
+  }
+ // counter = `${day} days: ${hour} hour: ${minute} minute: ${second} seconds`
+
+  return counter;
+}
 
 export default class Profile extends Component {
 
@@ -33,6 +72,7 @@ export default class Profile extends Component {
        this.handleClickDenyRequest = this.handleClickDenyRequest.bind(this);
        this.handleClickPostComment = this.handleClickPostComment.bind(this);
        this.onSlide = this.onSlide.bind(this);
+
 
 
     }
@@ -203,7 +243,8 @@ export default class Profile extends Component {
             var postContent = item.content;
             var postImage;
             var postVideo;
-
+            var timestamp = moment(item.created);
+            var formatted = timestamp.format('YYYY-MM-DD HH:mm:ss');
             var post_image = item.image || item.youtube_image;
 
             // Image content
@@ -242,6 +283,9 @@ export default class Profile extends Component {
 
                     <img src={post_image? this.state.uploadDir+"user_"+item.user_id+"/thumbs/"+post_image: null} className="uk-float-left img_margin_right"/>
                     <p>{postContent}</p>
+                    <small className="user_location post_timestamp">
+                    <TimeAgo date={formatted} formatter= {formatter}  />
+                    </small>
                   </a>
 
              </div>
@@ -260,8 +304,16 @@ export default class Profile extends Component {
 
     }
 
-    // photos and videos of visited user.
-renderPhotosVideos(){
+
+    onClickPhotoVideo(postId, currentSlide){
+      this.setState({clickedPost:postId});
+        if(this._imageGallery){
+          this._imageGallery.slideToIndex(currentSlide-1);
+        }
+    }
+
+    // photos of visited user.
+renderPhotos(){
     const{visitedUser} = this.props;
     var posts = visitedUser.posts;
     var postContent = [];
@@ -270,15 +322,16 @@ renderPhotosVideos(){
       Object.keys(posts).map((postId)=>{
       //  console.log(posts[key]);
         var item = posts[postId];
-        if(item.image || item.youtube_image){
-        var post_img = item.image || item.youtube_image;
+
+        if(item.image){
+        var post_img = item.image;
         postContent.push(
 
           <div className="profile_post_photos">
 
-              <a href="#photosVideosModel"
-                //  onClick={this.loadPostContent.bind(this,item.id,item.user_id,null,null,i,null)}
-                  data-uk-modal>
+
+              <a href="#photoVideoSlider" onClick={this.onClickPhotoVideo.bind(this,item.id,i)} data-uk-modal>
+
                 <img src={this.state.uploadDir+'user_'+item.user_id+'/thumbs/'+post_img}/>
 
               </a>
@@ -316,6 +369,19 @@ imageSlideTo(e){
   this._imageGallery.slideToIndex(e);
 }
 
+_myImageGalleryRenderer(item) {
+    // your own image error handling
+    const onImageError = this._handleImageError;
+    return (
+      <div className='image-gallery-image'>
+        {item.video?<iframe src={item.video} height="500" width="700"/>:<img src={item.original}/>}
+
+
+
+      </div>
+    )
+  }
+
 renderFriendsPostImagesLargeSlider(user_id){
 
 
@@ -328,12 +394,11 @@ renderFriendsPostImagesLargeSlider(user_id){
        var item = posts[postId];
        var postContent = item.content;
        var postImageSrc = item.image?this.state.uploadDir+"user_"+item.user_id+"/"+item.image:null;
-       if(item.image || item.youtube_url)
+       if(item.image)
        postImgEle.push(
          {
            original:postImageSrc,
-           postId:item.id,
-           video:item.youtube_url,
+           postId:item.id
          }
 
        );
@@ -360,7 +425,7 @@ renderFriendsPostImagesLargeSlider(user_id){
         autoPlay={false}
         showPlayButton={false}
         showFullscreenButton={false}
-        //renderItem={this._myImageGalleryRenderer.bind(this)}
+        renderItem={this._myImageGalleryRenderer.bind(this)}
       //  showNav={false}
         //onClick={this.clickSlider}
         onImageLoad={this.imageSlideTo.bind(this,this.state.currentSlide)}
@@ -608,6 +673,7 @@ renderPostImageModal(){
     var imageContent = null;
   }
   return(
+    <div>
     <div id="postImageModel" className="uk-modal coment_popup">
         <div className="uk-modal-dialog uk-modal-dialog-blank">
         <button className="uk-modal-close uk-close" type="button"></button>
@@ -635,6 +701,34 @@ renderPostImageModal(){
             </div>
           </div>
       </div>
+    </div>
+    <div id="photoVideoSlider" className="uk-modal coment_popup">
+        <div className="uk-modal-dialog uk-modal-dialog-blank">
+        <button className="uk-modal-close uk-close" type="button"></button>
+          <div className="uk-grid">
+
+            <div className="uk-width-small-3-4 popup_img_left" ref="largeSliderContent">
+                  {this.renderFriendsPostImagesLargeSlider(this.props.profileId)}
+            </div>
+            <div className="uk-width-small-1-4 popup_img_right">
+
+            {this.loadPostByInfo(this.props.profileId,this.state.clickedPost)}
+            <h5 className="coment_heading">Comments</h5>
+            <ul className="uk-comment-list">
+            {this.renderComments(this.state.clickedPost)}
+                </ul>
+
+                <div className="comenting_form border-top_cf">
+            <img className="uk-comment-avatar" src={this.getProfileImage(user.profile_image,user.id)} alt="" width="40" height="40"/>
+            <textarea placeholder="Write Comment..." value={this.state.postComment} onChange={(e)=>this.setState({postComment:e.target.value})} ref="commentBox"></textarea>
+            <a onClick={this.handleClickPostComment} className="uk-button uk-button-primary comment_btn">Post</a>
+            </div>
+
+
+            </div>
+          </div>
+      </div>
+    </div>
     </div>
 );
 }
@@ -718,16 +812,25 @@ renderPostContentModal(){
           <div className="uk-container uk-container-center middle_content profile">
              <div className="uk-grid uk-grid-large profile_bottom">
 
-              <div className="uk-width-small-1-2 profile_gallery_left">
-              <h3>Photos and Videos</h3>
-              {this.renderPhotosVideos()}
+
+              <div className="uk-width-medium-1-2 profile_gallery_left">
+              <h3>Photos</h3>
+               <ScrollbarWrapper >
+                  <div>
+                      {this.renderPhotos()}
+                </div>
+              </ScrollbarWrapper>
               </div>
 
-              <div className="uk-width-small-1-2 profile_post_right">
+              <div className="uk-width-medium-1-2 profile_post_right">
               <h3>Recent Activity</h3>
+               <ScrollbarWrapper vertical={true} >
+                  <div>
+                    {this.renderPostsContent()}
+                </div>
+              </ScrollbarWrapper>
 
 
-              {this.renderPostsContent()}
               </div>
 
              </div>

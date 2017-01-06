@@ -30,7 +30,9 @@ render(){
   if(friendElement && friendElement.length > 0){
    return(
       <div className="uk-container uk-container-center middle_content dashboad">
+          <div className="uk-grid uk-grid-medium">
             {friendElement}
+          </div>
       </div>
     )
   }else {

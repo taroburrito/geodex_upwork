@@ -28,7 +28,7 @@ uploadPostImage:function(imageData,userId){
   var thumbs_dir = clientDir+"/user_"+userId+"/thumbs";
   var path = dir+"/"+name;
   var thumbs_path = thumbs_dir+"/"+name;
-  console.log(clientDir);
+  //console.log(clientDir);
 
   // check if dir already exists
   if(!fs.existsSync(dir)){
@@ -53,12 +53,54 @@ if(!fs.existsSync(thumbs_dir)){
     }
   return name;
 });
-
+//return name;
 // process image
 
-var thumbImage = processImage(path,thumbs_path);
+ var thumbImage = processImage(path,thumbs_path);
 
+   return name;
+},
+
+uploadProfileImage:function(imageData,userId){
+  var base64Data = imageData.replace(/^data:image\/\w+;base64,/, "");
+  var ext = imageData.split(';')[0].match(/jpg|jpeg|png|gif/)[0];
+  var name = Date.now()+"."+ext;
+
+  var dir = clientDir+"/user_"+userId;
+  var thumbs_dir = clientDir+"/user_"+userId+"/thumbs";
+  var path = dir+"/"+name;
+  var thumbs_path = thumbs_dir+"/"+name;
+  //console.log(clientDir);
+
+  // check if dir already exists
+  if(!fs.existsSync(dir)){
+    fs.mkdirSync(dir, 0766, function(err){
+        if(err){
+            console.log(err);
+        }
+    });
+}
+  // check if dir already exists
+if(!fs.existsSync(thumbs_dir)){
+  fs.mkdirSync(thumbs_dir, 0766, function(err){
+      if(err){
+          console.log(err);
+      }
+  });
+}
+
+  fs.writeFileSync(path, base64Data, 'base64',(err,data) => {
+    if(err){
+      return err;
+    }
   return name;
+});
+return name;
+// process image
+
+// var thumbImage = processImage(path,thumbs_path);
+
+//   return name;
 },
 
 
@@ -115,12 +157,42 @@ return name;
 
 function processImage(img,dest){
 
+  var x = 0; var y = 0;
 
   Jimp.read(img).then(function (image) {
   // do stuff with the image
   image.write(img);
-   image.resize(185,152)
-        .write(dest); // save
+ //resize large resolution image
+  if(image.bitmap.width> 1200 || image.bitmap.height>900){
+    if(image.bitmap.width < image.bitmap.height){
+           image.resize(Jimp.AUTO,600).write(img);
+    }else{
+          image.resize(800,Jimp.AUTO).write(img);
+    }
+  }
+  if (image.bitmap.width > image.bitmap.height ) {
+    y = 0;
+    x = (image.bitmap.width - image.bitmap.height) / 2;
+  //  var smallestSide = $height;
+  } else {
+    x = 0;
+    y = (image.bitmap.height - image.bitmap.width) / 2;
+  //  var smallestSide = $width;
+  }
+  console.log(x+"---"+y);
+    if (image.bitmap.width === image.bitmap.height ) {
+        if(image.bitmap.width>350){
+          image.resize(350,350);  
+        }else{
+          image.write(dest);
+        }
+        
+    }else if(image.bitmap.width > 450 || image.bitmap.height > 450){
+        image.crop(x,y, 350, 350 ).write(dest); // save
+    }else{
+        image.crop(0,50,180,150).write(dest); // save
+    }
+   
   }).catch(function (err) {
   return err;
   });
