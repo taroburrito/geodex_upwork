@@ -37,7 +37,7 @@ export default class Profile extends Component {
 
     }
     componentWillMount() {
-      console.log(this.props);
+      //console.log(this.props);
     }
     componentDidMount(){
 
@@ -47,7 +47,7 @@ export default class Profile extends Component {
 
       if(currentSlide){
         var current = parseInt(currentSlide) - 1;
-        console.log("current:"+current);
+        //console.log("current:"+current);
         //this.setState({loadPostContent:true})
         this.setState({currentSlide:current});
         if(this._imageGallery){
@@ -82,7 +82,7 @@ export default class Profile extends Component {
 
       this.props.postComment(req);
 
-      console.log(req);
+     // console.log(req);
 
     }
 
@@ -139,10 +139,6 @@ export default class Profile extends Component {
       var link;
       var denyLink = "";
       var LoggedInUserId = userAuthSession.userObject.id;
-      console.log("============111111111111=============");
-      console.log(LoggedInUserId);
-      console.log(profileId);
-      console.log("============111111111111=============");
       if(friendStatus){
 
       if(friendStatus.status == 1 && LoggedInUserId != profileId){
@@ -264,24 +260,25 @@ export default class Profile extends Component {
 
     }
 
-    // photos of visited user.
-renderPhotos(){
+    // photos and videos of visited user.
+renderPhotosVideos(){
     const{visitedUser} = this.props;
     var posts = visitedUser.posts;
-
     var postContent = [];
     if(posts){
       var i = 1;
       Object.keys(posts).map((postId)=>{
       //  console.log(posts[key]);
         var item = posts[postId];
-        if(item.image || item.youtube_image)
+        if(item.image || item.youtube_image){
         var post_img = item.image || item.youtube_image;
         postContent.push(
 
           <div className="profile_post_photos">
 
-              <a href="#postImageModel" onClick={this.loadPostContent.bind(this,item.id,item.user_id,null,null,i,null)} data-uk-modal>
+              <a href="#photosVideosModel"
+                //  onClick={this.loadPostContent.bind(this,item.id,item.user_id,null,null,i,null)}
+                  data-uk-modal>
                 <img src={this.state.uploadDir+'user_'+item.user_id+'/thumbs/'+post_img}/>
 
               </a>
@@ -289,6 +286,7 @@ renderPhotos(){
         </div>
       );
       i++;
+    }
       });
     }else{
       postContent.push(
@@ -314,7 +312,7 @@ onSlide(e){
 }
 
 imageSlideTo(e){
-  console.log("ee:"+e);
+  //console.log("ee:"+e);
   this._imageGallery.slideToIndex(e);
 }
 
@@ -555,6 +553,42 @@ Object.keys(newItem).forEach((id)=>{
   )
 }
 
+renderPhotosVideosSlider(){
+  const {profileId} = this.props;
+
+  return(
+    <div id="photosVideosModel" className="uk-modal coment_popup">
+        <div className="uk-modal-dialog uk-modal-dialog-blank">
+        <button className="uk-modal-close uk-close" type="button"></button>
+          <div className="uk-grid">
+
+            <div className="uk-width-small-3-4 popup_img_left" ref="largeSliderContent">
+              {this.renderFriendsPostImagesLargeSlider(profileId)}
+                  {/* {(this.state.postLargeImage || this.state.popupVideo)?
+                    {imageContent}:this.renderFriendsPostImagesLargeSlider(this.state.clickedUser)} */}
+            </div>
+            <div className="uk-width-small-1-4 popup_img_right">
+
+            {/* {this.loadPostByInfo(this.state.clickedUser,this.state.clickedPost)} */}
+            <h5 className="coment_heading">Comments</h5>
+            <ul className="uk-comment-list">
+            {/* {this.renderComments(this.state.clickedPost)} */}
+                </ul>
+
+                {/* <div className="comenting_form border-top_cf">
+            <img className="uk-comment-avatar" src={this.getProfileImage(user.profile_image,user.id)} alt="" width="40" height="40"/>
+            <textarea placeholder="Write Comment..." value={this.state.postComment} onChange={(e)=>this.setState({postComment:e.target.value})} ref="commentBox"></textarea>
+            <a onClick={this.handleClickPostComment} className="uk-button uk-button-primary comment_btn">Post</a>
+            </div> */}
+
+
+            </div>
+          </div>
+      </div>
+    </div>
+  )
+}
+
 renderPostImageModal(){
   const{userAuthSession} = this.props;
   var user = userAuthSession.userObject;
@@ -686,8 +720,7 @@ renderPostContentModal(){
 
               <div className="uk-width-small-1-2 profile_gallery_left">
               <h3>Photos and Videos</h3>
-
-              {this.renderPhotos()}
+              {this.renderPhotosVideos()}
               </div>
 
               <div className="uk-width-small-1-2 profile_post_right">
@@ -703,6 +736,7 @@ renderPostContentModal(){
         </div>
         {this.renderPostImageModal()}
         {this.renderPostContentModal()}
+        {this.renderPhotosVideosSlider()}
       </div>
 
       );

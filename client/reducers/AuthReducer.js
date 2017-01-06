@@ -81,7 +81,7 @@ export function updateUserInfo(userAuthState = defaultStartState , action) {
     case Update_Profile_Input_Success:
     var prevState = Object.assign({}, userAuthState);
     prevState.userObject = action.data;
-    console.log(prevState.userObject);
+   // console.log(prevState.userObject);
     return Object.assign({}, prevState,{
       isLoggedIn: true,
       fetchingAuthUpdate: false,
@@ -111,8 +111,8 @@ export function updateUserInfo(userAuthState = defaultStartState , action) {
       });
 
     case Checked_Session_Status:
-    console.log(action);
-    console.log("***");
+    //console.log(action);
+   // console.log("***");
       if (action.result.isLoggedIn){
         return Object.assign({}, userAuthState, {
           isLoggedIn: true,

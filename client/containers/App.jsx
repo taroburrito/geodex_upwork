@@ -24,7 +24,7 @@ class App extends Component {
   }
 
   render() {
-    console.log(this.props.userAuthSession);
+    //console.log(this.props.userAuthSession);
     var baseUrl = window.location.href.split('#')[0].split('/')[window.location.href.split('#')[0].split('/').length-1];
 
     // Injected by connect() call:
