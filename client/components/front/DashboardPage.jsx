@@ -103,6 +103,7 @@ export default class DashboardPage extends Component {
       scale:1,
       previewImageWidth:250,
       previewImageHeight:250,
+      postanimation:false
 
     }
   }
@@ -143,10 +144,14 @@ export default class DashboardPage extends Component {
   }
 
   loadPrevPost(postId,userId){
+    this.setState({postanimation:userId});
+    setTimeout(function() { this.setState({postanimation: false}); }.bind(this), 1000);
     this.props.onFetchPreviousPost(postId,userId);
   }
 
   loadNextPost(postId,userId){
+    this.setState({postanimation:userId});
+    setTimeout(function() { this.setState({postanimation: false}); }.bind(this), 1000);
     this.props.onFetchNextPost(postId,userId);
   }
 
@@ -808,11 +813,15 @@ _myImageGalleryRenderer(item) {
               </div>
             </div>
 
-            <div className="uk-width-small-1-2 post_control">
+            <div id="animateid" className={this.state.postanimation == user_id ?"uk-width-small-1-2 post_control animated fadeIn":"uk-width-small-1-2 post_control animated"}>
               <div>
+              <img src='/public/images/Loading_icon.gif' id={"loader_"+user_id} className="loadingPost"/>
                 <a href="#" className="post_txt_dashboard" data-uk-modal={post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={this.loadSinglePostContent.bind(this,item.post_id,user_id,postImage,item.post_content,postVideo)}>
                   <img src={post_image? this.state.uploadDir+"user_"+user_id+"/thumbs/"+post_image: null} className="uk-float-left img_margin_right"/>
-                  <p>{content}</p>
+                  <p>
+
+                  {content}
+                  </p>
                    <small className="user_location post_timestamp">
                    <TimeAgo date={formatted} formatter= {formatter}  />
                    </small>
@@ -826,7 +835,6 @@ _myImageGalleryRenderer(item) {
                 </p>
               </div>
             </div>
-
          </div>);
 
     });
