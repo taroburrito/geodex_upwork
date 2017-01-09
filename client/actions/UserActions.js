@@ -484,11 +484,11 @@ return(dispatch) => {
       dataType:'JSON',
       data:{postid:postid,userid:userid},
       beforeSend: function() {
-         // $(".loadingPost").show();
+          $("#loader_"+userid).show();
       }
     }).done(function(data){
      // console.log(data);
-    // $(".loadingPost").hide();
+    $("#loader_"+userid).hide();
       if(Object.keys(data).length === 0 && data.constructor === Object){
         dispatch(fetchNextPostFailed(userid));
       }else{
@@ -496,7 +496,7 @@ return(dispatch) => {
       }
       
     }).fail(function(error){
-    //  $(".loadingPost").hide();
+   $("#loader_"+userid).hide();
       dispatch(fetchNextPostFailed(userid));
     })
   }
