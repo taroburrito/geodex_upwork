@@ -186,13 +186,6 @@ export default class FeedsList extends Component {
           var post_image = post.image || post.youtube_image;
           var content = post.content;
 
-          // if(post_image && post.image){
-          //   var imgSrc = "uploads/images/user_"+post.user_id+"/"+post_image;
-          // }else if (post_image && post.youtube_image) {
-          //   var imgSrc = "uploads/images/user_"+post.user_id+"/thumbs/"+post_image;
-          // }else {
-          //   var imgSrc = null;
-          // }
 
 
           // Image content
