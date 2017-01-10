@@ -117,10 +117,11 @@ export default class LoginPage extends Component {
                  <div className="uk-form-row">
 
                    <div className="uk-text-small uk-pull-left f_r_p">
-                     <label className="uk-float-left"><input type="checkbox"/> Remember Me</label>
+                     {/*<label className="uk-float-left"><input type="checkbox"/> Remember Me</label>*/}
+                     <a className="uk-width-1-4 uk-button uk-button-primary uk-button-large" href="#" onClick={this.handleOnClickLogin}>Login</a>
                 <a className="uk-float-right uk-link uk-link-muted" data-uk-modal="{target:'#forget_pass'}">Forgot Password?</a>
                  </div>
-                  <a className="uk-width-1-1 uk-button uk-button-primary uk-button-large" href="#" onClick={this.handleOnClickLogin}>Login</a>
+                  
                  </div>
 
              </form>

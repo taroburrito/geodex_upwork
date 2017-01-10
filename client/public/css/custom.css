@@ -12,6 +12,7 @@
   width: 100%;
 }
 
+
 .banner_home {
   background: rgba(0, 0, 0, 0) url("../images/banner.jpg") no-repeat scroll center top / cover ;
   bottom: 0;
@@ -2123,9 +2124,43 @@ form.uk-search.search_dash_nav {
   max-width: 181px;
   padding: 5px;
 }
+
 .uk-width-large-1-1.feeds {
     background: #fff;
     margin-bottom: 10px;
     border: 1px solid #ccc;
     padding: 10px;
+}
+
+
+.uk-slidenav.uk-slidenav-previous {
+  background: none;
+  bottom: -19px;
+  left: 50%;
+  line-height: 32px;
+  text-align: center;
+  top: auto !important;
+  transform: rotate(270deg);
+  font-size:25px;
+}
+.uk-slidenav.uk-slidenav-next {
+  background: none;
+  left: 50% !important;
+  line-height: 32px;
+  text-align: center;
+  top: -19px;
+  transform: rotate(270deg);
+  font-size:25px;
+}
+.uk-slidenav.uk-slidenav-previous:hover{
+  background: rgba(0, 0, 0, 0.1) none repeat scroll 0 0;
+}
+.uk-slidenav.uk-slidenav-next:hover{
+  background: rgba(0, 0, 0, 0.1) none repeat scroll 0 0;
+}
+.loadingPost {
+    left: 50%;
+    position: absolute;
+    top: 35%;
+    display: none;
 }

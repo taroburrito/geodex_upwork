@@ -5,7 +5,9 @@ import { validateDisplayName } from '../../utilities/RegexValidators';
 var AvatarEditor = require('react-avatar-editor');
 var Slider = require('react-slick');
 var moment = require('moment');
-
+var ReactToastr = require("react-toastr");
+var {ToastContainer} = ReactToastr; // This is a React Element.
+var ToastMessageFactory = React.createFactory(ReactToastr.ToastMessage.animation);
 import ImageGallery from 'react-image-gallery';
 import CategoryList from './manage_category/CategoryList';
 import TimeAgo from 'react-timeago';
@@ -73,7 +75,7 @@ export default class DashboardPage extends Component {
     this.handlePostMessage = this.handlePostMessage.bind(this);
     this.handleCloseImagePopUp = this.handleCloseImagePopUp.bind(this);
     this.handleScale = this.handleScale.bind(this);
-
+    this.addAlert = this.addAlert.bind(this);
     this.state ={
       errorMessage: null,
     //  image: "public/images/user.jpg",
@@ -105,6 +107,7 @@ export default class DashboardPage extends Component {
       scale:1,
       previewImageWidth:250,
       previewImageHeight:250,
+      postanimation:false
 
     }
   }
@@ -136,6 +139,15 @@ export default class DashboardPage extends Component {
 
   }
 
+  addAlert (title,message) {
+     this.refs.container.error(
+      message,
+      title, {
+      timeOut: 3000,
+      extendedTimeOut: 1000
+    });
+    //window.open("http://youtu.be/3SR75k7Oggg");
+  }
   pauseAllYoutube(){
         $('iframe[src*="youtube.com"]').each(function() {
             var iframe = $(this)[0].contentWindow;
@@ -145,10 +157,14 @@ export default class DashboardPage extends Component {
   }
 
   loadPrevPost(postId,userId){
+    this.setState({postanimation:userId});
+    setTimeout(function() { this.setState({postanimation: false}); }.bind(this), 1000);
     this.props.onFetchPreviousPost(postId,userId);
   }
 
   loadNextPost(postId,userId){
+    this.setState({postanimation:userId});
+    setTimeout(function() { this.setState({postanimation: false}); }.bind(this), 1000);
     this.props.onFetchNextPost(postId,userId);
   }
 
@@ -201,7 +217,13 @@ export default class DashboardPage extends Component {
       status:1,
     }
 
-    this.props.postComment(req);
+    if(this.state.postComment==null){
+      this.addAlert("","type something to post comment...");
+    }else{
+      this.props.postComment(req);
+    }
+
+
 
     //console.log(req);
 
@@ -210,7 +232,7 @@ export default class DashboardPage extends Component {
   handleClickReplyComment(parent_id,post_id){
 
     //console.log("parent:"+parent_id);
-    this.setState({showCommentBox:null,replyContent:null,postComment:null});
+
 
     const{userAuthSession} = this.props;
     var req = {
@@ -220,8 +242,14 @@ export default class DashboardPage extends Component {
       post_id:post_id,
       status:1,
     }
+    if(this.state.replyContent==null){
+      this.addAlert("","type something to post comment...");
+    }else{
+      this.setState({showCommentBox:null,replyContent:null,postComment:null});
+      this.props.postComment(req);
+    }
 
-    this.props.postComment(req);
+    //this.props.postComment(req);
 
   }
 
@@ -328,7 +356,7 @@ export default class DashboardPage extends Component {
       image: null
     }
     if(!formData.content && !formData.image){
-      alert("enter text or image");
+      this.addAlert("","Upload image or type something to post...");
     }else {
       this.props.onClickSavePost(formData);
       this.setState({image:null,post_image:null,postMessage:null});
@@ -685,7 +713,7 @@ _myImageGalleryRenderer(item) {
                   <div className="comenting_form border-top_cf">
               <img className="uk-comment-avatar" src={this.getProfileImage(user.profile_image,user.id)} alt="" width="40" height="40"/>
               <textarea placeholder="Write Comment..." value={this.state.postComment} onChange={(e)=>this.setState({postComment:e.target.value})} ref="commentBox"></textarea>
-              <a onClick={this.handleClickPostComment} className="uk-button uk-button-primary comment_btn">Post</a>
+              <a onClick={this.handleClickPostComment} className="uk-button uk-button-primary comment_btn">Comment</a>
               </div>
 
 
@@ -746,7 +774,7 @@ loadMorePost(){
       var user_id = friends[key].id;
       var profile_link = "/user/"+user_id;
       var content = item.post_content;
-      console.log(item);
+      //console.log(item);
       if(item){
         var content_length = content.length;
         var post_image = item.post_image || item.youtube_image;
@@ -817,11 +845,21 @@ loadMorePost(){
               </div>
             </div>
 
+
             <div className="uk-width-small-1-2 post_control">
+
+
+            <div id="animateid" className={this.state.postanimation == user_id ?"uk-width-small-1-2 post_control animated fadeIn":"uk-width-small-1-2 post_control animated"}>
+
+
               <div>
+              <img src='/public/images/Loading_icon.gif' id={"loader_"+user_id} className="loadingPost"/>
                 <a href="#" className="post_txt_dashboard" data-uk-modal={post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={this.loadSinglePostContent.bind(this,item.post_id,user_id,postImage,item.post_content,postVideo)}>
                   <img src={post_image? this.state.uploadDir+"user_"+user_id+"/thumbs/"+post_image: null} className="uk-float-left img_margin_right"/>
-                  <p>{content}</p>
+                  <p>
+
+                  {content}
+                  </p>
                    <small className="user_location post_timestamp">
                    <TimeAgo date={formatted} formatter= {formatter}  />
                    </small>
@@ -835,7 +873,6 @@ loadMorePost(){
                 </p>
               </div>
             </div>
-
          </div>);
 
     });
@@ -989,7 +1026,7 @@ loadChild(child){
         <div className="comenting_form border-top_cf">
         <img className="uk-comment-avatar" src={this.getProfileImage(userAuthSession.userObject.profile_image,userAuthSession.userObject.id)} alt="" width="40" height="40"/>
         <textarea placeholder="Write Comment..."  value={this.state.replyContent} onChange={(e)=>this.setState({replyContent:e.target.value})}></textarea>
-        <a onClick={this.handleClickReplyComment.bind(this,item.id,item.post_id)} className="uk-button uk-button-primary comment_btn">Send</a>
+        <a onClick={this.handleClickReplyComment.bind(this,item.id,item.post_id)} className="uk-button uk-button-primary comment_btn">Reply</a>
         </div>
       );
     }else{
@@ -1114,7 +1151,7 @@ loadChild(child){
             <div className="comenting_form border-top_cf">
             <img className="uk-comment-avatar" src={this.getProfileImage(user.profile_image,user.id)} alt="" width="40" height="40"/>
             <textarea placeholder="Write Comment..." value={this.state.postComment} onChange={(e)=>this.setState({postComment:e.target.value})} ref="commentBox"></textarea>
-            <a onClick={this.handleClickPostComment} className="uk-button uk-button-primary comment_btn">Post</a>
+            <a onClick={this.handleClickPostComment} className="uk-button uk-button-primary comment_btn">Comment</a>
             </div>
 
 
@@ -1143,7 +1180,7 @@ loadChild(child){
       // Image content
       if(latestPost.image){
         if(content.length > 300){
-        content = content.substring(0,300).concat(' ...LoadMore');
+        content = content.substring(0,300).concat(' ...Read More');
         }else{
         content = content;
         }
@@ -1152,7 +1189,7 @@ loadChild(child){
       //Video Content
       else if (latestPost.youtube_image) {
         if(content.length > 300){
-        content = content.substring(0,300).concat(' ...LoadMore');
+        content = content.substring(0,300).concat(' ...Read More');
         }else{
         content = content;
         }
@@ -1426,8 +1463,12 @@ loadChild(child){
     return (
 
       <div className="uk-container uk-container-center middle_content dashboad">
+      <div>
+        <ToastContainer ref="container"
+                        toastMessageFactory={ToastMessageFactory}
+                        className="toast-top-right" />
 
-
+    </div>
          <div className="uk-grid dash_top_head my_profile">
 
 

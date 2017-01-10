@@ -452,17 +452,17 @@ return(dispatch) => {
       dataType:'JSON',
       data:{postid:postid,userid:userid},
       beforeSend: function() {
-          $(".loading").show();
+          $("#loader_"+userid).show();
       }
     }).done(function(data){
-      $(".loading").hide();
+        $("#loader_"+userid).hide();
       if(Object.keys(data).length === 0 && data.constructor === Object){
         dispatch(fetchPreviousPostFailed(userid));
       }else{
         dispatch(fetchPreviousPostSuccess(data));
       }
     }).fail(function(error){
-      $(".loading").hide();
+      $("#loader_"+userid).hide();
       dispatch(fetchPreviousPostFailed(userid));
     })
   }
@@ -484,11 +484,11 @@ return(dispatch) => {
       dataType:'JSON',
       data:{postid:postid,userid:userid},
       beforeSend: function() {
-          $(".loading").show();
+          $("#loader_"+userid).show();
       }
     }).done(function(data){
      // console.log(data);
-     $(".loading").hide();
+    $("#loader_"+userid).hide();
       if(Object.keys(data).length === 0 && data.constructor === Object){
         dispatch(fetchNextPostFailed(userid));
       }else{
@@ -496,7 +496,7 @@ return(dispatch) => {
       }
       
     }).fail(function(error){
-      $(".loading").hide();
+   $("#loader_"+userid).hide();
       dispatch(fetchNextPostFailed(userid));
     })
   }

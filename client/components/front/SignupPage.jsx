@@ -178,7 +178,7 @@ _handleKeyPress(e){
 
               <div className="uk-grid uk-grid-small">
                 <div className="uk-width-small-1-2">
-                    <Datetime inputProps={{name:"dateofbirth",placeholder:"Date of birth"}} onChange={(dob) => this.setDateofBirth(dob)}  input={true} className={"dob"} closeOnSelect={true} viewMode={"years"} timeFormat={false} dateFormat={'DD/MM/YYYY'}  />
+                    <Datetime inputProps={{name:"dateofbirth",placeholder:"Date of birth",readOnly:true}} onChange={(dob) => this.setDateofBirth(dob)}  className={"dob"} closeOnSelect={true} viewMode={"years"} timeFormat={false} dateFormat={'DD/MM/YYYY'}  />
                 </div>
 
             <div className="uk-width-small-1-2 gender_select">
