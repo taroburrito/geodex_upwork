@@ -278,7 +278,7 @@ __renderContent(){
               <div className="uk-width-medium-1-2">
                   <label className="uk-form-label" for="form-gs-a">Date of Birth</label>
                   <div className="uk-form-controls">
-                  <Datetime defaultValue={dob} inputProps={{name:"dateofbirth",placeholder:"Date of birth"}} onChange={(dob) => this.setDateofBirth(dob)}  input={true} className={"dob"} closeOnSelect={true} viewMode={"years"} timeFormat={false} dateFormat={'DD-MM-YYYY'}  />
+                  <Datetime defaultValue={dob} inputProps={{name:"dateofbirth",placeholder:"Date of birth",readOnly:true}} onChange={(dob) => this.setDateofBirth(dob)}  input={true} className={"dob"} closeOnSelect={true} viewMode={"years"} timeFormat={false} dateFormat={'DD-MM-YYYY'}  />
 
                   </div>
               </div>

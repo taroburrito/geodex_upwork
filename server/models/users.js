@@ -450,9 +450,10 @@ var userModel = {
               }else if (result.affectedRows === 1) {
 
                 // Send signup email to user
-                var content = '<b>Hello,</b><br/><p>Please click on the link below to verify and complete your signup.</p>' +
-                        '<br/><a href="'+baseUrl+'"/#/verifySignUp/' + data.token + '" target="_blank">Click here</a>';
-                var sendmail = sendMailToUser(data.verify_token,'admin@geodex.com',data.email,'Verify Signup',content);
+                //var content = '<b>Hello,</b><br/><p>Please click on the link below to verify and complete your signup.</p>' +
+                  //    '<br/><a href="'+baseUrl+'"/#/verifySignUp/' + data.token + '" target="_blank">Click here</a>';
+                var content = '<h3>Welcome to Ambulist</h3><br/><a href="'+baseUrl+'"/#/ target="_blank">Click here to login</a>';
+                var sendmail = sendMailToUser(data.verify_token,'admin@geodex.com',data.email,'Welcome to Ambulist',content);
                 if(sendmail == 'success'){
                   dbConnection.end(); return(callback({success: "Successfully sent verify signup email",status:200}));
                 }else{
@@ -891,9 +892,10 @@ var userModel = {
               dbConnection.end();
                 return(callback({userProfileData:userProfileData,status:200,posts:null,friendStatus:friendStatus}));
             }else{
-              var posts = {};
+              var posts = {}; var i = 0;
                   results.forEach(function (postIndex) {
-                  posts[postIndex.id] = userModel.convertRowsToUserProfileObject(postIndex);
+                  posts[i] = userModel.convertRowsToUserProfileObject(postIndex);
+                  i++;
               });
               dbConnection.end();
               return(callback({userProfileData:userProfileData,status:200,posts:posts,friendStatus:friendStatus}));
@@ -911,10 +913,10 @@ var userModel = {
     */
     sendEmailFromDashboard:function(data,callback){
       if (sendMailToUser('',data.from,data.to,data.subject,data.content)) {
-        dbConnection.end();
+        //dbConnection.end();
         return(callback({success:"Sent mail successfully", status:200}));
       }else{
-        dbConnection.end();
+        //dbConnection.end();
         return(callback({success:"Sent mail successfully", status:200}));
       }
     }

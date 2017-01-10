@@ -233,7 +233,7 @@ export default class Profile extends Component {
 // Posts of visited user.
     renderPostsContent(){
         const{visitedUser} = this.props;
-      var posts = visitedUser.posts;
+        var posts = visitedUser.posts;
 
         var postItem = [];
         if(posts){
@@ -306,6 +306,7 @@ export default class Profile extends Component {
     }
 
     onClickPhotoVideo(postId, currentSlide){
+      console.log('****-******-*****'); console.log(postId);
       this.setState({clickedPost:postId});
         if(this._imageGallery){
           this._imageGallery.slideToIndex(currentSlide-1);
@@ -318,13 +319,18 @@ export default class Profile extends Component {
 renderPhotos(){
     const{visitedUser} = this.props;
     var posts = visitedUser.posts;
-
+    
+    
     var postContent = [];
     if(posts){
       var i = 1;
       Object.keys(posts).map((postId)=>{
       //  console.log(posts[key]);
+
+      //var findPost = _.findKey(posts, function (o) { return o.id == action.data;})
         var item = posts[postId];
+        
+     // console.log(item);
         if(item.image){
         var post_img = item.image;
         postContent.push(
@@ -446,8 +452,8 @@ loadPostByInfo(userId,postId){
 
   const {visitedUser} = this.props;
   if(postId){
-
-    var post = visitedUser.posts[postId];
+    var findPost = _.findKey(visitedUser.posts, function (o) { return o.id == postId;})
+    var post = visitedUser.posts[findPost];
     var postContent = post.content;
   }else{
       var postContent = null;

@@ -15,7 +15,7 @@ import {
   updateDashboardFriendList,
   addCategory,
   setMessageToDefault,
-  sendEmailFromDashboar,
+  sendEmailFromDashboard,
   deleteCategory,
   updateCategoryById,
   fetchPreviousPost,
@@ -57,7 +57,7 @@ class HomePage extends Component{
           handleMessage={this.props.handleMessage}
           dashboardData={this.props.dashboardData}
           sendEmail={(to,from,content)=>
-          dispatch(sendEmail(to,from,content))}
+          dispatch(sendEmailFromDashboard(to,from,content))}
           postComment = {(req)=>dispatch(postComment(req))}
           onDeleteClick={Id => dispatch(deleteCategory(Id))}
           onChange={(id, value) => {dispatch(updateCategoryById(id,value))}}
