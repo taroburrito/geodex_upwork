@@ -177,7 +177,8 @@ export default class FeedsList extends Component {
 
     render() {
       const{posts} = this.props;
-
+      console.log(posts);
+      console.log("***")
       var postItem = [];
       if(posts){
 
@@ -231,7 +232,7 @@ export default class FeedsList extends Component {
 
                 <p>{content}</p>
               </a>
-  				<p className="time">3.25pm</p>
+  				{/* <p className="time">3.25pm</p> */}
   				</div>
       );
     });
