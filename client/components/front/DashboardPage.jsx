@@ -10,6 +10,8 @@ import ImageGallery from 'react-image-gallery';
 import CategoryList from './manage_category/CategoryList';
 import TimeAgo from 'react-timeago';
 
+import InfiniteScroll from 'react-infinite-scroller';
+
 
 const formatter = (value, unit, suffix, rawTime) => {
   var counter = '';
@@ -275,7 +277,11 @@ export default class DashboardPage extends Component {
 
   handleSavePostImage(){
     const{userAuthSession} = this.props;
+    if(!this.state.videoImage){
     var postImageSrc = this.refs.postImageSrc.getImage();
+  }else {
+    var postImageSrc = null;
+  }
     var formData = {
       user_id: userAuthSession.userObject.id,
       content: this.refs.postImageContent.getDOMNode().value.trim(),
@@ -723,7 +729,9 @@ _myImageGalleryRenderer(item) {
   }
 
 
-
+loadMorePost(){
+  console.log("Load more");
+}
 
   renderFriendList(){
 
@@ -779,7 +787,7 @@ _myImageGalleryRenderer(item) {
 
       var slider_images = this.renderFriendsPostImagesSmallSlider(user_id);
       friendsElement.push(
-          <div ref="animate"  className={this.state.animation ? "uk-grid dash_top_head dash_botom_list animated fadeIn":'uk-grid dash_top_head dash_botom_list animated'} id={item.id}>
+          <div ref="animate" key={key} className={this.state.animation ? "uk-grid dash_top_head dash_botom_list animated fadeIn":'uk-grid dash_top_head dash_botom_list animated'} id={item.id}>
 
             <div className="uk-width-small-1-2">
               <div className="uk-grid uk-grid-small">
@@ -809,7 +817,7 @@ _myImageGalleryRenderer(item) {
               </div>
             </div>
 
-            <div className="uk-width-small-1-2 post_control animated fadeIn">
+            <div className="uk-width-small-1-2 post_control">
               <div>
                 <a href="#" className="post_txt_dashboard" data-uk-modal={post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={this.loadSinglePostContent.bind(this,item.post_id,user_id,postImage,item.post_content,postVideo)}>
                   <img src={post_image? this.state.uploadDir+"user_"+user_id+"/thumbs/"+post_image: null} className="uk-float-left img_margin_right"/>
@@ -834,7 +842,20 @@ _myImageGalleryRenderer(item) {
 
     if(friendsElement && friendsElement.length > 0){
     return(
-      {friendsElement}
+      <div >
+    <InfiniteScroll
+        pageStart={0}
+        loadMore={this.loadMorePost.bind(this)}
+        threshold={150}
+        hasMore={true}
+        loader={<div className="loader">Loading ...</div>}
+
+        initialLoad={true}
+    >
+        {friendsElement}
+    </InfiniteScroll>
+</div>
+
 
     )
   }else {
@@ -1332,9 +1353,9 @@ loadChild(child){
           :null}
       {(this.state.image || this.state.videoLink) ?
           <div className="uk-modal-footer uk-text-right">
-                        <button className="uk-button uk-modal-close" type="button">Cancel</button>
-                        <input className="uk-button uk-button-primary uk-modal-close" type="button" onClick={this.handleSavePostImage} value="Save" />
-                    </div>
+              <button className="uk-button uk-modal-close" type="button">Cancel</button>
+              <input className="uk-button uk-button-primary uk-modal-close" type="button" onClick={this.handleSavePostImage} value="Save" />
+          </div>
 
       : null}
       </form>

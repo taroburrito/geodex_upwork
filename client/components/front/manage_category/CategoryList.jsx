@@ -16,7 +16,7 @@ export default class CategoryList extends Component {
     if(categories)
     Object.keys(categories).forEach( (categoryId) => {
       if(categories[categoryId].added_by != 'admin')
-      categoriesElements.push(<Category id={categoryId} onChangeInput={this.props.onChange} onDeleteClick={this.props.onDeleteClick}
+      categoriesElements.push(<Category key={categoryId} id={categoryId} onChangeInput={this.props.onChange} onDeleteClick={this.props.onDeleteClick}
                   {...categories[categoryId]}
 
               isSaved={true}

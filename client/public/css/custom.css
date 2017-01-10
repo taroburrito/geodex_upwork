@@ -1518,6 +1518,7 @@ form.uk-search.search_dash_nav {
   position: absolute;
   width: 100%;
 }
+
 .image-gallery-slide img {
   display: inline-block !important;
   float: none !important;
@@ -2121,4 +2122,10 @@ form.uk-search.search_dash_nav {
   margin-top: -2px;
   max-width: 181px;
   padding: 5px;
+}
+.uk-width-large-1-1.feeds {
+    background: #fff;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    padding: 10px;
 }

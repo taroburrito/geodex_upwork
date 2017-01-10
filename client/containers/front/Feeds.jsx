@@ -1,12 +1,11 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { Navigation } from 'react-router';
-import ManageFriendsWidget from '../../components/front/ManageFriendsWidget';
+
 import Home from '../../components/front/Home';
-import {clickedBlockUser, clickedDeleteFriend, changeFriendCat} from '../../actions/UserActions';
+import {fetchUniversalPosts} from '../../actions/PostActions';
+import FeedsWidget from '../../components/front/feeds/FeedsWidget';
 
-
-import { fetchFriendList, getCategoryByUserId } from '../../utilities/ServerSocket';
 
 
 export default class Feeds extends Component {
@@ -22,7 +21,11 @@ export default class Feeds extends Component {
 
       return(
         <div className="full_width">
-            <br/><br/><br/><h2>Feeds</h2>
+            <FeedsWidget
+              fetchAllPosts={()=>dispatch(fetchUniversalPosts())}
+              posts={this.props.universalPosts}
+              userAuthSession={this.props.userAuthSession}
+            />
         </div>
       );
     }else{
@@ -39,8 +42,8 @@ export default class Feeds extends Component {
 function select(state) {
   return {
     userAuthSession: state.userAuthSession,
-    friendsData: state.friendsListState,
-    categories: state.universalCategories
+    universalPosts:state.universalPosts,
+    
   };
 }
 

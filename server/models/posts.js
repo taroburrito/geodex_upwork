@@ -23,6 +23,7 @@ var postModel = {
   convertRowsToObject: function (rows) {
       var objString=JSON.stringify(rows);
       var obj=JSON.parse(objString);
+      console.log(obj)
       return obj;
 
   },
@@ -216,10 +217,55 @@ var postModel = {
           return(callback({error:"Error in post comment query",status:400}));
         }
       });
+    },
+
+    getUniversalPosts: function(callback){
+      var dbConnection = dbConnectionCreator();
+      var getUniversalPostsSql = constructUniversalPostsSql();
+
+
+      dbConnection.query(getUniversalPostsSql,function(error,results,fields){
+        if(error){
+
+          return(callback({error:error,status:400,query:constructUniversalPostsSql,message:"Error in get all posts"}));
+        }else if (results.length == 0) {
+
+          return(callback({error:"empty result",status:400,message:"No post to show"}));
+        }else{
+
+          var posts = [];
+          results.forEach(function (result) {
+            posts.push(postModel.convertRowsToObject(result));
+          //  posts['test'] = "testing";
+              // comments[result.id] = postModel.convertRowsToObject(result);
+          });
+          dbConnection.end();
+
+          return(callback({status:200,posts}));
+        }
+      })
     }
 
 
 };
+
+function constructCommentsByPostId(postId){
+  var sql = "Select * from gx_post_comments WHERE post_id="+postId;
+  return sql;
+}
+
+function constructUniversalPostsSql(){
+  var sql = "SELECT a.*,"+
+            "CONCAT(b.first_name, ' ', b.last_name) NAME,"+
+            "b.profile_image,b.address,b.user_id, c.email"+
+            " from gx_posts as a,"+
+            " gx_user_details as b,"+
+            " gx_users as c"+
+            " WHERE b.user_id = a.user_id"+
+            " AND c.id  = a.user_id"+
+            " ORDER BY a.id DESC LIMIT 30 ";
+  return sql;
+}
 
 function constructPostCommentSqlString(data){
   var timestamp = moment();

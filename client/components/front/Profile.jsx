@@ -3,8 +3,8 @@ var Slider = require('react-slick');
 var ScrollbarWrapper = require('react-scrollbars').ScrollbarWrapper;
 var moment = require('moment');
 import TimeAgo from 'react-timeago';
-import MasonryLayout from 'react-masonry-layout';
 import ImageGallery from 'react-image-gallery';
+import MasonryLayout from 'react-masonry-layout'
 
 
 const formatter = (value, unit, suffix, rawTime) => {
@@ -73,6 +73,7 @@ export default class Profile extends Component {
        this.handleClickDenyRequest = this.handleClickDenyRequest.bind(this);
        this.handleClickPostComment = this.handleClickPostComment.bind(this);
        this.onSlide = this.onSlide.bind(this);
+       this.loadMorePosts = this.loadMorePosts.bind(this);
 
 
 
@@ -312,7 +313,42 @@ export default class Profile extends Component {
         }
     }
 
+loadMorePosts(){
+  const{visitedUser} = this.props;
+  var posts = visitedUser.posts;
 
+  var postContent = [];
+  if(posts){
+    var i = 1;
+    Object.keys(posts).map((postId)=>{
+    //  console.log(posts[key]);
+      var item = posts[postId];
+      if(item.image){
+      var post_img = item.image;
+      postContent.push(
+
+        <div className="profile_post_photos">
+
+            <a href="#photoVideoSlider" onClick={this.onClickPhotoVideo.bind(this,item.id,i)} data-uk-modal>
+              <img src={this.state.uploadDir+'user_'+item.user_id+'/medium/'+post_img}/>
+
+            </a>
+
+      </div>
+    );
+    i++;
+  }
+    });
+  }else{
+    postContent.push(
+      <div><p>No post is found for this user.</p></div>
+    )
+  }
+
+  return(
+    {postContent}
+  )
+}
 
     // photos of visited user.
 renderPhotos(){
@@ -329,10 +365,10 @@ renderPhotos(){
         var post_img = item.image;
         postContent.push(
 
-          <div className="profile_post_photos">
+          <div className="profile_post_photos" >
 
               <a href="#photoVideoSlider" onClick={this.onClickPhotoVideo.bind(this,item.id,i)} data-uk-modal>
-                <img src={this.state.uploadDir+'user_'+item.user_id+'/medium/'+post_img}/>
+                <img className="grid-item" src={this.state.uploadDir+'user_'+item.user_id+'/medium/'+post_img}/>
 
               </a>
 
@@ -348,10 +384,9 @@ renderPhotos(){
     }
 
     return(
-      // <MasonryLayout
-      //   id="items">
-      {postContent}
-      // </MasonryLayout>
+
+{postContent}
+
     )
 
 }
@@ -779,13 +814,12 @@ renderPostContentModal(){
           <div className="uk-container uk-container-center middle_content profile">
              <div className="uk-grid uk-grid-large profile_bottom">
 
-              <div className="uk-width-medium-1-2 profile_gallery_left">
+              <div className="uk-width-medium-1-2 profile_post_left">
               <h3>Photos</h3>
-               <ScrollbarWrapper >
-                  <div>
+ <ScrollbarWrapper >
                       {this.renderPhotos()}
-                </div>
-              </ScrollbarWrapper>
+        </ScrollbarWrapper>
+
 
               </div>
 

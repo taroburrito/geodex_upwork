@@ -1,7 +1,8 @@
 import {Get_All_Posts,
         Post_Added_Success,
         Set_Comments_Null,
-        Fetch_Comment_Success
+        Fetch_Comment_Success,
+        Fetch_Universal_Posts_Success
       } from '../actions/PostActions';
 
 export function updatePostsList(postsListState={},action){
@@ -32,5 +33,15 @@ export function updateComments(postCommentsState={}, action){
         break;
     default:
       return postCommentsState;
+  }
+}
+
+export function updateFeeds(universalPosts={},action){
+  switch (action.type) {
+    case Fetch_Universal_Posts_Success:
+    return Object.assign({}, universalPosts,action.posts);
+      break;
+    default:
+    return universalPosts;
   }
 }

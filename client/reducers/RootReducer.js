@@ -5,7 +5,7 @@ import { updateProfileData,userProfileData, visitedUserData } from './ProfileRed
 import {getAllFriendsList, getUserData, getAllFriendsPosts, updateDashboardData, friendRequests, searchUsersResult} from './UserReducer';
 import { updateCategoryList, handleMessage} from './CategoryReducer';
 import { updatePagesList, getPageData } from './PageReducer';
-import { updatePostsList, updateComments} from './PostReducer';
+import { updatePostsList, updateComments,updateFeeds} from './PostReducer';
 import { handleFrontMessage} from './CommonReducer';
 import {updateUserList, viewProfile} from './AdminReducer';
 // import { Add_Todo, Complete_Todo, Set_Visibility_Filter, VisibilityFilters  } from '../actions/TodoActions';
@@ -45,6 +45,7 @@ const AppReducer = combineReducers({
   postComments: updateComments,
   userList:updateUserList,
   userProfile:viewProfile,
+  universalPosts:updateFeeds,
 
   //For viewing profiles.
   userProfileData:userProfileData,

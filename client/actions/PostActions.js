@@ -3,6 +3,7 @@ export const Post_Added_Success =  'Post_Added_Success';
 export const Post_Added_Dashboard_Success = 'Post_Added_Dashboard_Success';
 export const Set_Comments_Null = 'Set_Comments_Null';
 export const Fetch_Comment_Success = 'Fetch_Comment_Success';
+export const Fetch_Universal_Posts_Success = 'Fetch_Universal_Posts_Success';
 
 export function receivedAllposts(posts){
   return{type: Get_All_Posts, data:posts}
@@ -97,6 +98,31 @@ export function fetchCommentsByPost(postId){
       $(".loading").hide();
     }).fail(function(error){
       console.log("Fail comments");
+      console.log(error);
+      $(".loading").hide();
+    });
+  }
+}
+
+export function fetchUniversalPostsSuccess(posts){
+  return{type:Fetch_Universal_Posts_Success,posts}
+}
+
+export function fetchUniversalPosts(){
+  return(dispatch) =>{
+  //  dispatch(initializeComments());
+    $.ajax({
+      type:'GET',
+      url:'/api/v1/posts/getUniversalPosts/',
+
+    }).done(function(result){
+      if(result.error){
+
+      }else {
+        dispatch(fetchUniversalPostsSuccess(result.posts));
+      }
+    }).fail(function(error){
+      console.log("Fail posts");
       console.log(error);
       $(".loading").hide();
     });
