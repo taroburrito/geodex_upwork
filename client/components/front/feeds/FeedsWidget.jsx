@@ -12,7 +12,7 @@ export default class FeedsWidget extends Component {
       const{userAuthSession} = this.props;
       this.props.fetchAllPosts();
 
-      this.props.fetchCategories(userAuthSession.userObject.id);
+      //this.props.fetchCategories(userAuthSession.userObject.id);
     }
 
 
