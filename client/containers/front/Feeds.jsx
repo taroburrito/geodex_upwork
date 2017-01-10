@@ -4,6 +4,7 @@ import { Navigation } from 'react-router';
 
 import Home from '../../components/front/Home';
 import {fetchUniversalPosts} from '../../actions/PostActions';
+import {fetchCategoriesByUser} from '../../actions/CategoryActions';
 import FeedsWidget from '../../components/front/feeds/FeedsWidget';
 
 
@@ -23,8 +24,12 @@ export default class Feeds extends Component {
         <div className="full_width">
             <FeedsWidget
               fetchAllPosts={()=>dispatch(fetchUniversalPosts())}
+              fetchCategories={(userId)=>
+
+                dispatch(fetchCategoriesByUser(userId))}
               posts={this.props.universalPosts}
               userAuthSession={this.props.userAuthSession}
+              categories={this.props.categories}
             />
         </div>
       );
@@ -43,7 +48,8 @@ function select(state) {
   return {
     userAuthSession: state.userAuthSession,
     universalPosts:state.universalPosts,
-    
+    categories:state.universalCategories,
+
   };
 }
 

@@ -12,7 +12,7 @@ import ImageGallery from 'react-image-gallery';
 import CategoryList from './manage_category/CategoryList';
 import TimeAgo from 'react-timeago';
 
-import InfiniteScroll from 'react-infinite-scroller';
+//import InfiniteScroll from 'react-infinite-scroller';
 
 
 const formatter = (value, unit, suffix, rawTime) => {
@@ -846,8 +846,6 @@ loadMorePost(){
             </div>
 
 
-            <div className="uk-width-small-1-2 post_control">
-
 
             <div id="animateid" className={this.state.postanimation == user_id ?"uk-width-small-1-2 post_control animated fadeIn":"uk-width-small-1-2 post_control animated"}>
 
@@ -880,7 +878,7 @@ loadMorePost(){
     if(friendsElement && friendsElement.length > 0){
     return(
       <div >
-    <InfiniteScroll
+    {/* <InfiniteScroll
         pageStart={0}
         loadMore={this.loadMorePost.bind(this)}
         threshold={150}
@@ -890,7 +888,8 @@ loadMorePost(){
         initialLoad={true}
     >
         {friendsElement}
-    </InfiniteScroll>
+    </InfiniteScroll> */}
+    {friendsElement}
 </div>
 
 

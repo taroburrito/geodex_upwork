@@ -15,6 +15,13 @@ var categoryModel = {
             date_created: row.date_created
         };
     },
+    convertRowsToObject: function (rows) {
+        var objString=JSON.stringify(rows);
+        var obj=JSON.parse(objString);
+        console.log(obj)
+        return obj;
+
+    },
     createCategory: function (req, callback) {
         var dbConnection = dbConnectionCreator();
         var checkDuplicatEntry = constructCheckDuplicateEntry(req);
@@ -106,6 +113,30 @@ var categoryModel = {
             }
         });
     },
+    getAllCategoriesByUser: function (userId,callback) {
+        var dbConnection = dbConnectionCreator();
+        var sqlString = getAllCategoriesByUserSqlString(userId);
+        dbConnection.query(sqlString, function (error, results, fields) {
+
+            if (error) {
+              dbConnection.end();
+                return callback({error: error});
+            }else if (results.length === 0) {
+              return(callback({error:"No category found for this user",status:400}))
+            }
+
+
+             else {
+                var categories = [];
+                results.forEach(function (result) {
+                  categories.push(categoryModel.convertRowsToObject(result));
+
+                });
+                dbConnection.end();
+                return callback({success:"success category call", categories});
+            }
+        });
+    },
     getCategoryDetails: function (catId, callback) {
         var dbConnection = dbConnectionCreator();
         var sqlString = getCategoryDetailSqlString(catId);
@@ -162,6 +193,11 @@ function constructDeleteCategorySqlString(catId) {
 function getAllCategoriesSqlString() {
     var query = " SELECT * FROM gx_categories where status = 1 AND added_by = 'admin'";
     return query;
+}
+
+function getAllCategoriesByUserSqlString(userId){
+  var query = " SELECT * FROM gx_categories where status = 1 AND user_id="+userId+" OR added_by='admin'";
+  return query;
 }
 
 function getCategoryDetailSqlString(catId) {
