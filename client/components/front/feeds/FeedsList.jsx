@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { Navigation, Link } from 'react-router';
+import MasonryLayout from 'react-masonry-layout'
 
 //import InfiniteScroll from 'react-infinite-scroller';
 
@@ -16,7 +17,9 @@ export default class FeedsList extends Component {
           clickedPostVideo:null,
           active_cat:null,
           filter:'all',
-        }
+          animation:false,
+        },
+        this.handleFilterFeeds = this.handleFilterFeeds.bind(this);
 
     }
     componentWillMount() {
@@ -137,7 +140,13 @@ export default class FeedsList extends Component {
 
     sortByCategory(catId){
       const{userAuthSession} = this.props;
-      this.setState({active_cat: catId});
+      this.setState({active_cat: catId,animation:true});
+      setTimeout(function() { this.setState({animation: false}); }.bind(this), 1000);
+      if(!catId){
+        this.props.fetchUniversalPosts();
+      }else{
+      this.props.fetchPostByFriendsCategory(userAuthSession.userObject.id,catId);
+    }
       //this.props.fetchInitialData(userAuthSession.userObject.id, catId);
     }
 
@@ -163,24 +172,30 @@ export default class FeedsList extends Component {
       );
     }
 
+    handleFilterFeeds(){
+      var state = this.refs.filterFeeds.getDOMNode().value;
+      this.setState({filter:state,animation:true});
+        setTimeout(function() { this.setState({animation: false}); }.bind(this), 1000);
+    }
+
     renderSortContent(){
       return(
       <div className="uk-width-small-1-1 shortlist_menu">
         <ul>
-          <li onClick={()=>this.setState({filter:'all'})} className={this.state.filter === 'all'?'active_sm':''}>All</li>
-          <li onClick={()=>this.setState({filter:'photos'})} className={this.state.filter === 'photos'?'active_sm':''}>Photos</li>
+          <li onClick={this.filterFeeds.bind(this,'all')} className={this.state.filter === 'all'?'active_sm':''}>All</li>
+          <li onClick={this.filterFeeds.bind(this,'photos')} className={this.state.filter === 'photos'?'active_sm':''}>Photos</li>
         </ul>
       </div>
     )
     }
 
-
-    render() {
+    renderAllPosts(){
       const{posts} = this.props;
-      console.log(posts);
-      console.log("***")
+
       var postItem = [];
-      if(posts){
+      var len = Object.keys(posts).length;
+
+      if(posts && len > 0){
 
         Object.keys(posts).forEach((postId)=>{
           var post = posts[postId];
@@ -224,28 +239,139 @@ export default class FeedsList extends Component {
             var postImage = null;
           }
 
+
+
         postItem.push(
 
-          <div className="uk-width-large-1-1  feeds post_control uk-float-left">
-            <a href="#" data-uk-modal={post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={this.loadSinglePostContent.bind(this,post.id,post.user_id,postImage,post.content,postVideo)}>
-                <img src={imgSrc} className="uk-float-left img_margin_right"/>
+        <div className={this.state.animation?"feeds-box animated  fadeIn":"feeds-box animated"}>
+          <article className="uk-comment uk-comment-primary">
+            <header className=" feeds-header uk-grid-medium uk-flex-middle" uk-grid>
+              <div className="uk-width-auto">
+                <img className="uk-comment-avatar" src={this.getProfileImage(post.profile_image,post.user_id)} width="80" height="80" alt=""/>
+              </div>
+              <div className="uk-width-expand">
+                <h4 className="uk-comment-title uk-margin-remove"><Link to={"/user/"+post.user_id}>{post.NAME}</Link></h4>
+                <span className="feeds-address">{post.address}</span>
+                  <span className="feeds-address">{post.email}</span>
 
-                <p>{content}</p>
-              </a>
-  				{/* <p className="time">3.25pm</p> */}
-  				</div>
+                </div>
+              </header>
+              <div className="uk-comment-body">
+                <a href="#" data-uk-modal={post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={this.loadSinglePostContent.bind(this,post.id,post.user_id,postImage,post.content,postVideo)}>
+                  <div className="feed_img"><img src={imgSrc} className=""/></div>
+
+                  <p>{content}</p>
+                </a>
+              </div>
+            </article>
+          </div>
+
       );
+
     });
   }else{
       postItem.push(
         <div>No post to show</div>
       );
   }
+      return(
+        {postItem}
+      )
+    }
+    renderPhotos(){
+      const{posts} = this.props;
+
+      var postItem = [];
+      var len = Object.keys(posts).length;
+
+      if(posts && len > 0){
+        var i = 1;
+        Object.keys(posts).forEach((postId)=>{
+          var post = posts[postId];
+          var post_image = post.image || post.youtube_image;
+
+
+
+
+          // Image content
+          if(post_image && post.image){
+
+            var imgSrc = "uploads/images/user_"+post.user_id+"/medium/"+post_image;
+            var postVideo = null;
+            var postImage = "uploads/images/user_"+post.user_id+"/"+post_image;;
+          }
+          //Video Content
+          else if (post_image && post.youtube_image) {
+
+            var imgSrc = "uploads/images/user_"+post.user_id+"/thumbs/"+post_image;
+            var postVideo = post.youtube_url;
+            var postImage = null;
+          }
+
+          //text content
+          else {
+
+            var imgSrc = null;
+            var postVideo = null;
+            var postImage = null;
+          }
+
+
+          if(post_image){
+        postItem.push(
+
+        <div className={this.state.animation?" animated  fadeIn":" animated"}
+          // style={{
+          //   maxWidth: '250px',
+          //   height: `${i % 2 === 0 ? 3 * 50 : 150 }px`,
+          //   display: 'block',
+          //   background: 'rgba(0,0,0,0.7)'
+          // }}
+          >
+
+
+              <div className="feeds_photos">
+                <a href="#" data-uk-modal={post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={this.loadSinglePostContent.bind(this,post.id,post.user_id,postImage,null,postVideo)}>
+                  <div className="feed_img"><img src={imgSrc} className=""/></div>
+
+
+                </a>
+              </div>
+
+          </div>
+
+      );i++;
+    }
+
+    });
+  }else{
+      postItem.push(
+        <div>No post to show</div>
+      );
+  }
+      return(
+        <div className="feeds-box">
+        {/* <MasonryLayout
+      id="items" > */}
+
+
+        {postItem}
+
+    {/* </MasonryLayout> */}
+  </div>
+
+      )
+    }
+    render() {
+
           return (
             <div>
-              {this.renderSortContent()}
-              {/* {this.renderCategoriesContent()} */}
-              {postItem}
+              <select name="sort" ref="filterFeeds" onChange={this.handleFilterFeeds}>
+                <option selected="true" value="all">All</option>
+                <option value="photos">Photos</option>
+                </select>
+              {this.renderCategoriesContent()}
+              {this.state.filter == 'all'? this.renderAllPosts(): this.renderPhotos()}
               {this.postImageModal()}
               {this.postContentModal()}
             </div>

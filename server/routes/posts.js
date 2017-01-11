@@ -38,8 +38,15 @@ var setPostRoutes = function (router) {
     });
 
     router.get('/api/v1/posts/getUniversalPosts',function(req,res){
-    
+
       postModel.getUniversalPosts(function(result){
+        return res.json(result);
+      })
+    })
+
+    router.get('/api/v1/posts/getPostByFriendsCategory/:userId/:catId',function(req,res){
+
+      postModel.getPostByFriendsCategory(req.params.userId,req.params.catId,function(result){
         return res.json(result);
       })
     })

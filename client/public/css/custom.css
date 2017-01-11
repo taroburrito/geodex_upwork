@@ -2164,3 +2164,68 @@ form.uk-search.search_dash_nav {
     top: 35%;
     display: none;
 }
+
+
+.feeds-box article.uk-comment.uk-comment-primary {
+    float: none;
+    margin: 0 auto;
+    min-width: 300px;
+    background: #fff;
+    border: 1px solid #E5E5E5;
+    padding: 8px;
+    width: 50%;
+    margin-bottom: 20px;
+    display: inline-block;
+}
+
+.feeds-box article.uk-comment.uk-comment-primary .uk-comment-body img {
+    max-width: 100%;
+}
+.feeds-box header.feeds-header.uk-grid-medium.uk-flex-middle {
+    margin-bottom: 9px!important;
+    padding: 0;
+    border-bottom: 1px solid #eeeeee;
+    float: left;
+    width: 99%;
+    margin: 0;
+    padding-bottom: 8px;
+    text-align: left;
+}
+.feeds-box span.feeds-address {
+    font-size: 11px;
+    display: block;
+}
+
+.feeds-box header.feeds-header.uk-grid-medium.uk-flex-middle  .uk-width-auto {
+    padding-left: 0;
+}
+
+
+.feeds-box {
+    float: left;
+    width: 100%;
+    text-align: center;
+}
+
+.feed_img {
+  float: left;
+  width:100%;
+  text-align: center;
+}
+
+
+.feeds-box  .middle_content p {
+    width: 100%;
+    float: left;
+    margin-top: 0px;
+}
+.feeds-box h4.uk-comment-title.uk-margin-remove a{
+color: #333;
+text-transform: capitalize;
+}
+
+.feeds_photos {
+    float: left;
+    margin: 1%;
+    width: 23%;
+}

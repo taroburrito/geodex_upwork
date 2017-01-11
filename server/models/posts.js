@@ -244,10 +244,55 @@ var postModel = {
           return(callback({status:200,posts}));
         }
       })
-    }
+    },
+
+    getPostByFriendsCategory: function(userId,catId,callback){
+      var dbConnection = dbConnectionCreator();
+      
+      var getPostsByFriendsSql = constructPostsByFriendsSql(userId,catId);
+      //return(callback(query:constructPostsByFriendsSql));
+
+
+      dbConnection.query(getPostsByFriendsSql,function(error,results,fields){
+        if(error){
+
+          return(callback({error:error,status:400,query:constructPostsByFriendsSql,message:"Error in get all posts"}));
+        }else if (results.length == 0) {
+
+          return(callback({error:"empty result",status:400,message:"No post to show"}));
+        }else{
+
+          var posts = [];
+          results.forEach(function (result) {
+            posts.push(postModel.convertRowsToObject(result));
+          //  posts['test'] = "testing";
+              // comments[result.id] = postModel.convertRowsToObject(result);
+          });
+          dbConnection.end();
+
+          return(callback({status:200,posts}));
+        }
+      })
+    },
+
+
 
 
 };
+function constructPostsByFriendsSql(userId,catId){
+  var sql = "SELECT a.*,"+
+            "CONCAT(b.first_name, ' ', b.last_name) NAME,"+
+            "b.profile_image,b.address,b.user_id, c.email"+
+            " from gx_posts as a,"+
+            " gx_user_details as b,"+
+            " gx_users as c"+
+            " WHERE a.user_id IN (SELECT friend_id FROM `gx_friends_category` WHERE user_id ='"+userId+"'  AND category_id = '"+catId+"') AND b.user_id = a.user_id"+
+            " AND c.id  = a.user_id"+
+            " ORDER BY a.id DESC LIMIT 100 ";
+
+            return sql;
+
+}
 
 function constructCommentsByPostId(postId){
   var sql = "Select * from gx_post_comments WHERE post_id="+postId;
@@ -263,7 +308,7 @@ function constructUniversalPostsSql(){
             " gx_users as c"+
             " WHERE b.user_id = a.user_id"+
             " AND c.id  = a.user_id"+
-            " ORDER BY a.id DESC LIMIT 30 ";
+            " ORDER BY a.id DESC LIMIT 100 ";
   return sql;
 }
 
