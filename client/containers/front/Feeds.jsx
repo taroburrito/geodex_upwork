@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Navigation } from 'react-router';
 
 import Home from '../../components/front/Home';
-import {fetchUniversalPosts,fetchPostByFriendsCategory} from '../../actions/PostActions';
+import {fetchUniversalPosts,fetchPostByFriendsCategory,fetchCommentsByPost,postComment} from '../../actions/PostActions';
 import {fetchCategoriesByUser} from '../../actions/CategoryActions';
 import FeedsWidget from '../../components/front/feeds/FeedsWidget';
 
@@ -29,6 +29,10 @@ export default class Feeds extends Component {
               posts={this.props.universalPosts}
               userAuthSession={this.props.userAuthSession}
               categories={this.props.categories}
+              fetchComments={(postId)=>
+              dispatch(fetchCommentsByPost(postId))}
+              comments={this.props.comments}
+              postComment = {(req)=>dispatch(postComment(req))}
             />
         </div>
       );
@@ -48,6 +52,7 @@ function select(state) {
     userAuthSession: state.userAuthSession,
     universalPosts:state.universalPosts,
     categories:state.universalCategories,
+    comments:state.postComments,
 
   };
 }

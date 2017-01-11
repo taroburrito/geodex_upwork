@@ -32,6 +32,9 @@ export default class FeedsWidget extends Component {
                userAuthSession={this.props.userAuthSession}
                fetchPostByFriendsCategory={this.props.fetchPostByFriendsCategory}
                fetchUniversalPosts={this.props.fetchAllPosts}
+               fetchComments={this.props.fetchComments}
+               comments={this.props.comments}
+               postComment={this.props.postComment}
                />
             </div>
 

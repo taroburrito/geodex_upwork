@@ -18,9 +18,13 @@ export default class FeedsList extends Component {
           active_cat:null,
           filter:'all',
           animation:false,
+          postComment:null,
+          replyContent:null,
         },
         this.handleFilterFeeds = this.handleFilterFeeds.bind(this);
         this.handleCloseImagePopUp = this.handleCloseImagePopUp.bind(this);
+        this.handleClickPostComment = this.handleClickPostComment.bind(this);
+        this.handleClickReplyComment = this.handleClickReplyComment.bind(this);
 
     }
     componentWillMount() {
@@ -32,9 +36,58 @@ export default class FeedsList extends Component {
       this.setState({clickedPostImage:null,clickedPostVideo:null})
     }
 
+    handleClickPostComment(){
+
+      const{userAuthSession} = this.props;
+      this.refs.commentBox.getDOMNode().value = "";
+      this.setState({replyContent:null,postComment:null});
+      var req = {
+        comment: this.state.postComment,
+        parent_id:'',
+        user_id: userAuthSession.userObject.id,
+        post_id:this.state.clickedPost,
+        status:1,
+      }
+
+      if(this.state.postComment==null){
+        this.addAlert("","type something to post comment...");
+      }else{
+        this.props.postComment(req);
+      }
+
+
+
+      //console.log(req);
+
+    }
+
+    handleClickReplyComment(parent_id,post_id){
+
+      //console.log("parent:"+parent_id);
+
+
+      const{userAuthSession} = this.props;
+      var req = {
+        comment: this.state.replyContent,
+        parent_id:parent_id,
+        user_id: userAuthSession.userObject.id,
+        post_id:post_id,
+        status:1,
+      }
+      if(this.state.replyContent==null){
+        this.addAlert("","type something to post comment...");
+      }else{
+        this.setState({showCommentBox:null,replyContent:null,postComment:null});
+        this.props.postComment(req);
+      }
+
+      //this.props.postComment(req);
+
+    }
+
     loadSinglePostContent(postId,userId,popupImage,popupContent,postVideo){
 
-      //this.props.fetchComments(postId);
+      this.props.fetchComments(postId);
 
       this.setState({
         clickedPostImage:popupImage,
@@ -44,6 +97,155 @@ export default class FeedsList extends Component {
         clickedUser:userId
       });
 
+    }
+
+    buildHierarchy(arry) {
+
+       var roots = [], children = {};
+
+       // find the top level nodes and hash the children based on parent
+       for (var i = 0, len = arry.length; i < len; ++i) {
+             var item = arry[i];
+               var p = item.parent_id;
+
+               var target = !p ? roots : (children[p] || (children[p] = []));
+
+           target.push({ value: item });
+       }
+
+       // function to recursively build the tree
+       var findChildren = function(parent) {
+           if (children[parent.value.id]) {
+               parent.children = children[parent.value.id];
+               for (var i = 0, len = parent.children.length; i < len; ++i) {
+                   findChildren(parent.children[i]);
+               }
+           }
+       };
+
+       // enumerate through to handle the case where there are multiple roots
+       for (var i = 0, len = roots.length; i < len; ++i) {
+           findChildren(roots[i]);
+       }
+
+       return roots;
+   }
+
+   loadChild(child){
+     const{userAuthSession} = this.props;
+     var childElement = [];
+     if(child)
+     Object.keys(child).forEach((id)=>{
+       var item = child[id]['value'];
+
+       var childArr = child[id]['children'];
+
+       if(this.state.showCommentBox == item.id){
+         var commentBox = (
+           <div className="comenting_form border-top_cf">
+           <img className="uk-comment-avatar" src={this.getProfileImage(userAuthSession.userObject.profile_image,userAuthSession.userObject.id)} alt="" width="40" height="40"/>
+           <textarea placeholder="Write Comment..."  value={this.state.replyContent} onChange={(e)=>this.setState({replyContent:e.target.value})}></textarea>
+           <a onClick={this.handleClickReplyComment.bind(this,item.id,item.post_id)} className="uk-button uk-button-primary comment_btn">Reply</a>
+           </div>
+         );
+       }else{
+         var commentBox = "";
+       }
+
+
+       childElement.push(
+         <li>
+             <article className="uk-comment">
+                 <header className="uk-comment-header">
+                     <img className="uk-comment-avatar" src={this.getProfileImage(item.profile_image,item.user_id)} alt="" width="40" height="40"/>
+                     <h4 className="uk-comment-title">{item.NAME}</h4>
+                     <div className="uk-comment-meta"><span>{item.email}</span> | {item.address}</div>
+                 </header>
+                 <div className="uk-comment-body">
+                     <p>{item.comment}</p>
+                 </div>
+             </article>
+             <a onClick={()=>this.setState({showCommentBox:item.id,replyContent:null})} className="reply_to_c">Reply</a>
+             {commentBox}
+
+             <ul>
+             {this.loadChild(childArr)}
+           </ul>
+         </li>
+       );
+     });
+     return(
+       {childElement}
+     )
+   }
+
+    renderComments(postId){
+      const{comments,userAuthSession} = this.props;
+
+      var commentElement = [];
+      if(comments){
+      var newArr = [];
+      Object.keys(comments).forEach((id)=>{
+        var item = comments[id];
+        newArr.push(item);
+      });
+
+    }else{
+      //commentElement = (<div>No comments yet</div>);
+    }
+    var newItem = null;
+    if(newArr){
+      newItem = this.buildHierarchy(newArr);
+
+    }
+
+    if(newItem)
+    Object.keys(newItem).forEach((id)=>{
+      var item = newItem[id]['value'];
+      var child = newItem[id]['children'];
+      if(child){
+
+      }
+      if(this.state.showCommentBox == item.id){
+        var commentBox = (
+          <div className="comenting_form border-top_cf">
+          <img className="uk-comment-avatar" src={this.getProfileImage(userAuthSession.userObject.profile_image,userAuthSession.userObject.id)} alt="" width="40" height="40"/>
+          <textarea placeholder="Write Comment..."  value={this.state.replyContent} onChange={(e)=>this.setState({replyContent:e.target.value})}></textarea>
+          <a onClick={this.handleClickReplyComment.bind(this,item.id,item.post_id)} className="uk-button uk-button-primary comment_btn">Reply</a>
+          </div>
+        );
+      }else{
+        var commentBox = "";
+      }
+
+      commentElement.push(
+        <li>
+            <article className="uk-comment">
+                <header className="uk-comment-header">
+                    <img className="uk-comment-avatar" src={this.getProfileImage(item.profile_image,item.user_id)} alt="" width="40" height="40"/>
+                    <h4 className="uk-comment-title">{item.NAME}</h4>
+                    <div className="uk-comment-meta"><span>{item.email}</span> | {item.address}</div>
+                </header>
+                <div className="uk-comment-body">
+                    <p>{item.comment}</p>
+                </div>
+            </article>
+            <a onClick={()=>this.setState({showCommentBox:item.id,replyContent:null})} className="reply_to_c">Reply</a>
+            {commentBox}
+
+            <ul>
+              {this.loadChild(child)}
+            </ul>
+
+      </li>
+    );
+  });
+
+
+      return(
+        {commentElement}
+
+      )
     }
 
     getProfileImage(img,userId){
@@ -84,6 +286,8 @@ export default class FeedsList extends Component {
     }
 
     postImageModal(){
+      const{userAuthSession} = this.props;
+      var user = userAuthSession.userObject;
       return(
         <div id="postImageModel" className="uk-modal coment_popup">
             <div className="uk-modal-dialog uk-modal-dialog-blank">
@@ -101,14 +305,14 @@ export default class FeedsList extends Component {
                   {this.loadPostByInfo(this.state.clickedUser,this.state.clickedPost)}
                   <h5 className="coment_heading">Comments</h5>
                   <ul className="uk-comment-list">
-                    {/* {this.renderComments(this.state.clickedPost)} */}
+                    {this.renderComments(this.state.clickedPost)}
                   </ul>
 
-                    {/* <div className="comenting_form border-top_cf">
+                    <div className="comenting_form border-top_cf">
                       <img className="uk-comment-avatar" src={this.getProfileImage(user.profile_image,user.id)} alt="" width="40" height="40"/>
                       <textarea placeholder="Write Comment..." value={this.state.postComment} onChange={(e)=>this.setState({postComment:e.target.value})} ref="commentBox"></textarea>
                       <a onClick={this.handleClickPostComment} className="uk-button uk-button-primary comment_btn">Post</a>
-                    </div> */}
+                    </div>
 
 
                 </div>
@@ -119,6 +323,8 @@ export default class FeedsList extends Component {
     }
 
     postContentModal(){
+      const{userAuthSession} = this.props;
+      var user = userAuthSession.userObject;
       return(
         <div id="postContentModel" className="uk-modal coment_popup">
             <div className="uk-modal-dialog uk-modal-dialog-blank">
@@ -131,15 +337,15 @@ export default class FeedsList extends Component {
               {this.loadPostByInfo(this.state.clickedUser,this.state.clickedPost)}
                 <h5 className="coment_heading">Comments</h5>
                 <ul className="uk-comment-list" ref="commentsul">
-                  {/* {this.renderComments(this.state.clickedPost)} */}
+                  {this.renderComments(this.state.clickedPost)}
                 </ul>
 
 
-              {/* <div className="comenting_form border-top_cf">
+              <div className="comenting_form border-top_cf">
               <img className="uk-comment-avatar" src={this.getProfileImage(user.profile_image,user.id)} alt="" width="40" height="40"/>
               <textarea placeholder="Write Comment..." value={this.state.postComment} onChange={(e)=>this.setState({postComment:e.target.value})} ref="commentBox"></textarea>
               <a onClick={this.handleClickPostComment} className="uk-button uk-button-primary comment_btn">Post</a>
-              </div> */}
+              </div>
 
 
           </div>
@@ -174,11 +380,9 @@ export default class FeedsList extends Component {
 
 
       return (
-        <div className="uk-width-small-1-1 shortlist_menu">
-          <ul>
+
             {categoriesElement}
-          </ul>
-        </div>
+
 
       );
     }
@@ -377,11 +581,18 @@ export default class FeedsList extends Component {
 
           return (
             <div>
-              <select name="sort" ref="filterFeeds" onChange={this.handleFilterFeeds}>
-                <option selected="true" value="all">All</option>
-                <option value="photos">Photos</option>
-                </select>
+              <div className="uk-width-small-1-1 shortlist_menu">
+                <ul>
               {this.renderCategoriesContent()}
+                </ul>
+              <div className="uk-float-right">
+              <label>Filter</label>
+                <select name="sort" ref="filterFeeds" onChange={this.handleFilterFeeds}>
+                  <option selected="true" value="all">All</option>
+                  <option value="photos">Photos</option>
+                  </select>
+              </div>
+            </div>
               {this.state.filter == 'all'? this.renderAllPosts(): this.renderPhotos()}
               {this.postImageModal()}
               {this.postContentModal()}

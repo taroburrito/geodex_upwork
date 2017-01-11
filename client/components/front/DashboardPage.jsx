@@ -1504,7 +1504,7 @@ loadChild(child){
              <li onClick={this.sortByAllCategory} className={this.state.active_cat == 'all'?"active_sm":''}>All</li>
              {this.renderCategoriesContent()}
 
-        </ul>
+           </ul>
         <div className="uk-float-right">
         <label>Sort</label>
           <select name="sort" ref="sortFriends" onChange={this.handleChangeSort}>
