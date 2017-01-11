@@ -31,7 +31,13 @@ export default class FeedsList extends Component {
 
       //this.props.fetchComments(postId);
 
-      this.setState({clickedPostImage:popupImage,clickedPostContent:popupContent,clickedPostVideo:postVideo,clickedPost:postId,clickedUser:userId});
+      this.setState({
+        clickedPostImage:popupImage,
+        // clickedPostContent:popupContent,
+        // clickedPostVideo:postVideo,
+        // clickedPost:postId,
+        // clickedUser:userId
+      });
 
     }
 
