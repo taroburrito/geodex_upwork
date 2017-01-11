@@ -22,7 +22,7 @@ export default class FeedsWidget extends Component {
             <div className="uk-container uk-container-center middle_content ">
 			        <div className="uk-grid uk-grid-large">
                 	<div className="uk-width-large-1-1">
-				                <h3>Feeds</h3>
+				                
                   </div>
 
 				    </div>

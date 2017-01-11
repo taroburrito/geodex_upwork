@@ -29,7 +29,7 @@ export function updateComments(postCommentsState={}, action){
       break;
 
       case Fetch_Comment_Success:
-
+        console.log(action.comments);
         return Object.assign({}, action.comments);
         break;
     default:

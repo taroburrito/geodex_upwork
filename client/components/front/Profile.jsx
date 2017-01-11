@@ -85,6 +85,30 @@ export default class Profile extends Component {
 
     }
 
+    handleClickReplyComment(parent_id,post_id){
+
+      //console.log("parent:"+parent_id);
+
+
+      const{userAuthSession} = this.props;
+      var req = {
+        comment: this.state.replyContent,
+        parent_id:parent_id,
+        user_id: userAuthSession.userObject.id,
+        post_id:post_id,
+        status:1,
+      }
+      if(this.state.replyContent==null){
+        this.addAlert("","type something to post comment...");
+      }else{
+        this.setState({showCommentBox:null,replyContent:null,postComment:null});
+        this.props.postComment(req);
+      }
+
+      //this.props.postComment(req);
+
+    }
+
     loadPostContent(postId,userId,popupImage,popupContent,currentSlide,postVideo){
 
       if(currentSlide){
@@ -307,11 +331,14 @@ export default class Profile extends Component {
     }
 
     onClickPhotoVideo(postId, currentSlide){
-      console.log('****-******-*****'); console.log(postId);
+
+
+
       this.setState({clickedPost:postId});
         if(this._imageGallery){
           this._imageGallery.slideToIndex(currentSlide-1);
         }
+        this.props.fetchComments(postId);
     }
 
 loadMorePosts(){
@@ -355,8 +382,8 @@ loadMorePosts(){
 renderPhotos(){
     const{visitedUser} = this.props;
     var posts = visitedUser.posts;
-    
-    
+
+
     var postContent = [];
     if(posts){
       var i = 1;
@@ -365,7 +392,7 @@ renderPhotos(){
 
       //var findPost = _.findKey(posts, function (o) { return o.id == action.data;})
         var item = posts[postId];
-        
+
      // console.log(item);
         if(item.image){
         var post_img = item.image;
@@ -400,9 +427,11 @@ renderPhotos(){
 onSlide(e){
   //React.unmountComponentAtNode(document.getElementById('test'));
     //this._imageGallery.slideToIndex(e);
+    if(this._imageGallery){
   var postId = this._imageGallery.props.items[e].postId;
   this.setState({clickedPost:postId});
   this.props.fetchComments(postId);
+}
   //this.loadPostContent(postId,this.state.clickedUser,null,null,e);
 
 
@@ -450,12 +479,7 @@ renderFriendsPostImagesLargeSlider(user_id){
 
 
      });
-
-
-
-
-
-    return(
+     return(
       <div>
         <ImageGallery
         ref={i => this._imageGallery = i}
@@ -559,7 +583,7 @@ loadChild(child){
      var commentBox = (
        <div className="comenting_form border-top_cf">
        <img className="uk-comment-avatar" src={this.getProfileImage(userAuthSession.userObject.profile_image,userAuthSession.userObject.id)} alt="" width="40" height="40"/>
-       <textarea placeholder="Write Comment..."  value={this.state.replyContent} onChange={(e)=>this.setState({replyContent:e.target.value})}></textarea>
+       <textarea placeholder="Reply comment..."  value={this.state.replyContent} onChange={(e)=>this.setState({replyContent:e.target.value})}></textarea>
        <a onClick={this.handleClickReplyComment.bind(this,item.id,item.post_id)} className="uk-button uk-button-primary comment_btn">Send</a>
        </div>
      );
@@ -624,7 +648,7 @@ Object.keys(newItem).forEach((id)=>{
     var commentBox = (
       <div className="comenting_form border-top_cf">
       <img className="uk-comment-avatar" src={this.getProfileImage(userAuthSession.userObject.profile_image,userAuthSession.userObject.id)} alt="" width="40" height="40"/>
-      <textarea placeholder="Write Comment..."  value={this.state.replyContent} onChange={(e)=>this.setState({replyContent:e.target.value})}></textarea>
+      <textarea placeholder="Reply Comment..."  value={this.state.replyContent} onChange={(e)=>this.setState({replyContent:e.target.value})}></textarea>
       <a onClick={this.handleClickReplyComment.bind(this,item.id,item.post_id)} className="uk-button uk-button-primary comment_btn">Reply</a>
       </div>
     );
