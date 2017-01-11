@@ -20,11 +20,16 @@ export default class FeedsList extends Component {
           animation:false,
         },
         this.handleFilterFeeds = this.handleFilterFeeds.bind(this);
+        this.handleCloseImagePopUp = this.handleCloseImagePopUp.bind(this);
 
     }
     componentWillMount() {
       const{userAuthSession} = this.props;
 
+    }
+
+    handleCloseImagePopUp(){
+      this.setState({clickedPostImage:null,clickedPostVideo:null})
     }
 
     loadSinglePostContent(postId,userId,popupImage,popupContent,postVideo){
@@ -33,10 +38,10 @@ export default class FeedsList extends Component {
 
       this.setState({
         clickedPostImage:popupImage,
-        // clickedPostContent:popupContent,
-        // clickedPostVideo:postVideo,
-        // clickedPost:postId,
-        // clickedUser:userId
+        clickedPostContent:popupContent,
+        clickedPostVideo:postVideo,
+        clickedPost:postId,
+        clickedUser:userId
       });
 
     }
@@ -82,7 +87,7 @@ export default class FeedsList extends Component {
       return(
         <div id="postImageModel" className="uk-modal coment_popup">
             <div className="uk-modal-dialog uk-modal-dialog-blank">
-            <button className="uk-modal-close uk-close" type="button"></button>
+            <button className="uk-modal-close uk-close" type="button" onClick={this.handleCloseImagePopUp}></button>
               <div className="uk-grid">
 
                 <div className="uk-width-small-3-4 popup_img_left">
