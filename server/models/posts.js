@@ -248,7 +248,7 @@ var postModel = {
 
     getPostByFriendsCategory: function(userId,catId,callback){
       var dbConnection = dbConnectionCreator();
-      
+
       var getPostsByFriendsSql = constructPostsByFriendsSql(userId,catId);
       //return(callback(query:constructPostsByFriendsSql));
 
@@ -288,7 +288,7 @@ function constructPostsByFriendsSql(userId,catId){
             " gx_users as c"+
             " WHERE a.user_id IN (SELECT friend_id FROM `gx_friends_category` WHERE user_id ='"+userId+"'  AND category_id = '"+catId+"') AND b.user_id = a.user_id"+
             " AND c.id  = a.user_id"+
-            " ORDER BY a.id DESC LIMIT 100 ";
+            " ORDER BY a.id DESC LIMIT 30 ";
 
             return sql;
 
@@ -308,7 +308,7 @@ function constructUniversalPostsSql(){
             " gx_users as c"+
             " WHERE b.user_id = a.user_id"+
             " AND c.id  = a.user_id"+
-            " ORDER BY a.id DESC LIMIT 100 ";
+            " ORDER BY a.id DESC LIMIT 30 ";
   return sql;
 }
 
