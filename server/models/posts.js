@@ -23,7 +23,7 @@ var postModel = {
   convertRowsToObject: function (rows) {
       var objString=JSON.stringify(rows);
       var obj=JSON.parse(objString);
-      console.log(obj)
+      
       return obj;
 
   },
@@ -208,11 +208,25 @@ var postModel = {
     postComment: function(data,callback){
       var dbConnection = dbConnectionCreator();
       var postCommentSqlString = constructPostCommentSqlString(data);
+      var comment = null;
       dbConnection.query(postCommentSqlString,function(error,results,fields){
         if (error) {
           return(callback({error:"Error in post comment",status:400,query:postCommentSqlString}));
         }else if (results.affectedRows === 1) {
-          return(callback({success:"Success post comment",status:200}));
+          //var CommentId = results.insertId
+          var getCommentsByPostSqlString = constructGetCommentsByIdSqlString(data.post_id);
+          dbConnection.query(getCommentsByPostSqlString,function(error,results,fields){
+            if(error){
+              return(callback({error:error,status:400}))
+            }else if (results.length == 0) {
+              //return(callback({error:"No comments found"}))
+                return(callback({success:"Success post comment",status:200,comment:comment}));
+            }else{
+               comment = postModel.convertRowsToObject(results[0]);
+                 return(callback({success:"Success post comment",status:200,comment:comment}));
+            }
+          });
+
         }else{
           return(callback({error:"Error in post comment query",status:400}));
         }
@@ -279,6 +293,19 @@ var postModel = {
 
 
 };
+
+function constructGetCommentsByIdSqlString(postId){
+  var sql = "SELECT a.*,"+
+            "CONCAT(b.first_name, ' ', b.last_name) NAME,"+
+            "b.profile_image,b.address,b.user_id, c.email"+
+            " from gx_post_comments as a,"+
+            " gx_user_details as b,"+
+            " gx_users as c"+
+            " WHERE b.user_id = a.user_id"+
+            " AND c.id  = a.user_id"+
+            " AND post_id="+postId+" ORDER by a.id DESC LIMIT 1";
+  return sql;
+}
 function constructPostsByFriendsSql(userId,catId){
   var sql = "SELECT a.*,"+
             "CONCAT(b.first_name, ' ', b.last_name) NAME,"+

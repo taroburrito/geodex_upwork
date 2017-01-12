@@ -5,6 +5,7 @@ export const Set_Comments_Null = 'Set_Comments_Null';
 export const Fetch_Comment_Success = 'Fetch_Comment_Success';
 export const Fetch_Universal_Posts_Success = 'Fetch_Universal_Posts_Success';
 export const Fetch_Universal_Posts_Failed = 'Fetch_Universal_Posts_Failed';
+export const Post_Comment_Success = 'Post_Comment_Success';
 
 export function receivedAllposts(posts){
   return{type: Get_All_Posts, data:posts}
@@ -44,6 +45,10 @@ export function addPost(formData){
   }
 }
 
+export function postCommentSucess(comment){
+  return{type: Post_Comment_Success, comment:comment}
+}
+
 export function postComment(formData){
   return(dispatch)=>{
     $.ajax({
@@ -55,10 +60,12 @@ export function postComment(formData){
           $(".loading").show();
       }
     }).done(function(data){
+      console.log(data);
+      console.log("**8")
       if(data.error){
 
       }else{
-        dispatch(fetchCommentsByPost(formData.post_id));
+        dispatch(postCommentSucess(data.comment));
       }
       console.log(data);
        $(".loading").hide();

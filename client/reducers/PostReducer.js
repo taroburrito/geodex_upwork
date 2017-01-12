@@ -3,7 +3,8 @@ import {Get_All_Posts,
         Set_Comments_Null,
         Fetch_Comment_Success,
         Fetch_Universal_Posts_Success,
-        Fetch_Universal_Posts_Failed
+        Fetch_Universal_Posts_Failed,
+        Post_Comment_Success
       } from '../actions/PostActions';
 
 export function updatePostsList(postsListState={},action){
@@ -29,9 +30,17 @@ export function updateComments(postCommentsState={}, action){
       break;
 
       case Fetch_Comment_Success:
-        console.log(action.comments);
+
         return Object.assign({}, action.comments);
         break;
+
+        case Post_Comment_Success:
+          var prevState = Object.assign({}, postCommentsState);
+          var len =Object.keys(prevState).length;
+          prevState[len] = action.comment;
+        //  prevState.push(action.comment);
+          return Object.assign({}, prevState);
+          break;
     default:
       return postCommentsState;
   }
