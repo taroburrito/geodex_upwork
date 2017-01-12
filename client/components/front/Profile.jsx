@@ -223,7 +223,7 @@ export default class Profile extends Component {
 
     loadSinglePostContent(postId,userId,popupImage,popupContent,postVideo){
 
-      this.setState({clickedPost:postId,clickedUser:userId,getClickedUser:userId,postLargeImage:popupImage,popupContent:popupContent,popupVideo:postVideo});
+      this.setState({clickedPost:postId,clickedUser:userId,postLargeImage:popupImage,popupContent:popupContent,popupVideo:postVideo});
       this.props.fetchComments(postId);
 
 
