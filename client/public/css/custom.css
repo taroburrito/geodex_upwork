@@ -903,7 +903,7 @@ a.reply_to_c {
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.1) inset;
   margin-top: 0;
   padding: 5px 10px;
-  width: 82%;
+  width: 88%;
   float:right;
 }
 
@@ -986,7 +986,10 @@ a.reply_to_c {
 }
 
 .popup_img_right.coment_pop_cont {
-  padding-left: 4%;
+    padding-left: 10px;
+    background: #fff;
+    border-left: none;
+    border-radius: 5px;
 }
 
 #contant_coment_pop .comenting_form .uk-comment-avatar {

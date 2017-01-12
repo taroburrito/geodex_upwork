@@ -208,6 +208,7 @@ export default class DashboardPage extends Component {
 
     const{userAuthSession} = this.props;
     this.refs.commentBox.getDOMNode().value = "";
+    //this.refs.commentBox1.getDOMNode().value = "";
     this.setState({replyContent:null,postComment:null});
     var req = {
       comment: this.state.postComment,
@@ -711,10 +712,10 @@ _myImageGalleryRenderer(item) {
                   </ul>
 
                   <div className="comenting_form border-top_cf">
-              <img className="uk-comment-avatar" src={this.getProfileImage(user.profile_image,user.id)} alt="" width="40" height="40"/>
-              <textarea placeholder="Write Comment..." value={this.state.postComment} onChange={(e)=>this.setState({postComment:e.target.value})} ref="commentBox"></textarea>
-              <a onClick={this.handleClickPostComment} className="uk-button uk-button-primary comment_btn">Comment</a>
-              </div>
+                    <img className="uk-comment-avatar" src={this.getProfileImage(user.profile_image,user.id)} alt="" width="40" height="40"/>
+                    <textarea placeholder="Write Comment..." value={this.state.postComment} onChange={(e)=>this.setState({postComment:e.target.value})} ref="commentBox"></textarea>
+                    <a onClick={this.handleClickPostComment} className="uk-button uk-button-primary comment_btn">Comment</a>
+                  </div>
 
 
               </div>
@@ -1147,11 +1148,13 @@ loadChild(child){
               </ul>
 
 
-            <div className="comenting_form border-top_cf">
-            <img className="uk-comment-avatar" src={this.getProfileImage(user.profile_image,user.id)} alt="" width="40" height="40"/>
-            <textarea placeholder="Write Comment..." value={this.state.postComment} onChange={(e)=>this.setState({postComment:e.target.value})} ref="commentBox"></textarea>
-            <a onClick={this.handleClickPostComment} className="uk-button uk-button-primary comment_btn">Comment</a>
-            </div>
+              <div className="comenting_form border-top_cf">
+                <img className="uk-comment-avatar" src={this.getProfileImage(user.profile_image,user.id)} alt="" width="40" height="40"/>
+                <textarea placeholder="Write Comment..." value={this.state.postComment} onChange={(e)=>this.setState({postComment:e.target.value})} ref="commentBox"></textarea>
+                <a onClick={this.handleClickPostComment} className="uk-button uk-button-primary comment_btn">Comment</a>
+              </div>
+
+
 
 
         </div>
