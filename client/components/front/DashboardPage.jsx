@@ -12,8 +12,6 @@ import ImageGallery from 'react-image-gallery';
 import CategoryList from './manage_category/CategoryList';
 import TimeAgo from 'react-timeago';
 
-//import InfiniteScroll from 'react-infinite-scroller';
-
 
 const formatter = (value, unit, suffix, rawTime) => {
   var counter = '';

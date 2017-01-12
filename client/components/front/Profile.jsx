@@ -4,7 +4,6 @@ var ScrollbarWrapper = require('react-scrollbars').ScrollbarWrapper;
 var moment = require('moment');
 import TimeAgo from 'react-timeago';
 import ImageGallery from 'react-image-gallery';
-import MasonryLayout from 'react-masonry-layout'
 
 
 const formatter = (value, unit, suffix, rawTime) => {
@@ -250,7 +249,7 @@ export default class Profile extends Component {
 
     loadSinglePostContent(postId,userId,popupImage,popupContent,postVideo){
 
-      this.setState({clickedPost:postId,clickedUser:userId,getClickedUser:userId,postLargeImage:popupImage,popupContent:popupContent,popupVideo:postVideo});
+      this.setState({clickedPost:postId,clickedUser:userId,postLargeImage:popupImage,popupContent:popupContent,popupVideo:postVideo});
       this.props.fetchComments(postId);
 
 
@@ -399,7 +398,7 @@ renderPhotos(){
         if(item.image){
         var post_img = item.image;
         postContent.push(
-
+          <section>
           <div className="profile_post_photos" >
 
               <a href="#photoVideoSlider" onClick={this.onClickPhotoVideo.bind(this,item.id,i)} data-uk-modal>
@@ -408,6 +407,7 @@ renderPhotos(){
               </a>
 
         </div>
+        </section>
       );
       i++;
     }
@@ -848,11 +848,11 @@ renderPostContentModal(){
 
               <div className="uk-width-medium-1-2 profile_post_left">
               <h3>Photos</h3>
- <ScrollbarWrapper >
+              <ScrollbarWrapper>
+                      <article className="profileArticle">
                       {this.renderPhotos()}
-        </ScrollbarWrapper>
-
-
+                      </article>
+               </ScrollbarWrapper>
               </div>
 
               <div className="uk-width-medium-1-2 profile_post_right">

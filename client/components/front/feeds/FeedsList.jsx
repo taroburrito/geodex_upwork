@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { Navigation, Link } from 'react-router';
-import MasonryInfiniteScroller from 'react-masonry-infinite';
+
 
 //import InfiniteScroll from 'react-infinite-scroller';
 
@@ -41,7 +41,7 @@ export default class FeedsList extends Component {
       const{userAuthSession} = this.props;
       this.refs.commentBox.getDOMNode().value = "";
       this.refs.contentCommentBox.getDOMNode().value = "";
-      
+
       this.setState({replyContent:null,postComment:null});
       var req = {
         comment: this.state.postComment,
