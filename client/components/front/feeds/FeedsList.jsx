@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { Navigation, Link } from 'react-router';
-import MasonryLayout from 'react-masonry-layout'
+import MasonryInfiniteScroller from 'react-masonry-infinite';
 
 //import InfiniteScroll from 'react-infinite-scroller';
 
@@ -40,6 +40,8 @@ export default class FeedsList extends Component {
 
       const{userAuthSession} = this.props;
       this.refs.commentBox.getDOMNode().value = "";
+      this.refs.contentCommentBox.getDOMNode().value = "";
+      
       this.setState({replyContent:null,postComment:null});
       var req = {
         comment: this.state.postComment,
@@ -343,7 +345,7 @@ export default class FeedsList extends Component {
 
               <div className="comenting_form border-top_cf">
               <img className="uk-comment-avatar" src={this.getProfileImage(user.profile_image,user.id)} alt="" width="40" height="40"/>
-              <textarea placeholder="Write Comment..." value={this.state.postComment} onChange={(e)=>this.setState({postComment:e.target.value})} ref="commentBox"></textarea>
+              <textarea placeholder="Write Comment..." value={this.state.postComment} onChange={(e)=>this.setState({postComment:e.target.value})} ref="contentCommentBox"></textarea>
               <a onClick={this.handleClickPostComment} className="uk-button uk-button-primary comment_btn">Post</a>
               </div>
 
@@ -538,7 +540,8 @@ export default class FeedsList extends Component {
         <div className={this.state.animation?" animated  fadeIn":" animated"}
           // style={{
           //   maxWidth: '250px',
-          //   height: `${i % 2 === 0 ? 3 * 50 : 150 }px`,
+          //   height: `${i % 3 === 0 ? 2 * 50 : 150 }px`,
+          //   //height:'100px',
           //   display: 'block',
           //   background: 'rgba(0,0,0,0.7)'
           // }}
@@ -566,13 +569,20 @@ export default class FeedsList extends Component {
   }
       return(
         <div className="feeds-box">
-        {/* <MasonryLayout
-      id="items" > */}
+        {/* <MasonryInfiniteScroller
+      id="items"
+      packed= "data-packed"
+      infiniteScrollDisabled={false}
+    sizes= {[
+      { columns: 2, gutter: 20 },
+      { mq: '768px', columns: 3, gutter: 20 },
+      { mq: '1024px', columns: 4, gutter: 10 }
+    ]} > */}
 
 
         {postItem}
 
-    {/* </MasonryLayout> */}
+    {/* </MasonryInfiniteScroller> */}
   </div>
 
       )

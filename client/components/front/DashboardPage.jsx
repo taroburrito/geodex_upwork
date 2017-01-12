@@ -107,7 +107,8 @@ export default class DashboardPage extends Component {
       scale:1,
       previewImageWidth:250,
       previewImageHeight:250,
-      postanimation:false
+      postanimation:false,
+      showMessage:true,
 
     }
   }
@@ -207,7 +208,11 @@ export default class DashboardPage extends Component {
   handleClickPostComment(){
 
     const{userAuthSession} = this.props;
+
     this.refs.commentBox.getDOMNode().value = "";
+    this.refs.contentCommentBox.getDOMNode().value = "";
+
+
     //this.refs.commentBox1.getDOMNode().value = "";
     this.setState({replyContent:null,postComment:null});
     var req = {
@@ -337,7 +342,7 @@ export default class DashboardPage extends Component {
     var to = this.refs.sendto.getDOMNode().value;
     var from = userAuthSession.userObject.email;
     var subject = this.refs.Subject.getDOMNode().value.trim();
-    var content = this.refs.emailBody.getDOMNode().value;
+    var content = this.refs.emailBody.getDOMNode().value.trim();
 
     if(subject == ''){
       this.setState({errorMessage:{sendEmail:"Please enter subject"}});
@@ -347,6 +352,7 @@ export default class DashboardPage extends Component {
     this.props.sendEmail(from,to,subject,content);
     this.setState({errorMessage:null});
     }
+    this.setState({showMessage:true});
 
   }
   handleSavePost(){
@@ -829,7 +835,7 @@ loadMorePost(){
                 </h3>
                 <div className="uk-width-7-10 comm-icon-div">
                 <a data-uk-modal="{target:'#sendEmail'}" onClick={this.handleOnClickEmailIcon.bind(this,item.email)} data={item.email}  href="#" className="">
-                <img className="comm-icons" src="public/images/email_icon.png"/>
+                <img className="comm-icons" src="public/images/email_icon.png" onClick={()=>this.setState({showMessage:false})}/>
                 </a>
 
                 <img className="comm-icons" src="public/images/message_icon.png"/>
@@ -1150,7 +1156,7 @@ loadChild(child){
 
               <div className="comenting_form border-top_cf">
                 <img className="uk-comment-avatar" src={this.getProfileImage(user.profile_image,user.id)} alt="" width="40" height="40"/>
-                <textarea placeholder="Write Comment..." value={this.state.postComment} onChange={(e)=>this.setState({postComment:e.target.value})} ref="commentBox"></textarea>
+                <textarea placeholder="Write Comment..." value={this.state.postComment} onChange={(e)=>this.setState({postComment:e.target.value})} ref="contentCommentBox"></textarea>
                 <a onClick={this.handleClickPostComment} className="uk-button uk-button-primary comment_btn">Comment</a>
               </div>
 
@@ -1406,11 +1412,13 @@ loadChild(child){
  renderSendEmailModel(){
    const{dashboardData} = this.props;
    var errorLabel;
+   if(this.state.showMessage){
    if(this.state.errorMessage && this.state.errorMessage.sendEmail){
        errorLabel = (
          <div className="uk-alert uk-alert-danger"><p>{this.state.errorMessage.sendEmail}</p></div>
        )
-     }else if (dashboardData && dashboardData.error) {
+     }
+     else if (dashboardData && dashboardData.error) {
        errorLabel = (
          <div className="uk-alert uk-alert-danger"><p>{dashboardData.error}</p></div>
        )
@@ -1419,6 +1427,7 @@ loadChild(child){
          <div className="uk-alert uk-alert-success"><p>{dashboardData.success}</p></div>
        )
      }
+   }
    return(
      <div id="sendEmail" className="uk-modal" ref="modal" >
           <div className="uk-modal-dialog">

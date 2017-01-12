@@ -2258,3 +2258,32 @@ nav .uk-container.uk-container-center.top-navigation {
     font-size: 12px;
     margin-left: 1%;
 }
+
+/*article {
+ -moz-column-width: 13em;
+ -webkit-column-width: 13em;
+ -moz-column-gap: 1em;
+ -webkit-column-gap: 1em;
+
+}*/
+
+/*section.animated {
+    display: inline-block;
+    /* margin: 0.25rem; */
+    /* padding: 1rem; */
+    /* width: 100%; */
+    /* background: #333;
+    height: 171px;
+}*/
+/*.feeds_photos1 {
+    height: 100%;
+}
+.feed_img {
+    float: left;
+    width: 100%;
+    text-align: center;
+    height: 100%;
+}
+.feed_img img {
+    height: 100%;
+}*/

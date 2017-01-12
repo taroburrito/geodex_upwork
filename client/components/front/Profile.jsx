@@ -137,6 +137,8 @@ export default class Profile extends Component {
     handleClickPostComment(){
       const{userAuthSession} = this.props;
       this.refs.commentBox.getDOMNode().value = "";
+      this.refs.contentCommentBox.getDOMNode().value = "";
+
       this.setState({replyContent:null,postComment:null});
       var req = {
         comment: this.state.postComment,
@@ -786,7 +788,7 @@ renderPostContentModal(){
 
           <div className="comenting_form border-top_cf">
           <img className="uk-comment-avatar" src={this.getProfileImage(user.profile_image,user.id)} alt="" width="40" height="40"/>
-          <textarea placeholder="Write Comment..." value={this.state.postComment} onChange={(e)=>this.setState({postComment:e.target.value})} ref="commentBox"></textarea>
+          <textarea placeholder="Write Comment..." value={this.state.postComment} onChange={(e)=>this.setState({postComment:e.target.value})} ref="contentCommentBox"></textarea>
           <a onClick={this.handleClickPostComment} className="uk-button uk-button-primary comment_btn">Post</a>
           </div>
 
