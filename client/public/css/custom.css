@@ -893,18 +893,20 @@ a.reply_to_c {
 .coment_popup .comenting_form  .uk-comment-avatar {
   float: left;
   margin-right: 0px;
-  width: 6%;
+  width: 10%;
+  max-width: 30px;
 }
 
 .coment_popup .comenting_form textarea {
-  background: #fff none repeat scroll 0 0;
-  border: 1px solid #ccc;
-  border-radius: 2px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1) inset;
-  margin-top: 0;
-  padding: 5px 10px;
-  width: 88%;
-  float:right;
+    background: #fff none repeat scroll 0 0;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1) inset;
+    margin-top: 0;
+    padding: 5px 10px;
+    width: 78%;
+    float: right;
+    font-size: 12px;
 }
 
 .coment_popup .comenting_form > input {
@@ -1628,10 +1630,10 @@ small.user_location {
     border-radius: 3px;
     color: #fff;
     float: right;
-    font-size: 16px;
-    margin-right: 5px;
+    font-size: 14px;
+    margin-right: 0px;
     margin-top: 5px;
-    padding: 3px 10px;
+    padding: 1px 8px;
 }
 .button-left{
   position: absolute;
@@ -2241,4 +2243,18 @@ nav .uk-container.uk-container-center.top-navigation {
 .top-navigation .uk-navbar-brand, .top-navigation .uk-navbar-content, .top-navigation .uk-navbar-toggle {
     padding-left: 7px;
     padding-right: 26px;
+}
+
+
+.coment_popup   .popup_img_right.coment_pop_cont  .comenting_form textarea {
+    background: #fff none repeat scroll 0 0;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1) inset;
+    margin-top: 0;
+    padding: 5px 10px;
+    width: 87%;
+    float: left;
+    font-size: 12px;
+    margin-left: 1%;
 }

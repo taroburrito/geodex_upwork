@@ -711,7 +711,7 @@ _myImageGalleryRenderer(item) {
               {this.renderComments(this.state.clickedPost)}
                   </ul>
 
-                  <div className="comenting_form border-top_cf">
+                  <div className="comenting_form border-top_cf content_comment">
                     <img className="uk-comment-avatar" src={this.getProfileImage(user.profile_image,user.id)} alt="" width="40" height="40"/>
                     <textarea placeholder="Write Comment..." value={this.state.postComment} onChange={(e)=>this.setState({postComment:e.target.value})} ref="commentBox"></textarea>
                     <a onClick={this.handleClickPostComment} className="uk-button uk-button-primary comment_btn">Comment</a>
