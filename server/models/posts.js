@@ -23,6 +23,7 @@ var postModel = {
   convertRowsToObject: function (rows) {
       var objString=JSON.stringify(rows);
       var obj=JSON.parse(objString);
+      
       return obj;
 
   },
@@ -207,19 +208,136 @@ var postModel = {
     postComment: function(data,callback){
       var dbConnection = dbConnectionCreator();
       var postCommentSqlString = constructPostCommentSqlString(data);
+      var comment = null;
       dbConnection.query(postCommentSqlString,function(error,results,fields){
         if (error) {
           return(callback({error:"Error in post comment",status:400,query:postCommentSqlString}));
         }else if (results.affectedRows === 1) {
-          return(callback({success:"Success post comment",status:200}));
+          //var CommentId = results.insertId
+          var getCommentsByPostSqlString = constructGetCommentsByIdSqlString(data.post_id);
+          dbConnection.query(getCommentsByPostSqlString,function(error,results,fields){
+            if(error){
+              return(callback({error:error,status:400}))
+            }else if (results.length == 0) {
+              //return(callback({error:"No comments found"}))
+                return(callback({success:"Success post comment",status:200,comment:comment}));
+            }else{
+               comment = postModel.convertRowsToObject(results[0]);
+                 return(callback({success:"Success post comment",status:200,comment:comment}));
+            }
+          });
+
         }else{
           return(callback({error:"Error in post comment query",status:400}));
         }
       });
-    }
+    },
+
+    getUniversalPosts: function(callback){
+      var dbConnection = dbConnectionCreator();
+      var getUniversalPostsSql = constructUniversalPostsSql();
+
+
+      dbConnection.query(getUniversalPostsSql,function(error,results,fields){
+        if(error){
+
+          return(callback({error:error,status:400,query:constructUniversalPostsSql,message:"Error in get all posts"}));
+        }else if (results.length == 0) {
+
+          return(callback({error:"empty result",status:400,message:"No post to show"}));
+        }else{
+
+          var posts = [];
+          results.forEach(function (result) {
+            posts.push(postModel.convertRowsToObject(result));
+          //  posts['test'] = "testing";
+              // comments[result.id] = postModel.convertRowsToObject(result);
+          });
+          dbConnection.end();
+
+          return(callback({status:200,posts}));
+        }
+      })
+    },
+
+    getPostByFriendsCategory: function(userId,catId,callback){
+      var dbConnection = dbConnectionCreator();
+
+      var getPostsByFriendsSql = constructPostsByFriendsSql(userId,catId);
+      //return(callback(query:constructPostsByFriendsSql));
+
+
+      dbConnection.query(getPostsByFriendsSql,function(error,results,fields){
+        if(error){
+
+          return(callback({error:error,status:400,query:constructPostsByFriendsSql,message:"Error in get all posts"}));
+        }else if (results.length == 0) {
+
+          return(callback({error:"empty result",status:400,message:"No post to show"}));
+        }else{
+
+          var posts = [];
+          results.forEach(function (result) {
+            posts.push(postModel.convertRowsToObject(result));
+          //  posts['test'] = "testing";
+              // comments[result.id] = postModel.convertRowsToObject(result);
+          });
+          dbConnection.end();
+
+          return(callback({status:200,posts}));
+        }
+      })
+    },
+
+
 
 
 };
+
+function constructGetCommentsByIdSqlString(postId){
+  var sql = "SELECT a.*,"+
+            "CONCAT(b.first_name, ' ', b.last_name) NAME,"+
+            "b.profile_image,b.address,b.user_id, c.email"+
+            " from gx_post_comments as a,"+
+            " gx_user_details as b,"+
+            " gx_users as c"+
+            " WHERE b.user_id = a.user_id"+
+            " AND c.id  = a.user_id"+
+            " AND post_id="+postId+" ORDER by a.id DESC LIMIT 1";
+  return sql;
+}
+function constructPostsByFriendsSql(userId,catId){
+  var sql = "SELECT a.*,"+
+            "CONCAT(b.first_name, ' ', b.last_name) NAME,"+
+            "b.profile_image,b.address,b.user_id, c.email"+
+            " from gx_posts as a,"+
+            " gx_user_details as b,"+
+            " gx_users as c"+
+            " WHERE a.user_id IN (SELECT friend_id FROM `gx_friends_category` WHERE user_id ='"+userId+"'  AND category_id = '"+catId+"') AND b.user_id = a.user_id"+
+            " AND c.id  = a.user_id"+
+            " ORDER BY a.id DESC LIMIT 30 ";
+
+            return sql;
+
+}
+
+function constructCommentsByPostId(postId){
+  var sql = "Select * from gx_post_comments WHERE post_id="+postId;
+  return sql;
+}
+
+function constructUniversalPostsSql(){
+  var sql = "SELECT a.*,"+
+            "CONCAT(b.first_name, ' ', b.last_name) NAME,"+
+            "b.profile_image,b.address,b.user_id, c.email"+
+            " from gx_posts as a,"+
+            " gx_user_details as b,"+
+            " gx_users as c"+
+            " WHERE b.user_id = a.user_id"+
+            " AND c.id  = a.user_id"+
+            " ORDER BY a.id DESC LIMIT 30 ";
+  return sql;
+}
 
 function constructPostCommentSqlString(data){
   var timestamp = moment();

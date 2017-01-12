@@ -123,3 +123,25 @@ export function updateCategoryById(id, value){
     })
   }
 }
+
+export function fetchCategoriesByUser(userId){
+  return(dispatch)=>{
+    $.ajax({
+      type:'GET',
+      url:'/api/v1/categories/fetchCategoriesByUser/'+userId,
+    }).done(function(data){
+      console.log(data);
+      if(data.error){
+  //  dispatch(updatedCategoryFailed(data.error));
+      }else{
+
+          dispatch(fetchcategoriesByUserId(data.categories));
+        //  dispatch(handleSuccessMessage("Updated Successfully"));
+
+      }
+    }).fail(function(error){
+      console.log("Failed");
+    //  dispatch(updatedCategoryFailed(error));
+    })
+  }
+}

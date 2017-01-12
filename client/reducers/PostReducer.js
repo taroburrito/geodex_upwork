@@ -1,7 +1,10 @@
 import {Get_All_Posts,
         Post_Added_Success,
         Set_Comments_Null,
-        Fetch_Comment_Success
+        Fetch_Comment_Success,
+        Fetch_Universal_Posts_Success,
+        Fetch_Universal_Posts_Failed,
+        Post_Comment_Success
       } from '../actions/PostActions';
 
 export function updatePostsList(postsListState={},action){
@@ -30,7 +33,30 @@ export function updateComments(postCommentsState={}, action){
 
         return Object.assign({}, action.comments);
         break;
+
+        case Post_Comment_Success:
+          var prevState = Object.assign({}, postCommentsState);
+          var len =Object.keys(prevState).length;
+          prevState[len] = action.comment;
+        //  prevState.push(action.comment);
+          return Object.assign({}, prevState);
+          break;
     default:
       return postCommentsState;
+  }
+}
+
+export function updateFeeds(universalPosts={},action){
+  switch (action.type) {
+    case Fetch_Universal_Posts_Success:
+    return Object.assign({}, action.posts);
+      break;
+
+      case Fetch_Universal_Posts_Failed:
+      return Object.assign({}, null);
+        break;
+        break;
+    default:
+    return universalPosts;
   }
 }

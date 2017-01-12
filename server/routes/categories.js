@@ -12,6 +12,16 @@ var setCategoryRoutes = function (router) {
             }
     );
 
+    /*return all categories of user*/
+        router.get('/api/v1/categories/fetchCategoriesByUser/:userId',
+                function (req, res) {
+                    categoryModel.getAllCategoriesByUser(req.params.userId,function (result) {
+                        return res.json(result);
+                    }
+                    );
+                }
+        );
+
     /*return single category*/
     router.get('/api/v1/categories/:id',
             function (req, res) {

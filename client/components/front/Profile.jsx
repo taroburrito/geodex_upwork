@@ -3,7 +3,6 @@ var Slider = require('react-slick');
 var ScrollbarWrapper = require('react-scrollbars').ScrollbarWrapper;
 var moment = require('moment');
 import TimeAgo from 'react-timeago';
-import MasonryLayout from 'react-masonry-layout';
 import ImageGallery from 'react-image-gallery';
 
 
@@ -73,6 +72,7 @@ export default class Profile extends Component {
        this.handleClickDenyRequest = this.handleClickDenyRequest.bind(this);
        this.handleClickPostComment = this.handleClickPostComment.bind(this);
        this.onSlide = this.onSlide.bind(this);
+       this.loadMorePosts = this.loadMorePosts.bind(this);
 
 
 
@@ -81,6 +81,30 @@ export default class Profile extends Component {
       //console.log(this.props);
     }
     componentDidMount(){
+
+    }
+
+    handleClickReplyComment(parent_id,post_id){
+
+      //console.log("parent:"+parent_id);
+
+
+      const{userAuthSession} = this.props;
+      var req = {
+        comment: this.state.replyContent,
+        parent_id:parent_id,
+        user_id: userAuthSession.userObject.id,
+        post_id:post_id,
+        status:1,
+      }
+      if(this.state.replyContent==null){
+        this.addAlert("","type something to post comment...");
+      }else{
+        this.setState({showCommentBox:null,replyContent:null,postComment:null});
+        this.props.postComment(req);
+      }
+
+      //this.props.postComment(req);
 
     }
 
@@ -306,21 +330,59 @@ export default class Profile extends Component {
     }
 
     onClickPhotoVideo(postId, currentSlide){
-      console.log('****-******-*****'); console.log(postId);
+
+
+
       this.setState({clickedPost:postId});
         if(this._imageGallery){
           this._imageGallery.slideToIndex(currentSlide-1);
         }
+        this.props.fetchComments(postId);
     }
 
+loadMorePosts(){
+  const{visitedUser} = this.props;
+  var posts = visitedUser.posts;
 
+  var postContent = [];
+  if(posts){
+    var i = 1;
+    Object.keys(posts).map((postId)=>{
+    //  console.log(posts[key]);
+      var item = posts[postId];
+      if(item.image){
+      var post_img = item.image;
+      postContent.push(
+
+        <div className="profile_post_photos">
+
+            <a href="#photoVideoSlider" onClick={this.onClickPhotoVideo.bind(this,item.id,i)} data-uk-modal>
+              <img src={this.state.uploadDir+'user_'+item.user_id+'/medium/'+post_img}/>
+
+            </a>
+
+      </div>
+    );
+    i++;
+  }
+    });
+  }else{
+    postContent.push(
+      <div><p>No post is found for this user.</p></div>
+    )
+  }
+
+  return(
+    {postContent}
+  )
+}
 
     // photos of visited user.
 renderPhotos(){
     const{visitedUser} = this.props;
     var posts = visitedUser.posts;
-    
-    
+
+
     var postContent = [];
     if(posts){
       var i = 1;
@@ -329,20 +391,21 @@ renderPhotos(){
 
       //var findPost = _.findKey(posts, function (o) { return o.id == action.data;})
         var item = posts[postId];
-        
+
      // console.log(item);
         if(item.image){
         var post_img = item.image;
         postContent.push(
-
-          <div className="profile_post_photos">
+          <section>
+          <div className="profile_post_photos" >
 
               <a href="#photoVideoSlider" onClick={this.onClickPhotoVideo.bind(this,item.id,i)} data-uk-modal>
-                <img src={this.state.uploadDir+'user_'+item.user_id+'/medium/'+post_img}/>
+                <img className="grid-item" src={this.state.uploadDir+'user_'+item.user_id+'/medium/'+post_img}/>
 
               </a>
 
         </div>
+        </section>
       );
       i++;
     }
@@ -354,10 +417,9 @@ renderPhotos(){
     }
 
     return(
-      // <MasonryLayout
-      //   id="items">
-      {postContent}
-      // </MasonryLayout>
+
+{postContent}
+
     )
 
 }
@@ -365,9 +427,11 @@ renderPhotos(){
 onSlide(e){
   //React.unmountComponentAtNode(document.getElementById('test'));
     //this._imageGallery.slideToIndex(e);
+    if(this._imageGallery){
   var postId = this._imageGallery.props.items[e].postId;
   this.setState({clickedPost:postId});
   this.props.fetchComments(postId);
+}
   //this.loadPostContent(postId,this.state.clickedUser,null,null,e);
 
 
@@ -415,12 +479,7 @@ renderFriendsPostImagesLargeSlider(user_id){
 
 
      });
-
-
-
-
-
-    return(
+     return(
       <div>
         <ImageGallery
         ref={i => this._imageGallery = i}
@@ -524,7 +583,7 @@ loadChild(child){
      var commentBox = (
        <div className="comenting_form border-top_cf">
        <img className="uk-comment-avatar" src={this.getProfileImage(userAuthSession.userObject.profile_image,userAuthSession.userObject.id)} alt="" width="40" height="40"/>
-       <textarea placeholder="Write Comment..."  value={this.state.replyContent} onChange={(e)=>this.setState({replyContent:e.target.value})}></textarea>
+       <textarea placeholder="Reply comment..."  value={this.state.replyContent} onChange={(e)=>this.setState({replyContent:e.target.value})}></textarea>
        <a onClick={this.handleClickReplyComment.bind(this,item.id,item.post_id)} className="uk-button uk-button-primary comment_btn">Send</a>
        </div>
      );
@@ -589,7 +648,7 @@ Object.keys(newItem).forEach((id)=>{
     var commentBox = (
       <div className="comenting_form border-top_cf">
       <img className="uk-comment-avatar" src={this.getProfileImage(userAuthSession.userObject.profile_image,userAuthSession.userObject.id)} alt="" width="40" height="40"/>
-      <textarea placeholder="Write Comment..."  value={this.state.replyContent} onChange={(e)=>this.setState({replyContent:e.target.value})}></textarea>
+      <textarea placeholder="Reply Comment..."  value={this.state.replyContent} onChange={(e)=>this.setState({replyContent:e.target.value})}></textarea>
       <a onClick={this.handleClickReplyComment.bind(this,item.id,item.post_id)} className="uk-button uk-button-primary comment_btn">Reply</a>
       </div>
     );
@@ -785,14 +844,13 @@ renderPostContentModal(){
           <div className="uk-container uk-container-center middle_content profile">
              <div className="uk-grid uk-grid-large profile_bottom">
 
-              <div className="uk-width-medium-1-2 profile_gallery_left">
+              <div className="uk-width-medium-1-2 profile_post_left">
               <h3>Photos</h3>
-               <ScrollbarWrapper >
-                  <div>
+              <ScrollbarWrapper>
+                      <article className="profileArticle">
                       {this.renderPhotos()}
-                </div>
-              </ScrollbarWrapper>
-
+                      </article>
+               </ScrollbarWrapper>
               </div>
 
               <div className="uk-width-medium-1-2 profile_post_right">

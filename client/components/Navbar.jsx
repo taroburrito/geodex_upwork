@@ -64,7 +64,7 @@ export default class Navbar extends Component {
 
 
       <ul className="uk-navbar-nav uk-hidden-small uk-float-right">
-                  <li><a href="">Feed</a></li>
+                  <li><Link to="/feeds">Feed</Link></li>
                   <li><a href="">Messages</a></li>
                   <li><a href="">Notifications</a></li>
         <li><a href="">About</a></li>

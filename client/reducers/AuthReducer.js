@@ -13,7 +13,7 @@ import {  Clicked_SignUp, SignUp_Success, SignUp_Fail,
         Reset_Password_Failed,
       Change_Password_Failed, Change_Password_Success } from '../actions/AuthActions';
 
-import {Update_Profile_Input_Success, Update_Profile_Success} from '../actions/ProfileActions';
+import {Update_Profile_Input_Success, Update_Profile_Success,Update_Profile_Data_Success} from '../actions/ProfileActions';
 
 const defaultStartState = { isLoggedIn: false,
                             fetchingAuthUpdate: false,
@@ -88,6 +88,11 @@ export function updateUserInfo(userAuthState = defaultStartState , action) {
         error: null
     });
       break;
+
+      case Update_Profile_Data_Success:
+
+      return Object.assign({}, action.data);
+        break;
 
     case Login_Success:return Object.assign({}, userAuthState, action.userObject,{
         isLoggedIn: true,

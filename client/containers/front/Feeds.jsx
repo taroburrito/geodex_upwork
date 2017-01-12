@@ -1,12 +1,12 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { Navigation } from 'react-router';
-import ManageFriendsWidget from '../../components/front/ManageFriendsWidget';
+
 import Home from '../../components/front/Home';
-import {clickedBlockUser, clickedDeleteFriend, changeFriendCat} from '../../actions/UserActions';
+import {fetchUniversalPosts,fetchPostByFriendsCategory,fetchCommentsByPost,postComment} from '../../actions/PostActions';
+import {fetchCategoriesByUser} from '../../actions/CategoryActions';
+import FeedsWidget from '../../components/front/feeds/FeedsWidget';
 
-
-import { fetchFriendList, getCategoryByUserId } from '../../utilities/ServerSocket';
 
 
 export default class Feeds extends Component {
@@ -22,7 +22,18 @@ export default class Feeds extends Component {
 
       return(
         <div className="full_width">
-            <br/><br/><br/><h2>Feeds</h2>
+            <FeedsWidget
+              fetchAllPosts={()=>dispatch(fetchUniversalPosts())}
+              fetchCategories={(userId)=>dispatch(fetchCategoriesByUser(userId))}
+              fetchPostByFriendsCategory = {(userId,catId)=>dispatch(fetchPostByFriendsCategory(userId,catId))}
+              posts={this.props.universalPosts}
+              userAuthSession={this.props.userAuthSession}
+              categories={this.props.categories}
+              fetchComments={(postId)=>
+              dispatch(fetchCommentsByPost(postId))}
+              comments={this.props.comments}
+              postComment = {(req)=>dispatch(postComment(req))}
+            />
         </div>
       );
     }else{
@@ -39,8 +50,10 @@ export default class Feeds extends Component {
 function select(state) {
   return {
     userAuthSession: state.userAuthSession,
-    friendsData: state.friendsListState,
-    categories: state.universalCategories
+    universalPosts:state.universalPosts,
+    categories:state.universalCategories,
+    comments:state.postComments,
+
   };
 }
 

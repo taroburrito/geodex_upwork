@@ -160,7 +160,7 @@ export function resetPassword(token, pwd){
 			data: {token:token,pwd:pwd},
 			beforeSend: function() {
           		$(".loading").show();
-      		} 
+      		}
 		}).done(function(data){
 			$(".loading").hide();
 			if(data.error){
@@ -188,7 +188,7 @@ export function changePassword(email,newPwd){
 			data: {email:email,new_pwd:newPwd},
 			beforeSend: function() {
           		$(".loading").show();
-      		} 
+      		}
 		}).done(function(data){
 			if(data.error){
 				console.log(data);
@@ -217,7 +217,7 @@ export function attemptSignUp(formData) {
 			data: formData,
 			beforeSend: function() {
           		$(".loading").show();
-      		} 
+      		}
 		 })
 			.done(function(data) {
 
@@ -239,7 +239,7 @@ export function attemptSignUp(formData) {
 }
 
 export function attemptLogin(email, password, role) {
-	
+
   return (dispatch) => {
     dispatch(clickedLogin());
 
@@ -249,17 +249,19 @@ export function attemptLogin(email, password, role) {
 			data: {email, password, role},
 			beforeSend: function() {
           		$(".loading").show();
-      		} 
+      		}
       		 }).done(function(data) {
 				console.log(data);
 				$(".loading").hide();
 				if (data.error){
 					dispatch(loginFail(data.error));
 				} else {
-					var storageData=data;
+					var storageData = {};
+					storageData['userObject']=data.userObject;
 					storageData['isLoggedIn']=true;
 					localStorage.setItem("userData",JSON.stringify(storageData));
 					dispatch(loginSuccess(data));
+					console.log(localStorage.getItem("userData"));
 
 				}
 			})

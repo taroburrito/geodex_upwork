@@ -124,7 +124,7 @@ export default class DashboardPage extends Component {
      this.setState({ scale: scale })
   }
    handleCloseImagePopUp(){
-      this.setState({showLargeSlider:false});
+      this.setState({showLargeSlider:false,postLargeImage:null,popupVideo:null});
     //  console.log("closed");
   }
   onSlide(e){
@@ -206,6 +206,7 @@ export default class DashboardPage extends Component {
 
     const{userAuthSession} = this.props;
     this.refs.commentBox.getDOMNode().value = "";
+    //this.refs.commentBox1.getDOMNode().value = "";
     this.setState({replyContent:null,postComment:null});
     var req = {
       comment: this.state.postComment,
@@ -214,14 +215,14 @@ export default class DashboardPage extends Component {
       post_id:this.state.clickedPost,
       status:1,
     }
-    
+
     if(this.state.postComment==null){
       this.addAlert("","type something to post comment...");
     }else{
-      this.props.postComment(req);  
+      this.props.postComment(req);
     }
 
-    
+
 
     //console.log(req);
 
@@ -230,7 +231,7 @@ export default class DashboardPage extends Component {
   handleClickReplyComment(parent_id,post_id){
 
     //console.log("parent:"+parent_id);
-    
+
 
     const{userAuthSession} = this.props;
     var req = {
@@ -244,7 +245,7 @@ export default class DashboardPage extends Component {
       this.addAlert("","type something to post comment...");
     }else{
       this.setState({showCommentBox:null,replyContent:null,postComment:null});
-      this.props.postComment(req);  
+      this.props.postComment(req);
     }
 
     //this.props.postComment(req);
@@ -303,7 +304,11 @@ export default class DashboardPage extends Component {
 
   handleSavePostImage(){
     const{userAuthSession} = this.props;
+    if(!this.state.videoImage){
     var postImageSrc = this.refs.postImageSrc.getImage();
+  }else {
+    var postImageSrc = null;
+  }
     var formData = {
       user_id: userAuthSession.userObject.id,
       content: this.refs.postImageContent.getDOMNode().value.trim(),
@@ -704,11 +709,11 @@ _myImageGalleryRenderer(item) {
               {this.renderComments(this.state.clickedPost)}
                   </ul>
 
-                  <div className="comenting_form border-top_cf">
-              <img className="uk-comment-avatar" src={this.getProfileImage(user.profile_image,user.id)} alt="" width="40" height="40"/>
-              <textarea placeholder="Write Comment..." value={this.state.postComment} onChange={(e)=>this.setState({postComment:e.target.value})} ref="commentBox"></textarea>
-              <a onClick={this.handleClickPostComment} className="uk-button uk-button-primary comment_btn">Comment</a>
-              </div>
+                  <div className="comenting_form border-top_cf content_comment">
+                    <img className="uk-comment-avatar" src={this.getProfileImage(user.profile_image,user.id)} alt="" width="40" height="40"/>
+                    <textarea placeholder="Write Comment..." value={this.state.postComment} onChange={(e)=>this.setState({postComment:e.target.value})} ref="commentBox"></textarea>
+                    <a onClick={this.handleClickPostComment} className="uk-button uk-button-primary comment_btn">Comment</a>
+                  </div>
 
 
               </div>
@@ -751,7 +756,9 @@ _myImageGalleryRenderer(item) {
   }
 
 
-
+loadMorePost(){
+  console.log("Load more");
+}
 
   renderFriendList(){
 
@@ -807,7 +814,7 @@ _myImageGalleryRenderer(item) {
 
       var slider_images = this.renderFriendsPostImagesSmallSlider(user_id);
       friendsElement.push(
-          <div ref="animate"  className={this.state.animation ? "uk-grid dash_top_head dash_botom_list animated fadeIn":'uk-grid dash_top_head dash_botom_list animated'} id={item.id}>
+          <div ref="animate" key={key} className={this.state.animation ? "uk-grid dash_top_head dash_botom_list animated fadeIn":'uk-grid dash_top_head dash_botom_list animated'} id={item.id}>
 
             <div className="uk-width-small-1-2">
               <div className="uk-grid uk-grid-small">
@@ -838,7 +845,9 @@ _myImageGalleryRenderer(item) {
             </div>
 
 
+
             <div id="animateid" className={this.state.postanimation == user_id ?"uk-width-small-1-2 post_control animated fadeIn":"uk-width-small-1-2 post_control animated"}>
+
 
               <div>
               <img src='/public/images/Loading_icon.gif' id={"loader_"+user_id} className="loadingPost"/>
@@ -867,7 +876,21 @@ _myImageGalleryRenderer(item) {
 
     if(friendsElement && friendsElement.length > 0){
     return(
-      {friendsElement}
+      <div >
+    {/* <InfiniteScroll
+        pageStart={0}
+        loadMore={this.loadMorePost.bind(this)}
+        threshold={150}
+        hasMore={true}
+        loader={<div className="loader">Loading ...</div>}
+
+        initialLoad={true}
+    >
+        {friendsElement}
+    </InfiniteScroll> */}
+    {friendsElement}
+</div>
+
 
     )
   }else {
@@ -1123,11 +1146,13 @@ loadChild(child){
               </ul>
 
 
-            <div className="comenting_form border-top_cf">
-            <img className="uk-comment-avatar" src={this.getProfileImage(user.profile_image,user.id)} alt="" width="40" height="40"/>
-            <textarea placeholder="Write Comment..." value={this.state.postComment} onChange={(e)=>this.setState({postComment:e.target.value})} ref="commentBox"></textarea>
-            <a onClick={this.handleClickPostComment} className="uk-button uk-button-primary comment_btn">Comment</a>
-            </div>
+              <div className="comenting_form border-top_cf">
+                <img className="uk-comment-avatar" src={this.getProfileImage(user.profile_image,user.id)} alt="" width="40" height="40"/>
+                <textarea placeholder="Write Comment..." value={this.state.postComment} onChange={(e)=>this.setState({postComment:e.target.value})} ref="commentBox"></textarea>
+                <a onClick={this.handleClickPostComment} className="uk-button uk-button-primary comment_btn">Comment</a>
+              </div>
+
+
 
 
         </div>
@@ -1365,9 +1390,9 @@ loadChild(child){
           :null}
       {(this.state.image || this.state.videoLink) ?
           <div className="uk-modal-footer uk-text-right">
-                        <button className="uk-button uk-modal-close" type="button">Cancel</button>
-                        <input className="uk-button uk-button-primary uk-modal-close" type="button" onClick={this.handleSavePostImage} value="Save" />
-                    </div>
+              <button className="uk-button uk-modal-close" type="button">Cancel</button>
+              <input className="uk-button uk-button-primary uk-modal-close" type="button" onClick={this.handleSavePostImage} value="Save" />
+          </div>
 
       : null}
       </form>
@@ -1442,7 +1467,7 @@ loadChild(child){
         <ToastContainer ref="container"
                         toastMessageFactory={ToastMessageFactory}
                         className="toast-top-right" />
-        
+
     </div>
          <div className="uk-grid dash_top_head my_profile">
 
@@ -1480,7 +1505,7 @@ loadChild(child){
              <li onClick={this.sortByAllCategory} className={this.state.active_cat == 'all'?"active_sm":''}>All</li>
              {this.renderCategoriesContent()}
 
-        </ul>
+           </ul>
         <div className="uk-float-right">
         <label>Sort</label>
           <select name="sort" ref="sortFriends" onChange={this.handleChangeSort}>

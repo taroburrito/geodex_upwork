@@ -3,6 +3,9 @@ export const Post_Added_Success =  'Post_Added_Success';
 export const Post_Added_Dashboard_Success = 'Post_Added_Dashboard_Success';
 export const Set_Comments_Null = 'Set_Comments_Null';
 export const Fetch_Comment_Success = 'Fetch_Comment_Success';
+export const Fetch_Universal_Posts_Success = 'Fetch_Universal_Posts_Success';
+export const Fetch_Universal_Posts_Failed = 'Fetch_Universal_Posts_Failed';
+export const Post_Comment_Success = 'Post_Comment_Success';
 
 export function receivedAllposts(posts){
   return{type: Get_All_Posts, data:posts}
@@ -42,6 +45,10 @@ export function addPost(formData){
   }
 }
 
+export function postCommentSucess(comment){
+  return{type: Post_Comment_Success, comment:comment}
+}
+
 export function postComment(formData){
   return(dispatch)=>{
     $.ajax({
@@ -53,10 +60,12 @@ export function postComment(formData){
           $(".loading").show();
       }
     }).done(function(data){
+      console.log(data);
+      console.log("**8")
       if(data.error){
 
       }else{
-        dispatch(fetchCommentsByPost(formData.post_id));
+        dispatch(postCommentSucess(data.comment));
       }
       console.log(data);
        $(".loading").hide();
@@ -99,6 +108,53 @@ export function fetchCommentsByPost(postId){
       console.log("Fail comments");
       console.log(error);
       $(".loading").hide();
+    });
+  }
+}
+
+export function fetchUniversalPostsSuccess(posts){
+  return{type:Fetch_Universal_Posts_Success,posts}
+}
+
+export function fetchUniversalPostsFailed(error){
+  return{type:Fetch_Universal_Posts_Failed,error}
+}
+
+export function fetchUniversalPosts(){
+  return(dispatch) =>{
+  //  dispatch(initializeComments());
+    $.ajax({
+      type:'GET',
+      url:'/api/v1/posts/getUniversalPosts/',
+
+    }).done(function(result){
+      if(result.error){
+
+      }else {
+        dispatch(fetchUniversalPostsSuccess(result.posts));
+      }
+    }).fail(function(error){
+      console.log("Fail posts");
+      console.log(error);
+      $(".loading").hide();
+    });
+  }
+}
+export function fetchPostByFriendsCategory(userId,catId){
+  return(dispatch) =>{
+  //  dispatch(initializeComments());
+    $.ajax({
+      type:'GET',
+      url:'/api/v1/posts/getPostByFriendsCategory/'+userId+"/"+catId,
+
+    }).done(function(result){
+      if(result.error){
+          dispatch(fetchUniversalPostsFailed(result.message));
+      }else {
+        dispatch(fetchUniversalPostsSuccess(result.posts));
+      }
+    }).fail(function(error){
+    dispatch(fetchUniversalPostsFailed(result.error));
     });
   }
 }
