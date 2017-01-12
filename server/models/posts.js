@@ -336,7 +336,7 @@ function constructUniversalPostsSql(userId){
             " WHERE b.user_id = a.user_id"+
             " AND c.id  = a.user_id"+
             " AND a.user_id IN (SELECT receiver_id FROM `gx_friends_list` WHERE sender_id ='"+userId+"'  AND STATUS = 1 UNION SELECT sender_id  FROM `gx_friends_list` WHERE receiver_id ='"+userId+"' AND STATUS = 1)"
-            " ORDER BY a.id DESC LIMIT 30 ";
+            " ORDER BY a.id desc ";
   return sql;
 }
 
