@@ -120,12 +120,12 @@ export function fetchUniversalPostsFailed(error){
   return{type:Fetch_Universal_Posts_Failed,error}
 }
 
-export function fetchUniversalPosts(){
+export function fetchUniversalPosts(userId){
   return(dispatch) =>{
   //  dispatch(initializeComments());
     $.ajax({
       type:'GET',
-      url:'/api/v1/posts/getUniversalPosts/',
+      url:'/api/v1/posts/getUniversalPosts/'+userId,
 
     }).done(function(result){
       if(result.error){

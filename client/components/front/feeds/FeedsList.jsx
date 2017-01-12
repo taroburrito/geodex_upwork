@@ -362,7 +362,7 @@ export default class FeedsList extends Component {
       this.setState({active_cat: catId,animation:true});
       setTimeout(function() { this.setState({animation: false}); }.bind(this), 1000);
       if(!catId){
-        this.props.fetchUniversalPosts();
+        this.props.fetchUniversalPosts(userAuthSession.userObject.id);
       }else{
       this.props.fetchPostByFriendsCategory(userAuthSession.userObject.id,catId);
     }

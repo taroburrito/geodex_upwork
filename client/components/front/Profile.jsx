@@ -848,11 +848,15 @@ renderPostContentModal(){
 
               <div className="uk-width-medium-1-2 profile_post_left">
               <h3>Photos</h3>
-              <ScrollbarWrapper>
+
+                <div>
+                  <ScrollbarWrapper>
                       <article className="profileArticle">
                       {this.renderPhotos()}
                       </article>
-               </ScrollbarWrapper>
+                      </ScrollbarWrapper>
+                    </div>
+
               </div>
 
               <div className="uk-width-medium-1-2 profile_post_right">

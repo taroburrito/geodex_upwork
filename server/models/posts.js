@@ -23,7 +23,7 @@ var postModel = {
   convertRowsToObject: function (rows) {
       var objString=JSON.stringify(rows);
       var obj=JSON.parse(objString);
-      
+
       return obj;
 
   },
@@ -233,15 +233,15 @@ var postModel = {
       });
     },
 
-    getUniversalPosts: function(callback){
+    getUniversalPosts: function(userId,callback){
       var dbConnection = dbConnectionCreator();
-      var getUniversalPostsSql = constructUniversalPostsSql();
+      var getUniversalPostsSql = constructUniversalPostsSql(userId);
 
 
       dbConnection.query(getUniversalPostsSql,function(error,results,fields){
         if(error){
 
-          return(callback({error:error,status:400,query:constructUniversalPostsSql,message:"Error in get all posts"}));
+          return(callback({error:error,status:400,query:getUniversalPostsSql,message:"Error in get all posts"}));
         }else if (results.length == 0) {
 
           return(callback({error:"empty result",status:400,message:"No post to show"}));
@@ -326,7 +326,7 @@ function constructCommentsByPostId(postId){
   return sql;
 }
 
-function constructUniversalPostsSql(){
+function constructUniversalPostsSql(userId){
   var sql = "SELECT a.*,"+
             "CONCAT(b.first_name, ' ', b.last_name) NAME,"+
             "b.profile_image,b.address,b.user_id, c.email"+
@@ -335,6 +335,7 @@ function constructUniversalPostsSql(){
             " gx_users as c"+
             " WHERE b.user_id = a.user_id"+
             " AND c.id  = a.user_id"+
+            " AND a.user_id IN (SELECT receiver_id FROM `gx_friends_list` WHERE sender_id ='"+userId+"'  AND STATUS = 1 UNION SELECT sender_id  FROM `gx_friends_list` WHERE receiver_id ='"+userId+"' AND STATUS = 1)"
             " ORDER BY a.id DESC LIMIT 30 ";
   return sql;
 }

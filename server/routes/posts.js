@@ -37,9 +37,9 @@ var setPostRoutes = function (router) {
       })
     });
 
-    router.get('/api/v1/posts/getUniversalPosts',function(req,res){
+    router.get('/api/v1/posts/getUniversalPosts/:userId',function(req,res){
 
-      postModel.getUniversalPosts(function(result){
+      postModel.getUniversalPosts(req.params.userId,function(result){
         return res.json(result);
       })
     })

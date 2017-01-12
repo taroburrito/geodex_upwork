@@ -10,7 +10,7 @@ export default class FeedsWidget extends Component {
     }
     componentWillMount() {
       const{userAuthSession} = this.props;
-      this.props.fetchAllPosts();
+      this.props.fetchAllPosts(userAuthSession.userObject.id);
 
       this.props.fetchCategories(userAuthSession.userObject.id);
     }
@@ -22,7 +22,7 @@ export default class FeedsWidget extends Component {
             <div className="uk-container uk-container-center middle_content ">
 			        <div className="uk-grid uk-grid-large">
                 	<div className="uk-width-large-1-1">
-				                
+
                   </div>
 
 				    </div>

@@ -23,7 +23,7 @@ export default class Feeds extends Component {
       return(
         <div className="full_width">
             <FeedsWidget
-              fetchAllPosts={()=>dispatch(fetchUniversalPosts())}
+              fetchAllPosts={(userId)=>dispatch(fetchUniversalPosts(userId))}
               fetchCategories={(userId)=>dispatch(fetchCategoriesByUser(userId))}
               fetchPostByFriendsCategory = {(userId,catId)=>dispatch(fetchPostByFriendsCategory(userId,catId))}
               posts={this.props.universalPosts}
