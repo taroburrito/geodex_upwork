@@ -467,7 +467,7 @@ form.uk-search.search_dash_nav {
   background: #fff none repeat scroll 0 0;
   border-radius: 3px;
   margin-top: 5px;
-  width: 33%;
+  width: 34.5%;
 }
 
 .shortlist_menu {
@@ -2231,4 +2231,14 @@ text-transform: capitalize;
     float: left;
     margin: 1%;
     width: 23%;
+}
+
+nav .uk-container.uk-container-center.top-navigation {
+    width: 100%!important;
+    max-width: 100%;
+}
+
+.top-navigation .uk-navbar-brand, .top-navigation .uk-navbar-content, .top-navigation .uk-navbar-toggle {
+    padding-left: 7px;
+    padding-right: 26px;
 }

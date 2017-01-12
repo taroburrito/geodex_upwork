@@ -20,6 +20,7 @@ export const Accept_Request_Failed = 'Accept_Request_Failed';
 export const Delete_Friend_Request_Success = 'Delete_Friend_Request_Success';
 export const Delete_Friend_Request_Failed = 'Delete_Friend_Request_Failed';
 export const Set_Visited_User_Null = 'Set_Visited_User_Null';
+export const Update_Profile_Data_Success = 'Update_Profile_Data_Success';
 
 	/*
      * other constants
@@ -96,8 +97,8 @@ export function updatedProfileData(data){
 	return {type:Update_Profile_Success,data}
 }
 
-export function updateProfileSuccess(userdetail){
-	return { type: Update_Profile_Success, data:userdetail};
+export function updateProfileDataSuccess(userdetail){
+	return { type: Update_Profile_Data_Success, data:userdetail};
 }
 
 export function handleSuccessMessage(msg){
@@ -120,8 +121,23 @@ export function updateUserProfileData(userData){
       if(data.error){
         console.log("error in update userProfile:"+JSON.stringify(data.error));
       }else{
-        console.log("Success update user Profile");
-        dispatch(updateProfileSuccess(userData));
+
+        var prevData = JSON.parse(localStorage.getItem("userData"));
+        //prevData.userObject.first_name = userData
+        var prevUserObject = prevData.userObject;
+
+        //console.log(userData);
+      Object.keys(userData).forEach((key)=> {
+        prevUserObject[key] = userData[key];
+      });
+      prevData.userObject = prevUserObject;
+        // prevUserObject['isLoggedIn']=true;
+        // console.log(prevUserObject);
+
+         localStorage.setItem("userData",JSON.stringify(prevData));
+        //console.log("Success update user Profile");
+        dispatch(updateProfileDataSuccess(prevData));
+        //console.log(localStorage.getItem("userData"))
       // /  dispatch(handleSuccessMessage("Updated Successfully"));
 
       }
@@ -168,9 +184,10 @@ export function updateUserData(userData){
         // console.log(storageData);
          //console.log(localStorage.getItem("userData"))
        localStorage.setItem("userData",JSON.stringify(storageData));
-       //console.log(localStorage.getItem("userData"))
+
         dispatch(updateProfileInputSuccess(data.userData));
       // /  dispatch(handleSuccessMessage("Updated Successfully"));
+       console.log(localStorage.getItem("userData"))
 
       }
     }).error(function(error){
