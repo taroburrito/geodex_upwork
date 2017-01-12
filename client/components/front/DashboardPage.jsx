@@ -126,7 +126,7 @@ export default class DashboardPage extends Component {
      this.setState({ scale: scale })
   }
    handleCloseImagePopUp(){
-      this.setState({showLargeSlider:false});
+      this.setState({showLargeSlider:false,postLargeImage:null,popupVideo:null});
     //  console.log("closed");
   }
   onSlide(e){
