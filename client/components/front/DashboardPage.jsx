@@ -161,13 +161,13 @@ export default class DashboardPage extends Component {
 
   loadPrevPost(postId,userId){
     this.setState({postanimation:userId,clickedPost:null});
-    setTimeout(function() { this.setState({postanimation: false}); }.bind(this), 1000);
+    setTimeout(function() { this.setState({postanimation: false}); }.bind(this), 2000);
     this.props.onFetchPreviousPost(postId,userId);
   }
 
   loadNextPost(postId,userId){
     this.setState({postanimation:userId,clickedPost:null});
-    setTimeout(function() { this.setState({postanimation: false}); }.bind(this), 1000);
+    setTimeout(function() { this.setState({postanimation: false}); }.bind(this), 2000);
     this.props.onFetchNextPost(postId,userId);
   }
 
