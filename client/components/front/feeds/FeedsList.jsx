@@ -579,7 +579,7 @@ export default class FeedsList extends Component {
           sizes={
             [ { columns: 2, gutter: 20 },
                { mq: '768px', columns: 2, gutter: 10 },
-               { mq: '1024px', columns: 3, gutter: 10 },
+               { mq: '1024px', columns: 4, gutter: 10 },
 
                ]}
           >
