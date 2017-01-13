@@ -464,10 +464,11 @@ text-transform:uppercase;
 
 
 form.uk-search.search_dash_nav {
-  background: #fff none repeat scroll 0 0;
-  border-radius: 3px;
-  margin-top: 5px;
-  width: 34.5%;
+    background: #fff none repeat scroll 0 0;
+    border-radius: 3px;
+    margin-top: 5px;
+    width: 30%;
+    margin-left: 3%;
 }
 
 .shortlist_menu {
@@ -2125,9 +2126,10 @@ form.uk-search.search_dash_nav {
 
 
 .uk-navbar-brand.uk-hidden-small > img {
-  margin-top: -2px;
-  max-width: 181px;
-  padding: 5px;
+    margin-top: -2px;
+    max-width: 181px;
+    padding: 5px;
+    padding-right: 20px;
 }
 
 .uk-width-large-1-1.feeds {
@@ -2237,10 +2239,7 @@ text-transform: capitalize;
     width: 23%;
 }
 
-nav .uk-container.uk-container-center.top-navigation {
-    width: 100%!important;
-    max-width: 100%;
-}
+
 
 .top-navigation .uk-navbar-brand, .top-navigation .uk-navbar-content, .top-navigation .uk-navbar-toggle {
     padding-left: 7px;
