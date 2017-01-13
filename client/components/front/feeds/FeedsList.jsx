@@ -283,7 +283,7 @@ export default class FeedsList extends Component {
 
             <div className="uk-comment-body">
               <div className="uk-width-small-1-1 post_control">
-              <p>{this.state.clickedPostContent}</p>
+              <p>{post.content}</p>
               </div>
             </div>
         </article>
