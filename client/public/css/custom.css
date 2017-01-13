@@ -2328,6 +2328,6 @@ text-transform: capitalize;
     width: 33%
 }
 .animated.feed_photos img{
-  /*width: 100%;*/
+  width: 100%;
   /*max-height: 350px;*/
 }
