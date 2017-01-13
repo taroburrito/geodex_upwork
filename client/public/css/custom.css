@@ -2326,7 +2326,8 @@ text-transform: capitalize;
 }*/
 .animated.feed_photos {
     float: left;
-    width: 33%
+    width: 33%;
+    text-align: center;
 }
 .animated.feed_photos img{
   /*width: 100%;*/
