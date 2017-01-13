@@ -542,13 +542,13 @@ export default class FeedsList extends Component {
         postItem.push(
 
         <div className={this.state.animation?" animated  fadeIn profile_post_photos":" animated feed_photos"}
-          // style={{
-          //   maxWidth: '250px',
-          //   height: `${i % 3 === 0 ? 2 * 50 : 150 }px`,
-          //   //height:'100px',
-          //   display: 'block',
-          //   background: 'rgba(0,0,0,0.7)'
-          // }}
+          style={{
+
+          //  height: `${i % 3 === 0 ? 2 * 50 : 50 }px`,
+            //height:'100px',
+          //  display: 'block',
+            background: 'rgba(0,0,0,0.7)'
+          }}
           >
 
 
