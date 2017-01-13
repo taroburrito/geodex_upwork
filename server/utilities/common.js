@@ -228,17 +228,17 @@ function createMediumImage(img,dest){
  //resize large resolution image
   if(image.bitmap.width> 1200 || image.bitmap.height>900){
     if(image.bitmap.width < image.bitmap.height){
-           image.resize(Jimp.AUTO,138).write(dest);
+           image.resize(Jimp.AUTO,240).write(dest);
     }else{
-          image.resize(250,Jimp.AUTO).write(dest);
+          image.resize(350,Jimp.AUTO).write(dest);
     }
   }else {
     if(image.bitmap.width < image.bitmap.height){
-           image.resize(Jimp.AUTO,138).write(dest);
+           image.resize(Jimp.AUTO,240).write(dest);
     }else{
-          image.resize(250,Jimp.AUTO).write(dest);
+          image.resize(350,Jimp.AUTO).write(dest);
     }
-    
+
   }
   // if (image.bitmap.width > image.bitmap.height ) {
   //   y = 0;

@@ -12,6 +12,10 @@ import ImageGallery from 'react-image-gallery';
 import CategoryList from './manage_category/CategoryList';
 import TimeAgo from 'react-timeago';
 
+import LatestPost from './LatestPost';
+
+//import InfiniteScroll from 'react-infinite-scroller';
+
 
 const formatter = (value, unit, suffix, rawTime) => {
   var counter = '';
@@ -156,13 +160,13 @@ export default class DashboardPage extends Component {
   }
 
   loadPrevPost(postId,userId){
-    this.setState({postanimation:userId});
+    this.setState({postanimation:userId,clickedPost:null});
     setTimeout(function() { this.setState({postanimation: false}); }.bind(this), 1000);
     this.props.onFetchPreviousPost(postId,userId);
   }
 
   loadNextPost(postId,userId){
-    this.setState({postanimation:userId});
+    this.setState({postanimation:userId,clickedPost:null});
     setTimeout(function() { this.setState({postanimation: false}); }.bind(this), 1000);
     this.props.onFetchNextPost(postId,userId);
   }
@@ -206,10 +210,8 @@ export default class DashboardPage extends Component {
   handleClickPostComment(){
 
     const{userAuthSession} = this.props;
-
     this.refs.commentBox.getDOMNode().value = "";
     this.refs.contentCommentBox.getDOMNode().value = "";
-
 
     //this.refs.commentBox1.getDOMNode().value = "";
     this.setState({replyContent:null,postComment:null});
@@ -755,9 +757,15 @@ _myImageGalleryRenderer(item) {
 
   loadSinglePostContent(postId,userId,popupImage,popupContent,postVideo){
 
+    if(popupImage || postVideo){
+       var modal = UIkit.modal("#postImageModel");
+    }else if (popupContent) {
+      var modal = UIkit.modal("#postContentModel");
+    }
+    modal.show();
     this.props.fetchComments(postId);
-
     this.setState({clickedPost:postId,clickedUser:userId,getClickedUser:userId,postLargeImage:popupImage,popupContent:popupContent,popupVideo:postVideo});
+
 
   }
 
@@ -930,24 +938,42 @@ loadMorePost(){
   }
 
   loadPostByInfo(userId,postId){
-
+    console.log("postId="+postId);
     if(userId){
     const{dashboardData,userAuthSession} = this.props;
 
+
+    // if latest post
     if(userAuthSession.userObject.id === userId){
         var friendData = userAuthSession.userObject;
+        var postContent = dashboardData.latestPost.content;
     }else{
-      var friendData = {};
-    var friendsData = dashboardData.friends;
-     Object.keys(friendsData).map(function (key) {
-      var item = friendsData[key];
-      if(item.id == userId){
-        friendData = item;
-        return false;
-      }
-    }, this);
 
+      //friends profile data
+
+    var findPost = _.findKey(dashboardData.friends, function (o) { return o.id == userId;})
+     var friendData = dashboardData.friends[findPost];
+
+
+    // post content
+    if(postId){
+
+      var findPost = _.findKey(dashboardData.friendsPostImages[userId], function (o) { return o.id == postId;})
+      if(!findPost){
+        var findPost = _.findKey(dashboardData.friends, function (o) { return o.post_id == postId;})
+        var friendPost = dashboardData.friends[findPost];
+
+        var postContent = friendPost.post_content;
+      }else {
+        var postContent = dashboardData.friendsPostImages[userId][findPost].content;
+      }
+
+    }else{
+        var postContent = null;
+    }
   }
+
+
 
   var profile_link = "/user/"+friendData.id;
   // if(postId){
@@ -957,6 +983,8 @@ loadMorePost(){
   // }else{
   //     var postContent = null;
   // }
+  console.log(friendData);
+  console.log("******")
     if(friendData)
     return(
       <article className="uk-comment">
@@ -971,7 +999,7 @@ loadMorePost(){
 
           <div className="uk-comment-body">
             <div className="uk-width-small-1-1 post_control">
-            <p>{this.state.popupContent}</p>
+            <p>{postContent}</p>
             </div>
           </div>
       </article>
@@ -1168,107 +1196,108 @@ loadChild(child){
     );
   }
 
-  renderLatestPost(){
-    const{dashboardData, userAuthSession} = this.props;
-    var content;
-    var latestPost = dashboardData.latestPost;
-    var userProfile = userAuthSession.userObject;
-
-    if(latestPost){
-      var content = latestPost.content;
-      var content_length = latestPost.content.length;
-      var post_image = latestPost.image || latestPost.youtube_image;
-      var postImage;
-      var postVideo;
-      var timestamp = moment(latestPost.created);
-      var formatted = timestamp.format('YYYY-MM-DD HH:mm:ss');
-
-      // Image content
-      if(latestPost.image){
-        if(content.length > 300){
-        content = content.substring(0,300).concat(' ...Read More');
-        }else{
-        content = content;
-        }
-         postImage = this.state.uploadDir+"user_"+userProfile.id+"/"+post_image;
-      }
-      //Video Content
-      else if (latestPost.youtube_image) {
-        if(content.length > 300){
-        content = content.substring(0,300).concat(' ...Read More');
-        }else{
-        content = content;
-        }
-         postVideo = latestPost.youtube_url;
-
-      }
-
-      //text content
-      else {
-        if(content.length > 500){
-        content = content.substring(0,500).concat(' ...LoadMore');
-        }else{
-        content = content;
-        }
-
-      }
-
-       return (
-         <div className="uk-width-small-1-2 post_control">
-        <div className="latest-post">
-        <a href="#" className="post_txt_dashboard" data-uk-modal={post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={this.loadSinglePostContent.bind(this,latestPost.id,userProfile.id,postImage,latestPost.content,postVideo)}>
-
-        <img src={post_image? this.state.uploadDir+"user_"+userProfile.id+"/thumbs/"+post_image: null} className="uk-float-left img_margin_right"/>
-        <p style={{paddingTop:3,paddingRight:10}}>{content}</p>
-        <small className="user_location post_timestamp" style={{margin:7}}>
-        <TimeAgo date={formatted} formatter= {formatter} />
-        </small>
-        </a>
-
-        </div>
-        {/* <div id='postContentPop' className="uk-modal coment_popup">
-            <div className="uk-modal-dialog uk-modal-dialog-blank">
-           <button className="uk-modal-close uk-close" type="button"></button>
-             <div className="uk-grid">
-
-               <div className="uk-width-small-1-1 popup_img_right coment_pop_cont">
-
-               <article className="uk-comment">
-                    <header className="uk-comment-header">
-                        {userProfile.profile_image?<img src={this.getProfileImage(userProfile.profile_image,userProfile.id)} className="uk-comment-avatar" width="60" height="60"/>:null}
-
-                        <h4 className="uk-comment-title">{userProfile.first_name} {userProfile.last_name}</h4>
-                        <div className="uk-comment-meta">{userProfile.address}<span>{userProfile.email}</span></div>
-                    </header>
-
-                    <div className="uk-comment-body">
-                      <div className="uk-width-small-1-1 post_control">
-                        {post_image?<img src={this.state.uploadDir+"user_"+userProfile.id+"/thumbs/"+post_image} className="uk-float-left img_margin_right"/>:null}
-                         <p>{latestPost.content}</p>
-                     </div>
-                    </div>
-                </article>
-               <h5 className="coment_heading">Comments</h5>
-               {/* <ul className="uk-comment-list" ref="commentsul">
-                  {comments?this.renderComments(item.post_id):null}
-             </ul> }
-
-
-             <div className="comenting_form border-top_cf">
-             <img className="uk-comment-avatar" src="public/images/user.jpg" alt="" width="40" height="40"/>
-             <textarea placeholder="Write Comment..."></textarea>
-             <input type="submit" value="Send"/>
-             </div>
-
-
-         </div>
-        </div>
-      </div>
-    </div> */}
-  </div>
-      );
-    }
-  }
+  // renderLatestPost(){
+  //   const{dashboardData, userAuthSession} = this.props;
+  //   var content;
+  //   var latestPost = dashboardData.latestPost;
+  //   var userProfile = userAuthSession.userObject;
+  //   console.log(latestPost)
+  //   console.log("Latest post")
+  //   if(latestPost){
+  //     var content = latestPost.content;
+  //     var content_length = latestPost.content.length;
+  //     var post_image = latestPost.image || latestPost.youtube_image;
+  //     var postImage;
+  //     var postVideo;
+  //     var timestamp = moment(latestPost.created);
+  //     var formatted = timestamp.format('YYYY-MM-DD HH:mm:ss');
+  //
+  //     // Image content
+  //     if(latestPost.image){
+  //       if(content.length > 300){
+  //       content = content.substring(0,300).concat(' ...Read More');
+  //       }else{
+  //       content = content;
+  //       }
+  //        postImage = this.state.uploadDir+"user_"+userProfile.id+"/"+post_image;
+  //     }
+  //     //Video Content
+  //     else if (latestPost.youtube_image) {
+  //       if(content.length > 300){
+  //       content = content.substring(0,300).concat(' ...Read More');
+  //       }else{
+  //       content = content;
+  //       }
+  //        postVideo = latestPost.youtube_url;
+  //
+  //     }
+  //
+  //     //text content
+  //     else {
+  //       if(content.length > 500){
+  //       content = content.substring(0,500).concat(' ...LoadMore');
+  //       }else{
+  //       content = content;
+  //       }
+  //
+  //     }
+  //
+  //      return (
+  //        <div className="uk-width-small-1-2 post_control">
+  //       <div className="latest-post">
+  //       <a href={post_image?"#postImageModel":"#postContentModel"} className="post_txt_dashboard" data-uk-modal onClick={this.loadSinglePostContent.bind(this,latestPost.id,userProfile.id,postImage,latestPost.content,postVideo)}>
+  //
+  //       <img src={post_image? this.state.uploadDir+"user_"+userProfile.id+"/thumbs/"+post_image: null} className="uk-float-left img_margin_right"/>
+  //       <p style={{paddingTop:3,paddingRight:10}}>{content}</p>
+  //       <small className="user_location post_timestamp" style={{margin:7}}>
+  //       <TimeAgo date={formatted} formatter= {formatter} />
+  //       </small>
+  //       </a>
+  //
+  //       </div>
+  //       {/* <div id='postContentPop' className="uk-modal coment_popup">
+  //           <div className="uk-modal-dialog uk-modal-dialog-blank">
+  //          <button className="uk-modal-close uk-close" type="button"></button>
+  //            <div className="uk-grid">
+  //
+  //              <div className="uk-width-small-1-1 popup_img_right coment_pop_cont">
+  //
+  //              <article className="uk-comment">
+  //                   <header className="uk-comment-header">
+  //                       {userProfile.profile_image?<img src={this.getProfileImage(userProfile.profile_image,userProfile.id)} className="uk-comment-avatar" width="60" height="60"/>:null}
+  //
+  //                       <h4 className="uk-comment-title">{userProfile.first_name} {userProfile.last_name}</h4>
+  //                       <div className="uk-comment-meta">{userProfile.address}<span>{userProfile.email}</span></div>
+  //                   </header>
+  //
+  //                   <div className="uk-comment-body">
+  //                     <div className="uk-width-small-1-1 post_control">
+  //                       {post_image?<img src={this.state.uploadDir+"user_"+userProfile.id+"/thumbs/"+post_image} className="uk-float-left img_margin_right"/>:null}
+  //                        <p>{latestPost.content}</p>
+  //                    </div>
+  //                   </div>
+  //               </article>
+  //              <h5 className="coment_heading">Comments</h5>
+  //              {/* <ul className="uk-comment-list" ref="commentsul">
+  //                 {comments?this.renderComments(item.post_id):null}
+  //            </ul> }
+  //
+  //
+  //            <div className="comenting_form border-top_cf">
+  //            <img className="uk-comment-avatar" src="public/images/user.jpg" alt="" width="40" height="40"/>
+  //            <textarea placeholder="Write Comment..."></textarea>
+  //            <input type="submit" value="Send"/>
+  //            </div>
+  //
+  //
+  //        </div>
+  //       </div>
+  //     </div>
+  //   </div> */}
+  // </div>
+  //     );
+  //   }
+  // }
 
 
 
@@ -1506,7 +1535,11 @@ loadChild(child){
             </div>
           </div>
 
-           {this.renderLatestPost()}
+           <LatestPost
+             dashboardData={this.props.dashboardData}
+             userAuthSession={this.props.userAuthSession}
+             loadSinglePostContent={(postId,userId,postImage,postContent,postVideo)=>this.loadSinglePostContent(postId,userId,postImage,postContent,postVideo)}
+             />
 
          </div>
          <div className="uk-width-small-1-1 shortlist_menu">
