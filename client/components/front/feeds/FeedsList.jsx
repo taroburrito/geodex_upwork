@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { Navigation, Link } from 'react-router';
 
 
-//import InfiniteScroll from 'react-infinite-scroller';
+import MasonryLayout from 'react-masonry-layout'
 
 export default class FeedsList extends Component {
 
@@ -31,6 +31,10 @@ export default class FeedsList extends Component {
       const{userAuthSession} = this.props;
 
     }
+
+    componentDidMount(){
+
+  }
 
     handleCloseImagePopUp(){
       this.setState({clickedPostImage:null,clickedPostVideo:null})
@@ -537,7 +541,7 @@ export default class FeedsList extends Component {
           if(post_image){
         postItem.push(
 
-        <div className={this.state.animation?" animated  fadeIn":" animated"}
+        <div className={this.state.animation?" animated  fadeIn profile_post_photos":" animated feed_photos"}
           // style={{
           //   maxWidth: '250px',
           //   height: `${i % 3 === 0 ? 2 * 50 : 150 }px`,
@@ -548,13 +552,13 @@ export default class FeedsList extends Component {
           >
 
 
-              <div className="feeds_photos">
                 <a href="#" data-uk-modal={post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={this.loadSinglePostContent.bind(this,post.id,post.user_id,postImage,null,postVideo)}>
-                  <div className="feed_img"><img src={imgSrc} className=""/></div>
+
+                  <img src={imgSrc} className=""/>
 
 
                 </a>
-              </div>
+
 
           </div>
 
@@ -568,22 +572,21 @@ export default class FeedsList extends Component {
       );
   }
       return(
-        <div className="feeds-box">
-        {/* <MasonryInfiniteScroller
-      id="items"
-      packed= "data-packed"
-      infiniteScrollDisabled={false}
-    sizes= {[
-      { columns: 2, gutter: 20 },
-      { mq: '768px', columns: 3, gutter: 20 },
-      { mq: '1024px', columns: 4, gutter: 10 }
-    ]} > */}
+        <div style={{float:'left'}}>
+        <MasonryLayout
+          id="items"
+          packed={"data-packed"}
+          sizes={
+            [ { columns: 2, gutter: 20 },
+               { mq: '768px', columns: 2, gutter: 10 },
+               { mq: '1024px', columns: 3, gutter: 10 },
 
+               ]}
+          >
+          {postItem}
+        </MasonryLayout>
+      </div>
 
-        {postItem}
-
-    {/* </MasonryInfiniteScroller> */}
-  </div>
 
       )
     }
@@ -603,6 +606,7 @@ export default class FeedsList extends Component {
                   </select>
               </div>
             </div>
+
               {this.state.filter == 'all'? this.renderAllPosts(): this.renderPhotos()}
               {this.postImageModal()}
               {this.postContentModal()}

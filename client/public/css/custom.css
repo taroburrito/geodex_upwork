@@ -2302,3 +2302,32 @@ text-transform: capitalize;
 .feedArticle section .profile_post_photos img{
   width: 100% !important;
 }
+
+/*.masonry {
+    margin: 1.5em 0;
+    padding: 0;
+    -moz-column-gap: 1.5em;
+    -webkit-column-gap: 1.5em;
+    column-gap: 1.5em;
+    font-size: .85em;
+}
+
+.item {
+    display: inline-block;
+    background: #fff;
+    padding: 1em;
+    margin: 0 0 1.5em;
+    width: 25%;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-shadow: 2px 2px 4px 0 #ccc;
+}*/
+.animated.feed_photos {
+    float: left;
+    width: 350px;
+}
+.animated.feed_photos img{
+  width: 100%;
+  max-height: 350px;
+}
