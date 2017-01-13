@@ -2325,7 +2325,7 @@ text-transform: capitalize;
 }*/
 .animated.feed_photos {
     float: left;
-    width: 350px;
+    width: 33%
 }
 .animated.feed_photos img{
   /*width: 100%;*/
