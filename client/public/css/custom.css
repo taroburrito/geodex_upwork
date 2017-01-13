@@ -2264,8 +2264,8 @@ text-transform: capitalize;
 .profileArticle {
  -moz-column-width: 180px;
  -webkit-column-width: 180px;
- -moz-column-gap: 8px;
- -webkit-column-gap: 8px;
+ -moz-column-gap: 0px;
+ -webkit-column-gap: 0px;
 
 }
 
@@ -2274,6 +2274,7 @@ text-transform: capitalize;
 
  width:  100%;
  background:  #efefef;
+ margin-bottom: -6px;
 }
 .profileArticle section .profile_post_photos {
   width: 100% !important;
