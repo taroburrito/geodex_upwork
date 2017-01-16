@@ -33,7 +33,16 @@ export default class FeedsList extends Component {
     }
 
     componentDidMount(){
-
+//       $(window).load(function(){
+//         alert("load windoe");
+//         $('#content').masonry({
+// columnWidth: 250,
+// itemSelector: '.item',
+// isFitWidth:'true'
+// }).imagesLoaded(function() {
+// $('#content').masonry('reloadItems');
+// });
+//       })
   }
 
     handleCloseImagePopUp(){
@@ -397,6 +406,18 @@ export default class FeedsList extends Component {
       var state = this.refs.filterFeeds.getDOMNode().value;
       this.setState({filter:state,animation:true});
         setTimeout(function() { this.setState({animation: false}); }.bind(this), 1000);
+          setTimeout(function() {
+            $('#content').masonry({
+    columnWidth: 250,
+    itemSelector: '.item',
+    isFitWidth:'true'
+    }).imagesLoaded(function() {
+    $('#content').masonry('reloadItems');
+    })
+
+  }, 1000);
+
+
     }
 
     renderSortContent(){
@@ -541,7 +562,7 @@ export default class FeedsList extends Component {
           if(post_image){
         postItem.push(
 
-        <div className={this.state.animation?" animated  fadeIn feed_photos":" animated feed_photos"}
+        <div className="item"
           // style={{
           //
           // //  height: `${i % 3 === 0 ? 2 * 50 : 50 }px`,
@@ -554,13 +575,14 @@ export default class FeedsList extends Component {
 
                 <a href="#" data-uk-modal={post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={this.loadSinglePostContent.bind(this,post.id,post.user_id,postImage,null,postVideo)}>
 
-                  <img src={imgSrc} className=""/>
+                  <img src={imgSrc} className="feedImg"/>
 
 
                 </a>
 
 
           </div>
+
 
       );i++;
     }
@@ -572,21 +594,24 @@ export default class FeedsList extends Component {
       );
   }
       return(
-        <div style={{float:'left'}}>
-        <MasonryLayout
-          id="items"
-          packed={"data-packed"}
-          positios={false}
-          sizes={
-            [ { columns: 2, gutter: 20 },
-               { mq: '768px', columns: 3, gutter: 10 },
-               { mq: '1024px', columns: 3, gutter: 10 },
-
-
-               ]}
-          >
-          {postItem}
-        </MasonryLayout>
+      //   <div style={{float:'left'}}>
+      //   <MasonryLayout
+      //     id="items"
+      //     packed={"data-packed"}
+      //     positios={false}
+      //     sizes={
+      //       [ { columns: 2, gutter: 20 },
+      //          { mq: '768px', columns: 3, gutter: 10 },
+      //          { mq: '1024px', columns: 3, gutter: 10 },
+      //
+      //
+      //          ]}
+      //     >
+      //     {postItem}
+      //   </MasonryLayout>
+      // </div>
+      <div className="feed_container">
+      <div id="content" >{postItem}</div>
       </div>
 
 
@@ -608,7 +633,7 @@ export default class FeedsList extends Component {
                   </select>
               </div>
             </div>
-
+            {/* {this.renderPhotos()} */}
               {this.state.filter == 'all'? this.renderAllPosts(): this.renderPhotos()}
               {this.postImageModal()}
               {this.postContentModal()}

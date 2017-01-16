@@ -2333,3 +2333,24 @@ text-transform: capitalize;
   /*width: 100%;*/
   /*max-height: 350px;*/
 }
+#content {
+margin: 0 auto;
+width: auto;
+}
+.feedImg{
+  width: 250px;
+  height: auto;
+  padding: 3px;
+}
+.feed_container{
+  float: left;
+  width: 100%;
+
+}
+
+/*-webkit-transition: left .4s ease-in-out, top .4s ease-in-out .4s;
+-moz-transition: left .4s ease-in-out, top .4s ease-in-out .4s;
+-ms-transition: left .4s ease-in-out, top .4s ease-in-out .4s;
+-o-transition: left .4s ease-in-out, top .4s ease-in-out .4s;
+transition: left .4s ease-in-out, top .4s ease-in-out .4s;
+*/
