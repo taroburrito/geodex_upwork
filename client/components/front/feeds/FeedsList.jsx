@@ -403,17 +403,57 @@ export default class FeedsList extends Component {
     }
 
     handleFilterFeeds(){
+
       var state = this.refs.filterFeeds.getDOMNode().value;
       this.setState({filter:state,animation:true});
         setTimeout(function() { this.setState({animation: false}); }.bind(this), 1000);
           setTimeout(function() {
-            $('#content').masonry({
-    columnWidth: 250,
-    itemSelector: '.item',
-    isFitWidth:'true'
-    }).imagesLoaded(function() {
-    $('#content').masonry('reloadItems');
-    })
+
+            // Main content container
+            	var container = $('#content');
+
+            	// Masonry + ImagesLoaded
+            	container.imagesLoaded(function(){
+            		container.masonry({
+            			// selector for entry content
+                  columnWidth: 250,
+                  itemSelector: '.item',
+                  isFitWidth:'true',
+                  isAnimated: true
+            		});
+            	});
+
+            // Infinite Scroll
+          	container.infinitescroll({
+
+          		// selector for the paged navigation (it will be hidden)
+          		navSelector  : ".navigation",
+          		// selector for the NEXT link (to page 2)
+          		nextSelector : ".nav-previous a",
+          		// selector for all items you'll retrieve
+          		itemSelector : ".item",
+
+          		// finished message
+          		loading: {
+
+          			finishedMsg: 'No more pages to load.'
+          			}
+          		},
+
+          		// Trigger Masonry as a callback
+          		function( newElements ) {
+                alert("dddd");
+          			// // hide new items while they are loading
+          			// var newElems = $( newElements ).css({ opacity: 0 });
+          			// // ensure that images load before adding to masonry layout
+          			//   newElems.imagesLoaded(function(){
+          			// 	// show elems now they're ready
+          			// 	newElems.animate({ opacity: 1 });
+          			// 	container.masonry( 'appended', $newElems, true );
+          			// });
+
+          	});
+
 
   }, 1000);
 
@@ -612,6 +652,9 @@ export default class FeedsList extends Component {
       // </div>
       <div className="feed_container">
       <div id="content" >{postItem}</div>
+        <nav id="pagination" className="navigation">
+  	<p><a href="">Page 2</a></p>
+  </nav>
       </div>
 
 

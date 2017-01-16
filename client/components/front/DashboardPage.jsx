@@ -280,6 +280,19 @@ export default class DashboardPage extends Component {
                 var width = img.naturalWidth,
                     height = img.naturalHeight;
 
+                    if(width < 250){
+                      self.addAlert("","Upload image of min width 250px.");
+                    }else{
+                      self.setState({
+                          image: upload.target.result,
+                          fileData:file,
+                          videoLink:null,
+                          videoImage:null,
+                          previewImageWidth:250,
+                          previewImageHeight:250,
+                        });
+                    }
+
                     // if(width < 250){
                     //   self.setState({
                     //       image: upload.target.result,
@@ -290,14 +303,7 @@ export default class DashboardPage extends Component {
                     //      previewImageHeight:height,
                     //     });
                     // }else{
-                      self.setState({
-                          image: upload.target.result,
-                          fileData:file,
-                          videoLink:null,
-                          videoImage:null,
-                          previewImageWidth:250,
-                          previewImageHeight:250,
-                        });
+
                     //}
 
             };
@@ -1417,8 +1423,13 @@ loadChild(child){
             : null}
 
              <br />
-             {this.state.clickedImageIcon?
-           <input type="file"  ref="file" className="uk-float-left"  onChange={this.handleImageChange.bind(this)}/>
+             {
+               this.state.clickedImageIcon?
+               <div>
+                 <input type="file"  ref="file" className="uk-float-left"  onChange={this.handleImageChange.bind(this)}/>
+                 <span className="s_upload">Please upload image of min width 250px.</span>
+               </div>
+
            :null}
          {this.state.clickedYouTubeLink?
           <input type="text" ref="videoLink" className="input-img-url"  value={this.state.videoLink} placeholder="Enter youtube url" onChange={this.handleVideoLinkChange}/>
@@ -1502,9 +1513,10 @@ loadChild(child){
 
       <div className="uk-container uk-container-center middle_content dashboad">
       <div>
-        <ToastContainer ref="container"
-                        toastMessageFactory={ToastMessageFactory}
-                        className="toast-top-right" />
+        <ToastContainer
+           ref="container"
+           toastMessageFactory={ToastMessageFactory}
+           className="toast-top-right" />
 
     </div>
          <div className="uk-grid dash_top_head my_profile">
