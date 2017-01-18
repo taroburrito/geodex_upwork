@@ -228,7 +228,7 @@ function createMediumImage(img,dest){
  //resize large resolution image
   if(image.bitmap.width> 1200 || image.bitmap.height>900){
     if(image.bitmap.width < image.bitmap.height){
-           image.resize(Jimp.AUTO,480).write(dest);
+           image.resize(Jimp.AUTO,560).write(dest);
     }else{
           image.resize(560,Jimp.AUTO).write(dest);
     }
