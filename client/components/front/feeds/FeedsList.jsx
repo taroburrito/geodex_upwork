@@ -1,8 +1,9 @@
 import React, { Component, PropTypes } from 'react';
 import { Navigation, Link } from 'react-router';
+//import InfiniteScroll from 'react-infinite-scroller';
 
-
-import MasonryLayout from 'react-masonry-layout'
+//import MasonryLayout from 'react-masonry-layout'
+//import InfiniteScroll from 'redux-infinite-scroll';
 
 export default class FeedsList extends Component {
 
@@ -20,6 +21,8 @@ export default class FeedsList extends Component {
           animation:false,
           postComment:null,
           replyContent:null,
+          isLoading:false,
+          windowHeight:1,
         },
         this.handleFilterFeeds = this.handleFilterFeeds.bind(this);
         this.handleCloseImagePopUp = this.handleCloseImagePopUp.bind(this);
@@ -31,8 +34,21 @@ export default class FeedsList extends Component {
       const{userAuthSession} = this.props;
 
     }
+    handleScroll(){
+      var windowHeight = $(window).height();
+var inHeight = window.innerHeight;
+var scrollT = $(window).scrollTop();
+var totalScrolled = scrollT+inHeight;
+
+if(totalScrolled > parseInt(this.state.windowHeight)+1000){
+  this.setState({windowHeight:totalScrolled});
+    console.log(totalScrolled);
+}
+
+    }
 
     componentDidMount(){
+       window.addEventListener('scroll', this.handleScroll.bind(this));
 //       $(window).load(function(){
 //         alert("load windoe");
 //         $('#content').masonry({
@@ -405,8 +421,8 @@ export default class FeedsList extends Component {
     handleFilterFeeds(){
 
       var state = this.refs.filterFeeds.getDOMNode().value;
-      this.setState({filter:state,animation:true});
-        setTimeout(function() { this.setState({animation: false}); }.bind(this), 1000);
+      this.setState({filter:state,animation:true,isLoading:true});
+        setTimeout(function() { this.setState({animation: false,isLoading:false}); }.bind(this), 1000);
           setTimeout(function() {
 
             // Main content container
@@ -435,7 +451,6 @@ export default class FeedsList extends Component {
 
           		// finished message
           		loading: {
-
           			finishedMsg: 'No more pages to load.'
           			}
           		},
@@ -651,19 +666,32 @@ export default class FeedsList extends Component {
       //   </MasonryLayout>
       // </div>
       <div className="feed_container">
-      <div id="content" >{postItem}</div>
-        <nav id="pagination" className="navigation">
-  	<p><a href="">Page 2</a></p>
-  </nav>
+
+      <div id="content" >
+
+
+        {postItem}
+
+
+
+
+
+   </div>
       </div>
 
 
       )
     }
+
+    loadMore(){
+      console.log("Load more");
+    }
     render() {
 
           return (
             <div>
+              {this.state.isLoading?<div className="loading" style={{display:'block'}}></div>:null}
+
               <div className="uk-width-small-1-1 shortlist_menu">
                 <ul>
               {this.renderCategoriesContent()}

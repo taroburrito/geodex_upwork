@@ -230,13 +230,13 @@ function createMediumImage(img,dest){
     if(image.bitmap.width < image.bitmap.height){
            image.resize(Jimp.AUTO,240).write(dest);
     }else{
-          image.resize(350,Jimp.AUTO).write(dest);
+          image.resize(560,Jimp.AUTO).write(dest);
     }
   }else {
     if(image.bitmap.width < image.bitmap.height){
            image.resize(Jimp.AUTO,240).write(dest);
     }else{
-          image.resize(350,Jimp.AUTO).write(dest);
+          image.resize(560,Jimp.AUTO).write(dest);
     }
 
   }

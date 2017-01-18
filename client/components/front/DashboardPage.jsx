@@ -280,8 +280,8 @@ export default class DashboardPage extends Component {
                 var width = img.naturalWidth,
                     height = img.naturalHeight;
 
-                    if(width < 250){
-                      self.addAlert("","Upload image of min width 250px.");
+                    if(width < 560){
+                      self.addAlert("","Upload image of min width 560px.");
                     }else{
                       self.setState({
                           image: upload.target.result,
@@ -837,31 +837,31 @@ loadMorePost(){
           <div ref="animate" key={key} className={this.state.animation ? "uk-grid dash_top_head dash_botom_list animated fadeIn":'uk-grid dash_top_head dash_botom_list animated'} id={item.id}>
 
             <div className="uk-width-small-1-2">
-              <div className="uk-grid uk-grid-small">
-              <div className="uk-width-3-10 user_img_left"><Link to={profile_link}><img src={this.getProfileImage(item.profile_image,user_id)} className=""/></Link></div>
-              <div className="uk-width-7-10 user_bottom_img_right">
-              <h3 className="capital_first"><Link to={profile_link} className="user-name-anchor">{item.first_name} {item.last_name} </Link>
-
-             <small className="user_location">{item.address}</small>
-
+              <div className="uk-grid uk-grid-small top_usinfo">
+                <div className="uk-width-1-10 user_img_left"><Link to={profile_link}><img src={this.getProfileImage(item.profile_image,user_id)} className=""/></Link></div>
+                <div className="uk-width-9-10 user_bottom_img_right">
+                <h3 className="capital_first"><Link to={profile_link} className="user-name-anchor">{item.first_name} {item.last_name} </Link>
+                <small className="user_location">{item.address}</small>
                 </h3>
-                <div className="uk-width-7-10 comm-icon-div">
+                <div className="uk-width-10-10 comm-icon-div">
                 <a data-uk-modal="{target:'#sendEmail'}" onClick={this.handleOnClickEmailIcon.bind(this,item.email)} data={item.email}  href="#" className="">
                 <img className="comm-icons" src="public/images/email_icon.png" onClick={()=>this.setState({showMessage:false})}/>
                 </a>
-
                 <img className="comm-icons" src="public/images/message_icon.png"/>
                 <img className="comm-icons" src="public/images/phone_icon.png"/>
                 </div>
+                </div>
+             </div>
 
-                   <div className="uk-slidenav-position uk-margin" data-uk-slider="{autoplay: true}">
 
+             <div className="uk-grid uk-grid-small slider_contt">
+              <div className="uk-slidenav-position uk-margin" data-uk-slider="{autoplay: true}">
                     <div className="uk-slider-container img_slid">
                         {slider_images}
                     </div>
                 </div>
-                </div>
               </div>
+              
             </div>
 
 
@@ -1427,7 +1427,7 @@ loadChild(child){
                this.state.clickedImageIcon?
                <div>
                  <input type="file"  ref="file" className="uk-float-left"  onChange={this.handleImageChange.bind(this)}/>
-                 <span className="s_upload">Please upload image of min width 250px.</span>
+                 <span className="s_upload">Please upload image of min width 560px.</span>
                </div>
 
            :null}

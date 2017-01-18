@@ -81,6 +81,21 @@ export default class Profile extends Component {
       //console.log(this.props);
     }
     componentDidMount(){
+        setTimeout(function() {
+          // Main content container
+            var container = $('#content');
+
+            // Masonry + ImagesLoaded
+            container.imagesLoaded(function(){
+              container.masonry({
+                // selector for entry content
+                columnWidth: 250,
+                itemSelector: '.photos-item',
+                isFitWidth:true,
+                isAnimated: true
+              });
+            });
+        }, 1000);
 
     }
 
@@ -398,16 +413,16 @@ renderPhotos(){
         if(item.image){
         var post_img = item.image;
         postContent.push(
-          <section>
-          <div className="profile_post_photos" >
+
+          <div className="photos-item" >
 
               <a href="#photoVideoSlider" onClick={this.onClickPhotoVideo.bind(this,item.id,i)} data-uk-modal>
-                <img className="grid-item" src={this.state.uploadDir+'user_'+item.user_id+'/medium/'+post_img}/>
+                <img className="photos-item-img" src={this.state.uploadDir+'user_'+item.user_id+'/medium/'+post_img}/>
 
               </a>
 
         </div>
-        </section>
+
       );
       i++;
     }
@@ -419,8 +434,11 @@ renderPhotos(){
     }
 
     return(
+      <div className="profile_photos_container">
+      <div id="content" >{postContent}</div>
 
-{postContent}
+      </div>
+
 
     )
 
@@ -849,13 +867,12 @@ renderPostContentModal(){
               <div className="uk-width-medium-1-2 profile_post_left">
               <h3>Photos</h3>
 
-                <div>
                   <ScrollbarWrapper>
-                      <article className="profileArticle">
+
                       {this.renderPhotos()}
-                      </article>
+
                       </ScrollbarWrapper>
-                    </div>
+
 
               </div>
 
