@@ -130,6 +130,79 @@ if(totalScrolled > parseInt(this.state.windowHeight)+1000){
 
     }
 
+    loadPostContent(postId){
+    this.props.fetchComments(postId);            
+      var comments   = this.props.comments;
+      var userAuthSession   = this.props.userAuthSession;
+      var commentElement = [];
+      console.log(postId);
+      console.log(this.props);
+      if(comments){
+      var newArr = [];
+      Object.keys(comments).forEach((id)=>{
+        var item = comments[id];
+        newArr.push(item);
+      });
+
+    }else{
+      //commentElement = (<div>No comments yet</div>);
+    }
+    var newItem = null;
+    if(newArr){
+      newItem = this.buildHierarchy(newArr);
+
+    }
+
+    if(newItem)
+    Object.keys(newItem).forEach((id)=>{
+      var item = newItem[id]['value'];
+      var child = newItem[id]['children'];
+      if(child){
+
+      }
+      if(this.state.showCommentBox == item.id){
+        var commentBox = (
+          <div className="comenting_form border-top_cf">
+          <img className="uk-comment-avatar" src={this.getProfileImage(userAuthSession.userObject.profile_image,userAuthSession.userObject.id)} alt="" width="40" height="40"/>
+          <textarea placeholder="Write Comment..."  value={this.state.replyContent} onChange={(e)=>this.setState({replyContent:e.target.value})}></textarea>
+          <a onClick={this.handleClickReplyComment.bind(this,item.id,item.post_id)} className="uk-button uk-button-primary comment_btn">Reply</a>
+          </div>
+        );
+      }else{
+        var commentBox = "";
+      }
+
+      commentElement.push(
+        <li>
+            <article className="uk-comment">
+                <header className="uk-comment-header">
+                    <img className="uk-comment-avatar" src={this.getProfileImage(item.profile_image,item.user_id)} alt="" width="40" height="40"/>
+                    <h4 className="uk-comment-title">{item.NAME}</h4>
+                    <div className="uk-comment-meta"><span>{item.email}</span> | {item.address}</div>
+                </header>
+                <div className="uk-comment-body">
+                    <p>{item.comment}</p>
+                </div>
+            </article>
+            <a onClick={()=>this.setState({showCommentBox:item.id,replyContent:null})} className="reply_to_c">Reply</a>
+            {commentBox}
+
+            <ul>
+              {this.loadChild(child)}
+            </ul>
+
+      </li>
+    );
+  });
+console.log(commentElement);
+
+      return(
+        {commentElement}
+
+      )
+
+    }
+
     buildHierarchy(arry) {
 
        var roots = [], children = {};
@@ -559,6 +632,7 @@ if(totalScrolled > parseInt(this.state.windowHeight)+1000){
 
                   <p>{content}</p>
                 </a>
+                
               </div>
             </article>
           </div>
