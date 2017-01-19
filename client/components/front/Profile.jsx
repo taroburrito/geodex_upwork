@@ -850,7 +850,7 @@ renderPostContentModal(){
                       </div>
                     <div className="uk-width-7-10 pro_right">
                       {(userAuthSession.userObject.id != this.props.profileId)? this.renderAddFriendLink(): null}
-                    <h3>{userProfileData.first_name} {userProfileData.last_name}</h3>
+                    <h3 className="name-heading">{userProfileData.first_name} {userProfileData.last_name}</h3>
                     <h4>{userProfileData.address}</h4>
                     <h5>{userProfileData.email} <i className="uk-icon-envelope"></i></h5>
                     </div>

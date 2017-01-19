@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { Navigation, Link } from 'react-router';
+import PhotosView from './PhotosView';
 //import InfiniteScroll from 'react-infinite-scroller';
 
 //import MasonryLayout from 'react-masonry-layout'
@@ -131,7 +132,7 @@ if(totalScrolled > parseInt(this.state.windowHeight)+1000){
     }
 
     loadPostContent(postId){
-    this.props.fetchComments(postId);            
+    this.props.fetchComments(postId);
       var comments   = this.props.comments;
       var userAuthSession   = this.props.userAuthSession;
       var commentElement = [];
@@ -466,7 +467,33 @@ console.log(commentElement);
       if(!catId){
         this.props.fetchUniversalPosts(userAuthSession.userObject.id);
       }else{
+
       this.props.fetchPostByFriendsCategory(userAuthSession.userObject.id,catId);
+
+
+    }
+    if(this.state.filter == 'all'){
+
+    }else{
+      setTimeout(function() {
+
+        // Main content container
+          var container = $('#content');
+
+          // Masonry + ImagesLoaded
+          container.imagesLoaded(function(){
+            container.masonry({
+              // selector for entry content
+              columnWidth: 250,
+              itemSelector: '.item',
+              isFitWidth:'true',
+              isAnimated: true
+            });
+          });
+
+
+
+  }, 1000);
     }
       //this.props.fetchInitialData(userAuthSession.userObject.id, catId);
     }
@@ -484,11 +511,8 @@ console.log(commentElement);
 
 
       return (
-
-            {categoriesElement}
-
-
-      );
+        {categoriesElement}
+          );
     }
 
     handleFilterFeeds(){
@@ -496,54 +520,54 @@ console.log(commentElement);
       var state = this.refs.filterFeeds.getDOMNode().value;
       this.setState({filter:state,animation:true,isLoading:true});
         setTimeout(function() { this.setState({animation: false,isLoading:false}); }.bind(this), 1000);
-          setTimeout(function() {
-
-            // Main content container
-            	var container = $('#content');
-
-            	// Masonry + ImagesLoaded
-            	container.imagesLoaded(function(){
-            		container.masonry({
-            			// selector for entry content
-                  columnWidth: 250,
-                  itemSelector: '.item',
-                  isFitWidth:'true',
-                  isAnimated: true
-            		});
-            	});
-
-            // Infinite Scroll
-          	container.infinitescroll({
-
-          		// selector for the paged navigation (it will be hidden)
-          		navSelector  : ".navigation",
-          		// selector for the NEXT link (to page 2)
-          		nextSelector : ".nav-previous a",
-          		// selector for all items you'll retrieve
-          		itemSelector : ".item",
-
-          		// finished message
-          		loading: {
-          			finishedMsg: 'No more pages to load.'
-          			}
-          		},
-
-          		// Trigger Masonry as a callback
-          		function( newElements ) {
-                alert("dddd");
-          			// // hide new items while they are loading
-          			// var newElems = $( newElements ).css({ opacity: 0 });
-          			// // ensure that images load before adding to masonry layout
-          			//   newElems.imagesLoaded(function(){
-          			// 	// show elems now they're ready
-          			// 	newElems.animate({ opacity: 1 });
-          			// 	container.masonry( 'appended', $newElems, true );
-          			// });
-
-          	});
-
-
-  }, 1000);
+  //         setTimeout(function() {
+  //
+  //           // Main content container
+  //           	var container = $('#content');
+  //
+  //           	// Masonry + ImagesLoaded
+  //           	container.imagesLoaded(function(){
+  //           		container.masonry({
+  //           			// selector for entry content
+  //                 columnWidth: 250,
+  //                 itemSelector: '.item',
+  //                 isFitWidth:'true',
+  //                 isAnimated: true
+  //           		});
+  //           	});
+  //
+  //           // Infinite Scroll
+  //         	container.infinitescroll({
+  //
+  //         		// selector for the paged navigation (it will be hidden)
+  //         		navSelector  : ".navigation",
+  //         		// selector for the NEXT link (to page 2)
+  //         		nextSelector : ".nav-previous a",
+  //         		// selector for all items you'll retrieve
+  //         		itemSelector : ".item",
+  //
+  //         		// finished message
+  //         		loading: {
+  //         			finishedMsg: 'No more pages to load.'
+  //         			}
+  //         		},
+  //
+  //         		// Trigger Masonry as a callback
+  //         		function( newElements ) {
+  //               alert("dddd");
+  //         			// // hide new items while they are loading
+  //         			// var newElems = $( newElements ).css({ opacity: 0 });
+  //         			// // ensure that images load before adding to masonry layout
+  //         			//   newElems.imagesLoaded(function(){
+  //         			// 	// show elems now they're ready
+  //         			// 	newElems.animate({ opacity: 1 });
+  //         			// 	container.masonry( 'appended', $newElems, true );
+  //         			// });
+  //
+  //         	});
+  //
+  //
+  // }, 1000);
 
 
     }
@@ -632,7 +656,7 @@ console.log(commentElement);
 
                   <p>{content}</p>
                 </a>
-                
+
               </div>
             </article>
           </div>
@@ -647,113 +671,6 @@ console.log(commentElement);
   }
       return(
         {postItem}
-      )
-    }
-    renderPhotos(){
-      const{posts} = this.props;
-
-      var postItem = [];
-      var len = Object.keys(posts).length;
-
-      if(posts && len > 0){
-        var i = 1;
-        Object.keys(posts).forEach((postId)=>{
-          var post = posts[postId];
-          var post_image = post.image || post.youtube_image;
-
-
-
-
-          // Image content
-          if(post_image && post.image){
-
-            var imgSrc = "uploads/images/user_"+post.user_id+"/medium/"+post_image;
-            var postVideo = null;
-            var postImage = "uploads/images/user_"+post.user_id+"/"+post_image;;
-          }
-          //Video Content
-          else if (post_image && post.youtube_image) {
-
-            var imgSrc = "uploads/images/user_"+post.user_id+"/thumbs/"+post_image;
-            var postVideo = post.youtube_url;
-            var postImage = null;
-          }
-
-          //text content
-          else {
-
-            var imgSrc = null;
-            var postVideo = null;
-            var postImage = null;
-          }
-
-
-          if(post_image){
-        postItem.push(
-
-        <div className="item"
-          // style={{
-          //
-          // //  height: `${i % 3 === 0 ? 2 * 50 : 50 }px`,
-          //   //height:'100px',
-          // //  display: 'block',
-          //
-          // }}
-          >
-
-
-                <a href="#" data-uk-modal={post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={this.loadSinglePostContent.bind(this,post.id,post.user_id,postImage,null,postVideo)}>
-
-                  <img src={imgSrc} className="feedImg"/>
-
-
-                </a>
-
-
-          </div>
-
-
-      );i++;
-    }
-
-    });
-  }else{
-      postItem.push(
-        <div>No post to show</div>
-      );
-  }
-      return(
-      //   <div style={{float:'left'}}>
-      //   <MasonryLayout
-      //     id="items"
-      //     packed={"data-packed"}
-      //     positios={false}
-      //     sizes={
-      //       [ { columns: 2, gutter: 20 },
-      //          { mq: '768px', columns: 3, gutter: 10 },
-      //          { mq: '1024px', columns: 3, gutter: 10 },
-      //
-      //
-      //          ]}
-      //     >
-      //     {postItem}
-      //   </MasonryLayout>
-      // </div>
-      <div className="feed_container">
-
-      <div id="content" >
-
-
-        {postItem}
-
-
-
-
-
-   </div>
-      </div>
-
-
       )
     }
 
@@ -779,7 +696,12 @@ console.log(commentElement);
               </div>
             </div>
             {/* {this.renderPhotos()} */}
-              {this.state.filter == 'all'? this.renderAllPosts(): this.renderPhotos()}
+              {this.state.filter == 'all'? this.renderAllPosts():
+                 <PhotosView
+                   posts={this.props.posts}
+                   animation={this.state.animation}
+                   loadSinglePostContent={(postId,userId,popupImage,popupContent,postVideo)=>this.loadSinglePostContent(postId,userId,popupImage,popupContent,postVideo)}
+                />}
               {this.postImageModal()}
               {this.postContentModal()}
             </div>

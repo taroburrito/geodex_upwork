@@ -862,8 +862,8 @@ form.uk-search.search_dash_nav {
 }
 
 a.reply_to_c {
-    background: #1D8ACB;
-    color: #fff;
+    /*background: #1D8ACB;
+    color: #fff;*/
     font-size: 12px;
     padding: 0px 7px;
     border-radius: 0 0 2px 2px;
@@ -2442,6 +2442,7 @@ ul.uk-feedcomment-list {
     float: left;
     width: 100%;
 }
+
 .uk-feedcomment-list .cmnt-cntnt-box{ float:left; width:87%; margin:0;}
 .uk-feedcomment-list .cmnt-cntnt-box h4.uk-feedcomment-title{ float:left; width:100%; margin:0;}
 ul.uk-feedChildComment {
@@ -2456,5 +2457,11 @@ ul.uk-feedChildComment li{ border: none; padding: 0;}
     float: left;
     width: 100%; margin: 5px 0 0 0;
 }
-.comenting_form.border-top_cf textarea{width: 75%;}
-.comenting_form.border-top_cf .comment_btn{ margin: 0;}
+/*.comenting_form.border-top_cf textarea{width: 75%;}
+.comenting_form.border-top_cf .comment_btn{ margin: 0;}*/
+li.placesSuggest_suggest span {
+    text-transform: capitalize;
+}
+.name-heading {
+    text-transform: capitalize;
+}

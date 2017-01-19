@@ -439,7 +439,7 @@ renderCoverModel(){
                                         <a data-uk-modal="{target:'#profilepic'}" href="#" className="edit_profile_img_btn">Edit <i className="uk-icon-file-image-o"></i></a>
                                     </div>
                                     <div className="uk-width-7-10 pro_right">
-                                       <h3>{userData.first_name} {userData.last_name} </h3>
+                                       <h3 className="name-heading">{userData.first_name} {userData.last_name} </h3>
                                         <h4>{ userData.address }</h4>
                                         <h5>{userData.email}</h5>
                                     </div>
