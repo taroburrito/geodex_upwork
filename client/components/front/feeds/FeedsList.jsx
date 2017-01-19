@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { Navigation, Link } from 'react-router';
 import PhotosView from './PhotosView';
+import PostView from './PostView';
 //import InfiniteScroll from 'react-infinite-scroller';
 
 //import MasonryLayout from 'react-masonry-layout'
@@ -583,96 +584,99 @@ console.log(commentElement);
     )
     }
 
-    renderAllPosts(){
-      const{posts} = this.props;
-
-      var postItem = [];
-      var len = Object.keys(posts).length;
-
-      if(posts && len > 0){
-
-        Object.keys(posts).forEach((postId)=>{
-          var post = posts[postId];
-          var post_image = post.image || post.youtube_image;
-          var content = post.content;
-
-
-
-          // Image content
-          if(post_image && post.image){
-            if(content.length > 300){
-            content = content.substring(0,300).concat(' ...LoadMore');
-            }else{
-            content = content;
-            }
-            var imgSrc = "uploads/images/user_"+post.user_id+"/medium/"+post_image;
-            var postVideo = null;
-            var postImage = "uploads/images/user_"+post.user_id+"/"+post_image;;
-          }
-          //Video Content
-          else if (post_image && post.youtube_image) {
-            if(content.length > 300){
-            content = content.substring(0,300).concat(' ...LoadMore');
-            }else{
-            content = content;
-            }
-            var imgSrc = "uploads/images/user_"+post.user_id+"/thumbs/"+post_image;
-            var postVideo = post.youtube_url;
-            var postImage = null;
-          }
-
-          //text content
-          else {
-            if(content.length > 500){
-            content = content.substring(0,500).concat(' ...LoadMore');
-            }else{
-            content = content;
-            }
-            var imgSrc = null;
-            var postVideo = null;
-            var postImage = null;
-          }
-
-
-
-        postItem.push(
-
-        <div className={this.state.animation?"feeds-box animated  fadeIn":"feeds-box animated"}>
-          <article className="uk-comment uk-comment-primary">
-            <header className=" feeds-header uk-grid-medium uk-flex-middle" uk-grid>
-              <div className="uk-width-auto">
-                <img className="uk-comment-avatar" src={this.getProfileImage(post.profile_image,post.user_id)} width="80" height="80" alt=""/>
-              </div>
-              <div className="uk-width-expand">
-                <h4 className="uk-comment-title uk-margin-remove"><Link to={"/user/"+post.user_id}>{post.NAME}</Link></h4>
-                <span className="feeds-address">{post.address}</span>
-                  <span className="feeds-address">{post.email}</span>
-
-                </div>
-              </header>
-              <div className="uk-comment-body">
-                <a href="#" data-uk-modal={post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={this.loadSinglePostContent.bind(this,post.id,post.user_id,postImage,post.content,postVideo)}>
-                  <div className="feed_img"><img src={imgSrc} className=""/></div>
-
-                  <p>{content}</p>
-                </a>
-
-              </div>
-            </article>
-          </div>
-
-      );
-
-    });
-  }else{
-      postItem.push(
-        <div>No post to show</div>
-      );
-  }
-      return(
-        {postItem}
-      )
-    }
+  //   renderAllPosts(){
+  //     const{posts} = this.props;
+  //
+  //     var postItem = [];
+  //     var len = Object.keys(posts).length;
+  //
+  //     if(posts && len > 0){
+  //
+  //       Object.keys(posts).forEach((postId)=>{
+  //         var post = posts[postId];
+  //         var post_image = post.image || post.youtube_image;
+  //         var content = post.content;
+  //
+  //
+  //
+  //         // Image content
+  //         if(post_image && post.image){
+  //           if(content.length > 300){
+  //           content = content.substring(0,300).concat(' ...LoadMore');
+  //           }else{
+  //           content = content;
+  //           }
+  //           var imgSrc = "uploads/images/user_"+post.user_id+"/medium/"+post_image;
+  //           var postVideo = null;
+  //           var postImage = "uploads/images/user_"+post.user_id+"/"+post_image;;
+  //         }
+  //         //Video Content
+  //         else if (post_image && post.youtube_image) {
+  //           if(content.length > 300){
+  //           content = content.substring(0,300).concat(' ...LoadMore');
+  //           }else{
+  //           content = content;
+  //           }
+  //           var imgSrc = "uploads/images/user_"+post.user_id+"/thumbs/"+post_image;
+  //           var postVideo = post.youtube_url;
+  //           var postImage = null;
+  //         }
+  //
+  //         //text content
+  //         else {
+  //           if(content.length > 500){
+  //           content = content.substring(0,500).concat(' ...LoadMore');
+  //           }else{
+  //           content = content;
+  //           }
+  //           var imgSrc = null;
+  //           var postVideo = null;
+  //           var postImage = null;
+  //         }
+  //
+  //
+  //
+  //       postItem.push(
+  //
+  //       <div className={this.state.animation?"feeds-box animated  fadeIn":"feeds-box animated"}>
+  //         <article className="uk-comment uk-comment-primary">
+  //           <header className=" feeds-header uk-grid-medium uk-flex-middle" uk-grid>
+  //             <div className="uk-width-auto">
+  //               <img className="uk-comment-avatar" src={this.getProfileImage(post.profile_image,post.user_id)} width="80" height="80" alt=""/>
+  //             </div>
+  //             <div className="uk-width-expand">
+  //               <h4 className="uk-comment-title uk-margin-remove"><Link to={"/user/"+post.user_id}>{post.NAME}</Link></h4>
+  //               <span className="feeds-address">{post.address}</span>
+  //                 <span className="feeds-address">{post.email}</span>
+  //
+  //               </div>
+  //             </header>
+  //             <div className="uk-comment-body">
+  //               <a href="#" data-uk-modal={post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={this.loadSinglePostContent.bind(this,post.id,post.user_id,postImage,post.content,postVideo)}>
+  //                 <div className="feed_img"><img src={imgSrc} className=""/></div>
+  //
+  //                 <p>{content}</p>
+  //               </a>
+  //
+  //             </div>
+  //             <div className="feed_comments_section">
+  //               <a>Comment</a>
+  //             </div>
+  //           </article>
+  //         </div>
+  //
+  //     );
+  //
+  //   });
+  // }else{
+  //     postItem.push(
+  //       <div>No post to show</div>
+  //     );
+  // }
+  //     return(
+  //       {postItem}
+  //     )
+  //   }
 
     loadMore(){
       console.log("Load more");
@@ -685,7 +689,7 @@ console.log(commentElement);
 
               <div className="uk-width-small-1-1 shortlist_menu">
                 <ul>
-              {this.renderCategoriesContent()}
+                  {this.renderCategoriesContent()}
                 </ul>
               <div className="uk-float-right">
               <label>Filter</label>
@@ -696,7 +700,15 @@ console.log(commentElement);
               </div>
             </div>
             {/* {this.renderPhotos()} */}
-              {this.state.filter == 'all'? this.renderAllPosts():
+              {this.state.filter == 'all'?
+                 <PostView
+                   postComment={this.props.postComment}
+                   fetchComments={this.props.fetchComments}
+                   userAuthSession={this.props.userAuthSession}
+                   comments={this.props.comments}
+                    posts={this.props.posts}
+                    loadSinglePostContent={(postId,userId,popupImage,popupContent,postVideo)=>this.loadSinglePostContent(postId,userId,popupImage,popupContent,postVideo)}
+                   />:
                  <PhotosView
                    posts={this.props.posts}
                    animation={this.state.animation}
