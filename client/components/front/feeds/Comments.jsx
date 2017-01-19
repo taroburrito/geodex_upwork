@@ -232,7 +232,7 @@ export default class Comments extends Component {
     const{postId,comments,userAuthSession} = this.props;
     var user = userAuthSession.userObject;
     return(
-      <div className="uk-width-small-1-1 full-width-cmnt">
+      <div className="uk-width-small-1-1 full-width-cmnt uk-float-left">
         <h5 className="coment_heading">Comments</h5>
         {this.renderComments(postId)}
         <div className="comenting_form border-top_cf">
