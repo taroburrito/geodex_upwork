@@ -2504,3 +2504,9 @@ header.uk-comment-header {
 ul.uk-comment-list li {
     list-style: none;
 }
+
+.feeds_overflow {
+    height: 200px;
+    overflow: auto;
+    width: 100%;
+}
