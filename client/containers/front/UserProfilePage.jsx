@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import VistiProfileWidget from '../../components/front/VistiProfileWidget';
 import Home from '../../components/front/Home';
 import {getVisitedUserDetail} from '../../utilities/ServerSocket';
-import {fetchCommentsByPost,postComment} from '../../actions/PostActions';
+import {fetchCommentsByPost,postComment,deletePost} from '../../actions/PostActions';
 
 import { clickAddFriend,fetchUserProfile, reloadingProfilePage,clickAcceptRequest, clickDenyFriendRequest } from '../../actions/ProfileActions';
 
@@ -41,6 +41,7 @@ export default class UserProfilePage extends Component {
          fetchComments={(postId)=>
          dispatch(fetchCommentsByPost(postId))}
         postComment = {(req)=>dispatch(postComment(req))}
+        deletePost={(postId)=>dispatch(deletePost(postId))}
          />
       </div>
     );

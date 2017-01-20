@@ -16,6 +16,8 @@ import {  Start_Fetching_User_Profile,
           Set_Visited_User_Null
         } from '../actions/ProfileActions';
 
+import {Delete_Post_Success} from '../actions/PostActions';
+
 const defaultStartState = { profileLoaded: false, //true even if results failed
                             isFetchingProfile: false,
                             userData: null,
@@ -128,6 +130,13 @@ export function visitedUserData(visitedUserState=null, action){
             case Set_Visited_User_Null:
               return null;
               break;
+
+        case Delete_Post_Success:
+          var prevState = Object.assign({},visitedUserState);
+          var findUser = _.findKey(prevState.posts, function (o) { return o.id == action.id;})
+          delete prevState.posts[findUser];
+        return Object.assign({},prevState);
+          break;
     default:
     return visitedUserState;
 

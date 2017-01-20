@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { Navigation, Link } from 'react-router';
-import { validateDisplayName } from '../../utilities/RegexValidators';
+import { validateDisplayName, formatter } from '../../utilities/RegexValidators';
 var AvatarEditor = require('react-avatar-editor');
 var Slider = require('react-slick');
 var moment = require('moment');
@@ -17,38 +17,7 @@ import LatestPost from './LatestPost';
 //import InfiniteScroll from 'react-infinite-scroller';
 
 
-const formatter = (value, unit, suffix, rawTime) => {
-  var counter = '';
-  //console.log('minnnnnnnnnnn'+value);
-  var minunit = 'minute';
-  if (value > 1) {
-    minunit = 'minutes'
-  }
-  var year = unit === ('year') ? value : 0
-  var month = unit === ('month') ? value : 0
-  var week = unit === ('week') ? value : 0
-  var day = unit === ('day') ? value : 0
-  var hour = unit === ('hour') ? value : 0
-  var minute = unit === ('minute') ? value : 0
-  var second = unit === ('second') ? value : 0
-  if(year==0 && month==0 && week==0 && day==0 && hour==0 && minute==0){
-     counter = 'Just now';
-  } else if(year==0 && month==0 && week==0 && day==0 && hour==0 && minute>0){
-     counter = `${minute} ${minunit} ago`;
-  }else if(year==0 && month==0 && week==0 && day==0 && hour>0){
-     counter = `${hour} ${unit} ago`;
-  }else if(year==0 && month==0 && week==0 && day==1){
-      var timestamp = moment(rawTime);
-      var formatted = timestamp.format('hh a');
-      counter = formatted+' Yesterday';
-  }else{
-    var timestamp = moment(rawTime);
-      var formatted = timestamp.format('DD MMM hh:mma');
-      counter = formatted;
-  }
 
-  return counter;
-}
 
 function generateUUID(){
    return (Math.round(Math.random()*10000000000000000).toString()+(Date.now()));
@@ -861,7 +830,7 @@ loadMorePost(){
                     </div>
                 </div>
               </div>
-              
+
             </div>
 
 
@@ -989,8 +958,7 @@ loadMorePost(){
   // }else{
   //     var postContent = null;
   // }
-  console.log(friendData);
-  console.log("******")
+
     if(friendData)
     return(
       <article className="uk-comment">

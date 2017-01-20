@@ -49,7 +49,18 @@ var setPostRoutes = function (router) {
       postModel.getPostByFriendsCategory(req.params.userId,req.params.catId,function(result){
         return res.json(result);
       })
-    })
+    });
+
+    router.delete('/api/v1/posts/:id',
+            function (req, res) {
+                var postId = req.params.id;
+                postModel.delete(postId,
+                        function (result) {
+                            return res.json(result);
+                        }
+                );
+            }
+    );
 
 
 

@@ -1,4 +1,7 @@
 import React, { Component, PropTypes } from 'react';
+var moment = require('moment');
+import { formatter } from '../../utilities/RegexValidators';
+import TimeAgo from 'react-timeago';
 
 export default class LatestPost extends Component {
   constructor(props){
@@ -16,15 +19,15 @@ render(){
     var content;
     var latestPost = dashboardData.latestPost;
     var userProfile = userAuthSession.userObject;
-    
+
     if(dashboardData.latestPost){
       var content = latestPost.content;
       var content_length = latestPost.content.length;
       var post_image = latestPost.image || latestPost.youtube_image;
       var postImage;
       var postVideo;
-    //  var timestamp = moment(latestPost.created);
-      //var formatted = timestamp.format('YYYY-MM-DD HH:mm:ss');
+     var timestamp = moment(latestPost.created);
+      var formatted = timestamp.format('YYYY-MM-DD HH:mm:ss');
 
       // Image content
       if(latestPost.image){
@@ -64,7 +67,7 @@ render(){
         <img src={post_image? "uploads/images/user_"+userProfile.id+"/thumbs/"+post_image: null} className="uk-float-left img_margin_right"/>
         <p style={{paddingTop:3,paddingRight:10}}>{content}</p>
         <small className="user_location post_timestamp" style={{margin:7}}>
-        {/* <TimeAgo date={formatted} formatter= {formatter} /> */}
+        <TimeAgo date={formatted} formatter= {formatter} />
         </small>
         </a>
 

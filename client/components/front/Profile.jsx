@@ -1,46 +1,10 @@
 import React, { Component, PropTypes } from 'react';
 var Slider = require('react-slick');
 var ScrollbarWrapper = require('react-scrollbars').ScrollbarWrapper;
+import { validateDisplayName, formatter } from '../../utilities/RegexValidators';
 var moment = require('moment');
 import TimeAgo from 'react-timeago';
 import ImageGallery from 'react-image-gallery';
-
-
-const formatter = (value, unit, suffix, rawTime) => {
-  var minunit = 'minute';
-  if (value > 1) {
-    minunit = 'minutes'
-  }
-  var counter = '';
-  var year = unit === ('year') ? value : 0
-  var month = unit === ('month') ? value : 0
-  var week = unit === ('week') ? value : 0
-  var day = unit === ('day') ? value : 0
-  var hour = unit === ('hour') ? value : 0
-  var minute = unit === ('minute') ? value : 0
-  var second = unit === ('second') ? value : 0
-  //console.log(week+ ' week' + day +' day'+ hour +' hour'+ minute +' minute'+ second +' second');
-
-  if(year==0 && month==0 && week==0 && day==0 && hour==0 && minute==0){
-     counter = 'Just now';
-  } else if(year==0 && month==0 && week==0 && day==0 && hour==0 && minute>0){
-     counter = `${minute} ${minunit} ago`;
-  }else if(year==0 && month==0 && week==0 && day==0 && hour>0){
-     counter = `${hour} ${unit} ago`;
-  }else if(year==0 && month==0 && week==0 && day==1){
-      var timestamp = moment(rawTime);
-      var formatted = timestamp.format('hh a');
-      counter = formatted+' Yesterday';
-  }else{
-    var timestamp = moment(rawTime);
-      var formatted = timestamp.format('DD MMM hh:mma');
-      counter = formatted;
-     //counter = '20 Dec 8:30pm';
-  }
- // counter = `${day} days: ${hour} hour: ${minute} minute: ${second} seconds`
-
-  return counter;
-}
 
 export default class Profile extends Component {
 
@@ -96,6 +60,26 @@ export default class Profile extends Component {
               });
             });
         }, 1000);
+
+    }
+
+    deletePost(postId){
+      this.props.deletePost(postId);
+      setTimeout(function() {
+        // Main content container
+          var container = $('#content');
+
+          // Masonry + ImagesLoaded
+          container.imagesLoaded(function(){
+            container.masonry({
+              // selector for entry content
+              columnWidth: 250,
+              itemSelector: '.photos-item',
+              isFitWidth:true,
+              isAnimated: true
+            });
+          });
+      }, 1000);
 
     }
 
@@ -273,7 +257,7 @@ export default class Profile extends Component {
 
 // Posts of visited user.
     renderPostsContent(){
-        const{visitedUser} = this.props;
+        const{visitedUser,userAuthSession} = this.props;
         var posts = visitedUser.posts;
 
         var postItem = [];
@@ -282,6 +266,7 @@ export default class Profile extends Component {
           //  console.log(posts[key]);
 
             var item = posts[postId];
+
             var postContent = item.content;
             var postImage;
             var postVideo;
@@ -320,7 +305,7 @@ export default class Profile extends Component {
             }
             postItem.push(
               <div className="uk-width-small-1-1 post_control">
-                <div>
+                <div className="uk-width-small-5-6 uk-float-left">
                   <a href="#" className="post_txt_dashboard" data-uk-modal={post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={this.loadSinglePostContent.bind(this,item.id,item.user_id,postImage,item.content,postVideo)}>
 
                     <img src={post_image? this.state.uploadDir+"user_"+item.user_id+"/thumbs/"+post_image: null} className="uk-float-left img_margin_right"/>
@@ -331,6 +316,19 @@ export default class Profile extends Component {
                   </a>
 
              </div>
+             {(userAuthSession.userObject.id == item.user_id)?
+             <div className="uk-width-small-1-10 uk-float-left">
+
+               <div className="uk-button-dropdown" data-uk-dropdown="{delay: 100}">
+                  <a className="uk-button">Action<i className="uk-icon-caret-down"></i></a>
+                    <div className="uk-dropdown uk-dropdown-small uk-dropdown-bottom">
+                      <ul className="uk-nav uk-nav-dropdown">
+                        <li><a onClick={this.deletePost.bind(this,item.id)}>Delete</a></li>
+                      </ul>
+                    </div>
+              </div>
+             </div>
+             :null}
            </div>
           );
           });

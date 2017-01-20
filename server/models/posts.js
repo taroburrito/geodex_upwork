@@ -289,10 +289,29 @@ var postModel = {
       })
     },
 
+    delete: function(id,callback){
+      var dbConnection = dbConnectionCreator();
+      var deletePostQuery = ConstructDeletePostQuery(id);
+      dbConnection.query(deletePostQuery,function(error,results,fields){
+        if(error){
+          return(callback({error:error,status:400}));
+        }else if (results.affectedRows === 0) {
+          return(callback({error:"error in query",status:400}));
+        }else{
+          return(callback({success:"Deleted successfully",status:200}));
+        }
+      });
+    },
+
 
 
 
 };
+
+function ConstructDeletePostQuery(id){
+  var sql = "Delete FROM gx_posts WHERE id="+id;
+  return sql;
+}
 
 function constructGetCommentsByIdSqlString(postId){
   var sql = "SELECT a.*,"+

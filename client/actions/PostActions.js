@@ -6,6 +6,7 @@ export const Fetch_Comment_Success = 'Fetch_Comment_Success';
 export const Fetch_Universal_Posts_Success = 'Fetch_Universal_Posts_Success';
 export const Fetch_Universal_Posts_Failed = 'Fetch_Universal_Posts_Failed';
 export const Post_Comment_Success = 'Post_Comment_Success';
+export const Delete_Post_Success = 'Delete_Post_Success';
 
 export function receivedAllposts(posts){
   return{type: Get_All_Posts, data:posts}
@@ -156,5 +157,42 @@ export function fetchPostByFriendsCategory(userId,catId){
     }).fail(function(error){
     dispatch(fetchUniversalPostsFailed(result.error));
     });
+  }
+}
+
+export function deletePostSuccess(id){
+  return{type:'Delete_Post_Success',id}
+}
+
+
+export function deletePost(Id) {
+  return (dispatch) => {
+
+    $.ajax({
+			type: 'DELETE',
+			url: '/api/v1/posts/'+Id,
+      beforeSend: function() {
+          $(".loading").show();
+      },
+     })
+			.done(function(data) {
+				if (data.error){
+					console.log("error in delete post ", data);
+          //dispatch(handleErrorMessage(data.error));
+
+
+					} else {
+						console.log("deleted post successfull");
+             dispatch(deletePostSuccess(Id));
+            // dispatch(handleSuccessMessage("Deleted Successfully"));
+
+					}
+            $(".loading").hide();
+				})
+			.fail(function(error) {
+        console.log("erro in delete post query")
+			//	dispatch(handleErrorMessage(error));
+			});
+
   }
 }

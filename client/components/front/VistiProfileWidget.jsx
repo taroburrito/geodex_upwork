@@ -27,6 +27,7 @@ export default class VisitProfileWidget extends Component {
                         onClickDenyRequest={this.props.onClickDenyRequest}
                         fetchComments={this.props.fetchComments}
                         postComment={this.props.postComment}
+                        deletePost={this.props.deletePost}
                         />
 
                     </div>

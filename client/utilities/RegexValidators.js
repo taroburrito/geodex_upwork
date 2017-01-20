@@ -1,10 +1,10 @@
 import moment from 'moment';
 var emailRegex = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
 var displayNameRegex = /^[a-zA-Z\-\_0-9]+$/; //alphanumerics, "-" and "_"
-var passwordRegex = /^[a-zA-Z0-9!@#$%^&*]{6,}$/; // At least 6 characters    
+var passwordRegex = /^[a-zA-Z0-9!@#$%^&*]{6,}$/; // At least 6 characters
 
 /**
-	*	Given a trimmed string, returns true if the string matches 
+	*	Given a trimmed string, returns true if the string matches
 	* a proper email format.
 	*/
 export function validateEmail(email) {
@@ -13,7 +13,7 @@ export function validateEmail(email) {
 
 
 /**
-	*	Given a trimmed string, returns true if the string contains at  
+	*	Given a trimmed string, returns true if the string contains at
 	* least one valid character (alphanumerics)
 	*/
 export function validateDisplayName(displayName) {
@@ -22,7 +22,7 @@ export function validateDisplayName(displayName) {
 
 
 /**
-	*	Given a trimmed string, returns true if the string contains at  
+	*	Given a trimmed string, returns true if the string contains at
 	* least 6 valid character (alphanumerics and !@#$%^&*)
 	*/
 export function validatePassword(password) {
@@ -93,4 +93,35 @@ var templates = {
 
 }
 
+export function formatter(value, unit, suffix, rawTime) {
+  var counter = '';
+  //console.log('minnnnnnnnnnn'+value);
+  var minunit = 'minute';
+  if (value > 1) {
+    minunit = 'minutes'
+  }
+  var year = unit === ('year') ? value : 0
+  var month = unit === ('month') ? value : 0
+  var week = unit === ('week') ? value : 0
+  var day = unit === ('day') ? value : 0
+  var hour = unit === ('hour') ? value : 0
+  var minute = unit === ('minute') ? value : 0
+  var second = unit === ('second') ? value : 0
+  if(year==0 && month==0 && week==0 && day==0 && hour==0 && minute==0){
+     counter = 'Just now';
+  } else if(year==0 && month==0 && week==0 && day==0 && hour==0 && minute>0){
+     counter = `${minute} ${minunit} ago`;
+  }else if(year==0 && month==0 && week==0 && day==0 && hour>0){
+     counter = `${hour} ${unit} ago`;
+  }else if(year==0 && month==0 && week==0 && day==1){
+      var timestamp = moment(rawTime);
+      var formatted = timestamp.format('hh a');
+      counter = formatted+' Yesterday';
+  }else{
+    var timestamp = moment(rawTime);
+      var formatted = timestamp.format('DD MMM hh:mma');
+      counter = formatted;
+  }
 
+  return counter;
+}
