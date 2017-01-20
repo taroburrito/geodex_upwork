@@ -259,6 +259,33 @@ var postModel = {
         }
       })
     },
+    getNewsPosts: function(userId,callback){
+      var dbConnection = dbConnectionCreator();
+      var getNewsPostsSql = constructgetNewsPostsSql(userId);
+
+
+      dbConnection.query(getNewsPostsSql,function(error,results,fields){
+        if(error){
+
+          return(callback({error:error,status:400,query:getNewsPostsSql,message:"Error in get all posts"}));
+        }else if (results.length == 0) {
+
+          return(callback({error:"empty result",status:400,message:"No post to show"}));
+        }else{
+
+          var posts = [];
+          results.forEach(function (result) {
+            posts.push(postModel.convertRowsToObject(result));
+          //  posts['test'] = "testing";
+              // comments[result.id] = postModel.convertRowsToObject(result);
+          });
+          dbConnection.end();
+
+          return(callback({status:200,posts}));
+        }
+      })
+    },
+
 
     getPostByFriendsCategory: function(userId,catId,callback){
       var dbConnection = dbConnectionCreator();
@@ -359,6 +386,21 @@ function constructUniversalPostsSql(userId){
   return sql;
 }
 
+function constructgetNewsPostsSql(userId){
+  var sql = "SELECT a.*,"+
+            "CONCAT(b.first_name, ' ', b.last_name) NAME,"+
+            "b.profile_image,b.address,b.user_id, c.email"+
+            " from gx_posts as a,"+
+            " gx_user_details as b,"+
+            " gx_users as c"+
+            " WHERE a.is_news = 'yes' AND b.user_id = a.user_id"+
+            " AND c.id  = a.user_id"+
+            " AND a.user_id IN (SELECT receiver_id FROM `gx_friends_list` WHERE sender_id ='"+userId+"'  AND STATUS = 1 UNION SELECT sender_id  FROM `gx_friends_list` WHERE receiver_id ='"+userId+"' AND STATUS = 1)"+
+            " ORDER BY a.id DESC ";
+  return sql;
+}
+
+
 function constructPostCommentSqlString(data){
   var timestamp = moment();
   var formatted = timestamp.format('YYYY-MM-DD HH:mm:ss Z');
@@ -419,6 +461,7 @@ function constructCreatePostSqlString(formData) {
             ", content = " + mysql.escape(formData.content) +
             ", youtube_url = " + mysql.escape(formData.youtube_url) +
             ", youtube_image = " + mysql.escape(formData.youtube_image) +
+            ", is_news = " + mysql.escape(formData.is_news) +
             ", image = " + mysql.escape(formData.image) +
             ", status = 1 "+
             ", created = '" + formatted+"'" ;

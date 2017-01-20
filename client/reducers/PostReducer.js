@@ -4,7 +4,9 @@ import {Get_All_Posts,
         Fetch_Comment_Success,
         Fetch_Universal_Posts_Success,
         Fetch_Universal_Posts_Failed,
-        Post_Comment_Success
+        Post_Comment_Success,
+        Fetch_News_Posts_Success,
+        Fetch_News_Posts_Failed
       } from '../actions/PostActions';
 
 export function updatePostsList(postsListState={},action){
@@ -52,6 +54,13 @@ export function updateFeeds(universalPosts={},action){
     return Object.assign({}, action.posts);
       break;
 
+    case Fetch_News_Posts_Success:
+    return Object.assign({}, action.posts);
+      break;
+
+      case Fetch_News_Posts_Failed:
+          return Object.assign({},null);
+        break;
       case Fetch_Universal_Posts_Failed:
       return Object.assign({}, null);
         break;

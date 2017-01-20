@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Navigation } from 'react-router';
 
 import Home from '../../components/front/Home';
-import {fetchUniversalPosts,fetchPostByFriendsCategory,fetchCommentsByPost,postComment} from '../../actions/PostActions';
+import {fetchUniversalPosts,fetchPostByFriendsCategory,fetchCommentsByPost,postComment,fetchNewsPosts} from '../../actions/PostActions';
 import {fetchCategoriesByUser} from '../../actions/CategoryActions';
 import FeedsWidget from '../../components/front/feeds/FeedsWidget';
 
@@ -23,6 +23,7 @@ export default class Feeds extends Component {
       return(
         <div className="full_width">
             <FeedsWidget
+              fetchNewsPosts={(userId)=>dispatch(fetchNewsPosts(userId))}
               fetchAllPosts={(userId)=>dispatch(fetchUniversalPosts(userId))}
               fetchCategories={(userId)=>dispatch(fetchCategoriesByUser(userId))}
               fetchPostByFriendsCategory = {(userId,catId)=>dispatch(fetchPostByFriendsCategory(userId,catId))}

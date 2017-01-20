@@ -35,6 +35,7 @@ export default class FeedsWidget extends Component {
                fetchComments={this.props.fetchComments}
                comments={this.props.comments}
                postComment={this.props.postComment}
+               fetchNewsPosts={this.props.fetchNewsPosts}
                />
             </div>
 

@@ -47,6 +47,7 @@ export default class DashboardPage extends Component {
     this.handleCloseImagePopUp = this.handleCloseImagePopUp.bind(this);
     this.handleScale = this.handleScale.bind(this);
     this.addAlert = this.addAlert.bind(this);
+    this.handleClickCheckBox = this.handleClickCheckBox.bind(this);
     this.state ={
       errorMessage: null,
     //  image: "public/images/user.jpg",
@@ -80,6 +81,7 @@ export default class DashboardPage extends Component {
       previewImageHeight:250,
       postanimation:false,
       showMessage:true,
+      isNewsChecked:false,
 
     }
   }
@@ -298,6 +300,7 @@ export default class DashboardPage extends Component {
       thumbImage:postImageSrc,
       youtube_url: this.state.videoLink,
       youtube_image: this.state.videoImage,
+      is_news:this.state.isNewsChecked,
       //fileData:this.state.fileData
     }
 
@@ -330,12 +333,22 @@ export default class DashboardPage extends Component {
     this.setState({showMessage:true});
 
   }
+  handleClickCheckBox(e){
+    console.log(e.target.checked);
+    if(e.target.checked){
+    this.setState({isNewsChecked:'yes'});
+  }else{
+    this.setState({isNewsChecked:'no'});
+  }
+  }
   handleSavePost(){
+
     const{userAuthSession} = this.props;
     var formData = {
       user_id: userAuthSession.userObject.id,
       content: this.refs.postContent.getDOMNode().value.trim(),
-      image: null
+      image: null,
+      is_news:this.state.isNewsChecked,
     }
     if(!formData.content && !formData.image){
       this.addAlert("","Upload image or type something to post...");
@@ -1387,7 +1400,8 @@ loadChild(child){
               <div className="img_border">
               <iframe className="player" type="text/html" width="100%" height="100%" src={this.state.videoLink}/>
               <textarea placeholder="text about video" className="uk-width-1-1" ref="postImageContent" >{this.state.postMessage}</textarea>
-              </div>
+
+            </div>
             : null}
 
              <br />
@@ -1404,6 +1418,10 @@ loadChild(child){
           :null}
       {(this.state.image || this.state.videoLink) ?
           <div className="uk-modal-footer uk-text-right">
+            <div className="is_news_div">
+          
+            <input className="uk-checkbox" type="checkbox" ref="isCheck" onChange={this.handleClickCheckBox} checked={(this.state.isNewsChecked == 'yes')? true:false}/>IsNews
+            </div>
               <button className="uk-button uk-modal-close" type="button">Cancel</button>
               <input className="uk-button uk-button-primary uk-modal-close" type="button" onClick={this.handleSavePostImage} value="Save" />
           </div>
@@ -1504,7 +1522,10 @@ loadChild(child){
 
             <div className="cont_post_btn">
               <textarea placeholder="Post to ambulist..." className="uk-width-1-1" onChange={this.handlePostMessage} ref="postContent"></textarea>
-              <a className="uk-button uk-button-primary uk-button-large" onClick={this.handleSavePost}>Post</a>
+                <label>
+            <input className="uk-checkbox" type="checkbox" ref="isCheck" onChange={this.handleClickCheckBox} checked={(this.state.isNewsChecked == 'yes')? true:false}/>IsNews
+          </label>
+            <a className="uk-button uk-button-primary uk-button-large" onClick={this.handleSavePost}>Post</a>
               <div className="yt_img"><i data-uk-tooltip title="Upload Image" className="uk-icon-image" data-uk-modal="{target:'#statusImageModel'}" style={{cursor:"pointer"}} onClick={()=>this.setState({clickedYouTubeLink:null,clickedImageIcon:true,videoLink:null,image:null})}></i>
 
             </div>

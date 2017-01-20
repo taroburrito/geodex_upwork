@@ -7,6 +7,8 @@ export const Fetch_Universal_Posts_Success = 'Fetch_Universal_Posts_Success';
 export const Fetch_Universal_Posts_Failed = 'Fetch_Universal_Posts_Failed';
 export const Post_Comment_Success = 'Post_Comment_Success';
 export const Delete_Post_Success = 'Delete_Post_Success';
+export const Fetch_News_Posts_Success = 'Fetch_News_Posts_Success';
+export const Fetch_News_Posts_Failed = 'Fetch_News_Posts_Failed';
 
 export function receivedAllposts(posts){
   return{type: Get_All_Posts, data:posts}
@@ -141,6 +143,36 @@ export function fetchUniversalPosts(userId){
     });
   }
 }
+
+export function fetchNewsPostsSuccess(posts){
+    return{type:Fetch_News_Posts_Success,posts}
+}
+
+export function fetchNewsPostsFailed(error){
+  return{type: Fetch_News_Posts_Failed,error}
+}
+
+export function fetchNewsPosts(userId){
+  return(dispatch) =>{
+  //  dispatch(initializeComments());
+    $.ajax({
+      type:'GET',
+      url:'/api/v1/posts/getNewsPosts/'+userId,
+
+    }).done(function(result){
+      if(result.error){
+        dispatch(fetchNewsPostsFailed(result.error));
+      }else {
+        dispatch(fetchNewsPostsSuccess(result.posts));
+      }
+    }).fail(function(error){
+      console.log("Fail posts");
+      console.log(error);
+      $(".loading").hide();
+    });
+  }
+}
+
 export function fetchPostByFriendsCategory(userId,catId){
   return(dispatch) =>{
   //  dispatch(initializeComments());

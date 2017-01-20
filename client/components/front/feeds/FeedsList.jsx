@@ -467,7 +467,10 @@ console.log(commentElement);
       setTimeout(function() { this.setState({animation: false}); }.bind(this), 1000);
       if(!catId){
         this.props.fetchUniversalPosts(userAuthSession.userObject.id);
-      }else{
+      }else if (catId == 'news') {
+        this.props.fetchNewsPosts(userAuthSession.userObject.id);
+      }
+      else{
 
       this.props.fetchPostByFriendsCategory(userAuthSession.userObject.id,catId);
 
@@ -505,6 +508,7 @@ console.log(commentElement);
 
       if(categories)
       categoriesElement.push(<li id="all" onClick={this.sortByCategory.bind(this,null)} className={!this.state.active_cat? "active_sm":''}>All</li>);
+      categoriesElement.push(<li id="all" onClick={this.sortByCategory.bind(this,'news')} className={this.state.active_cat == 'news'? "active_sm":''}>News</li>);
       Object.keys(categories).map(function (key) {
         var item = categories[key];
         categoriesElement.push(<li id={item.id} onClick={this.sortByCategory.bind(this,item.id)} className={this.state.active_cat == item.id ? "active_sm":''}>{item.category_name}</li>);

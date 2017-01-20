@@ -44,6 +44,15 @@ var setPostRoutes = function (router) {
       })
     })
 
+    router.get('/api/v1/posts/getNewsPosts/:userId',function(req,res){
+
+      postModel.getNewsPosts(req.params.userId,function(result){
+        return res.json(result);
+      })
+    })
+
+
+
     router.get('/api/v1/posts/getPostByFriendsCategory/:userId/:catId',function(req,res){
 
       postModel.getPostByFriendsCategory(req.params.userId,req.params.catId,function(result){
