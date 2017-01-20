@@ -64,22 +64,48 @@ export default class Profile extends Component {
     }
 
     deletePost(postId){
-      this.props.deletePost(postId);
-      setTimeout(function() {
-        // Main content container
-          var container = $('#content');
+      UIkit.modal.confirm('Are you sure to delete this?', function(){
+         // do some thing if click Yes
+         this.props.deletePost(postId);
+         setTimeout(function() {
+           // Main content container
+             var container = $('#content');
 
-          // Masonry + ImagesLoaded
-          container.imagesLoaded(function(){
-            container.masonry({
-              // selector for entry content
-              columnWidth: 250,
-              itemSelector: '.photos-item',
-              isFitWidth:true,
-              isAnimated: true
-            });
-          });
-      }, 2000);
+             // Masonry + ImagesLoaded
+             container.imagesLoaded(function(){
+               container.masonry({
+                 // selector for entry content
+                 columnWidth: 250,
+                 itemSelector: '.photos-item',
+                 isFitWidth:true,
+                 isAnimated: true
+               });
+             });
+         }, 2000);
+        }.bind(this),
+         {labels: {'Ok': 'Yes', 'Cancel': 'No'}
+       }
+     );
+      // if(UIkit.modal.confirm("Are you sure?")){
+      // this.props.deletePost(postId);
+      // setTimeout(function() {
+      //   // Main content container
+      //     var container = $('#content');
+      //
+      //     // Masonry + ImagesLoaded
+      //     container.imagesLoaded(function(){
+      //       container.masonry({
+      //         // selector for entry content
+      //         columnWidth: 250,
+      //         itemSelector: '.photos-item',
+      //         isFitWidth:true,
+      //         isAnimated: true
+      //       });
+      //     });
+      // }, 2000);
+      // }
+
+
 
     }
 
