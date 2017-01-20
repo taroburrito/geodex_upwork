@@ -59,7 +59,7 @@ export default class Profile extends Component {
                 isAnimated: true
               });
             });
-        }, 1000);
+        }, 2000);
 
     }
 
