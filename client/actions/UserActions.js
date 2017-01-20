@@ -80,7 +80,7 @@ export function clickedBlockUser(senderId,receiverId,userId) {
 			data: {sender:senderId, receiver:receiverId, user:userId},
       beforeSend: function() {
           $(".loading").show();
-      } 
+      }
     }).done(function(data) {
       $(".loading").hide();
 				if (data.error){
@@ -90,7 +90,7 @@ export function clickedBlockUser(senderId,receiverId,userId) {
 						console.log("block user success", data);
 					//	dispatch(deleteFriendSuccess(data));
 					}
-          
+
 				})
 			.fail(function(a,b,c,d) {
 				console.log("actual failure: ", a, b, c, d);
@@ -113,7 +113,7 @@ export function clickedDeleteFriend(id) {
 			url: '/api/v1/user/deleteFriend/'+id,
       beforeSend: function() {
           $(".loading").show();
-      } 
+      }
     }).done(function(data) {
        $(".loading").hide();
 				if (data.error){
@@ -123,7 +123,7 @@ export function clickedDeleteFriend(id) {
 						console.log("delete friend success", data);
 						//dispatch(deleteFriendSuccess(id));
 					}
-         
+
 				})
 			.fail(function(a,b,c,d) {
 				console.log("delete failure: ", a, b, c, d);
@@ -157,10 +157,10 @@ export function addCategory(req) {
 			data: req,
       beforeSend: function() {
           $(".loading").show();
-      } 
+      }
     }).done(function(data) {
 				if (data.error){
-					$(".loading").hide();
+
           dispatch(addCategoryFail(data.error));
 
 					} else {
@@ -169,7 +169,7 @@ export function addCategory(req) {
           //  dispatch(handleSuccessMessage("Added Successfully"));
 
 					}
-          
+          	$(".loading").hide();
 				})
 			.fail(function(error) {
 				console.log("Failure");
@@ -204,7 +204,7 @@ export function confirmFriendRequest(requestId){
       dataType: 'json',
        beforeSend: function() {
           $(".loading").show();
-      } 
+      }
     }).done(function(result){
       $(".loading").hide();
       if(result.error){
@@ -213,7 +213,7 @@ export function confirmFriendRequest(requestId){
       }else{
         dispatch(confirmFriendSuccess(requestId,result.success));
       }
-      
+
     }).fail(function(error){
       $(".loading").hide();
       dispatch(confirmFriendFailed("Error in confirm request call"));
@@ -237,7 +237,7 @@ export function deleteFriendRequest(requestId){
       url: '/api/v1/users/deleteFriendRequest/'+requestId,
       beforeSend: function() {
           $(".loading").show();
-      } 
+      }
     }).done(function(result){
       $(".loading").hide();
       if(result.error){
@@ -246,7 +246,7 @@ export function deleteFriendRequest(requestId){
       }else{
         dispatch(deleteFriendRequestSuccess(requestId,result.success));
       }
-       
+
     }).fail(function(error){
       dispatch(deleteFriendRequestFailed("Error in confirm request call"));
       $(".loading").hide();
@@ -262,7 +262,7 @@ export function getCategoryByUserId(userId){
       url: 'api/v1/users/getCategoryByUserId/'+userId,
       beforeSend: function() {
           $(".loading").show();
-      } 
+      }
     }).done(function(result){
       console.log("Success get cat by user id");
       $(".loading").hide();
@@ -301,7 +301,7 @@ export function changeFriendCat(userId,friendId, catId){
         console.log(result);
         dispatch(changeFriendCatSuccess(result.categorizedFriends,friendId));
       }
-     
+
     }).fail(function(error){
       console.log("success:"+JSON.stringify(error));
       dispatch(changeFriendCatFailed(error));
@@ -392,7 +392,7 @@ export function deleteCategory(Id) {
         	} else {
 					  dispatch(deleteCategorySuccess(Id));
           	}
-            
+
 				})
 			.fail(function(error) {
         $(".loading").hide();
@@ -428,7 +428,7 @@ export function updateCategoryById(id, value){
 
         dispatch(updateCategorySuccess(id,data.category));
       }
-      
+
     }).fail(function(error){
       $(".loading").hide();
       dispatch(updateCategoryFailed(error));
@@ -494,7 +494,7 @@ return(dispatch) => {
       }else{
         dispatch(fetchNextPostSuccess(data));
       }
-      
+
     }).fail(function(error){
    $("#loader_"+userid).hide();
       dispatch(fetchNextPostFailed(userid));
