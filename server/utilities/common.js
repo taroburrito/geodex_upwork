@@ -4,6 +4,7 @@ var path = require('path');
 var clientDir = path.join(__dirname, '../../', 'client/uploads/images');
 var httpRequest = require('request');
 
+
 var common = {
 decodeBase64Image: function(dataString) {
   var matches = dataString.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/),
@@ -125,6 +126,8 @@ return name;
 
 uploadYoutubePostImage:function(imageData,userId){
 
+
+
 //   fs.readFile(imageData, function(err, data) {
 //   if (err) throw err;
 //
@@ -139,6 +142,7 @@ uploadYoutubePostImage:function(imageData,userId){
   var thumbs_dir = clientDir+"/user_"+userId+"/thumbs";
   var path = dir+"/"+name;
   var thumbs_path = thumbs_dir+"/"+name;
+  var medium_path = dir+"/medium/"+name;
   //console.log(clientDir);
 
   // check if dir already exists
@@ -166,11 +170,41 @@ httpRequest.get({url: imageData, encoding: 'binary'}, function (err, httpRespons
       console.log('Error: '+err);
     } else {
       console.log('Saved image');
+      fs.writeFile(path, body, 'binary', function(err) {
+        if(err) {
+          console.log('Error: '+err);
+        } else {
+          console.log('Saved image');
+          fs.writeFile(medium_path, body, 'binary', function(err) {
+            if(err) {
+              console.log('Error: '+err);
+            } else {
+              console.log('Saved image');
+
+            }
+          });
+        }
+      });
     }
   });
+
+
+
+//   var inStr = fs.createReadStream(thumbs_path);
+// var outStr = fs.createWriteStream(path);
+//
+// inStr.pipe(outStr);
+  // fs.writeFile(medium_path, body, 'binary', function(err) {
+  //   if(err) {
+  //     console.log('Error: '+err);
+  //   } else {
+  //     console.log('Saved image');
+  //   }
+  // });
 });
 return name;
 },
+
 
 }
 

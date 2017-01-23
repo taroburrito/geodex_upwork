@@ -29,19 +29,23 @@ var postModel = {
   },
 
     createPost: function (formData, callback) {
-      if(!formData.image && !formData.youtube_image){
+      if(!formData.image && !formData.youtube_image && !formData.newsImage){
         var image = null;
       }else{
         if(formData.image){
           var uploadImage = common.uploadPostImage(formData.image,formData.thumbImage,formData.user_id);
         }else if (formData.youtube_image) {
           var uploadImage = common.uploadYoutubePostImage(formData.youtube_image,formData.user_id);
+        }else if (formData.newsImage) {
+          var uploadImage = common.uploadYoutubePostImage(formData.newsImage,formData.user_id);
         }
 
         if(uploadImage && formData.image){
           formData.image = uploadImage;
         }else if(uploadImage && formData.youtube_image){
           formData.youtube_image = uploadImage;
+        }else if(uploadImage && formData.newsImage){
+          formData.image = uploadImage;
         }else{
           dbConnection.end();
           return(callback({error:"Error in uploading"}));

@@ -8,6 +8,7 @@ var bcrypt = require('bcryptjs');
 var nodemailer = require('nodemailer');
 var moment = require('moment');
 var common = require('../utilities/common.js');
+var ogs = require('open-graph-scraper');
 
 
 
@@ -520,7 +521,7 @@ var userModel = {
       var updateUserDataQuery = constructupdateUserDataQuery(req);
       // Update Query for gx_users table
 
-      
+
       dbConnection.query(updateUserDataQuery, function (error, results, fields) {
           if (error) {
             dbConnection.end(); return(callback({error: error,status:400}));
@@ -919,7 +920,19 @@ var userModel = {
         //dbConnection.end();
         return(callback({success:"Sent mail successfully", status:200}));
       }
-    }
+    },
+
+    checkNews(data, callback){
+      var options = {'url': data.url};
+      ogs(options, function (err, results) {
+        if(err){
+          return (callback({error:err}));
+        }else {
+          return (callback({success:true,news:results.data}));
+            //return results;
+        }
+      });
+    },
 
 
 

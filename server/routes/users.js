@@ -253,6 +253,12 @@ var setUserRoutes = function (router) {
               }
               );
 
+              router.post('/api/v1/users/checkNews',function(req,res){
+                userModel.checkNews(req.body,function(result){
+                  return res.json(result);
+                });
+              });
+
 }
 
 module.exports = setUserRoutes;

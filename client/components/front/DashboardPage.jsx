@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { Navigation, Link } from 'react-router';
-import { validateDisplayName, formatter } from '../../utilities/RegexValidators';
+import { validateDisplayName, formatter, validateUrl } from '../../utilities/RegexValidators';
 var AvatarEditor = require('react-avatar-editor');
 var Slider = require('react-slick');
 var moment = require('moment');
@@ -13,6 +13,8 @@ import CategoryList from './manage_category/CategoryList';
 import TimeAgo from 'react-timeago';
 
 import LatestPost from './LatestPost';
+
+import {checkNews} from  '../../actions/UserActions';
 
 //import InfiniteScroll from 'react-infinite-scroller';
 
@@ -82,6 +84,7 @@ export default class DashboardPage extends Component {
       postanimation:false,
       showMessage:true,
       isNewsChecked:false,
+      newsLink: false,
 
     }
   }
@@ -157,21 +160,43 @@ export default class DashboardPage extends Component {
 
   handlePostMessage()
   {
+    const{dispatch} = this.props;
       var msg = this.refs.postContent.getDOMNode().value.trim();
      this.setState({postMessage:msg});
+    //  if(validateUrl(msg)){
+    //    console.log("matched")
+    //    dispatch(checkNews(msg));
+    //    this.setState({newsLink:true})
+    //     var modal = UIkit.modal("#statusImageModel");
+    //     modal.show();
+    //  }else {
+    //    console.log("Not matched")
+    //  }
     // var videoid = msg.match(/(?:https?:\/{2})?(?:w{3}\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\?v=|\/)([^\s&]+)/);
      var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|\?v=)([^#\&\?]*).*/;
+     var urlPattern = /(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/;
+
+
+     var isUrl = msg.match(urlPattern);
      var match = msg.match(regExp);
+
+     console.log(isUrl);
+     console.log(match);
+
      var modal = UIkit.modal("#statusImageModel");
             if (match && match[2].length == 11) {
                 //console.log('https://www.youtube.com/embed/' + match[2] + '?autoplay=0');
                 var videoLink = 'https://www.youtube.com/embed/'+match[2];
                 var videoImg = "https://img.youtube.com/vi/"+match[2]+"/0.jpg"
-                this.setState({clickedYouTubeLink:true,clickedImageIcon:null,videoLink:videoLink,image:null,videoImage:videoImg,postMessage:null});
+                this.setState({clickedYouTubeLink:true,clickedImageIcon:null,videoLink:videoLink,image:null,videoImage:videoImg,postMessage:null,newsLink:null});
                 modal.show();
+            }else if (isUrl) {
+              dispatch(checkNews(isUrl[0]));
+              this.setState({videoLink:null,image:null,videoImage:null,newsLink:true});
+              modal.show();
             }
             else {
-                this.setState({videoLink:null,image:null,videoImage:null})
+                this.setState({videoLink:null,image:null,videoImage:null,newsLink:null});
                  //console.log("The youtube url is not valid.");
             }
 
@@ -288,7 +313,7 @@ export default class DashboardPage extends Component {
 
   handleSavePostImage(){
     const{userAuthSession} = this.props;
-    if(!this.state.videoImage){
+    if(!this.state.videoImage && !this.state.newsLink){
     var postImageSrc = this.refs.postImageSrc.getImage();
   }else {
     var postImageSrc = null;
@@ -301,12 +326,15 @@ export default class DashboardPage extends Component {
       youtube_url: this.state.videoLink,
       youtube_image: this.state.videoImage,
       is_news:this.state.isNewsChecked,
+      newsImage:this.state.newsLink?this.refs.hidden_news_image.getDOMNode().value.trim():null,
       //fileData:this.state.fileData
     }
 
-    if(!formData.image && !formData.youtube_url){
+    if(!formData.image && !formData.youtube_url && !formData.newsImage){
+
       this.setState({handleMessage:{error:"Please choose image",success:null}});
     }else{
+
       //this.setState({loading:true});
       this.props.onClickSavePost(formData);
       this.setState({image:null,post_image:null,fileData:null,videoImage:null,videoLink:null,postMessage:null});
@@ -926,7 +954,7 @@ loadMorePost(){
   }
 
   loadPostByInfo(userId,postId){
-    console.log("postId="+postId);
+
     if(userId){
     const{dashboardData,userAuthSession} = this.props;
 
@@ -1357,11 +1385,33 @@ loadChild(child){
  }
 
  renderStatusModel(){
+   const {dashboardData} = this.props;
+   console.log(dashboardData);
    var errorLabel;
+   var newsImg;
+   var desc;
    if(this.state.handleMessage && this.state.handleMessage.error){
        errorLabel = (
          <div className="uk-alert uk-alert-danger"><p>{this.state.handleMessage.error}</p></div>
        )
+     }
+     if(this.state.newsLink && dashboardData.news){
+       desc = dashboardData.news.ogDescription?dashboardData.news.ogDescription:this.state.postMessage;
+       if(dashboardData.news)
+        newsImg = (
+          <div>
+            <input type="hidden" ref="hidden_news_image" value={dashboardData.news.ogImage?dashboardData.news.ogImage.url:null}/>
+          <div>
+            <img src={dashboardData.news.ogImage?dashboardData.news.ogImage.url:null}/>
+
+         </div>
+         <div className="news_heading"><h5>{dashboardData.news.ogTitle?dashboardData.news.ogTitle:null}</h5></div>
+         <div className="news_description"><span>{dashboardData.news.ogDescription?dashboardData.news.ogDescription:null}</span></div>
+         <div className="news_site"><h5>{dashboardData.news.ogSiteName?dashboardData.news.ogSiteName:null}</h5></div>
+       </div>
+       )
+     }else {
+       desc = this.state.postMessage;
      }
   //var videoSrc = "http://www.youtube.com/embed/" + this.state.videoLink;
    return(
@@ -1404,6 +1454,14 @@ loadChild(child){
             </div>
             : null}
 
+            {this.state.newsLink?
+              <div className="img_border">
+              {newsImg}
+              <textarea placeholder="text about video" className="uk-width-1-1" ref="postImageContent" >{desc}</textarea>
+
+            </div>
+            : null}
+
              <br />
              {
                this.state.clickedImageIcon?
@@ -1416,10 +1474,10 @@ loadChild(child){
          {this.state.clickedYouTubeLink?
           <input type="text" ref="videoLink" className="input-img-url"  value={this.state.videoLink} placeholder="Enter youtube url" onChange={this.handleVideoLinkChange}/>
           :null}
-      {(this.state.image || this.state.videoLink) ?
+      {(this.state.image || this.state.videoLink || this.state.newsLink) ?
           <div className="uk-modal-footer uk-text-right">
             <div className="is_news_div">
-          
+
             <input className="uk-checkbox" type="checkbox" ref="isCheck" onChange={this.handleClickCheckBox} checked={(this.state.isNewsChecked == 'yes')? true:false}/>IsNews
             </div>
               <button className="uk-button uk-modal-close" type="button">Cancel</button>

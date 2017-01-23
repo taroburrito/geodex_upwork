@@ -25,7 +25,9 @@ import {
           Fetch_Previous_Post_Success,
           Fetch_Previous_Post_Failed,
           Fetch_Next_Post_Success,
-          Fetch_Next_Post_Failed
+          Fetch_Next_Post_Failed,
+          Check_News_Success,
+          Check_News_Failed,
         } from '../actions/UserActions';
 
         import {Post_Added_Dashboard_Success} from '../actions/PostActions';
@@ -190,10 +192,10 @@ export function updateDashboardData(dashboardDataState={error:null,success:null}
         success:'fetched failed'
       })
       break;
-      case Fetch_Previous_Post_Success:  
+      case Fetch_Previous_Post_Success:
        var newState = Object.assign({},dashboardDataState);
        var findUser = _.findKey(newState.friends, function (o) { return o.id == action.data.post.id; })
-       
+
       newState.friends[findUser] = action.data.post;
       newState.friends[findUser].next = true;
       newState.friends[findUser].prev = true;
@@ -203,7 +205,7 @@ export function updateDashboardData(dashboardDataState={error:null,success:null}
       })
       case Fetch_Next_Post_Failed:
        var newState = Object.assign({},dashboardDataState);
-      
+
       var findUser = _.findKey(newState.friends, function (o) { return o.id == action.data; })
       newState.friends[findUser].next = false;
       newState.friends[findUser].prev = true;
@@ -222,7 +224,22 @@ export function updateDashboardData(dashboardDataState={error:null,success:null}
       return Object.assign({}, newState,{
         error:null,
         success:'fetched successfull'
-      })
+      });
+
+    case Check_News_Success:
+      return Object.assign({}, dashboardDataState,{
+        error:null,
+        news:action.news
+      });
+      break;
+
+      case Check_News_Failed:
+        return Object.assign({}, dashboardDataState,{
+          error:"No news to fetch",
+          news:false
+        });
+        break;
+
     default:
     return dashboardDataState;
 
