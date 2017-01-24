@@ -64,7 +64,7 @@ render(){
         <div className="latest-post">
         <a  className="post_txt_dashboard" data-uk-modal onClick={this.loadSinglePostContent.bind(this,latestPost.id,userProfile.id,postImage,latestPost.content,postVideo)}>
 
-        <img src={post_image? "uploads/images/user_"+userProfile.id+"/thumbs/"+post_image: null} className="uk-float-left img_margin_right"/>
+        {post_image?<img src={post_image? "uploads/images/user_"+userProfile.id+"/thumbs/"+post_image: null} className="uk-float-left img_margin_right"/>:null}
         <p style={{paddingTop:3,paddingRight:10}}>{content}</p>
         <small className="user_location post_timestamp" style={{margin:7}}>
         <TimeAgo date={formatted} formatter= {formatter} />

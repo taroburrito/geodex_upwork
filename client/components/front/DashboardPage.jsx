@@ -188,11 +188,12 @@ export default class DashboardPage extends Component {
                 //console.log('https://www.youtube.com/embed/' + match[2] + '?autoplay=0');
                 var videoLink = 'https://www.youtube.com/embed/'+match[2];
                 var videoImg = "https://img.youtube.com/vi/"+match[2]+"/0.jpg"
-                this.setState({clickedYouTubeLink:true,clickedImageIcon:null,videoLink:videoLink,image:null,videoImage:videoImg,postMessage:null,newsLink:null});
+                this.setState({clickedYouTubeLink:true,clickedImageIcon:null,videoLink:videoLink,image:null,videoImage:videoImg,postMessage:null,newsLink:null,post_image:null,fileData:null});
                 modal.show();
             }else if (isUrl) {
               dispatch(checkNews(isUrl[0]));
-              this.setState({videoLink:null,image:null,videoImage:null,newsLink:true});
+              this.setState({videoLink:null,image:null,videoImage:null,newsLink:true,clickedImageIcon:null,clickedYouTubeLink:null});
+
               modal.show();
             }
             else {
@@ -337,7 +338,7 @@ export default class DashboardPage extends Component {
 
       //this.setState({loading:true});
       this.props.onClickSavePost(formData);
-      this.setState({image:null,post_image:null,fileData:null,videoImage:null,videoLink:null,postMessage:null});
+      this.setState({image:null,post_image:null,fileData:null,videoImage:null,videoLink:null,postMessage:null,newsLink:null,isNewsChecked:null});
       this.refs.postImageContent.getDOMNode().value = "";
       this.refs.postContent.getDOMNode().value = "";
     }
@@ -1389,15 +1390,16 @@ loadChild(child){
    console.log(dashboardData);
    var errorLabel;
    var newsImg;
-   var desc;
+   //var desc;
    if(this.state.handleMessage && this.state.handleMessage.error){
        errorLabel = (
          <div className="uk-alert uk-alert-danger"><p>{this.state.handleMessage.error}</p></div>
        )
      }
-     if(this.state.newsLink && dashboardData.news){
-       desc = dashboardData.news.ogDescription?dashboardData.news.ogDescription:this.state.postMessage;
-       if(dashboardData.news)
+     if(this.state.newsLink ){
+
+    //   if(dashboardData.news){
+       var desc = dashboardData.news.ogDescription?dashboardData.news.ogDescription:null;
         newsImg = (
           <div>
             <input type="hidden" ref="hidden_news_image" value={dashboardData.news.ogImage?dashboardData.news.ogImage.url:null}/>
@@ -1410,8 +1412,9 @@ loadChild(child){
          <div className="news_site"><h5>{dashboardData.news.ogSiteName?dashboardData.news.ogSiteName:null}</h5></div>
        </div>
        )
+    // }
      }else {
-       desc = this.state.postMessage;
+       var desc = this.state.postMessage;
      }
   //var videoSrc = "http://www.youtube.com/embed/" + this.state.videoLink;
    return(
@@ -1478,7 +1481,7 @@ loadChild(child){
           <div className="uk-modal-footer uk-text-right">
             <div className="is_news_div">
 
-            <input className="uk-checkbox" type="checkbox" ref="isCheck" onChange={this.handleClickCheckBox} checked={(this.state.isNewsChecked == 'yes')? true:false}/>IsNews
+            <input className="uk-checkbox" type="checkbox" ref="isCheck" onChange={this.handleClickCheckBox} checked={(this.state.isNewsChecked == 'yes')? true:false}/> News
             </div>
               <button className="uk-button uk-modal-close" type="button">Cancel</button>
               <input className="uk-button uk-button-primary uk-modal-close" type="button" onClick={this.handleSavePostImage} value="Save" />
@@ -1581,7 +1584,7 @@ loadChild(child){
             <div className="cont_post_btn">
               <textarea placeholder="Post to ambulist..." className="uk-width-1-1" onChange={this.handlePostMessage} ref="postContent"></textarea>
                 <label>
-            <input className="uk-checkbox" type="checkbox" ref="isCheck" onChange={this.handleClickCheckBox} checked={(this.state.isNewsChecked == 'yes')? true:false}/>IsNews
+            <input className="uk-checkbox" type="checkbox" ref="isCheck" onChange={this.handleClickCheckBox} checked={(this.state.isNewsChecked == 'yes')? true:false}/> News
           </label>
             <a className="uk-button uk-button-primary uk-button-large" onClick={this.handleSavePost}>Post</a>
               <div className="yt_img"><i data-uk-tooltip title="Upload Image" className="uk-icon-image" data-uk-modal="{target:'#statusImageModel'}" style={{cursor:"pointer"}} onClick={()=>this.setState({clickedYouTubeLink:null,clickedImageIcon:true,videoLink:null,image:null})}></i>

@@ -508,7 +508,7 @@ console.log(commentElement);
 
       if(categories)
       categoriesElement.push(<li id="all" onClick={this.sortByCategory.bind(this,null)} className={!this.state.active_cat? "active_sm":''}>All</li>);
-      categoriesElement.push(<li id="all" onClick={this.sortByCategory.bind(this,'news')} className={this.state.active_cat == 'news'? "active_sm":''}>News</li>);
+      // categoriesElement.push(<li id="all" onClick={this.sortByCategory.bind(this,'news')} className={this.state.active_cat == 'news'? "active_sm":''}>News</li>);
       Object.keys(categories).map(function (key) {
         var item = categories[key];
         categoriesElement.push(<li id={item.id} onClick={this.sortByCategory.bind(this,item.id)} className={this.state.active_cat == item.id ? "active_sm":''}>{item.category_name}</li>);
@@ -700,18 +700,20 @@ console.log(commentElement);
                 <select name="sort" ref="filterFeeds" onChange={this.handleFilterFeeds}>
                   <option selected="true" value="all">All</option>
                   <option value="photos">Photos</option>
+                  <option value="news">News</option>
                   </select>
               </div>
             </div>
             {/* {this.renderPhotos()} */}
-              {this.state.filter == 'all'?
+              {(this.state.filter == 'all' || this.state.filter == 'news')?
                  <PostView
                    postComment={this.props.postComment}
                    fetchComments={this.props.fetchComments}
                    userAuthSession={this.props.userAuthSession}
                    comments={this.props.comments}
-                    posts={this.props.posts}
-                    loadSinglePostContent={(postId,userId,popupImage,popupContent,postVideo)=>this.loadSinglePostContent(postId,userId,popupImage,popupContent,postVideo)}
+                   posts={this.props.posts}
+                   filter={this.state.filter}
+                   loadSinglePostContent={(postId,userId,popupImage,popupContent,postVideo)=>this.loadSinglePostContent(postId,userId,popupImage,popupContent,postVideo)}
                    />:
                  <PhotosView
                    posts={this.props.posts}

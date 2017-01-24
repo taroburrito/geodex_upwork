@@ -68,7 +68,7 @@ export default class PhotosView extends Component {
   }
 
   render(){
-      console.log("photosview");
+      
     const{posts} = this.props;
     if(posts)
     var postItem = [];

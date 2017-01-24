@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 var Slider = require('react-slick');
-var ScrollbarWrapper = require('react-scrollbars').ScrollbarWrapper;
+//var ScrollbarWrapper = require('react-scrollbars').ScrollbarWrapper;
 import { validateDisplayName, formatter } from '../../utilities/RegexValidators';
 var moment = require('moment');
 import TimeAgo from 'react-timeago';
@@ -868,7 +868,7 @@ renderPostContentModal(){
                  <div className="uk-grid uk-grid-large dash_top_head">
                   <div className="uk-width-small-1-2">
                     <div className="uk-grid uk-grid-small">
-                    <div className="uk-width-3-10 user_img_left">
+                    <div className="uk-width-2-10 user_img_left profile_page_pic">
                       <img src={this.getProfileImage(userProfileData.profile_image,userProfileData.id)} />
 
                       </div>
@@ -891,22 +891,22 @@ renderPostContentModal(){
               <div className="uk-width-medium-1-2 profile_post_left">
               <h3>Photos</h3>
 
-                  <ScrollbarWrapper>
+                  {/* <ScrollbarWrapper> */}
 
                       {this.renderPhotos()}
 
-                      </ScrollbarWrapper>
+                      {/* </ScrollbarWrapper> */}
 
 
               </div>
 
               <div className="uk-width-medium-1-2 profile_post_right">
               <h3>Recent Activity</h3>
-               <ScrollbarWrapper vertical={true} >
+               {/* <ScrollbarWrapper vertical={true} > */}
                   <div>
                     {this.renderPostsContent()}
                 </div>
-              </ScrollbarWrapper>
+              {/* </ScrollbarWrapper> */}
 
 
               </div>

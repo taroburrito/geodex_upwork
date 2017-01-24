@@ -434,7 +434,7 @@ renderCoverModel(){
                         <div className="uk-grid uk-grid-large dash_top_head">
                             <div className="uk-width-small-1-2">
                                 <div className="uk-grid uk-grid-small">
-                                    <div className="uk-width-3-10 user_img_left">
+                                    <div className="uk-width-2-10 user_img_left">
                                         <img src={this.getProfileImage(userData.profile_image,userData.id)} style={{borderRadius: this.state.borderRadius + 5 /* because of the 5px padding */}} />
                                         <a data-uk-modal="{target:'#profilepic'}" href="#" className="edit_profile_img_btn">Edit <i className="uk-icon-file-image-o"></i></a>
                                     </div>

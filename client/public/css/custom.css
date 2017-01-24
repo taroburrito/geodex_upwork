@@ -733,7 +733,7 @@ form.uk-search.search_dash_nav {
   color: #fff;
   font-family: open sans;
   font-size: 30px;
-  margin: 16% 0 10px;
+  margin: 3% 0 10px;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.9);
 }
 
@@ -1131,6 +1131,20 @@ ul.placesSuggest_suggests li svg.placesSuggest_suggestIcon {
     max-height: 164px;
 }
 
+.uk-width-2-10.user_img_left {
+    position: relative;
+}
+
+
+.dash_top_head.my_profile .uk-width-2-10.user_img_left {
+    margin-top: 4px;
+    max-height: 111px;
+}
+
+.uk-width-2-10.user_img_left.profile_page_pic {
+    max-height: 111px;
+}
+
 .background_profile {
   position: relative;
 }
@@ -1139,10 +1153,11 @@ ul.placesSuggest_suggests li svg.placesSuggest_suggestIcon {
   background: black none repeat scroll 0 0;
   bottom: 0;
   color: #fff;
-  padding: 4px 20px;
+  padding: 2px 10px;
   position: absolute;
   right: 0;
   width: auto;
+  display: none;
 }
 
 .edit_profile_img_btn .uk-icon-file-image-o {
@@ -1256,7 +1271,7 @@ p.text-align-left .uk-button-large {
 }
 .profile-modal .uk-modal-dialog {
   background: #fff none repeat scroll 0 0;
-  max-width: 350px;
+  max-width: 650px;
   text-align: center;
 }
 
@@ -2525,20 +2540,10 @@ ul.uk-comment-list li {
 .uk-checkbox:disabled{background-color:#f8f8f8;border-color:#e5e5e5}
 .uk-checkbox:disabled:checked{background-image:url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2214%22%20height%3D%2211%22%20viewBox%3D%220%200%2014%2011%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Cpolygon%20fill%3D%22%23999%22%20points%3D%2212%201%205%207.5%202%205%201%205.5%205%2010%2013%201.5%22%2F%3E%0A%3C%2Fsvg%3E")}
 
-.news_heading h5 {
-    margin-bottom: 4px;
-    margin-top: 10px;
-    font-weight: bold;
-    font-size: 15px;
+.uk-width-2-10.user_img_left:hover .edit_profile_img_btn {
+    display: block;
 }
 
-.news_description span {
-    font-size: 13px;
-    line-height: 17px;
-    float: left;
-    width: 100%;
-}
-
-.is_news_div input.uk-checkbox {
-    margin-right: 5px;
+.uk-button-dropdown{
+  padding: 8px;
 }
