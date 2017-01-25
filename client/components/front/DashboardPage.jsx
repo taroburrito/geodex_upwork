@@ -339,7 +339,10 @@ export default class DashboardPage extends Component {
 
       //this.setState({loading:true});
       this.props.onClickSavePost(formData);
+      setTimeout(function(){
       this.props.fetchInitialData(userAuthSession.userObject.id,null);
+      }.bind(this),1000);
+
       this.setState({image:null,post_image:null,fileData:null,videoImage:null,videoLink:null,postMessage:null,newsLink:null,isNewsChecked:null});
       this.refs.postImageContent.getDOMNode().value = "";
       this.refs.postContent.getDOMNode().value = "";
