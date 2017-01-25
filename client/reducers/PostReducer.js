@@ -51,6 +51,7 @@ export function updateComments(postCommentsState={}, action){
 export function updateFeeds(universalPosts={},action){
   switch (action.type) {
     case Fetch_Universal_Posts_Success:
+    console.log(action.posts);
     return Object.assign({}, action.posts);
       break;
 

@@ -205,7 +205,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#45484d', end
   font-family: open sans;
   font-size: 15px;
   font-weight: 400;
-  line-height: 22px;
+  line-height: 18px;
   text-align: justify;
 }
 
@@ -1949,6 +1949,7 @@ background: #fff !important;
 .Scrollbar{
   width:5px !important;
   background: #ccc none repeat scroll 0 0 !important;
+  display: none;
 }
 .Scrollbar-stick{
   background: rgba(0, 0, 0, 0.5) none repeat scroll 0 0 !important;
@@ -2546,4 +2547,60 @@ ul.uk-comment-list li {
 
 .uk-button-dropdown{
   padding: 8px;
+}
+
+.height-fixed .ScrollbarContent {
+    height: 315px;
+    max-height: 100%;
+}
+.height-fixed div#content {
+    height: 100% !important;
+}
+.height-fixed {
+    max-height: 315px;
+}
+.news_heading h5 {
+    font-size: 14px;
+    font-weight: 800;
+    /* float: left; */
+    margin: 7px 0px 0px 0;
+}
+
+.feed-heading h3 a {
+    color: #000;
+    font-weight: 600;
+}
+
+
+.undefined .btn_sm a.uk-button {
+    border: none;
+    background: none;
+    color: #666;
+    padding: 0;
+    line-height: 28px;
+    height: 21px;
+    min-height: 10px;
+}
+
+.profile .undefined .user_location.post_timestamp {
+    float: right;
+    margin-bottom: 0 !important;
+    margin-right: 18px;
+    margin-top: 5px !important;
+    text-align: left;
+    width: auto;
+    padding-right: 50px;
+}
+
+.undefined .uk-button-dropdown.btn_sm {
+    position: absolute;
+    right: 7px;
+    top: -39px;
+    padding: 0;
+    border: none!important;
+    text-align: right;
+}
+
+.undefined .btn_sm i.uk-icon-caret-down {
+    margin-left: 3px;
 }

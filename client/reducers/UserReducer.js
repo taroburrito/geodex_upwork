@@ -28,9 +28,10 @@ import {
           Fetch_Next_Post_Failed,
           Check_News_Success,
           Check_News_Failed,
+          Initialize_Check_News,
         } from '../actions/UserActions';
 
-        import {Post_Added_Dashboard_Success} from '../actions/PostActions';
+import {Post_Added_Dashboard_Success} from '../actions/PostActions';
 
 
 
@@ -239,7 +240,12 @@ export function updateDashboardData(dashboardDataState={error:null,success:null}
           news:false
         });
         break;
-
+  case Initialize_Check_News:
+  return Object.assign({}, dashboardDataState,{
+    error:false,
+    news:false
+  });
+  break;
     default:
     return dashboardDataState;
 

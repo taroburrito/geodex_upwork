@@ -123,12 +123,36 @@ export function fetchUniversalPostsFailed(error){
   return{type:Fetch_Universal_Posts_Failed,error}
 }
 
-export function fetchUniversalPosts(userId){
+export function fetchUniversalPosts(userId,limitFrom,limitTo){
   return(dispatch) =>{
   //  dispatch(initializeComments());
     $.ajax({
-      type:'GET',
-      url:'/api/v1/posts/getUniversalPosts/'+userId,
+      type:'POST',
+      url:'/api/v1/posts/getUniversalPosts',
+      data:{userId:userId,limitFrom:limitFrom,limitTo:limitTo},
+      dataType:'JSON',
+    }).done(function(result){
+      if(result.error){
+
+      }else {
+        dispatch(fetchUniversalPostsSuccess(result.posts));
+      }
+    }).fail(function(error){
+      console.log("Fail posts");
+      console.log(error);
+      $(".loading").hide();
+    });
+  }
+}
+
+export function fetchLimitedUniversalPosts(userId,limitFrom,limitTo){
+  return(dispatch) =>{
+  //  dispatch(initializeComments());
+    $.ajax({
+      type:'POST',
+      url:'/api/v1/posts/getLimitedUniversalPosts',
+      data:{userId:userId,limitFrom:limitFrom,limitTo:limitTo},
+      dataType:'JSON'
 
     }).done(function(result){
       if(result.error){
@@ -143,6 +167,7 @@ export function fetchUniversalPosts(userId){
     });
   }
 }
+
 
 export function fetchNewsPostsSuccess(posts){
     return{type:Fetch_News_Posts_Success,posts}

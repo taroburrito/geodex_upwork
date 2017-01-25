@@ -6,11 +6,15 @@ export default class FeedsWidget extends Component {
 
     constructor(props){
         super(props);
+        this.state={
+            itemsPerPage:100
+        }
 
     }
     componentWillMount() {
+      console.log("Feeds widget");
       const{userAuthSession} = this.props;
-      this.props.fetchAllPosts(userAuthSession.userObject.id);
+      this.props.fetchAllPosts(userAuthSession.userObject.id,0,this.state.itemsPerPage);
 
       this.props.fetchCategories(userAuthSession.userObject.id);
     }
@@ -27,6 +31,7 @@ export default class FeedsWidget extends Component {
 
 				    </div>
             <FeedsList
+                loadMorePosts = {this.props.loadMorePosts}
                posts={this.props.posts}
                categories={this.props.categories}
                userAuthSession={this.props.userAuthSession}

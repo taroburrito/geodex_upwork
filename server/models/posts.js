@@ -237,9 +237,13 @@ var postModel = {
       });
     },
 
-    getUniversalPosts: function(userId,callback){
+    getUniversalPosts: function(userId,limitFrom,limitTo,callback){
+
       var dbConnection = dbConnectionCreator();
-      var getUniversalPostsSql = constructUniversalPostsSql(userId);
+
+      var getUniversalPostsSql = constructUniversalPostsSql(userId,limitFrom,limitTo);
+
+
 
 
       dbConnection.query(getUniversalPostsSql,function(error,results,fields){
@@ -376,7 +380,7 @@ function constructCommentsByPostId(postId){
   return sql;
 }
 
-function constructUniversalPostsSql(userId){
+function constructUniversalPostsSql(userId,limitFrom,limitTo){
   var sql = "SELECT a.*,"+
             "CONCAT(b.first_name, ' ', b.last_name) NAME,"+
             "b.profile_image,b.address,b.user_id, c.email"+
@@ -386,7 +390,7 @@ function constructUniversalPostsSql(userId){
             " WHERE b.user_id = a.user_id"+
             " AND c.id  = a.user_id"+
             " AND a.user_id IN (SELECT receiver_id FROM `gx_friends_list` WHERE sender_id ='"+userId+"'  AND STATUS = 1 UNION SELECT sender_id  FROM `gx_friends_list` WHERE receiver_id ='"+userId+"' AND STATUS = 1)"+
-            " ORDER BY a.id DESC ";
+            " ORDER BY a.id DESC LIMIT "+limitFrom+", "+limitTo;
   return sql;
 }
 
@@ -466,6 +470,8 @@ function constructCreatePostSqlString(formData) {
             ", youtube_url = " + mysql.escape(formData.youtube_url) +
             ", youtube_image = " + mysql.escape(formData.youtube_image) +
             ", is_news = " + mysql.escape(formData.is_news) +
+            ", title = " + mysql.escape(formData.title) +
+            ", link = " + mysql.escape(formData.link) +
             ", image = " + mysql.escape(formData.image) +
             ", status = 1 "+
             ", created = '" + formatted+"'" ;

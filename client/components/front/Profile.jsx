@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 var Slider = require('react-slick');
-//var ScrollbarWrapper = require('react-scrollbars').ScrollbarWrapper;
+var ScrollbarWrapper = require('react-scrollbars').ScrollbarWrapper;
 import { validateDisplayName, formatter } from '../../utilities/RegexValidators';
 var moment = require('moment');
 import TimeAgo from 'react-timeago';
@@ -331,21 +331,22 @@ export default class Profile extends Component {
             }
             postItem.push(
               <div className="uk-width-small-1-1 post_control">
-                <div className="uk-width-small-5-6 uk-float-left">
+                <div className="uk-width-small-1-1 uk-float-left">
                   <a href="#" className="post_txt_dashboard" data-uk-modal={post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={this.loadSinglePostContent.bind(this,item.id,item.user_id,postImage,item.content,postVideo)}>
 
                     <img src={post_image? this.state.uploadDir+"user_"+item.user_id+"/thumbs/"+post_image: null} className="uk-float-left img_margin_right"/>
-                    <p>{postContent}</p>
+                    <p>{postContent}  </p>
                     <small className="user_location post_timestamp">
                     <TimeAgo date={formatted} formatter= {formatter}  />
                     </small>
+
                   </a>
 
              </div>
              {(userAuthSession.userObject.id == item.user_id)?
-             <div className="uk-width-small-1-10 uk-float-left">
 
-               <div className="uk-button-dropdown" data-uk-dropdown="{delay: 100}">
+
+               <div className="uk-button-dropdown btn_sm" data-uk-dropdown="{delay: 100}">
                   <a className="uk-button">Action<i className="uk-icon-caret-down"></i></a>
                     <div className="uk-dropdown uk-dropdown-small uk-dropdown-bottom">
                       <ul className="uk-nav uk-nav-dropdown">
@@ -353,8 +354,9 @@ export default class Profile extends Component {
                       </ul>
                     </div>
               </div>
-             </div>
+
              :null}
+
            </div>
           );
           });
@@ -860,7 +862,7 @@ renderPostContentModal(){
       }
     }
       return(
-        <div>
+        <div className="hidden-scrollbar">
           <div className="full_width">
 
             <div className="background_profile" style={background_profile_css}>
@@ -891,22 +893,22 @@ renderPostContentModal(){
               <div className="uk-width-medium-1-2 profile_post_left">
               <h3>Photos</h3>
 
-                  {/* <ScrollbarWrapper> */}
+                  <ScrollbarWrapper>
 
                       {this.renderPhotos()}
 
-                      {/* </ScrollbarWrapper> */}
+                      </ScrollbarWrapper>
 
 
               </div>
 
               <div className="uk-width-medium-1-2 profile_post_right">
               <h3>Recent Activity</h3>
-               {/* <ScrollbarWrapper vertical={true} > */}
+               <ScrollbarWrapper vertical={true} >
                   <div>
                     {this.renderPostsContent()}
                 </div>
-              {/* </ScrollbarWrapper> */}
+              </ScrollbarWrapper>
 
 
               </div>

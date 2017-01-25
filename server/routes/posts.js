@@ -37,12 +37,19 @@ var setPostRoutes = function (router) {
       })
     });
 
-    router.get('/api/v1/posts/getUniversalPosts/:userId',function(req,res){
+    router.post('/api/v1/posts/getUniversalPosts',function(req,res){
 
-      postModel.getUniversalPosts(req.params.userId,function(result){
+      postModel.getUniversalPosts(req.body.userId,req.body.limitFrom,req.body.limitTo,function(result){
         return res.json(result);
       })
     })
+    router.post('/api/v1/posts/getLimitedUniversalPosts',function(req,res){
+
+      postModel.getUniversalPosts(req.body.userId,req.body.limitFrom,req.body.limitTo,function(result){
+        return res.json(result);
+      })
+    })
+
 
     router.get('/api/v1/posts/getNewsPosts/:userId',function(req,res){
 

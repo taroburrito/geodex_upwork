@@ -33,8 +33,7 @@ export const Fetch_Next_Post_Success = 'Fetch_Next_Post_Success';
 export const Fetch_Next_Post_Failed = 'Fetch_Next_Post_Failed';
 export const Check_News_Success = 'Check_News_Success';
 export const Check_News_Failed = 'Check_News_Failed';
-
-
+export const Initialize_Check_News = 'Initialize_Check_News';
 
 /*
  * other constants
@@ -512,8 +511,13 @@ export function checkNewsFailed(){
   return {type: Check_News_Failed}
 }
 
+export function initializeCheckNews(){
+  return {type: Initialize_Check_News}
+}
+
 export function checkNews(url){
   return(dispatch) => {
+    dispatch(initializeCheckNews())
       $.ajax({
         type:'Post',
         url:'/api/v1/users/checkNews',
@@ -521,6 +525,7 @@ export function checkNews(url){
         data:{url:url},
         beforeSend: function() {
 
+            $(".loading").show();
         }
       }).done(function(data){
        // console.log(data);
@@ -537,6 +542,7 @@ export function checkNews(url){
         console.log(error);
 
       //  dispatch(fetchNextPostFailed(userid));
-      })
+    });
+      $(".loading").hide();
     }
 }

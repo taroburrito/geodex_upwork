@@ -466,7 +466,7 @@ console.log(commentElement);
       this.setState({active_cat: catId,animation:true});
       setTimeout(function() { this.setState({animation: false}); }.bind(this), 1000);
       if(!catId){
-        this.props.fetchUniversalPosts(userAuthSession.userObject.id);
+        this.props.fetchUniversalPosts(userAuthSession.userObject.id,0,10);
       }else if (catId == 'news') {
         this.props.fetchNewsPosts(userAuthSession.userObject.id);
       }
@@ -707,6 +707,7 @@ console.log(commentElement);
             {/* {this.renderPhotos()} */}
               {(this.state.filter == 'all' || this.state.filter == 'news')?
                  <PostView
+                   fetchUniversalPosts={this.props.fetchUniversalPosts}
                    postComment={this.props.postComment}
                    fetchComments={this.props.fetchComments}
                    userAuthSession={this.props.userAuthSession}

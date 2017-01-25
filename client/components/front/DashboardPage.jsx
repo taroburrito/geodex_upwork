@@ -12,7 +12,9 @@ import ImageGallery from 'react-image-gallery';
 import CategoryList from './manage_category/CategoryList';
 import TimeAgo from 'react-timeago';
 
+// components
 import LatestPost from './LatestPost';
+import LoadNewsPost from './dashboard/LoadNewsPost';
 
 import {checkNews} from  '../../actions/UserActions';
 
@@ -85,7 +87,8 @@ export default class DashboardPage extends Component {
       showMessage:true,
       isNewsChecked:false,
       newsLink: false,
-
+      isLoading:false,
+      postLink:false,
     }
   }
 
@@ -163,16 +166,7 @@ export default class DashboardPage extends Component {
     const{dispatch} = this.props;
       var msg = this.refs.postContent.getDOMNode().value.trim();
      this.setState({postMessage:msg});
-    //  if(validateUrl(msg)){
-    //    console.log("matched")
-    //    dispatch(checkNews(msg));
-    //    this.setState({newsLink:true})
-    //     var modal = UIkit.modal("#statusImageModel");
-    //     modal.show();
-    //  }else {
-    //    console.log("Not matched")
-    //  }
-    // var videoid = msg.match(/(?:https?:\/{2})?(?:w{3}\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\?v=|\/)([^\s&]+)/);
+
      var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|\?v=)([^#\&\?]*).*/;
      var urlPattern = /(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/;
 
@@ -188,12 +182,17 @@ export default class DashboardPage extends Component {
                 //console.log('https://www.youtube.com/embed/' + match[2] + '?autoplay=0');
                 var videoLink = 'https://www.youtube.com/embed/'+match[2];
                 var videoImg = "https://img.youtube.com/vi/"+match[2]+"/0.jpg"
-                this.setState({clickedYouTubeLink:true,clickedImageIcon:null,videoLink:videoLink,image:null,videoImage:videoImg,postMessage:null,newsLink:null,post_image:null,fileData:null});
+                this.setState({postLink:videoLink, isLoading:true, clickedYouTubeLink:true,clickedImageIcon:null,videoLink:videoLink,image:null,videoImage:videoImg,postMessage:null,newsLink:null,post_image:null,fileData:null});
+                setTimeout(function(){
+                  this.setState({isLoading:false})
+                }.bind(this),1000)
                 modal.show();
             }else if (isUrl) {
               dispatch(checkNews(isUrl[0]));
-              this.setState({videoLink:null,image:null,videoImage:null,newsLink:true,clickedImageIcon:null,clickedYouTubeLink:null});
-
+              this.setState({postLink:isUrl, isLoading:true,videoLink:null,image:null,videoImage:null,newsLink:true,clickedImageIcon:null,clickedYouTubeLink:null});
+              setTimeout(function(){
+                this.setState({isLoading:false})
+              }.bind(this),1000)
               modal.show();
             }
             else {
@@ -328,6 +327,8 @@ export default class DashboardPage extends Component {
       youtube_image: this.state.videoImage,
       is_news:this.state.isNewsChecked,
       newsImage:this.state.newsLink?this.refs.hidden_news_image.getDOMNode().value.trim():null,
+      title:this.state.newsLink?this.refs.hidden_news_title.getDOMNode().value.trim():null,
+      link:this.state.newsLink?this.refs.hidden_news_url.getDOMNode().value.trim():null,
       //fileData:this.state.fileData
     }
 
@@ -338,9 +339,11 @@ export default class DashboardPage extends Component {
 
       //this.setState({loading:true});
       this.props.onClickSavePost(formData);
+      this.props.fetchInitialData(userAuthSession.userObject.id,null);
       this.setState({image:null,post_image:null,fileData:null,videoImage:null,videoLink:null,postMessage:null,newsLink:null,isNewsChecked:null});
       this.refs.postImageContent.getDOMNode().value = "";
       this.refs.postContent.getDOMNode().value = "";
+
     }
   }
 
@@ -664,7 +667,7 @@ _myImageGalleryRenderer(item) {
          if(post_image){
          friendElement.push(
              <div key={item.i} className="slider_image uk-grid-small uk-grid-width-medium-1-4">
-               <a data-uk-modal="{target:'#postImageModel'}"  onClick={this.loadPostContent.bind(this,item.id,user_id,null,item.content,i,null)}>
+               <a data-uk-modal="{target:'#postImageModel'}"  onClick={this.loadPostContent.bind(this,item.id,item.user_id,null,item.content,i,null)}>
                  <img src={postImage}/>
                 </a>
             </div>
@@ -961,10 +964,10 @@ loadMorePost(){
 
 
     // if latest post
-    if(userAuthSession.userObject.id === userId){
-        var friendData = userAuthSession.userObject;
-        var postContent = dashboardData.latestPost.content;
-    }else{
+    // if(userAuthSession.userObject.id === userId){
+    //     var friendData = userAuthSession.userObject;
+    //     var postContent = dashboardData.latestPost.content;
+    // }else{
 
       //friends profile data
 
@@ -988,7 +991,7 @@ loadMorePost(){
     }else{
         var postContent = null;
     }
-  }
+//  }
 
 
 
@@ -1388,34 +1391,53 @@ loadChild(child){
  renderStatusModel(){
    const {dashboardData} = this.props;
    console.log(dashboardData);
+   var news = dashboardData.news;
    var errorLabel;
    var newsImg;
+   var content;
    //var desc;
    if(this.state.handleMessage && this.state.handleMessage.error){
        errorLabel = (
          <div className="uk-alert uk-alert-danger"><p>{this.state.handleMessage.error}</p></div>
        )
      }
-     if(this.state.newsLink ){
+
+     if(news){
 
     //   if(dashboardData.news){
-       var desc = dashboardData.news.ogDescription?dashboardData.news.ogDescription:null;
-        newsImg = (
+       var desc = news.ogDescription?news.ogDescription:null;
+        content = (
           <div>
-            <input type="hidden" ref="hidden_news_image" value={dashboardData.news.ogImage?dashboardData.news.ogImage.url:null}/>
+            <input type="hidden" ref="hidden_news_image" value={news.ogImage?news.ogImage.url:null}/>
+             <input type="hidden" ref="hidden_news_title" value={news.ogTitle?news.ogTitle:null}/>
+               <input type="hidden" ref="hidden_news_url" value={news.ogUrl?news.ogUrl:null}/>
           <div>
-            <img src={dashboardData.news.ogImage?dashboardData.news.ogImage.url:null}/>
+            <img src={news.ogImage?news.ogImage.url:null}/>
 
          </div>
-         <div className="news_heading"><h5>{dashboardData.news.ogTitle?dashboardData.news.ogTitle:null}</h5></div>
-         <div className="news_description"><span>{dashboardData.news.ogDescription?dashboardData.news.ogDescription:null}</span></div>
-         <div className="news_site"><h5>{dashboardData.news.ogSiteName?dashboardData.news.ogSiteName:null}</h5></div>
-       </div>
+         <div className="news_heading"><h5>{news.ogTitle?news.ogTitle:null}</h5></div>
+         {/* <div className="news_description"><span>{news.ogDescription?news.ogDescription:null}</span></div> */}
+
+           <textarea placeholder="Enter description here" className="uk-width-1-1" ref="postImageContent" >{desc}</textarea>
+           <div className="news_site"><h5>{news.ogSiteName?"by|"+news.ogSiteName:null}</h5></div>
+     </div>
        )
     // }
-     }else {
-       var desc = this.state.postMessage;
-     }
+  }else if (this.state.postLink) {
+    content=(
+      <div>
+      <div className="news_heading"><h5>{this.state.postLink}</h5></div>
+      <input type="hidden" ref="hidden_news_url" value={this.state.postLink}/>
+       <input type="hidden" ref="hidden_news_title" value={this.state.postLink}/>
+       </div>
+    )
+  }else{
+    content=(
+      <div>Loading...</div>
+    )
+  }
+
+
   //var videoSrc = "http://www.youtube.com/embed/" + this.state.videoLink;
    return(
      <div id="statusImageModel" className="uk-modal" >
@@ -1459,9 +1481,7 @@ loadChild(child){
 
             {this.state.newsLink?
               <div className="img_border">
-              {newsImg}
-              <textarea placeholder="text about video" className="uk-width-1-1" ref="postImageContent" >{desc}</textarea>
-
+              {content}
             </div>
             : null}
 
@@ -1477,7 +1497,7 @@ loadChild(child){
          {this.state.clickedYouTubeLink?
           <input type="text" ref="videoLink" className="input-img-url"  value={this.state.videoLink} placeholder="Enter youtube url" onChange={this.handleVideoLinkChange}/>
           :null}
-      {(this.state.image || this.state.videoLink || this.state.newsLink) ?
+          {(this.state.image || this.state.videoLink || this.state.newsLink) ?
           <div className="uk-modal-footer uk-text-right">
             <div className="is_news_div">
 
@@ -1571,37 +1591,50 @@ loadChild(child){
 
           <div className="uk-width-small-1-2">
             <div className="uk-grid uk-grid-small">
-            <div className="uk-width-3-10 user_img_left">
+            <div className="uk-width-1-10 user_img_left">
               <Link to={profile_link}><img src={this.getProfileImage(userProfileData.profile_image,userProfileData.id)}/></Link>
 
             </div>
-            <div className="uk-width-7-10 user_img_right">
+
+            <div className="uk-width-9-10 user_img_right">
             <h3><Link to={profile_link}  className="user-name-anchor">{userProfileData.first_name} {userProfileData.last_name}</Link>
+              <small className="uk-float-right">{userProfileData.email}</small></h3>
 
-               <small className="uk-float-right">{userProfileData.email}</small></h3>
+            </div>
+            </div>
 
 
+
+            <div className="uk-grid " style={{marginTop:5}}>
+
+             <div className="uk-width-small-1-1 user_img_right">
             <div className="cont_post_btn">
               <textarea placeholder="Post to ambulist..." className="uk-width-1-1" onChange={this.handlePostMessage} ref="postContent"></textarea>
                 <label>
             <input className="uk-checkbox" type="checkbox" ref="isCheck" onChange={this.handleClickCheckBox} checked={(this.state.isNewsChecked == 'yes')? true:false}/> News
           </label>
             <a className="uk-button uk-button-primary uk-button-large" onClick={this.handleSavePost}>Post</a>
-              <div className="yt_img"><i data-uk-tooltip title="Upload Image" className="uk-icon-image" data-uk-modal="{target:'#statusImageModel'}" style={{cursor:"pointer"}} onClick={()=>this.setState({clickedYouTubeLink:null,clickedImageIcon:true,videoLink:null,image:null})}></i>
+              <div className="yt_img"><i data-uk-tooltip title="Upload Image" className="uk-icon-image" data-uk-modal="{target:'#statusImageModel'}" style={{cursor:"pointer"}} onClick={()=>this.setState({clickedYouTubeLink:null,clickedImageIcon:true,videoLink:null,image:null,newsLink:null})}></i>
 
             </div>
 
           </div>
-
-            </div>
-            </div>
+          </div>
           </div>
 
-           <LatestPost
+
+
+
+
+
+
+          </div>
+
+           {/* <LatestPost
              dashboardData={this.props.dashboardData}
              userAuthSession={this.props.userAuthSession}
              loadSinglePostContent={(postId,userId,postImage,postContent,postVideo)=>this.loadSinglePostContent(postId,userId,postImage,postContent,postVideo)}
-             />
+             /> */}
 
          </div>
          <div className="uk-width-small-1-1 shortlist_menu">

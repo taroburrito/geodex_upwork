@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Navigation } from 'react-router';
 
 import Home from '../../components/front/Home';
-import {fetchUniversalPosts,fetchPostByFriendsCategory,fetchCommentsByPost,postComment,fetchNewsPosts} from '../../actions/PostActions';
+import {fetchLimitedUniversalPosts,fetchUniversalPosts,fetchPostByFriendsCategory,fetchCommentsByPost,postComment,fetchNewsPosts} from '../../actions/PostActions';
 import {fetchCategoriesByUser} from '../../actions/CategoryActions';
 import FeedsWidget from '../../components/front/feeds/FeedsWidget';
 
@@ -24,7 +24,7 @@ export default class Feeds extends Component {
         <div className="full_width">
             <FeedsWidget
               fetchNewsPosts={(userId)=>dispatch(fetchNewsPosts(userId))}
-              fetchAllPosts={(userId)=>dispatch(fetchUniversalPosts(userId))}
+              fetchAllPosts={(userId,limitFrom,limitTo)=>dispatch(fetchUniversalPosts(userId,limitFrom,limitTo))}
               fetchCategories={(userId)=>dispatch(fetchCategoriesByUser(userId))}
               fetchPostByFriendsCategory = {(userId,catId)=>dispatch(fetchPostByFriendsCategory(userId,catId))}
               posts={this.props.universalPosts}
@@ -34,6 +34,7 @@ export default class Feeds extends Component {
               dispatch(fetchCommentsByPost(postId))}
               comments={this.props.comments}
               postComment = {(req)=>dispatch(postComment(req))}
+              loadMorePosts={(userId,limitFrom,limitTo)=>dispatch(fetchLimitedUniversalPosts((userId,limitFrom,limitTo)))}
             />
         </div>
       );

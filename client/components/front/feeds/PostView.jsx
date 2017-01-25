@@ -6,7 +6,8 @@ export default class PostView extends Component {
   constructor(props) {
     super(props);
     this.state={
-      clickedPost:null
+      clickedPost:null,
+      itemsPerPage:4
     }
   }
 
@@ -30,6 +31,14 @@ export default class PostView extends Component {
     this.props.loadSinglePostContent(postId,userId,popupImage,popupContent,postVideo);
   }
 
+  loadMore(itemsPerPage){
+    const{userAuthSession} = this.props;
+    this.setState({itemsPerPage:itemsPerPage+this.state.itemsPerPage});
+    console.log(itemsPerPage);
+    console.log("****")
+    this.props.fetchUniversalPosts(userAuthSession.userObject.id,itemsPerPage,itemsPerPage+this.state.itemsPerPage);
+  }
+
 
   render(){
     const{posts} = this.props;
@@ -38,7 +47,7 @@ export default class PostView extends Component {
     var len = Object.keys(posts).length;
 
     if(posts && len > 0){
-
+      var i=1;
       Object.keys(posts).forEach((postId)=>{
         var post = posts[postId];
         var post_image = post.image || post.youtube_image;
@@ -81,12 +90,13 @@ export default class PostView extends Component {
           var postImage = null;
         }
 
-        if((this.props.filter == 'news' && post.is_news == 'yes') || (this.props.filter =='all'))
+        if((this.props.filter == 'news' && post.is_news == 'yes') || (this.props.filter =='all')){
       postItem.push(
 
       <div className={this.props.animation?"feeds-box animated  fadeIn":"feeds-box animated"}>
         <article className="uk-comment uk-comment-primary">
           <header className=" feeds-header uk-grid-medium uk-flex-middle" uk-grid>
+
             <div className="uk-width-auto">
               <img className="uk-comment-avatar" src={this.getProfileImage(post.profile_image,post.user_id)} width="80" height="80" alt=""/>
             </div>
@@ -98,6 +108,9 @@ export default class PostView extends Component {
               </div>
             </header>
             <div className="uk-comment-body">
+              <div className="feed-heading">
+                <h3><a href={post.link} target="_blank">{post.title}</a></h3>
+              </div>
               <a href="#" data-uk-modal={post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={this.loadSinglePostContent.bind(this,post.id,post.user_id,postImage,post.content,postVideo)}>
                 <div className="feed_img"><img src={imgSrc} className=""/></div>
 
@@ -119,9 +132,11 @@ export default class PostView extends Component {
                 :null}
             </div>
           </article>
+          {/* {i>=this.state.itemsPerPage?<a onClick={this.loadMore.bind(this,this.state.itemsPerPage)}>Load More</a>:null} */}
         </div>
 
-    );
+    );i++;
+  }
 
   });
 }else{

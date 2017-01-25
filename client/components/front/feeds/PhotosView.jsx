@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { Navigation, Link } from 'react-router';
+//import InfiniteScroll from 'react-infinite-scroller';
 
 export default class PhotosView extends Component {
   constructor(props) {
@@ -29,35 +30,6 @@ export default class PhotosView extends Component {
           });
         });
 
-      // Infinite Scroll
-      // container.infinitescroll({
-      //
-      //   // selector for the paged navigation (it will be hidden)
-      //   navSelector  : ".navigation",
-      //   // selector for the NEXT link (to page 2)
-      //   nextSelector : ".nav-previous a",
-      //   // selector for all items you'll retrieve
-      //   itemSelector : ".item",
-      //
-      //   // finished message
-      //   loading: {
-      //     finishedMsg: 'No more pages to load.'
-      //     }
-      //   },
-      //
-      //   // Trigger Masonry as a callback
-      //   function( newElements ) {
-      //     alert("dddd");
-      //     // // hide new items while they are loading
-      //     // var newElems = $( newElements ).css({ opacity: 0 });
-      //     // // ensure that images load before adding to masonry layout
-      //     //   newElems.imagesLoaded(function(){
-      //     // 	// show elems now they're ready
-      //     // 	newElems.animate({ opacity: 1 });
-      //     // 	container.masonry( 'appended', $newElems, true );
-      //     // });
-      //
-      // });
 
 
 }, 1000);
@@ -68,7 +40,7 @@ export default class PhotosView extends Component {
   }
 
   render(){
-      
+
     const{posts} = this.props;
     if(posts)
     var postItem = [];
@@ -107,7 +79,7 @@ export default class PhotosView extends Component {
         }
 
 
-        if(post_image){
+        if(post_image && post.is_news !='yes'){
       postItem.push(
 
         <div className={this.props.animation?"item animated  fadeIn":"item animated"} key={i}>

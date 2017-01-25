@@ -127,6 +127,7 @@ var userModel = {
       var getUsersCategoriesSqlString = constructGetUserCategoriesSqlString(userId);
       var getUserFriendsListSqlString = constructgetUserFriendsListSqlString(userId);
       if(!catId){
+
       var getFriendsListForDashboardSqlString = constructFriendListForDashboardSqlString(userId);
     }else{
       var getFriendsListForDashboardSqlString = constructFriendListByCatForDashboardSqlString(userId,catId);
@@ -1012,7 +1013,9 @@ function constructFriendListForDashboardSqlString(userId){
   var query="SELECT (a.user_id) id, LOWER(first_name) first_name, LOWER(last_name) last_name, dob,gender,address,latitude,longitude,"+
              "profile_image,cover_image,c.id post_id,(image) post_image,(content) post_content,(select count(1) from gx_posts where user_id = a.user_id) post_count, youtube_url, youtube_image, u.email, (b.modified) created,(c.created) post_date"+
             " FROM `gx_user_details` a,(SELECT receiver_id, modified FROM `gx_friends_list` WHERE sender_id ='"+userId+"'  AND STATUS = 1 UNION SELECT sender_id, modified FROM `gx_friends_list` WHERE receiver_id ='"+userId+"' AND STATUS = 1) b,"+
-            " (SELECT t1.* FROM gx_posts t1  WHERE t1.id = (SELECT t2.id FROM gx_posts t2 WHERE t2.user_id = t1.user_id ORDER BY t2.id DESC LIMIT 1) ) c, gx_users u WHERE a.user_id = b.receiver_id AND a.user_id = c.user_id AND a.user_id = u.id GROUP BY a.user_id ORDER BY c.id desc";
+            " (SELECT t1.* FROM gx_posts t1  WHERE t1.id = (SELECT t2.id FROM gx_posts t2 WHERE t2.user_id = t1.user_id ORDER BY t2.id DESC LIMIT 1) ) c,"+
+            " gx_users u WHERE (a.user_id =  '"+userId+"' AND a.user_id = c.user_id AND a.user_id = u.id)"+
+            " OR (a.user_id = b.receiver_id AND a.user_id = c.user_id AND a.user_id = u.id) GROUP BY a.user_id  ORDER BY c.id desc";
             return query;
 }
 
