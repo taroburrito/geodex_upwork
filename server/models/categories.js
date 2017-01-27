@@ -133,12 +133,7 @@ var categoryModel = {
 
                 });
                 dbConnection.end();
-                return callback(
-                  {
-                    success:"success category call",
-                    categories:categories,
-                  }
-                );
+                return callback({success:"success category call", categories});
             }
         });
     },
