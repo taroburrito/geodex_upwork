@@ -386,7 +386,7 @@ reader.readAsDataURL(file);
       }else{
         setTimeout(function(){
         this.props.fetchInitialData(userAuthSession.userObject.id,null);
-        }.bind(this),1000);
+      }.bind(this),2000);
       }
 
       // setTimeout(function(){
