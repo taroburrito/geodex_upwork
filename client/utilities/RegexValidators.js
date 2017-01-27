@@ -93,38 +93,38 @@ var templates = {
 
 }
 
-export function formatter(value, unit, suffix, rawTime) {
-  var counter = '';
-  //console.log('minnnnnnnnnnn'+value);
-  var minunit = 'minute';
-  if (value > 1) {
-    minunit = 'minutes'
-  }
-  var year = unit === ('year') ? value : 0
-  var month = unit === ('month') ? value : 0
-  var week = unit === ('week') ? value : 0
-  var day = unit === ('day') ? value : 0
-  var hour = unit === ('hour') ? value : 0
-  var minute = unit === ('minute') ? value : 0
-  var second = unit === ('second') ? value : 0
-  if(year==0 && month==0 && week==0 && day==0 && hour==0 && minute==0){
-     counter = 'Just now';
-  } else if(year==0 && month==0 && week==0 && day==0 && hour==0 && minute>0){
-     counter = `${minute} ${minunit} ago`;
-  }else if(year==0 && month==0 && week==0 && day==0 && hour>0){
-     counter = `${hour} ${unit} ago`;
-  }else if(year==0 && month==0 && week==0 && day==1){
-      var timestamp = moment(rawTime);
-      var formatted = timestamp.format('hh a');
-      counter = formatted+' Yesterday';
-  }else{
-    var timestamp = moment(rawTime);
-      var formatted = timestamp.format('DD MMM hh:mma');
-      counter = formatted;
-  }
-
-  return counter;
-}
+// export function formatter(value, unit, suffix, rawTime) {
+//   var counter = '';
+//   //console.log('minnnnnnnnnnn'+value);
+//   var minunit = 'minute';
+//   if (value > 1) {
+//     minunit = 'minutes'
+//   }
+//   var year = unit === ('year') ? value : 0
+//   var month = unit === ('month') ? value : 0
+//   var week = unit === ('week') ? value : 0
+//   var day = unit === ('day') ? value : 0
+//   var hour = unit === ('hour') ? value : 0
+//   var minute = unit === ('minute') ? value : 0
+//   var second = unit === ('second') ? value : 0
+//   if(year==0 && month==0 && week==0 && day==0 && hour==0 && minute==0){
+//      counter = 'Just now';
+//   } else if(year==0 && month==0 && week==0 && day==0 && hour==0 && minute>0){
+//      counter = `${minute} ${minunit} ago`;
+//   }else if(year==0 && month==0 && week==0 && day==0 && hour>0){
+//      counter = `${hour} ${unit} ago`;
+//   }else if(year==0 && month==0 && week==0 && day==1){
+//       var timestamp = moment(rawTime);
+//       var formatted = timestamp.format('hh a');
+//       counter = formatted+' Yesterday';
+//   }else{
+//     var timestamp = moment(rawTime);
+//       var formatted = timestamp.format('DD MMM hh:mma');
+//       counter = formatted;
+//   }
+//
+//   return counter;
+// }
 
 export function validateUrl(value){
       return /^(https?|ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i.test(value);

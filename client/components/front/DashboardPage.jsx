@@ -951,7 +951,7 @@ loadMorePost(){
                   {content}
                   </p>
                    <small className="user_location post_timestamp">
-                   <TimeAgo date={formatted} formatter= {formatter}  />
+                   {/* <TimeAgo date={formatted} formatter= {formatter}  /> */}
                    </small>
                 </a>
                 <p>

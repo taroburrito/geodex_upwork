@@ -337,7 +337,7 @@ export default class Profile extends Component {
                     <img src={post_image? this.state.uploadDir+"user_"+item.user_id+"/thumbs/"+post_image: null} className="uk-float-left img_margin_right"/>
                     <p>{postContent}  </p>
                     <small className="user_location post_timestamp">
-                    <TimeAgo date={formatted} formatter= {formatter}  />
+                    {/* <TimeAgo date={formatted} formatter= {formatter}  /> */}
                     </small>
 
                   </a>

@@ -784,8 +784,8 @@ form.uk-search.search_dash_nav {
   border: 1px solid #e2e2e2;
   float: left;
   margin-bottom: 10px;
-  padding-bottom: 5px;
-  padding-left: 5px;
+  padding-bottom: 0;
+  padding-left: 0;
   position: relative;
 }
 
@@ -2562,7 +2562,7 @@ ul.uk-comment-list li {
 .news_heading h5 {
     font-size: 14px;
     font-weight: 800;
-    
+
     margin: 7px 0px 0px 0;
     word-break: break-all;
 }
@@ -2572,8 +2572,13 @@ ul.uk-comment-list li {
     font-weight: 600;
 }
 
+.btn_sm .uk-dropdown-small {
+ float: right !important;
+ left: auto !important;
+  right: 0 !important;
+}
 
-.undefined .btn_sm a.uk-button {
+.btn_sm a.uk-button {
     border: none;
     background: none;
     color: #666;
@@ -2593,15 +2598,15 @@ ul.uk-comment-list li {
     padding-right: 50px;
 }
 
-.undefined .uk-button-dropdown.btn_sm {
+.uk-button-dropdown.btn_sm {
     position: absolute;
     right: 7px;
-    top: -39px;
+    bottom: 6px;
     padding: 0;
     border: none!important;
     text-align: right;
 }
 
-.undefined .btn_sm i.uk-icon-caret-down {
+.btn_sm i.uk-icon-caret-down {
     margin-left: 3px;
 }
