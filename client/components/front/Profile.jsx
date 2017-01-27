@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-var Slider = require('react-slick');
+// var Slider = require('react-slick');
 var ScrollbarWrapper = require('react-scrollbars').ScrollbarWrapper;
 import { validateDisplayName, formatter } from '../../utilities/RegexValidators';
 var moment = require('moment');
