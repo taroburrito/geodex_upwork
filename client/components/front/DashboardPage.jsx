@@ -301,6 +301,9 @@ export default class DashboardPage extends Component {
 
                   if(width < 560){
                     self.addAlert("","Upload image of min width 560px.");
+                    var modal = UIkit.modal("#statusImageModel");
+                    modal.hide();
+                    this.setState({uploadImages:null,uploadedIndex:null});
                   }else{
                     self.setState({
                         image: upload.target.result,
