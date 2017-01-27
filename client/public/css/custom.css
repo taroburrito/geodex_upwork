@@ -2564,6 +2564,7 @@ ul.uk-comment-list li {
     font-weight: 800;
     /* float: left; */
     margin: 7px 0px 0px 0;
+    word-break: break-all;
 }
 
 .feed-heading h3 a {

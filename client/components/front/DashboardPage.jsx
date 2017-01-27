@@ -851,7 +851,7 @@ loadMorePost(){
 
   renderFriendList(){
 
-    const{dashboardData} = this.props;
+    const{dashboardData, userAuthSession} = this.props;
     var friendsElement = [];
     var friends = dashboardData.friends;
 
@@ -912,13 +912,17 @@ loadMorePost(){
                 <h3 className="capital_first"><Link to={profile_link} className="user-name-anchor">{item.first_name} {item.last_name} </Link>
                 <small className="user_location">{item.address}</small>
                 </h3>
+                {(user_id != userAuthSession.userObject.id)?
                 <div className="uk-width-10-10 comm-icon-div">
+
                 <a data-uk-modal="{target:'#sendEmail'}" onClick={this.handleOnClickEmailIcon.bind(this,item.email)} data={item.email}  href="#" className="">
                 <img className="comm-icons" src="public/images/email_icon.png" onClick={()=>this.setState({showMessage:false})}/>
                 </a>
                 <img className="comm-icons" src="public/images/message_icon.png"/>
                 <img className="comm-icons" src="public/images/phone_icon.png"/>
+
                 </div>
+                      :null}
                 </div>
              </div>
 

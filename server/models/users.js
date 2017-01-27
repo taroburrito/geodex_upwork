@@ -924,12 +924,12 @@ var userModel = {
     },
 
     checkNews(data, callback){
-      var options = {'url': data.url};
-      ogs(options, function (err, results) {
+      var options = {'url': data.url,'timeout': 2000};
+      ogs(options, function (err, results,source) {
         if(err){
-          return (callback({error:err}));
+          return (callback({error:err,source:source}));
         }else {
-          return (callback({success:true,news:results.data}));
+          return (callback({success:true,news:results.data,source:source}));
             //return results;
         }
       });
