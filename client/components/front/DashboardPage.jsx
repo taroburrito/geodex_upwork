@@ -52,6 +52,7 @@ export default class DashboardPage extends Component {
     this.handleScale = this.handleScale.bind(this);
     this.addAlert = this.addAlert.bind(this);
     this.handleClickCheckBox = this.handleClickCheckBox.bind(this);
+    this.handleClickCancelPost = this.handleClickCancelPost.bind(this);
     this.state ={
       errorMessage: null,
     //  image: "public/images/user.jpg",
@@ -89,6 +90,8 @@ export default class DashboardPage extends Component {
       newsLink: false,
       isLoading:false,
       postLink:false,
+      uploadImages:null,
+      uploadedIndex:null,
     }
   }
 
@@ -117,6 +120,11 @@ export default class DashboardPage extends Component {
     this.setState({clickedPost:postId});
 
 
+  }
+
+  handleClickCancelPost(){
+    this.setState({uploadedIndex:null,uploadImages:null});
+    this.setState({image:null,post_image:null,fileData:null,videoImage:null,videoLink:null,postMessage:null,newsLink:null,isNewsChecked:null});
   }
 
   addAlert (title,message) {
@@ -262,53 +270,67 @@ export default class DashboardPage extends Component {
     this.setState({active_cat:'all'});
   }
   handleImageChange(evt) {
-      var self = this;
-      var reader = new FileReader();
+
+      var imgLength = evt.target.files.length;
+      var images = [];
+
+      for(var i = 0; i< imgLength; i++){
+        images.push(evt.target.files[i]);
+      }
+      this.setState({uploadImages:images});
+      this.setState({uploadedIndex:0});
       var file = evt.target.files[0];
-        console.log("Width here")
-
-      reader.onloadend = function(upload) {
-        var img = new Image();
-
-            img.src = window.URL.createObjectURL( file );
-
-           img.onload = function() {
-                var width = img.naturalWidth,
-                    height = img.naturalHeight;
-
-                    if(width < 560){
-                      self.addAlert("","Upload image of min width 560px.");
-                    }else{
-                      self.setState({
-                          image: upload.target.result,
-                          fileData:file,
-                          videoLink:null,
-                          videoImage:null,
-                          previewImageWidth:250,
-                          previewImageHeight:250,
-                        });
-                    }
-
-                    // if(width < 250){
-                    //   self.setState({
-                    //       image: upload.target.result,
-                    //       fileData:file,
-                    //       videoLink:null,
-                    //       videoImage:null,
-                    //      previewImageWidth:width,
-                    //      previewImageHeight:height,
-                    //     });
-                    // }else{
-
-                    //}
-
-            };
+        console.log("Width here");
+        this.previewImage(file);
 
 
 
-      };
-  reader.readAsDataURL(file);
+  }
 
+  previewImage(file){
+    var self = this;
+    var reader = new FileReader();
+    reader.onloadend = function(upload) {
+      var img = new Image();
+
+          img.src = window.URL.createObjectURL( file );
+
+         img.onload = function() {
+              var width = img.naturalWidth,
+                  height = img.naturalHeight;
+
+                  if(width < 560){
+                    self.addAlert("","Upload image of min width 560px.");
+                  }else{
+                    self.setState({
+                        image: upload.target.result,
+                        fileData:file,
+                        videoLink:null,
+                        videoImage:null,
+                        previewImageWidth:250,
+                        previewImageHeight:250,
+                      });
+                  }
+
+                  // if(width < 250){
+                  //   self.setState({
+                  //       image: upload.target.result,
+                  //       fileData:file,
+                  //       videoLink:null,
+                  //       videoImage:null,
+                  //      previewImageWidth:width,
+                  //      previewImageHeight:height,
+                  //     });
+                  // }else{
+
+                  //}
+
+          };
+
+
+
+    };
+reader.readAsDataURL(file);
   }
 
   handleSavePostImage(){
@@ -339,11 +361,37 @@ export default class DashboardPage extends Component {
 
       //this.setState({loading:true});
       this.props.onClickSavePost(formData);
-      setTimeout(function(){
-      this.props.fetchInitialData(userAuthSession.userObject.id,null);
-      }.bind(this),1000);
+      if(this.state.uploadImages){
+        var uploadedIndex = this.state.uploadedIndex + 1;
+        var imgLength = this.state.uploadImages.length;
+        console.log("imgLength:"+imgLength)
+        console.log("uploadedIndex:"+uploadedIndex)
+        if(imgLength > uploadedIndex){
+          this.setState({uploadedIndex:uploadedIndex});
+          this.previewImage(this.state.uploadImages[uploadedIndex]);
+          console.log(this.state.uploadImages);
 
-      this.setState({image:null,post_image:null,fileData:null,videoImage:null,videoLink:null,postMessage:null,newsLink:null,isNewsChecked:null});
+        }else{
+          //setTimeout(function(){
+          this.props.fetchInitialData(userAuthSession.userObject.id,null);
+        //  }.bind(this),1000);
+           var modal = UIkit.modal("#statusImageModel");
+           modal.hide();
+           this.setState({uploadImages:null,uploadedIndex:null});
+        }
+
+      }else{
+        setTimeout(function(){
+        this.props.fetchInitialData(userAuthSession.userObject.id,null);
+        }.bind(this),1000);
+      }
+
+      // setTimeout(function(){
+      // this.props.fetchInitialData(userAuthSession.userObject.id,null);
+      // }.bind(this),1000);
+      //
+       this.setState({image:null,post_image:null,fileData:null,videoImage:null,videoLink:null,postMessage:null,newsLink:null,isNewsChecked:null});
+
       this.refs.postImageContent.getDOMNode().value = "";
       this.refs.postContent.getDOMNode().value = "";
 
@@ -1440,6 +1488,22 @@ loadChild(child){
       <div>Loading...</div>
     )
   }
+  if(this.state.image){
+    console.log(this.state.uploadImages.length)
+    console.log(this.state.uploadedIndex)
+    if(this.state.uploadImages && (this.state.uploadImages.length > this.state.uploadedIndex+1)){
+      var saveText = "Save&Next";
+    }else{
+      var saveText = "Save";
+    }
+    var saveBtn =(
+      <input className="uk-button uk-button-primary" type="button" onClick={this.handleSavePostImage} value={saveText}/>
+    )
+  }else {
+    var saveBtn = (
+      <input className="uk-button uk-button-primary uk-modal-close" type="button" onClick={this.handleSavePostImage} value="Save" />
+    );
+  }
 
 
   //var videoSrc = "http://www.youtube.com/embed/" + this.state.videoLink;
@@ -1493,7 +1557,7 @@ loadChild(child){
              {
                this.state.clickedImageIcon?
                <div>
-                 <input type="file"  ref="file" className="uk-float-left"  onChange={this.handleImageChange.bind(this)}/>
+                 <input type="file"  ref="file" className="uk-float-left"  onChange={this.handleImageChange.bind(this)} multiple={true}/>
                  <span className="s_upload">Please upload image of min width 560px.</span>
                </div>
 
@@ -1507,8 +1571,8 @@ loadChild(child){
 
             <input className="uk-checkbox" type="checkbox" ref="isCheck" onChange={this.handleClickCheckBox} checked={(this.state.isNewsChecked == 'yes')? true:false}/> News
             </div>
-              <button className="uk-button uk-modal-close" type="button">Cancel</button>
-              <input className="uk-button uk-button-primary uk-modal-close" type="button" onClick={this.handleSavePostImage} value="Save" />
+              <button className="uk-button uk-modal-close" type="button" onClick={this.handleClickCancelPost}>Cancel</button>
+              {saveBtn}
           </div>
 
       : null}
