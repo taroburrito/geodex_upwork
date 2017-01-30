@@ -181,7 +181,6 @@ export default class DashboardPage extends Component {
 
      var isUrl = msg.match(urlPattern);
      var match = msg.match(regExp);
-
      console.log(isUrl);
      console.log(match);
 
@@ -369,7 +368,7 @@ reader.readAsDataURL(file);
         var imgLength = this.state.uploadImages.length;
         console.log("imgLength:"+imgLength)
         console.log("uploadedIndex:"+uploadedIndex)
-        if(imgLength > uploadedIndex){
+        if(imgLength >= uploadedIndex){
           this.setState({uploadedIndex:uploadedIndex});
           this.previewImage(this.state.uploadImages[uploadedIndex]);
           console.log(this.state.uploadImages);
@@ -429,7 +428,7 @@ reader.readAsDataURL(file);
   }
   }
   handleSavePost(){
-
+//console.log('dsd');
     const{userAuthSession} = this.props;
     var formData = {
       user_id: userAuthSession.userObject.id,
@@ -445,7 +444,7 @@ reader.readAsDataURL(file);
       this.refs.postContent.getDOMNode().value = "";
     }
 
-    //this.props.fetchInitialData(userAuthSession.userObject.id);
+    this.props.fetchInitialData(userAuthSession.userObject.id);
   }
 
 setMessageStateToDefault (){

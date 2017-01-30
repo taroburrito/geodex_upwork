@@ -488,7 +488,7 @@ console.log(commentElement);
           container.imagesLoaded(function(){
             container.masonry({
               // selector for entry content
-              columnWidth: 250,
+              columnWidth: 280,
               itemSelector: '.item',
               isFitWidth:'true',
               isAnimated: true
