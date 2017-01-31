@@ -84,7 +84,6 @@ export default class ResetPassword extends Component {
     )
     }else{
 
-
     return(
       <div className="uk-container uk-container-center middle_content">
         <div className="uk-vertical-align uk-text-center uk-height-1-1">

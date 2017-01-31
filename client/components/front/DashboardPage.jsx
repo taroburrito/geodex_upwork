@@ -368,7 +368,7 @@ reader.readAsDataURL(file);
         var imgLength = this.state.uploadImages.length;
         console.log("imgLength:"+imgLength)
         console.log("uploadedIndex:"+uploadedIndex)
-        if(imgLength >= uploadedIndex){
+        if(imgLength > uploadedIndex){
           this.setState({uploadedIndex:uploadedIndex});
           this.previewImage(this.state.uploadImages[uploadedIndex]);
           console.log(this.state.uploadImages);
@@ -1495,8 +1495,7 @@ loadChild(child){
     )
   }
   if(this.state.image){
-    console.log(this.state.uploadImages.length)
-    console.log(this.state.uploadedIndex)
+
     if(this.state.uploadImages && (this.state.uploadImages.length > this.state.uploadedIndex+1)){
       var saveText = "Save&Next";
     }else{
