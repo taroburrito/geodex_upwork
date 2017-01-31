@@ -80,16 +80,16 @@ export default class ResetPassword extends Component {
     }
     if(!verifyToken || !verifyToken.token){
     return(
-      <div><p style={{fontSize:18, textAlign: 'center'}}>Link not found Please <Link to="/admin/login">Login here</Link></p></div>
+      <div className="uk-container uk-container-center middle_content"><p style={{fontSize:18, textAlign: 'center'}}>Link not found Please <Link to="home">Login here</Link></p></div>
     )
     }else{
 
 
     return(
-      <div>
+      <div className="uk-container uk-container-center middle_content">
         <div className="uk-vertical-align uk-text-center uk-height-1-1">
-          <div className="uk-vertical-align-middle login_form">
-           <img className="uk-margin-bottom" src="resources/images/logo.png" alt=""/>
+          <div className="uk-vertical-align-middle reset_form">
+           <h2>Reset Password</h2>
             <form className="uk-panel uk-panel-box uk-form">
               <div className="uk-form-row">
                 <h3 style={{color:'#fff'}}>Reset Password</h3>

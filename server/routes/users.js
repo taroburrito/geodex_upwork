@@ -88,20 +88,19 @@ var setUserRoutes = function (router) {
 
     router.post('/forgetSubmit',
             function (req, res) {
-
                 var email = req.body.email;
-                userModel.generateForgotPasswordToken(email, function (result) {
-                    if (result.result_token) {
-                        var token = result.result_token;
-                      userModel.sendForgotPasswordMail(token,'admin@geodex.com',email,'Reset Password',function(results){
-                        return res.json(results);
-
-                    //return res.json("success");
-                      });
-
-                    } else {
+                userModel.generateForgotPasswordToken(email,req.body.role,req, function (result) {
+                    // if (result.result_token) {
+                    //     var token = result.result_token;
+                    //   userModel.sendForgotPasswordMail(token,'admin@geodex.com',email,'Reset Password',function(results){
+                    //     return res.json(results);
+                    //
+                    // //return res.json("success");
+                    //   });
+                    //
+                    // } else {
                         return res.json(result);
-                    }
+                  //  }
 
                 });
             }

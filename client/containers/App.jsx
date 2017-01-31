@@ -67,7 +67,7 @@ class App extends Component {
     if(userAuthSession.isLoggedIn && userAuthSession.userObject && userAuthSession.userObject.role=='user'){
     return (
             <div>
-             
+
               <Navbar
                 clearSearchList={this.props.clearSearchList}
                  userAuthSession={userAuthSession} logout={() => dispatch(attemptLogout())} searchUser={(str)=>
@@ -76,15 +76,21 @@ class App extends Component {
               {landingPage}
               { children }
               { content }
-              
+
             </div>
           );
         }else{
-          if(!landingPage){
+          console.log(children);
+          console.log(landingPage);
+          if(!landingPage && !children){
             landingPage = <HomePage/>;
+          }else if (page == '') {
+            landingPage = <HomePage/>;
+          }else{
+            landingPage = children;
           }
           return(
-            <div>
+            <div className="full_width">
               <Navbar
                 clearSearchList={this.props.clearSearchList}
                 userAuthSession={userAuthSession} searchUser={(str)=>

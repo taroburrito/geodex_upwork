@@ -13,7 +13,8 @@ export default class FriendsList extends Component{
    var friends = this.props.friendsData.friendsList;
    var categorizedFriendList = this.props.friendsData.categorizedFriendList;
    var friendElement = [];
-   if(friends)
+
+   if(friends){
    Object.keys(friends).forEach((id)=> {
      if(friends[id].status !=0){
      var user_id = friends[id].user_id;
@@ -35,7 +36,13 @@ export default class FriendsList extends Component{
               />);
             }
      }
+
    );
+ }else {
+   var friendElement = (
+     <div><h3>There's no friends data.</h3></div>
+   )
+ }
    return (
       <div className="uk-grid uk-grid-medium dash_top_head">
          {friendElement}

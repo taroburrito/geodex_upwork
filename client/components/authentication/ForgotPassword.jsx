@@ -39,6 +39,7 @@ export default class ForgotPassword extends Component {
 
      var formData = {
       email : this.refs.email.getDOMNode().value.trim(),
+      role:'user',
     }
 
     let newState = this.findErrorsInForgotPasswordForm(formData);

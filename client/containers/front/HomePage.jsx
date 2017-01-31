@@ -19,7 +19,8 @@ import {
   deleteCategory,
   updateCategoryById,
   fetchPreviousPost,
-  fetchNextPost
+  fetchNextPost,
+  checkNews,
   } from '../../actions/UserActions';
 class HomePage extends Component{
   constructor(props){
@@ -63,6 +64,8 @@ class HomePage extends Component{
           onChange={(id, value) => {dispatch(updateCategoryById(id,value))}}
           onFetchPreviousPost = {(id, value) => {dispatch(fetchPreviousPost(id,value))}}
           onFetchNextPost = {(id, value) => {dispatch(fetchNextPost(id,value))}}
+          checkNews={(url)=>{dispatch(checkNews(url))}}
+          addAlert={this.props.addAlert}
           />
         </div>
 

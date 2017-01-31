@@ -52,7 +52,7 @@ export default class Home extends Component {
                     serverError={userAuthSession.error}
          />
          <ForgotPassword onClickSubmit={(formData) => {
-           dispatch(forgetPasswordSubmit(formData.email))
+           dispatch(forgetPasswordSubmit(formData.email,formData.role))
          }}
          serverError={forgotPasswordResult.error}
          successMessage={forgotPasswordResult.success}/>

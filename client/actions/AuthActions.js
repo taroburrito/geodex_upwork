@@ -319,24 +319,28 @@ export function attemptLogout(){
   }
 }
 
-export function forgetPasswordSubmit(email){
+export function forgetPasswordSubmit(email,role){
 	return (dispatch) => {
 		  dispatch(clickedForgotPassword());
     $.ajax({
 			type: 'POST',
 			url: '/forgetSubmit',
-			data: {email} })
+			data: {email:email,role:role},
+			dataType:'json',
+		 })
 			.done(function(result) {
 
 				if(result.error){
+					console.log(result.error)
 					dispatch(forgotPasswordEmailError(result.error));
 				}else{
+					console.log(result)
 					dispatch(forgotPasswordEmailSuccess(result));
 				}
 				//dispatch(emailSendSuccess(result));
 			})
 			.fail(function(error) {
-
+				console.log(error)
 			  // console.log('failed to check',a,b,c,d);
 			  dispatch(forgotPasswordEmailError(error));
 			});

@@ -69,11 +69,11 @@ _handleKeyPress(e){
   setDateofBirth(x){
        var selectedDate = JSON.stringify(x);
        this.setState({dob:new Date(x)});
-   
+
     }
 
   findErrorsInSignUpForm(formData){
-   
+
     var newState = this.state.errorMessage;
     if(!validateDisplayName(formData.first_name)){
         this.setState({errorMessage:'Please enter first name'});
@@ -124,7 +124,7 @@ _handleKeyPress(e){
 
   render(){
     const { search } = this.state;
-  
+
     var errorLabel;
     if(this.state.errorMessage){
       errorLabel =(<div className="uk-alert uk-alert-danger">

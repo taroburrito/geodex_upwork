@@ -108,7 +108,7 @@ export default class LoginPage extends Component {
            {errorLabel}
           <form className="uk-form">
                  <div className="uk-form-row">
-                     <input className="uk-width-1-1 uk-form-large" placeholder="Username" onKeyPress={this._handleKeyPress} type="text" ref="email"/>
+                     <input className="uk-width-1-1 uk-form-large" placeholder="Email" onKeyPress={this._handleKeyPress} type="text" ref="email"/>
                  </div>
                  <div className="uk-form-row">
                      <input className="uk-width-1-1 uk-form-large" placeholder="Password" onKeyPress={this._handleKeyPress} type="password" ref="password"/>
@@ -121,7 +121,7 @@ export default class LoginPage extends Component {
                      <a className="uk-width-1-4 uk-button uk-button-primary uk-button-large" href="#" onClick={this.handleOnClickLogin}>Login</a>
                 <a className="uk-float-right uk-link uk-link-muted" data-uk-modal="{target:'#forget_pass'}">Forgot Password?</a>
                  </div>
-                  
+
                  </div>
 
              </form>

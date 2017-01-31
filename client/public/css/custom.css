@@ -2612,3 +2612,17 @@ ul.uk-comment-list li {
 .btn_sm i.uk-icon-caret-down {
     margin-left: 3px;
 }
+
+.uk-vertical-align-middle.reset_form {
+    background: #666;
+    padding: 27px;
+    width: 100%;
+    max-width: 350px;
+    border-radius: 5px;
+    box-shadow: 0 0 15px #555;
+}
+.uk-vertical-align-middle.reset_form h2{
+  
+  color: #fff;
+  font-size: 30px;
+}

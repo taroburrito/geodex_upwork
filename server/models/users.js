@@ -360,20 +360,23 @@ var userModel = {
             }
         });
     },
-    generateForgotPasswordToken: function (email, callback) {
+    generateForgotPasswordToken: function (email,role, req,callback) {
+        var baseUrl=req.protocol+"://"+req.get('host');
         var dbConnection = dbConnectionCreator();
         var token = randtoken.generate(16);
-        var generateForgotPasswordTokenQuery = constructGenereateForgotPasswordTokenQuery(email,token);
+        var generateForgotPasswordTokenQuery = constructGenereateForgotPasswordTokenQuery(email,role,token);
 
         dbConnection.query(generateForgotPasswordTokenQuery, function (error, results, fields) {
             if (error) {
-
-
                 dbConnection.end(); return(callback({error: "Error in forget password query", status:400}));
             } else if (results.affectedRows === 1) {
-                dbConnection.end(); return(callback({result_token: token,status:200}));
+                userModel.sendForgotPasswordMail(role,baseUrl,token,'admin@geodex.com',email,'Reset Password',function(results){
+                 return(callback({success: "Sent forgot password email", status:200}));
+                });
 
-            } else {
+
+              //  dbConnection.end(); return(callback({result_token: token,status:200}));
+              } else {
                 dbConnection.end(); return(callback({error: "User not found.",status:400}));
             }
         });
@@ -398,14 +401,19 @@ var userModel = {
     },
 
     // Send forgot password mail function
-    sendForgotPasswordMail(token,from,to,subject,callback){
+    sendForgotPasswordMail(role,baseUrl,token,from,to,subject,callback){
+      if(role == 'admin'){
+        var mail_link = baseUrl+"/admin#/resetPassword/"+token;
+      }else {
+        var mail_link = baseUrl+"/#/resetPassword/"+token;
+      }
       var content = '<b>Hello,</b><br/><p>Please click on the link below to reset your password.</p>' +
-              '<br/><a href="http://localhost:6969/#/admin/resetPassword/' + token + '" target="_blank">Click here</a>';
+              '<br/><a href="' + mail_link + '" target="_blank">Click here</a>';
               var sendMail = sendMailToUser(token,from,to,subject,content);
       if(sendMail == "success"){
-        dbConnection.end(); return(callback({success: "Sent forgot password email", status:200}));
+         return(callback({success: "Sent forgot password email", status:200}));
       }else{
-          dbConnection.end(); return(callback({success: "Please check your mail to change password",status:200}));
+         return(callback({success: "Please check your mail to change password",status:200}));
       }
 
 
@@ -1220,9 +1228,9 @@ function constructGetUserProfileByTokenSqlString(token,token_type) {
 
 }
 
-function constructGenereateForgotPasswordTokenQuery(email, token) {
+function constructGenereateForgotPasswordTokenQuery(email, role, token) {
 
-    var query = "Update gx_users set forgot_password_token='" + token + "' WHERE email='" + email + "'";
+    var query = "Update gx_users set forgot_password_token='" + token + "' WHERE email='" + email + "' AND role='"+role+"'";
     return query;
 
 }

@@ -137,7 +137,7 @@ export function clickedDeleteFriend(id) {
 
 
 export function addCategorySuccess(category) {
-  return{type: Category_Added_Dashboard_Success, category,success:"Added category Successfully"};
+  return{type: Category_Added_Dashboard_Success, category,success:"Category Added Successfully"};
 }
 
 export function addCategoryFail(msg){
@@ -507,8 +507,8 @@ export function checkNewsSuccess(news){
   return {type: Check_News_Success,news}
 }
 
-export function checkNewsFailed(){
-  return {type: Check_News_Failed}
+export function checkNewsFailed(error){
+  return {type: Check_News_Failed,error}
 }
 
 export function initializeCheckNews(){
@@ -524,14 +524,14 @@ export function checkNews(url){
         dataType:'JSON',
         data:{url:url},
         beforeSend: function() {
-
+          console.log("before send");
             $(".loading").show();
         }
       }).done(function(data){
        // console.log(data);
+       $(".loading").hide();
        if(data.eror){
-         console.log("Error in check news");
-         console.log(checkNewsFailed);
+         checkNewsFailed("Failed to scrap this url");
        }else {
          console.log(data);
          dispatch(checkNewsSuccess(data.news));
@@ -540,9 +540,10 @@ export function checkNews(url){
 
       }).fail(function(error){
         console.log(error);
+        $(".loading").hide();
 
       //  dispatch(fetchNextPostFailed(userid));
     });
-      $(".loading").hide();
+
     }
 }
