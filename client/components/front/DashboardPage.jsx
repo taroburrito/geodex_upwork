@@ -46,7 +46,7 @@ export default class DashboardPage extends Component {
     this.clickSlider = this.clickSlider.bind(this);
     this.handleVideoLinkChange = this.handleVideoLinkChange.bind(this);
 
-    this.handleCloseImagePopUp = this.handleCloseImagePopUp.bind(this);
+    
     this.handleScale = this.handleScale.bind(this);
     this.addAlert = this.addAlert.bind(this);
     this.handleClickCheckBox = this.handleClickCheckBox.bind(this);
@@ -106,10 +106,7 @@ export default class DashboardPage extends Component {
     var scale = parseFloat(e.target.value);
      this.setState({ scale: scale })
   }
-   handleCloseImagePopUp(){
-      this.setState({showLargeSlider:false,postLargeImage:null,popupVideo:null});
-    //  console.log("closed");
-  }
+
   onSlide(e){
     this.pauseAllYoutube();
     var postId = this._imageGallery.props.items[e].postId;

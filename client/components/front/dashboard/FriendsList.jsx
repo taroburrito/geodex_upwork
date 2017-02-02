@@ -12,8 +12,14 @@ export default class FriendsList extends Component {
     super(props);
     this.loadPostImg = this.loadPostImg.bind(this);
     this.handleOnClickSendEmail = this.handleOnClickSendEmail.bind(this);
+    this.handleCloseImagePopUp = this.handleCloseImagePopUp.bind(this);
     this.state= this.props;
   }
+
+  handleCloseImagePopUp(){
+     this.setState({showLargeSlider:false,postLargeImage:null,popupVideo:null});
+   //  console.log("closed");
+ }
 
   handleOnClickEmailIcon(email){
       this.refs.sendto.getDOMNode().value = email;
@@ -75,6 +81,7 @@ export default class FriendsList extends Component {
        }
     }
     }else {
+      if(this.state.showLargeSlider){
       var friendsPost = dashboardData.friendsPostImages[userId];
       if(friendsPost){
       var findPostKey = _.findKey(friendsPost, function (o) { return o.id == postId;})
@@ -94,6 +101,7 @@ export default class FriendsList extends Component {
          );
        }
     }
+  }
 
 
 
@@ -122,7 +130,7 @@ export default class FriendsList extends Component {
     }
     modal.show();
     this.props.fetchComments(postId);
-    this.setState({clickedPost:postId,clickedUser:userId,content_type:content_type});
+    this.setState({clickedPost:postId,clickedUser:userId,content_type:content_type,showLargeSlider:true});
 
 
   }
