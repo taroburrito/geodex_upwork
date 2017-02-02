@@ -9,7 +9,7 @@ export default class Comments extends Component {
       postComment:null,
       replyContent:null,
     }
-    this.handleClickPostComment = this.handleClickPostComment.bind(this);
+    //this.handleClickPostComment = this.handleClickPostComment.bind(this);
   }
 
   componentWillMount(){
@@ -30,16 +30,14 @@ export default class Comments extends Component {
       post_id:postId,
       status:1,
     }
-
     if(this.state.postComment==null){
       this.addAlert("","type something to post comment...");
     }else{
+    console.log(this.props);
       this.props.postComment(req);
+
     }
 
-
-
-    //console.log(req);
 
   }
 
@@ -63,7 +61,7 @@ export default class Comments extends Component {
       this.props.postComment(req);
     }
 
-    //this.props.postComment(req);
+
 
   }
 
@@ -232,7 +230,7 @@ export default class Comments extends Component {
     const{postId,comments,userAuthSession} = this.props;
     var user = userAuthSession.userObject;
     return(
-      <div className="uk-width-small-1-1 full-width-cmnt uk-float-left feeds_overflow">
+      <div className="uk-width-small-1-1 full-width-cmnt uk-float-left">
         <h5 className="coment_heading">Comments</h5>
         {this.renderComments(postId)}
         <div className="comenting_form border-top_cf">

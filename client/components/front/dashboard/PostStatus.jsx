@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { Navigation, Link } from 'react-router';
 import { getProfileImage, validateUrl } from '../../../utilities/RegexValidators';
-var AvatarEditor = require('react-avatar-editor');
+
 
 export default class PostStatus extends Component {
   constructor(props) {
@@ -9,25 +9,94 @@ export default class PostStatus extends Component {
     this.handlePostMessage = this.handlePostMessage.bind(this);
     this.handleClickCheckBox = this.handleClickCheckBox.bind(this);
     this.handleSavePost = this.handleSavePost.bind(this);
+    this.handleSavePostImage = this.handleSavePostImage.bind(this);
     this.handleClickImgIcon = this.handleClickImgIcon.bind(this);
-    this.state={
-      isNewsChecked:false,
-      clickedYouTubeLink:false,
-      clickedImageIcon:false,
-      videoLink:false,
-      previewImage:false,
-      newsLink:false,
-      videoImage:false,
-      uploadImages:false,
-      uploadedIndex:null,
-      previewImageWidth:null,
-      fileData:null,
-      previewImageHeight:null,
+    this.state=this.props;
+  }
+
+  componentDidMount(){
+
+  }
+
+  handleSavePostImage(){
+    const{userAuthSession} = this.props;
+    if(!this.state.videoImage && !this.state.newsLink){
+    var postImageSrc = this.state.image;
+    var postContent = this.refs.postImageContent.getDOMNode().value.trim();
+  }else {
+    var postImageSrc = null;
+    var postContent = this.state.postMessage;
+  }
+    var formData = {
+      user_id: userAuthSession.userObject.id,
+      content: postContent,
+      image: this.state.image,
+      thumbImage:postImageSrc,
+      youtube_url: this.state.videoLink,
+      youtube_image: this.state.videoImage,
+      is_news:this.state.isNewsChecked,
+      newsImage:this.state.newsLink?this.refs.hidden_news_image.getDOMNode().value.trim():null,
+      title:this.state.newsLink?this.refs.hidden_news_title.getDOMNode().value.trim():null,
+      link:this.state.newsLink?this.refs.hidden_news_url.getDOMNode().value.trim():null,
+      news_source: this.state.newsLink?this.refs.hidden_news_source.getDOMNode().value.trim():null,
+      //fileData:this.state.fileData
     }
+
+    if(!formData.image && !formData.youtube_url && !formData.newsImage){
+
+      this.setState({handleMessage:{error:"Please choose image",success:null}});
+        this.props.onClickSavePost(formData);
+        this.props.fetchInitialData(userAuthSession.userObject.id,null);
+    }else{
+
+      //this.setState({loading:true});
+
+      this.props.onClickSavePost(formData);
+      if(this.state.uploadImages){
+        var uploadedIndex = this.state.uploadedIndex + 1;
+        var imgLength = this.state.uploadImages.length;
+        // console.log("imgLength:"+imgLength)
+        // console.log("uploadedIndex:"+uploadedIndex)
+        if(imgLength > uploadedIndex){
+          this.setState({uploadedIndex:uploadedIndex});
+          this.previewImage(this.state.uploadImages[uploadedIndex]);
+          //console.log(this.state.uploadImages);
+
+        }else{
+
+          setTimeout(function(){
+          this.props.fetchInitialData(userAuthSession.userObject.id,null);
+          }.bind(this),1000);
+           var modal = UIkit.modal("#statusImageModel");
+           modal.hide();
+           this.setState({uploadImages:null,uploadedIndex:null});
+        }
+
+      }else{
+
+        setTimeout(function(){
+        this.props.fetchInitialData(userAuthSession.userObject.id,null);
+      }.bind(this),2000);
+      }
+
+      // setTimeout(function(){
+      // this.props.fetchInitialData(userAuthSession.userObject.id,null);
+      // }.bind(this),1000);
+      //
+
+
+
+    }
+    this.refs.postImageContent.getDOMNode().value = "";
+    this.refs.postContent.getDOMNode().value = "";
+    this.setState({uploadImages:null,uploadedIndex:null});
+    this.setState({image:null,post_image:null,fileData:null,videoImage:null,videoLink:null,postMessage:null,newsLink:null,isNewsChecked:null});
+
+
   }
 
   handleClickImgIcon(){
-    this.setState({clickedYouTubeLink:null,clickedImageIcon:true,videoLink:null,previewImage:null,newsLink:null})
+    this.setState({clickedYouTubeLink:null,clickedImageIcon:true,videoLink:null,image:null,newsLink:null})
   }
 
   handleImageChange(evt) {
@@ -67,7 +136,7 @@ export default class PostStatus extends Component {
                     this.setState({uploadImages:null,uploadedIndex:null});
                   }else{
                     self.setState({
-                        previewImage: upload.target.result,
+                        image: upload.target.result,
                         fileData:file,
                         videoLink:null,
                         videoImage:null,
@@ -170,6 +239,7 @@ reader.readAsDataURL(file);
              <input type="hidden" ref="hidden_news_image" value={news.ogImage?news.ogImage.url:null}/>
               <input type="hidden" ref="hidden_news_title" value={news.ogTitle?news.ogTitle:null}/>
                 <input type="hidden" ref="hidden_news_url" value={news.ogUrl?news.ogUrl:null}/>
+                <input type="hidden" ref="hidden_news_source" value={news.ogSiteName?news.ogSiteName:null}/>
            <div>
              <img src={news.ogImage?news.ogImage.url:null}/>
 
@@ -188,6 +258,8 @@ reader.readAsDataURL(file);
        <div className="news_heading"><h5>{this.state.postLink}</h5></div>
        <input type="hidden" ref="hidden_news_url" value={this.state.postLink}/>
         <input type="hidden" ref="hidden_news_title" value={this.state.postLink}/>
+        <input type="hidden" ref="hidden_news_source" value=""/>
+        <input type="hidden" ref="hidden_news_image" value=""/>
         </div>
      )
    }else{
@@ -195,7 +267,7 @@ reader.readAsDataURL(file);
        <div>Loading...</div>
      )
    }
-   if(this.state.previewImage){
+   if(this.state.image){
      console.log(this.state.uploadImages.length)
      console.log(this.state.uploadedIndex)
      if(this.state.uploadImages && (this.state.uploadImages.length > this.state.uploadedIndex+1)){
@@ -220,29 +292,10 @@ reader.readAsDataURL(file);
          <div className="uk-modal-dialog uk-text-center" >
            <form className="post_img_modal_form">
 
-            {this.state.previewImage
+            {this.state.image
               ?<div className="img_border">
 
-              <AvatarEditor
-                image={this.state.previewImage}
-                ref="postImageSrc"
-                width={this.state.previewImageWidth}
-                height={this.state.previewImageHeight}
-                border={10}
-                color={[255, 255, 255, 0.6]} // RGBA
-                scale={parseFloat(this.state.scale)}
-                border={50}
-               // borderRadius={this.state.borderRadius}
-                onSave={this.handleSave}
-                // onLoadFailure={this.logCallback.bind(this, 'onLoadFailed')}
-                // onLoadSuccess={this.logCallback.bind(this, 'onLoadSuccess')}
-                // onImageReady={this.logCallback.bind(this, 'onImageReady')}
-                // onImageLoad={this.logCallback.bind(this, 'onImageLoad')}
-                // onDropFile={this.logCallback.bind(this, 'onDropFile')}
-               />
-             <br/>
-               <input name="scale" type="range" ref="scale" onChange={this.handleScale} min="1" max="2" step="0.01"
-                            defaultValue="1" />
+            <img src={this.state.image}/>
             <textarea placeholder="text about image" className="uk-width-1-1" ref="postImageContent" >{this.state.postMessage}</textarea>
               </div>:null}
 
@@ -272,7 +325,7 @@ reader.readAsDataURL(file);
           {this.state.clickedYouTubeLink?
            <input type="text" ref="videoLink" className="input-img-url"  value={this.state.videoLink} placeholder="Enter youtube url" onChange={this.handleVideoLinkChange}/>
            :null}
-           {(this.state.previewImage || this.state.videoLink || this.state.newsLink) ?
+           {(this.state.image || this.state.videoLink || this.state.newsLink) ?
            <div className="uk-modal-footer uk-text-right">
              <div className="is_news_div">
 
@@ -290,7 +343,7 @@ reader.readAsDataURL(file);
   }
 
   render(){
-    console.log(this.props);
+
     const {userAuthSession} = this.props;
     var userProfileData = userAuthSession.userObject;
     return(

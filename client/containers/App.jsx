@@ -37,7 +37,8 @@ class App extends Component {
     const value = pathname.split('/');
     const page = value[1];
 
-
+    console.log(children);
+    console.log("page:"+page);
     var content;
     var landingPage;
     var loginForm = <LoginForm/>
@@ -80,13 +81,12 @@ class App extends Component {
             </div>
           );
         }else{
-          console.log(children);
-          console.log(landingPage);
           if(!landingPage && !children){
             landingPage = <HomePage/>;
           }else if (page == '') {
             landingPage = <HomePage/>;
-          }else{
+          }
+          else{
             landingPage = children;
           }
           return(

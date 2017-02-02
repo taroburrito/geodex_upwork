@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { Navigation, Link } from 'react-router';
-import Comments from './Comments';
+import Comments from '../Comments';
 
 export default class PostView extends Component {
   constructor(props) {
@@ -110,6 +110,7 @@ export default class PostView extends Component {
             <div className="uk-comment-body">
               <div className="feed-heading">
                 <h3><a href={post.link} target="_blank">{post.title}</a></h3>
+                <span>{post.news_source}</span>
               </div>
               <a href="#" data-uk-modal={post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={this.loadSinglePostContent.bind(this,post.id,post.user_id,postImage,post.content,postVideo)}>
                 <div className="feed_img"><img src={imgSrc} className=""/></div>
@@ -121,6 +122,7 @@ export default class PostView extends Component {
             <div className="feed_comments_section">
               <a onClick={()=>this.setState({clickedPost:post.id})} className="reply_to_c">Comments</a>
               {(this.state.clickedPost == post.id)?
+                <div className="feeds_overflow">
                 <Comments
                   postId={post.id}
                   comments={this.props.comments}
@@ -129,6 +131,7 @@ export default class PostView extends Component {
                   handleClickPostComment={this.props.handleClickPostComment}
                   postComment={this.props.postComment}
                   />
+                </div>
                 :null}
             </div>
           </article>

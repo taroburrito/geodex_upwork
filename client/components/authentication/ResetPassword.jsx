@@ -105,7 +105,7 @@ export default class ResetPassword extends Component {
                   <a className="uk-width-1-1 uk-button uk-button-primary uk-button-large" onClick={this.handleOnClickReset}>Reset</a>
               </div>
               <div className="uk-form-row uk-text-small">
-                <Link className="uk-float-right uk-link uk-link-muted" to="/admin/login">Login</Link>
+                <Link className="uk-float-right uk-link uk-link-muted" to="/home">Login</Link>
               </div>
             </form>
           </div>

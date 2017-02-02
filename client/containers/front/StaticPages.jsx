@@ -35,7 +35,7 @@ class StaticPages extends Component{
       );
     }else {
       return(
-        <div className="full_widh">
+        <div className="static_page_content">
           <Navbar changeContent={slug=>dispatch(getPageById(slug))}/>
         <StaticPage
           currentPage={this.props.params.slug}
