@@ -22,14 +22,14 @@ export default class PostStatus extends Component {
     const{userAuthSession} = this.props;
     if(!this.state.videoImage && !this.state.newsLink){
     var postImageSrc = this.state.image;
-    var postContent = this.refs.postImageContent.getDOMNode().value.trim();
+
   }else {
     var postImageSrc = null;
-    var postContent = this.state.postMessage;
+
   }
     var formData = {
       user_id: userAuthSession.userObject.id,
-      content: postContent,
+      content: this.state.newsLink?this.state.postMessage:this.refs.postImageContent.getDOMNode().value.trim(),
       image: this.state.image,
       thumbImage:postImageSrc,
       youtube_url: this.state.videoLink,
