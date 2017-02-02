@@ -118,14 +118,14 @@ export default class FriendsList extends Component {
   }
 
   loadPrevPost(postId,userId){
-    this.setState({postanimation:userId,clickedPost:null});
-    setTimeout(function() { this.setState({postanimation: false}); }.bind(this), 2000);
+    this.setState({clickedPost:null});
+
     this.props.onFetchPreviousPost(postId,userId);
   }
 
   loadNextPost(postId,userId){
-    this.setState({postanimation:userId,clickedPost:null});
-    setTimeout(function() { this.setState({postanimation: false}); }.bind(this), 2000);
+    this.setState({clickedPost:null});
+    
     this.props.onFetchNextPost(postId,userId);
   }
 
