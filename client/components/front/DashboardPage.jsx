@@ -46,7 +46,7 @@ export default class DashboardPage extends Component {
     this.clickSlider = this.clickSlider.bind(this);
     this.handleVideoLinkChange = this.handleVideoLinkChange.bind(this);
 
-    
+
     this.handleScale = this.handleScale.bind(this);
     this.addAlert = this.addAlert.bind(this);
     this.handleClickCheckBox = this.handleClickCheckBox.bind(this);
@@ -88,8 +88,7 @@ export default class DashboardPage extends Component {
       newsLink: false,
       isLoading:false,
       postLink:false,
-      uploadImages:null,
-      uploadedIndex:null,
+    
     }
   }
 
@@ -118,7 +117,7 @@ export default class DashboardPage extends Component {
   }
 
   handleClickCancelPost(){
-    this.setState({uploadedIndex:null,uploadImages:null});
+  //  this.setState({uploadedIndex:null,uploadImages:null});
     this.setState({image:null,post_image:null,fileData:null,videoImage:null,videoLink:null,postMessage:null,newsLink:null,isNewsChecked:null});
   }
 

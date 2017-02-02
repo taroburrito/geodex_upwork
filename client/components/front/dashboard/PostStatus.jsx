@@ -22,14 +22,12 @@ export default class PostStatus extends Component {
     const{userAuthSession} = this.props;
     if(!this.state.videoImage && !this.state.newsLink){
     var postImageSrc = this.state.image;
-
   }else {
     var postImageSrc = null;
-
   }
     var formData = {
       user_id: userAuthSession.userObject.id,
-      content: this.state.newsLink?this.state.postMessage:this.refs.postImageContent.getDOMNode().value.trim(),
+      content: this.refs.postImageContent.getDOMNode().value.trim(),
       image: this.state.image,
       thumbImage:postImageSrc,
       youtube_url: this.state.videoLink,
@@ -43,37 +41,33 @@ export default class PostStatus extends Component {
     }
 
     if(!formData.image && !formData.youtube_url && !formData.newsImage){
-
+      console.log("Not Called");
       this.setState({handleMessage:{error:"Please choose image",success:null}});
-        this.props.onClickSavePost(formData);
-        this.props.fetchInitialData(userAuthSession.userObject.id,null);
     }else{
 
       //this.setState({loading:true});
-
+      console.log("Called");
       this.props.onClickSavePost(formData);
       if(this.state.uploadImages){
         var uploadedIndex = this.state.uploadedIndex + 1;
         var imgLength = this.state.uploadImages.length;
-        // console.log("imgLength:"+imgLength)
-        // console.log("uploadedIndex:"+uploadedIndex)
+        console.log("imgLength:"+imgLength)
+        console.log("uploadedIndex:"+uploadedIndex)
         if(imgLength > uploadedIndex){
           this.setState({uploadedIndex:uploadedIndex});
           this.previewImage(this.state.uploadImages[uploadedIndex]);
-          //console.log(this.state.uploadImages);
+          console.log(this.state.uploadImages);
 
         }else{
-
-          setTimeout(function(){
+          //setTimeout(function(){
           this.props.fetchInitialData(userAuthSession.userObject.id,null);
-          }.bind(this),1000);
+        //  }.bind(this),1000);
            var modal = UIkit.modal("#statusImageModel");
            modal.hide();
            this.setState({uploadImages:null,uploadedIndex:null});
         }
 
       }else{
-
         setTimeout(function(){
         this.props.fetchInitialData(userAuthSession.userObject.id,null);
       }.bind(this),2000);
@@ -83,16 +77,13 @@ export default class PostStatus extends Component {
       // this.props.fetchInitialData(userAuthSession.userObject.id,null);
       // }.bind(this),1000);
       //
+       this.setState({image:null,post_image:null,fileData:null,videoImage:null,videoLink:null,postMessage:null,newsLink:null,isNewsChecked:null});
 
+      this.refs.postImageContent.getDOMNode().value = "";
+      this.refs.postContent.getDOMNode().value = "";
 
 
     }
-    this.refs.postImageContent.getDOMNode().value = "";
-    this.refs.postContent.getDOMNode().value = "";
-    this.setState({uploadImages:null,uploadedIndex:null});
-    this.setState({image:null,post_image:null,fileData:null,videoImage:null,videoLink:null,postMessage:null,newsLink:null,isNewsChecked:null});
-
-
   }
 
   handleClickImgIcon(){
@@ -258,8 +249,6 @@ reader.readAsDataURL(file);
        <div className="news_heading"><h5>{this.state.postLink}</h5></div>
        <input type="hidden" ref="hidden_news_url" value={this.state.postLink}/>
         <input type="hidden" ref="hidden_news_title" value={this.state.postLink}/>
-        <input type="hidden" ref="hidden_news_source" value=""/>
-        <input type="hidden" ref="hidden_news_image" value=""/>
         </div>
      )
    }else{
