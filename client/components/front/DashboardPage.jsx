@@ -88,7 +88,7 @@ export default class DashboardPage extends Component {
       newsLink: false,
       isLoading:false,
       postLink:false,
-    
+
     }
   }
 
@@ -105,6 +105,7 @@ export default class DashboardPage extends Component {
     var scale = parseFloat(e.target.value);
      this.setState({ scale: scale })
   }
+  
 
   onSlide(e){
     this.pauseAllYoutube();
@@ -465,6 +466,7 @@ handleClickPlus(){
              handleEmptyPost={(error)=>this.handleEmptyPost(error)}
              fetchInitialData={(userId,catId)=>this.props.fetchInitialData(userId,catId)}
              onClickSavePost={(data)=>this.props.onClickSavePost(data)}
+             addAlert={(title,message)=>this.addAlert(title,message)}
              />
          <div className="uk-width-small-1-1 shortlist_menu">
            <ul>

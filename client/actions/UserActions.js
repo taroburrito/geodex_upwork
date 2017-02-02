@@ -452,7 +452,7 @@ export function initializeFetchPreviousPost(postid,userid){
 
 export function fetchPreviousPost(postid,userid){
 return(dispatch) => {
-    dispatch(initializeFetchPreviousPost(postid,userid));
+    // dispatch(initializeFetchPreviousPost(postid,userid));
     $.ajax({
       type:'Post',
       url:'/api/v1/posts/fetchPreviousPost/',

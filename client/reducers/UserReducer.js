@@ -196,12 +196,9 @@ export function updateDashboardData(dashboardDataState={error:null,success:null}
       break;
 
      case Init_Fetch_previous_Post:
-     var newState = Object.assign({},dashboardDataState);
-     var findUser = _.findKey(newState.friends, function (o) { return o.id == action.postid; })
 
-    newState.friends[findUser] = "";
-    
-    return Object.assign({}, newState);
+
+    //return null;
         break;
       case Fetch_Previous_Post_Success:
        var newState = Object.assign({},dashboardDataState);

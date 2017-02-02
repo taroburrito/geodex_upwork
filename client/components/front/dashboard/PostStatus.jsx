@@ -94,7 +94,7 @@ export default class PostStatus extends Component {
 
       var imgLength = evt.target.files.length;
       var images = [];
-
+      if(imgLength <= 4){
       for(var i = 0; i< imgLength; i++){
         images.push(evt.target.files[i]);
       }
@@ -103,6 +103,9 @@ export default class PostStatus extends Component {
       var file = evt.target.files[0];
         console.log("Width here");
         this.previewImage(file);
+      }else {
+        this.props.addAlert("","You can choose maximum four images at a time");
+      }
 
 
 
@@ -121,7 +124,7 @@ export default class PostStatus extends Component {
                   height = img.naturalHeight;
 
                   if(width < 560){
-                    self.addAlert("","Upload image of min width 560px.");
+                    self.props.addAlert("","Upload image of min width 560px.");
                     var modal = UIkit.modal("#statusImageModel");
                     modal.hide();
                     this.setState({uploadImages:null,uploadedIndex:null});
