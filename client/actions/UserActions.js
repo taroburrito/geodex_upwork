@@ -459,17 +459,20 @@ return(dispatch) => {
       dataType:'JSON',
       data:{postid:postid,userid:userid},
       beforeSend: function() {
-          $("#loader_"+userid).show();
+        //  $("#loader_"+userid).show();
+          $('.loading').show();
       }
     }).done(function(data){
-        $("#loader_"+userid).hide();
+      //  $("#loader_"+userid).hide();
+        $('.loading').hide();
       if(Object.keys(data).length === 0 && data.constructor === Object){
         dispatch(fetchPreviousPostFailed(userid));
       }else{
         dispatch(fetchPreviousPostSuccess(data));
       }
     }).fail(function(error){
-      $("#loader_"+userid).hide();
+    //  $("#loader_"+userid).hide();
+      $('.loading').hide();
       dispatch(fetchPreviousPostFailed(userid));
     })
   }
