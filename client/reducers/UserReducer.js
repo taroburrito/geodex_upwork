@@ -29,6 +29,7 @@ import {
           Check_News_Success,
           Check_News_Failed,
           Initialize_Check_News,
+          Init_Fetch_previous_Post,
         } from '../actions/UserActions';
 
 import {Post_Added_Dashboard_Success} from '../actions/PostActions';
@@ -193,6 +194,15 @@ export function updateDashboardData(dashboardDataState={error:null,success:null}
         success:'fetched failed'
       })
       break;
+
+     case Init_Fetch_previous_Post:
+     var newState = Object.assign({},dashboardDataState);
+     var findUser = _.findKey(newState.friends, function (o) { return o.id == action.postid; })
+
+    newState.friends[findUser] = "";
+    
+    return Object.assign({}, newState);
+        break;
       case Fetch_Previous_Post_Success:
        var newState = Object.assign({},dashboardDataState);
        var findUser = _.findKey(newState.friends, function (o) { return o.id == action.data.post.id; })

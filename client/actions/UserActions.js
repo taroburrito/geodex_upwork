@@ -34,6 +34,7 @@ export const Fetch_Next_Post_Failed = 'Fetch_Next_Post_Failed';
 export const Check_News_Success = 'Check_News_Success';
 export const Check_News_Failed = 'Check_News_Failed';
 export const Initialize_Check_News = 'Initialize_Check_News';
+export const Init_Fetch_previous_Post = 'Init_Fetch_previous_Post';
 
 /*
  * other constants
@@ -445,8 +446,13 @@ export function fetchPreviousPostFailed(data) {
   return {type:Fetch_Previous_Post_Failed,data}
 }
 
+export function initializeFetchPreviousPost(postid,userid){
+  return{type:Init_Fetch_previous_Post,postid,userid}
+}
+
 export function fetchPreviousPost(postid,userid){
 return(dispatch) => {
+    dispatch(initializeFetchPreviousPost(postid,userid));
     $.ajax({
       type:'Post',
       url:'/api/v1/posts/fetchPreviousPost/',
