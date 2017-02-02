@@ -99,8 +99,16 @@ export default class FriendsList extends Component {
             <iframe src={post.youtube_url}/>
            </div>
          );
+       }else {
+         return(
+           <div className="loading" style={{display:'block'}}>Loading</div>
+         )
        }
     }
+  }else {
+    return(
+      <div className="loading" style={{display:'block'}}>Loading</div>
+    )
   }
 
 
