@@ -22,7 +22,7 @@ decodeBase64Image: function(dataString) {
 
 uploadPostImage:function(imageData,thumbImg,userId){
   var base64Data = imageData.replace(/^data:image\/\w+;base64,/, "");
-  var base64DataThumb = thumbImg.replace(/^data:image\/\w+;base64,/, "");
+
   var ext = imageData.split(';')[0].match(/jpg|jpeg|png|gif/)[0];
   var name = Date.now()+"."+ext;
 
@@ -66,13 +66,30 @@ fs.mkdirSync(mediumdir, 0766, function(err){
     }
   return name;
 });
-//Thumb img
-fs.writeFileSync(thumbs_path, base64DataThumb, 'base64',(err,data) => {
-  if(err){
-    return err;
-  }
-return name;
-});
+
+if(thumbImg){
+    var base64DataThumb = thumbImg.replace(/^data:image\/\w+;base64,/, "");
+  //Thumb img
+  fs.writeFileSync(thumbs_path, base64DataThumb, 'base64',(err,data) => {
+    if(err){
+      return err;
+    }
+//  return name;
+  });
+
+
+}else{
+  var thumbImage = processImage(path,thumbs_path);
+  //  fs.readFile(path, function (err, data) {
+  //   if (err) throw err;
+  //   fs.writeFile(thumbs_path, data, function (err) {
+  //       if (err) throw err;
+  //     //  console.log('It\'s saved!');
+  //   });
+  // });
+}
+
+
 //return name;
 // process image
 
@@ -214,7 +231,8 @@ function processImage(img,dest){
 
   Jimp.read(img).then(function (image) {
   // do stuff with the image
-  image.write(img);
+//  image.write(img);
+
  //resize large resolution image
   if(image.bitmap.width> 1200 || image.bitmap.height>900){
     if(image.bitmap.width < image.bitmap.height){
@@ -223,6 +241,8 @@ function processImage(img,dest){
           image.resize(800,Jimp.AUTO).write(img);
     }
   }
+
+
   if (image.bitmap.width > image.bitmap.height ) {
     y = 0;
     x = (image.bitmap.width - image.bitmap.height) / 2;
@@ -234,14 +254,15 @@ function processImage(img,dest){
   }
   console.log(x+"---"+y);
     if (image.bitmap.width === image.bitmap.height ) {
-        if(image.bitmap.width>350){
-          image.resize(350,350);
+        if(image.bitmap.width>250){
+          image.resize(200,200);
         }else{
           image.write(dest);
         }
 
     }else if(image.bitmap.width > 450 || image.bitmap.height > 450){
-        image.crop(x,y, 350, 350 ).write(dest); // save
+        image.resize(Jimp.AUTO,150).write(dest);
+        //image.crop(x,y, 250, 150 ).write(dest); // save
     }else{
         image.crop(0,50,180,150).write(dest); // save
     }

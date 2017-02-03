@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { Navigation, Link } from 'react-router';
 import { getProfileImage, validateUrl } from '../../../utilities/RegexValidators';
-
+var AvatarEditor = require('react-avatar-editor');
 
 export default class PostStatus extends Component {
   constructor(props) {
@@ -11,11 +11,21 @@ export default class PostStatus extends Component {
     this.handleSavePost = this.handleSavePost.bind(this);
     this.handleSavePostImage = this.handleSavePostImage.bind(this);
     this.handleClickImgIcon = this.handleClickImgIcon.bind(this);
-    this.state=this.props;
+    this.handleScale = this.handleScale.bind(this);
+    this.state=Object.assign({},this.props,{
+      showCropTool:false,
+      scale:1,
+    })
+
   }
 
   componentDidMount(){
 
+  }
+
+  handleScale (e) {
+    var scale = parseFloat(e.target.value);
+     this.setState({ scale: scale })
   }
 
   handleSavePostImage(){
@@ -29,7 +39,7 @@ export default class PostStatus extends Component {
       user_id: userAuthSession.userObject.id,
       content: this.refs.postImageContent.getDOMNode().value.trim(),
       image: this.state.image,
-      thumbImage:postImageSrc,
+      thumbImage:this.state.showCropTool? this.refs.avatar.getImage():null,
       youtube_url: this.state.videoLink,
       youtube_image: this.state.videoImage,
       is_news:this.state.isNewsChecked,
@@ -127,16 +137,30 @@ export default class PostStatus extends Component {
                     self.props.addAlert("","Upload image of min width 560px.");
                     var modal = UIkit.modal("#statusImageModel");
                     modal.hide();
-                    this.setState({uploadImages:null,uploadedIndex:null});
+                    this.setState({uploadImages:null,uploadedIndex:null,showCropTool:false});
                   }else{
-                    self.setState({
-                        image: upload.target.result,
-                        fileData:file,
-                        videoLink:null,
-                        videoImage:null,
-                        previewImageWidth:250,
-                        previewImageHeight:250,
-                      });
+                    if(height > width){
+                      self.setState({
+                          image: upload.target.result,
+                          fileData:file,
+                          videoLink:null,
+                          videoImage:null,
+                          previewImageWidth:250,
+                          previewImageHeight:250,
+                          showCropTool:true,
+                        });
+                    }else{
+                      self.setState({
+                          image: upload.target.result,
+                          fileData:file,
+                          videoLink:null,
+                          videoImage:null,
+                          previewImageWidth:250,
+                          previewImageHeight:250,
+                          showCropTool:false,
+                        });
+                    }
+
                   }
 
           };
@@ -260,8 +284,7 @@ reader.readAsDataURL(file);
      )
    }
    if(this.state.image){
-     console.log(this.state.uploadImages.length)
-     console.log(this.state.uploadedIndex)
+
      if(this.state.uploadImages && (this.state.uploadImages.length > this.state.uploadedIndex+1)){
        var saveText = "Save&Next";
      }else{
@@ -270,6 +293,40 @@ reader.readAsDataURL(file);
      var saveBtn =(
        <input className="uk-button uk-button-primary" type="button" onClick={this.handleSavePostImage} value={saveText}/>
      )
+
+     if(this.state.showCropTool){
+       var renderImageContent=(
+       <div className="img_border">
+         <AvatarEditor
+           image={this.state.image}
+           ref="avatar"
+           width={250}
+           height={250}
+           border={10}
+           color={[255, 255, 255, 0.6]} // RGBA
+           scale={parseFloat(this.state.scale)}
+
+           //onSave={this.handleSave}
+
+          />
+      <br />
+
+     <input name="scale" type="range" ref="scale" onChange={this.handleScale} min="1" max="2" step="0.01"
+                  defaultValue="1" />
+
+     <textarea placeholder="text about image" className="uk-width-1-1" ref="postImageContent" >{this.state.postMessage}</textarea>
+       </div>
+     );
+     }else {
+       var renderImageContent=(
+       <div className="img_border">
+
+     <img src={this.state.image}/>
+     <textarea placeholder="text about image" className="uk-width-1-1" ref="postImageContent" >{this.state.postMessage}</textarea>
+       </div>
+     );
+     }
+
    }else {
      var saveBtn = (
        <input className="uk-button uk-button-primary uk-modal-close" type="button" onClick={this.handleSavePostImage} value="Save" />
@@ -285,11 +342,7 @@ reader.readAsDataURL(file);
            <form className="post_img_modal_form">
 
             {this.state.image
-              ?<div className="img_border">
-
-            <img src={this.state.image}/>
-            <textarea placeholder="text about image" className="uk-width-1-1" ref="postImageContent" >{this.state.postMessage}</textarea>
-              </div>:null}
+              ?renderImageContent:null}
 
              {this.state.videoLink?
                <div className="img_border">
@@ -305,7 +358,7 @@ reader.readAsDataURL(file);
              </div>
              : null}
 
-              <br />
+              <br/>
               {
                 this.state.clickedImageIcon?
                 <div>
