@@ -79,14 +79,14 @@ if(thumbImg){
 
 
 }else{
-  var thumbImage = processImage(path,thumbs_path);
-  //  fs.readFile(path, function (err, data) {
-  //   if (err) throw err;
-  //   fs.writeFile(thumbs_path, data, function (err) {
-  //       if (err) throw err;
-  //     //  console.log('It\'s saved!');
-  //   });
-  // });
+//  var thumbImage = processImage(path,thumbs_path);
+   fs.readFile(path, function (err, data) {
+    if (err) throw err;
+    fs.writeFile(thumbs_path, data, function (err) {
+        if (err) throw err;
+      //  console.log('It\'s saved!');
+    });
+  });
 }
 
 
@@ -182,17 +182,17 @@ if(!fs.existsSync(thumbs_dir)){
 // simple HTTP GET request for the image URL
 httpRequest.get({url: imageData, encoding: 'binary'}, function (err, httpResponse, body) {
 
-  fs.writeFile(path, body, 'binary', function(err) {
+  fs.writeFile(thumbs_path, body, 'binary', function(err) {
     if(err) {
       console.log('Error: '+err);
     } else {
       console.log('Saved image');
-      fs.writeFile(medium_path, body, 'binary', function(err) {
+      fs.writeFile(path, body, 'binary', function(err) {
         if(err) {
           console.log('Error: '+err);
         } else {
           console.log('Saved image');
-          fs.writeFile(thumbs_path, body, 'binary', function(err) {
+          fs.writeFile(medium_path, body, 'binary', function(err) {
             if(err) {
               console.log('Error: '+err);
             } else {
