@@ -137,7 +137,7 @@ export default class PostStatus extends Component {
                     self.props.addAlert("","Upload image of min width 560px.");
                     var modal = UIkit.modal("#statusImageModel");
                     modal.hide();
-                    this.setState({uploadImages:null,uploadedIndex:null,showCropTool:false});
+                    self.setState({uploadImages:null,uploadedIndex:null,showCropTool:false});
                   }else{
                     if(height > width){
                       self.setState({

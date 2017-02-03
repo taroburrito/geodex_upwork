@@ -125,7 +125,7 @@ export default class FriendsList extends Component {
 
   loadNextPost(postId,userId){
     this.setState({clickedPost:null});
-    
+
     this.props.onFetchNextPost(postId,userId);
   }
 
@@ -603,7 +603,7 @@ _myImageGalleryRenderer(item) {
         var post_image = item.post_image || item.youtube_image;
         if(post_image){
 
-          var imgSrc = this.state.uploadDir+"user_"+user_id+"/"+post_image;
+          var imgSrc = this.state.uploadDir+"user_"+user_id+"/thumbs/"+post_image;
         }
 
 
