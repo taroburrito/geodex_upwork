@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 
+
 //Actions
 import { attemptLogout } from '../actions/AuthActions';
 import { searchUser, clearSearchList } from '../actions/UserActions';
@@ -21,8 +22,8 @@ import Dashboard from './admin/Dashboard';
 class App extends Component {
   constructor(props) {
     super(props);
-  }
 
+  }
   render() {
     //console.log(this.props.userAuthSession);
     var baseUrl = window.location.href.split('#')[0].split('/')[window.location.href.split('#')[0].split('/').length-1];
@@ -91,11 +92,13 @@ class App extends Component {
           }
           return(
             <div className="full_width">
+
               <Navbar
                 clearSearchList={this.props.clearSearchList}
                 userAuthSession={userAuthSession} searchUser={(str)=>
                 dispatch(searchUser(str))}
-                searchResult={this.props.searchResult}/>
+                searchResult={this.props.searchResult}
+                page={page}/>
               {landingPage}
 
               </div>

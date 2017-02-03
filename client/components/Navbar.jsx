@@ -37,13 +37,19 @@ export default class Navbar extends Component {
 
     var pwd = this.refs.authPwd.getDOMNode().value.trim();
     console.log(pwd)
+    console.log(this.props.page);
+    console.log("*")
     //this.props.verifyLockPwd(pwd);
     if(pwd == 'root'){
-
+      localStorage.setItem("verifyAuth",true);
       this.setState({error:null,success:"Congratulation your password is confirmed, You can now access the site"});
       setTimeout(function(){
-        localStorage.setItem("verifyAuth",true);
-        this.context.router.transitionTo('/');
+        if(this.props.page){
+          this.context.router.transitionTo('/');
+        }else{
+          this.context.router.transitionTo('/home');
+        }
+
         var modal = UIkit.modal("#auth");
         modal.hide();
       }.bind(this),1000)
@@ -152,7 +158,7 @@ export default class Navbar extends Component {
       <div>
 				<nav className="uk-navbar fixed-nav innerpage_nav">
 						<Link className="uk-navbar-brand uk-hidden-small" to="home"><img src="public/images/logo.png" alt=""/></Link>
-            {!this.state.success?
+            {!localStorage.getItem("verifyAuth")?
         <a href={"#auth"} data-uk-modal><img src="public/images/lock.png" className="lockset"/></a>
         :null}
           <ul className="uk-navbar-nav uk-hidden-small uk-float-right">

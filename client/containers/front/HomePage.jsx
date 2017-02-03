@@ -65,7 +65,7 @@ class HomePage extends Component{
           onFetchPreviousPost = {(id, value) => {dispatch(fetchPreviousPost(id,value))}}
           onFetchNextPost = {(id, value) => {dispatch(fetchNextPost(id,value))}}
           checkNews={(url)=>{dispatch(checkNews(url))}}
-          addAlert={this.props.addAlert}
+          //addAlert={this.props.addAlert}
           />
         </div>
 
@@ -74,7 +74,10 @@ class HomePage extends Component{
     return(
       <div className="full_width">
 
-      <Home isVerifiedUser={this.props.isVerifiedUser}/>
+      <Home
+         isVerifiedUser={this.props.isVerifiedUser}
+
+         />
       </div>
     );
   }
