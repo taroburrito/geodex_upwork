@@ -79,14 +79,14 @@ if(thumbImg){
 
 
 }else{
-//  var thumbImage = processImage(path,thumbs_path);
-   fs.readFile(path, function (err, data) {
-    if (err) throw err;
-    fs.writeFile(thumbs_path, data, function (err) {
-        if (err) throw err;
-      //  console.log('It\'s saved!');
-    });
-  });
+  var thumbImage = processImage(path,thumbs_path);
+  //  fs.readFile(path, function (err, data) {
+  //   if (err) throw err;
+  //   fs.writeFile(thumbs_path, data, function (err) {
+  //       if (err) throw err;
+  //     //  console.log('It\'s saved!');
+  //   });
+  // });
 }
 
 
