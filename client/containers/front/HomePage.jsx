@@ -30,7 +30,7 @@ class HomePage extends Component{
 
   render(){
     const {userAuthSession, dispatch} = this.props;
-
+    console.log(this.props);
     if(userAuthSession.isLoggedIn){
 
       return(
@@ -74,7 +74,7 @@ class HomePage extends Component{
     return(
       <div className="full_width">
 
-      <Home/>
+      <Home isVerifiedUser={this.props.isVerifiedUser}/>
       </div>
     );
   }

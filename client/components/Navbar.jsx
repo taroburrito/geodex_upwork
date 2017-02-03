@@ -7,16 +7,57 @@ import {getVisitedUserDetail} from '../utilities/ServerSocket';
 export default class Navbar extends Component {
   constructor(props){
     super(props);
+     this.verifyLogin = this.verifyLogin.bind(this);
+     this._handleKeyPress = this._handleKeyPress.bind(this);
+     this.state={
+       error:null,
+       success:null,
+     }
 
   }
   changeContent(e){
 
     this.props.changeContent(e);
+
   }
+
 
   handleSearchChange(e){
 
     this.props.searchUser(e.target.value);
+  }
+
+  _handleKeyPress(e){
+    if(e.key=='Enter'){
+        this.verifyLogin();
+      }
+  }
+
+  verifyLogin(){
+
+    var pwd = this.refs.authPwd.getDOMNode().value.trim();
+    console.log(pwd)
+    //this.props.verifyLockPwd(pwd);
+    if(pwd == 'root'){
+
+      this.setState({error:null,success:"Congratulation your password is confirmed, You can now access the site"});
+      setTimeout(function(){
+        localStorage.setItem("verifyAuth",true);
+        this.context.router.transitionTo('/');
+        var modal = UIkit.modal("#auth");
+        modal.hide();
+      }.bind(this),1000)
+
+    }else{
+      if(pwd == ''){
+        this.setState({error:"Please enter site password",success:null})
+      }else{
+      this.setState({error:"Sorry you have enterd wrong password",success:null});
+    }
+
+    }
+
+
   }
 
   handleClickUser(name,profileId){
@@ -96,11 +137,25 @@ export default class Navbar extends Component {
       );
     }
     else{
+      if(this.state.error){
+        var ValidationMesssage = (
+        <div className="uk-alert uk-alert-danger"><p>{this.state.error}</p></div>
+        )
+      }else if (this.state.success) {
+        var ValidationMesssage = (
+        <div className="uk-alert uk-alert-success"><p>{this.state.success}</p></div>
+        )
+      }else {
+        var ValidationMesssage;
+      }
     return (
       <div>
 				<nav className="uk-navbar fixed-nav innerpage_nav">
 						<Link className="uk-navbar-brand uk-hidden-small" to="home"><img src="public/images/logo.png" alt=""/></Link>
-						<ul className="uk-navbar-nav uk-hidden-small uk-float-right">
+            {!this.state.success?
+        <a href={"#auth"} data-uk-modal><img src="public/images/lock.png" className="lockset"/></a>
+        :null}
+          <ul className="uk-navbar-nav uk-hidden-small uk-float-right">
               <li><a onClick={()=>this.changeContent('aboutUs')} href="#/pages/aboutUs">About Us</a></li>
               <li><Link to="pages/contactUs">Contact Us</Link></li>
               <li><a onClick={()=>this.changeContent('terms')} href="#/pages/terms">Term Of Use</a></li>
@@ -108,6 +163,33 @@ export default class Navbar extends Component {
 						<a href="#offcanvas" className="uk-navbar-toggle uk-visible-small" data-uk-offcanvas></a>
 						<div className="uk-navbar-brand uk-navbar-center uk-visible-small"><a className="" href="index.html"><img src="public/images/logo.png"/></a></div>
 				</nav>
+        <div id="auth" className="uk-modal" >
+          <div className="uk-modal-dialog">
+             <button type="button" className="uk-modal-close uk-close"></button>
+             <div className="uk-modal-header">
+                 <h2>Verify site authentication by typing password here.</h2>
+             </div>
+             {ValidationMesssage}
+
+
+                   <div className="uk-form-row">
+                       <input className="uk-width-1-1 uk-form-large" placeholder="Password" onKeyPress={this._handleKeyPress} type="password" ref="authPwd"/>
+
+                   </div>
+                   <div className="uk-form-row">
+
+                     <div className="uk-text-small uk-pull-left f_r_p">
+
+                       <a className="uk-width-1-4 uk-button uk-button-primary uk-button-large" onClick={this.verifyLogin}>Verify</a>
+
+                   </div>
+
+                   </div>
+
+
+
+          </div>
+        </div>
 			</div>
     );
   }
@@ -129,6 +211,11 @@ export default class Navbar extends Component {
 }
   }
 }
+
+
+Navbar.contextTypes = {
+  router: PropTypes.object.isRequired
+};
 
 function select(state) {
   return {

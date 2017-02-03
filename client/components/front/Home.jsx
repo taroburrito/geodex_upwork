@@ -26,6 +26,8 @@ export default class Home extends Component {
     this.props.dispatch(navigatedAwayFromAuthFormPage());
   }
   render() {
+  
+    var isVerifiedUser = localStorage.getItem("verifyAuth");
     const { dispatch, userAuthSession, forgotPasswordResult } = this.props;
     return (
       <div>
@@ -38,18 +40,19 @@ export default class Home extends Component {
 
                         <p>
                             <a className="uk-button uk-button-primary uk-button-large" data-uk-modal="{target:'#login'}">Login</a>
-            <a className="uk-button uk-button-large" data-uk-modal="{target:'#signup'}">Signup</a>
+                            <a className="uk-button uk-button-large" data-uk-modal="{target:'#signup'}">Signup</a>
                         </p>
                     </div>
                 </div>
 
             </div>
         </div>
-        <LoginPage onClickLogin={(formData) => {
-                       dispatch(attemptLogin(formData.email, formData.password, formData.role))
-                    }}
-                    isFetchingData={userAuthSession.fetchingAuthUpdate}
-                    serverError={userAuthSession.error}
+        {isVerifiedUser?
+      <div>
+        <LoginPage
+          onClickLogin={(formData) => {dispatch(attemptLogin(formData.email, formData.password, formData.role))}}
+          isFetchingData={userAuthSession.fetchingAuthUpdate}
+          serverError={userAuthSession.error}
          />
          <ForgotPassword onClickSubmit={(formData) => {
            dispatch(forgetPasswordSubmit(formData.email,formData.role))
@@ -60,6 +63,8 @@ export default class Home extends Component {
            dispatch(attemptSignUp(formData))
          }}
          message={this.props.updateMessage}/>
+     </div>
+       :null}
      <Footer/>
        <div id="offcanvas" className="uk-offcanvas">
            <div className="uk-offcanvas-bar">

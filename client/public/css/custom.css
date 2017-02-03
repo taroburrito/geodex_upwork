@@ -2649,13 +2649,21 @@ ul.uk-comment-list li {
   margin-bottom: 5px;
   line-height: 14px;
   }
-  .dash-news-heading h3 a {
-    font-size: 15px;
-    font-weight: 600;
-    color: #000;
-    line-height: 0;
-    }
 
-    .dash-news-heading span{
-      font-size: 12px;
-    }
+.dash-news-heading h3 a {
+  font-size: 15px;
+  font-weight: 600;
+  color: #000;
+  line-height: 0;
+  }
+
+.dash-news-heading span{
+  font-size: 12px;
+}
+.lockset {
+    color: #999;
+    margin-left: -23px;
+      margin-top: 14px;
+      width: 14px;
+
+}

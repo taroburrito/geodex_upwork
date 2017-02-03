@@ -346,3 +346,9 @@ export function forgetPasswordSubmit(email,role){
 			});
   }
 }
+
+// export function verifyLockPwd(pwd){
+// 	return(dispatch)=>{
+// 		$.ajax
+// 	}
+// }
