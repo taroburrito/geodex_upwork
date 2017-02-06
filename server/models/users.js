@@ -131,6 +131,8 @@ var userModel = {
     }else{
       var getFriendsListForDashboardSqlString = constructFriendListByCatForDashboardSqlString(userId,catId);
     }
+
+  
       var profileData;
       var userCategoriesData;
 
