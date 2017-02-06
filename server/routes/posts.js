@@ -50,10 +50,16 @@ var setPostRoutes = function (router) {
       })
     })
 
+    router.post('/api/v1/posts/getPhotosPost',function(req,res){
 
-    router.get('/api/v1/posts/getNewsPosts/:userId',function(req,res){
+      postModel.getPhotosPost(req.body.userId,req.body.limitFrom,req.body.limitTo,function(result){
+        return res.json(result);
+      })
+    })
 
-      postModel.getNewsPosts(req.params.userId,function(result){
+    router.post('/api/v1/posts/getNewsPosts',function(req,res){
+
+      postModel.getNewsPosts(req.body.userId,req.body.limitFrom,req.body.limitTo,function(result){
         return res.json(result);
       })
     })

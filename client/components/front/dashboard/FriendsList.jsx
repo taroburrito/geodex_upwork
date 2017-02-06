@@ -1,589 +1,737 @@
-import React, { Component, PropTypes } from 'react';
+import React, {Component} from 'react';
 import { Navigation, Link } from 'react-router';
-import PhotosView from './PhotosView';
-import PostView from './PostView';
-//import InfiniteScroll from 'react-infinite-scroller';
+import { getProfileImage } from '../../../utilities/RegexValidators';
+import Comments from '../Comments';
 
-//import MasonryLayout from 'react-masonry-layout'
-//import InfiniteScroll from 'redux-infinite-scroll';
+var Slider = require('react-slick');
+var moment = require('moment');
+import ImageGallery from 'react-image-gallery';
 
-export default class FeedsList extends Component {
-
-    constructor(props){
-        super(props);
-
-        this.state={
-          clickedPost:null,
-          clickedUser:null,
-          clickedPostImage:null,
-          clickedPostContent:null,
-          clickedPostVideo:null,
-          active_cat:null,
-          filter:'all',
-          animation:false,
-          postComment:null,
-          replyContent:null,
-          isLoading:false,
-          windowHeight:1,
-        },
-        this.handleFilterFeeds = this.handleFilterFeeds.bind(this);
-        this.handleCloseImagePopUp = this.handleCloseImagePopUp.bind(this);
-        this.handleClickPostComment = this.handleClickPostComment.bind(this);
-        this.handleClickReplyComment = this.handleClickReplyComment.bind(this);
-
-    }
-    componentWillMount() {
-      const{userAuthSession} = this.props;
-
-    }
-    handleScroll(){
-      var windowHeight = $(window).height();
-var inHeight = window.innerHeight;
-var scrollT = $(window).scrollTop();
-var totalScrolled = scrollT+inHeight;
-
-if(totalScrolled > parseInt(this.state.windowHeight)+1000){
-  this.setState({windowHeight:totalScrolled});
-    console.log(totalScrolled);
-}
-
-    }
-
-    componentDidMount(){
-       window.addEventListener('scroll', this.handleScroll.bind(this));
-//       $(window).load(function(){
-//         alert("load windoe");
-//         $('#content').masonry({
-// columnWidth: 250,
-// itemSelector: '.item',
-// isFitWidth:'true'
-// }).imagesLoaded(function() {
-// $('#content').masonry('reloadItems');
-// });
-//       })
+export default class FriendsList extends Component {
+  constructor(props) {
+    super(props);
+    this.loadPostImg = this.loadPostImg.bind(this);
+    this.handleOnClickSendEmail = this.handleOnClickSendEmail.bind(this);
+    this.handleCloseImagePopUp = this.handleCloseImagePopUp.bind(this);
+    this.state= this.props;
   }
 
-    handleCloseImagePopUp(){
-      this.setState({clickedPostImage:null,clickedPostVideo:null})
-    }
+  handleCloseImagePopUp(){
+     this.setState({showLargeSlider:false,postLargeImage:null,popupVideo:null});
+   //  console.log("closed");
+ }
 
-    handleClickPostComment(){
+  handleOnClickEmailIcon(email){
+      this.refs.sendto.getDOMNode().value = email;
+      this.resetEmailForm();
+     // console.log(email);
+  }
 
-      const{userAuthSession} = this.props;
-      this.refs.commentBox.getDOMNode().value = "";
-      this.refs.contentCommentBox.getDOMNode().value = "";
-
-      this.setState({replyContent:null,postComment:null});
-      var req = {
-        comment: this.state.postComment,
-        parent_id:'',
-        user_id: userAuthSession.userObject.id,
-        post_id:this.state.clickedPost,
-        status:1,
-      }
-
-      if(this.state.postComment==null){
-        this.addAlert("","type something to post comment...");
-      }else{
-        this.props.postComment(req);
-      }
-
-
-
-      //console.log(req);
-
-    }
-
-    handleClickReplyComment(parent_id,post_id){
-
-      //console.log("parent:"+parent_id);
-
-
-      const{userAuthSession} = this.props;
-      var req = {
-        comment: this.state.replyContent,
-        parent_id:parent_id,
-        user_id: userAuthSession.userObject.id,
-        post_id:post_id,
-        status:1,
-      }
-      if(this.state.replyContent==null){
-        this.addAlert("","type something to post comment...");
-      }else{
-        this.setState({showCommentBox:null,replyContent:null,postComment:null});
-        this.props.postComment(req);
-      }
-
-      //this.props.postComment(req);
-
-    }
-
-    loadSinglePostContent(postId,userId,popupImage,popupContent,postVideo){
-
-      this.props.fetchComments(postId);
-
-      this.setState({
-        clickedPostImage:popupImage,
-        clickedPostContent:popupContent,
-        clickedPostVideo:postVideo,
-        clickedPost:postId,
-        clickedUser:userId
-      });
-
-    }
-
-    loadPostContent(postId){
-    this.props.fetchComments(postId);
-      var comments   = this.props.comments;
-      var userAuthSession   = this.props.userAuthSession;
-      var commentElement = [];
-      console.log(postId);
-      console.log(this.props);
-      if(comments){
-      var newArr = [];
-      Object.keys(comments).forEach((id)=>{
-        var item = comments[id];
-        newArr.push(item);
-      });
-
-    }else{
-      //commentElement = (<div>No comments yet</div>);
-    }
-    var newItem = null;
-    if(newArr){
-      newItem = this.buildHierarchy(newArr);
-
-    }
-
-    if(newItem)
-    Object.keys(newItem).forEach((id)=>{
-      var item = newItem[id]['value'];
-      var child = newItem[id]['children'];
-      if(child){
-
-      }
-      if(this.state.showCommentBox == item.id){
-        var commentBox = (
-          <div className="comenting_form border-top_cf">
-          <img className="uk-comment-avatar" src={this.getProfileImage(userAuthSession.userObject.profile_image,userAuthSession.userObject.id)} alt="" width="40" height="40"/>
-          <textarea placeholder="Write Comment..."  value={this.state.replyContent} onChange={(e)=>this.setState({replyContent:e.target.value})}></textarea>
-          <a onClick={this.handleClickReplyComment.bind(this,item.id,item.post_id)} className="uk-button uk-button-primary comment_btn">Reply</a>
-          </div>
-        );
-      }else{
-        var commentBox = "";
-      }
-
-      commentElement.push(
-        <li>
-            <article className="uk-comment">
-                <header className="uk-comment-header">
-                    <img className="uk-comment-avatar" src={this.getProfileImage(item.profile_image,item.user_id)} alt="" width="40" height="40"/>
-                    <h4 className="uk-comment-title">{item.NAME}</h4>
-                    <div className="uk-comment-meta"><span>{item.email}</span> | {item.address}</div>
-                </header>
-                <div className="uk-comment-body">
-                    <p>{item.comment}</p>
-                </div>
-            </article>
-            <a onClick={()=>this.setState({showCommentBox:item.id,replyContent:null})} className="reply_to_c">Reply</a>
-            {commentBox}
-
-            <ul>
-              {this.loadChild(child)}
-            </ul>
-
-      </li>
-    );
-  });
-console.log(commentElement);
-
-      return(
-        {commentElement}
-
-      )
-
-    }
-
-    buildHierarchy(arry) {
-
-       var roots = [], children = {};
-
-       // find the top level nodes and hash the children based on parent
-       for (var i = 0, len = arry.length; i < len; ++i) {
-             var item = arry[i];
-               var p = item.parent_id;
-
-               var target = !p ? roots : (children[p] || (children[p] = []));
-
-           target.push({ value: item });
-       }
-
-       // function to recursively build the tree
-       var findChildren = function(parent) {
-           if (children[parent.value.id]) {
-               parent.children = children[parent.value.id];
-               for (var i = 0, len = parent.children.length; i < len; ++i) {
-                   findChildren(parent.children[i]);
-               }
-           }
-       };
-
-       // enumerate through to handle the case where there are multiple roots
-       for (var i = 0, len = roots.length; i < len; ++i) {
-           findChildren(roots[i]);
-       }
-
-       return roots;
+  loadPrevImg(userId,postId){
+    const{dashboardData,userAuthSession} = this.props;
+    var friendsPost = dashboardData.friendsPostImages[userId];
+    if(friendsPost){
+    var findPostKey = _.findKey(friendsPost, function (o) { return o.id == postId;})
+    var newKey = findPostKey-1;
+    var post = friendsPost[newKey];
+    if(post && (!post.youtube_image && post.is_news !="yes")){
+     this.setState({clickedPost:post.id});
+   }else {
+     //this.setState({disableNextBtn:true});
    }
+   }
+  }
+  loadNextImg(userId,postId){
+    const{dashboardData,userAuthSession} = this.props;
+    var friendsPost = dashboardData.friendsPostImages[userId];
+    if(friendsPost){
+    var findPostKey = _.findKey(friendsPost, function (o) { return o.id == postId;})
+    var newKey = parseInt(findPostKey)+1;
+    var post = friendsPost[newKey];
+    if(post && (!post.youtube_image && post.is_news !="yes")){
+     this.setState({clickedPost:post.id});
+   }else {
+     //this.setState({disableNextBtn:true});
+   }
+   }
+  }
 
-   loadChild(child){
-     const{userAuthSession} = this.props;
-     var childElement = [];
-     if(child)
-     Object.keys(child).forEach((id)=>{
-       var item = child[id]['value'];
+  loadPostImg(userId,postId,is_single){
+    console.log(postId);
+    const{dashboardData,userAuthSession} = this.props;
 
-       var childArr = child[id]['children'];
+    if(is_single){
+       var friendsPost = dashboardData.friends;
+      if(friendsPost){
+      var findPostKey = _.findKey(friendsPost, function (o) { return o.post_id == postId;})
+       var post = friendsPost[findPostKey];
+       if(post && post.post_image){
+         return(
+           <div className="image-gallery-slide">
+             <img src={getProfileImage(post.post_image,userId)}/>
 
-       if(this.state.showCommentBox == item.id){
-         var commentBox = (
-           <div className="comenting_form border-top_cf">
-           <img className="uk-comment-avatar" src={this.getProfileImage(userAuthSession.userObject.profile_image,userAuthSession.userObject.id)} alt="" width="40" height="40"/>
-           <textarea placeholder="Write Comment..."  value={this.state.replyContent} onChange={(e)=>this.setState({replyContent:e.target.value})}></textarea>
-           <a onClick={this.handleClickReplyComment.bind(this,item.id,item.post_id)} className="uk-button uk-button-primary comment_btn">Reply</a>
            </div>
          );
-       }else{
-         var commentBox = "";
+       } else if (post && post.youtube_image) {
+         return(
+           <div className="image-gallery-slide">
+            <iframe src={post.youtube_url}/>
+           </div>
+         );
        }
+    }
+    }else {
+      if(this.state.showLargeSlider){
+      var friendsPost = dashboardData.friendsPostImages[userId];
+      if(friendsPost){
+      var findPostKey = _.findKey(friendsPost, function (o) { return o.id == postId;})
+       var post = friendsPost[findPostKey];
+       if(post && post.image){
+         return(
+           <div className="image-gallery-slide">
+             <img src={getProfileImage(post.post_image,userId)}/>
+
+           </div>
+         );
+       } else if (post && post.youtube_image) {
+         return(
+           <div className="image-gallery-slide">
+            <iframe src={post.youtube_url}/>
+           </div>
+         );
+       }else {
+         return(
+           <div className="loading" style={{display:'block'}}>Loading</div>
+         )
+       }
+    }
+  }else {
+    return(
+      <div className="loading" style={{display:'block'}}>Loading</div>
+    )
+  }
 
 
-       childElement.push(
-         <li>
-             <article className="uk-comment">
-                 <header className="uk-comment-header">
-                     <img className="uk-comment-avatar" src={this.getProfileImage(item.profile_image,item.user_id)} alt="" width="40" height="40"/>
-                     <h4 className="uk-comment-title">{item.NAME}</h4>
-                     <div className="uk-comment-meta"><span>{item.email}</span> | {item.address}</div>
-                 </header>
-                 <div className="uk-comment-body">
-                     <p>{item.comment}</p>
-                 </div>
-             </article>
-             <a onClick={()=>this.setState({showCommentBox:item.id,replyContent:null})} className="reply_to_c">Reply</a>
-             {commentBox}
 
-             <ul>
-             {this.loadChild(childArr)}
-           </ul>
-         </li>
-       );
-     });
-     return(
-       {childElement}
-     )
+
    }
+  }
 
-    renderComments(postId){
-      const{comments,userAuthSession} = this.props;
+  loadPrevPost(postId,userId){
+    this.setState({clickedPost:null});
 
-      var commentElement = [];
-      if(comments){
-      var newArr = [];
-      Object.keys(comments).forEach((id)=>{
-        var item = comments[id];
-        newArr.push(item);
+    this.props.onFetchPreviousPost(postId,userId);
+  }
+
+  loadNextPost(postId,userId){
+    this.setState({clickedPost:null});
+
+    this.props.onFetchNextPost(postId,userId);
+  }
+
+  loadSinglePostContent(postId,userId,content_type){
+
+    if(content_type == 'image' || content_type == 'video'){
+       var modal = UIkit.modal("#postSingleImageModel");
+    }else  {
+      var modal = UIkit.modal("#postContentModel");
+    }
+    modal.show();
+    this.props.fetchComments(postId);
+    this.setState({clickedPost:postId,clickedUser:userId,content_type:content_type,showLargeSlider:true});
+
+
+  }
+
+  renderFriendsPostImagesSmallSlider(user_id){
+
+    const{dashboardData} = this.props;
+    var friendsPosts = dashboardData.friendsPostImages;
+    var friend_post_images;
+    if(friendsPosts)
+    var friendsPost = friendsPosts[user_id];
+      if(friendsPost && friendsPost.length > 0){
+
+      var friendElement = [];
+      var i = 1;
+
+      Object.keys(friendsPost).forEach((friendId)=> {
+
+        var item = friendsPost[friendId];
+        var post_image = item.post_image;
+        var postImage = this.state.uploadDir+"user_"+user_id+"/thumbs/"+post_image;
+      //  console.log(item);
+        // Image content
+        if(item.post_image){
+         //var postImage = this.state.uploadDir+"user_"+user_id+"/thumbs/"+post_image;
+        }
+        //Video Content
+        else if (item.youtube_image) {
+         //var  postVideo = item.youtube_url;
+          }
+
+        //text content
+        else {
+
+        }
+        //console.log(item);
+
+        if(post_image && item.is_news !='yes'){
+        friendElement.push(
+            <div key={item.i} className="slider_image uk-grid-small uk-grid-width-medium-1-4">
+              <a data-uk-modal="{target:'#postImageModel'}"  onClick={this.loadPostContent.bind(this,item.id,item.user_id,null,item.content,i,null)}>
+                <img src={postImage}/>
+               </a>
+           </div>
+        );
+        i++;
+      }
+
       });
 
-    }else{
-      //commentElement = (<div>No comments yet</div>);
+
+      const settings = {
+        slidesToShow:3,
+        infinite:false,
+       // slikGoTo:this.state.currentSlide
+      };
+      return(
+       <div>
+         <Slider {...settings}>
+           {friendElement}
+               </Slider>
+         {/* <ul className="uk-slider uk-grid-small uk-grid-width-medium-1-4">
+           {friendElement}
+         </ul> */}
+       </div>
+
+     );
     }
-    var newItem = null;
-    if(newArr){
-      newItem = this.buildHierarchy(newArr);
+   //console.log(friendsPost);
 
-    }
+ }
 
-    if(newItem)
-    Object.keys(newItem).forEach((id)=>{
-      var item = newItem[id]['value'];
-      var child = newItem[id]['children'];
-      if(child){
+ loadPostContent(postId,userId,popupImage,popupContent,currentSlide,postVideo){
 
-      }
-      if(this.state.showCommentBox == item.id){
-        var commentBox = (
-          <div className="comenting_form border-top_cf">
-          <img className="uk-comment-avatar" src={this.getProfileImage(userAuthSession.userObject.profile_image,userAuthSession.userObject.id)} alt="" width="40" height="40"/>
-          <textarea placeholder="Write Comment..."  value={this.state.replyContent} onChange={(e)=>this.setState({replyContent:e.target.value})}></textarea>
-          <a onClick={this.handleClickReplyComment.bind(this,item.id,item.post_id)} className="uk-button uk-button-primary comment_btn">Reply</a>
-          </div>
-        );
-      }else{
-        var commentBox = "";
-      }
+   if(currentSlide){
+     var current = parseInt(currentSlide) - 1;
+    // console.log("current:"+current);
+     //this.setState({loadPostContent:true})
+     this.setState({currentSlide:current});
+     if(this._imageGallery){
+       this._imageGallery.slideToIndex(current);
+     }
+     //this._imageGallery.slideToIndex(currentSlide);
+     //console.log(this._imageGallery); console.log("cjed");
+   //  React.unmountComponentAtNode(document.getElementById('postImageModel'));
+     //this.refs.largeSliderContent.getDOMNode.innerHtml = "";
+     //ReactDOM.unmountComponentAtNode(this.refs.largeSliderContent);
 
-      commentElement.push(
-        <li>
-            <article className="uk-comment">
-                <header className="uk-comment-header">
-                    <img className="uk-comment-avatar" src={this.getProfileImage(item.profile_image,item.user_id)} alt="" width="40" height="40"/>
-                    <h4 className="uk-comment-title">{item.NAME}</h4>
-                    <div className="uk-comment-meta"><span>{item.email}</span> | {item.address}</div>
-                </header>
-                <div className="uk-comment-body">
-                    <p>{item.comment}</p>
-                </div>
-            </article>
-            <a onClick={()=>this.setState({showCommentBox:item.id,replyContent:null})} className="reply_to_c">Reply</a>
-            {commentBox}
 
-            <ul>
-              {this.loadChild(child)}
-            </ul>
+   }
+   this.props.fetchComments(postId);
 
-      </li>
+   this.setState({showLargeSlider:true,clickedPost:postId,clickedUser:userId,getClickedUser:userId,postLargeImage:popupImage,popupContent:popupContent,popupVideo:postVideo});
+
+ }
+
+ renderPostContentModel(){
+   const{userAuthSession} = this.props;
+   var user = userAuthSession.userObject;
+
+   return(
+     <div id="postContentModel" className="uk-modal coment_popup">
+         <div className="uk-modal-dialog uk-modal-dialog-blank">
+         <button className="uk-modal-close uk-close" type="button" onClick={this.pauseAllYoutube}></button>
+           <div className="uk-grid">
+
+             <div className="uk-width-small-1-1 popup_img_right coment_pop_cont">
+
+
+           {this.loadPostByInfo(this.state.clickedUser,this.state.clickedPost)}
+
+           <Comments
+             postId={this.state.clickedPost}
+             comments={this.props.comments}
+             userAuthSession={this.props.userAuthSession}
+             fetchComments={this.props.fetchComments}
+             postComment={(req)=>this.props.postComments(req) }
+             page="dashboard"
+             />
+             </div>
+     </div>
+   </div>
+ </div>
+   );
+ }
+
+ imageSlideTo(e){
+   //console.log("ee:"+e);
+   this._imageGallery.slideToIndex(e);
+ }
+
+ renderFriendsPostImagesLargeSlider(user_id){
+
+   const{dashboardData} = this.props;
+   var friendsPosts = dashboardData.friendsPostImages;
+   var friend_post_images;
+   if(friendsPosts)
+   var friendsPost = friendsPosts[user_id];
+     if(friendsPost && friendsPost.length > 0){
+       //var newPost = this.sortImages(friendsPost, e => e.id === this.state.clickedPost);
+
+     var friendElement = [];
+     var i = 0;
+     Object.keys(friendsPost).forEach((postImage)=> {
+
+       var postContent = friendsPost[postImage];
+       var postImageSrc = this.state.uploadDir+"user_"+postContent.user_id+"/"+postContent.post_image;
+       if(postContent.post_image){
+       friendElement.push(
+         {
+           original:postImageSrc,
+           postId:postContent.id,
+
+         }
+
+       );
+       i++;
+     }
+
+     });
+
+     if(this.state.showLargeSlider){
+
+     return(
+       <div id="test">
+      <ImageGallery
+      ref={i => this._imageGallery = i}
+      items={friendElement}
+      slideInterval={200}
+      startIndex={this.state.currentSlide}
+      onSlide={this.onSlide}
+      infinite={false}
+      showBullets={false}
+      showThumbnails={false}
+      autoPlay={false}
+      showPlayButton={false}
+      showFullscreenButton={false}
+    //  renderItem={this._myImageGalleryRenderer.bind(this)}
+    //  showNav={false}
+      //onClick={this.clickSlider}
+      onImageLoad={this.imageSlideTo.bind(this,this.state.currentSlide)}
+      />
+  </div>
+
     );
-  });
-
-
-      return(
-        {commentElement}
-
-      )
-    }
-
-    getProfileImage(img,userId){
-       if(img){
-         var imageSrc = "uploads/images/user_"+userId+"/"+img;
-        return imageSrc;
-      }else{
-       return "public/images/user.png";
-      }
-
-    }
-
-    loadPostByInfo(userId,postId){
-     const{posts} = this.props;
-        if(posts)
-        var post = _.find(posts, function (o) { return o.id == postId; })
-        if(post)
-      return(
-
-        <article className="uk-comment">
-            <header className="uk-comment-header">
-                <img src={this.getProfileImage(post.profile_image,post.user_id)} className="uk-comment-avatar" width="60" height="60"/>
-                <Link to={"user/"+post.user_id}>
-                  <h4 className="uk-comment-title">{post.NAME}</h4>
-                </Link>
-
-                <div className="uk-comment-meta"><span>{post.address}</span></div>
-            </header>
-
-            <div className="uk-comment-body">
-              <div className="uk-width-small-1-1 post_control">
-              <p>{post.content}</p>
-              </div>
-            </div>
-        </article>
-      )
-
-    }
-
-    postImageModal(){
-      const{userAuthSession} = this.props;
-      var user = userAuthSession.userObject;
-      return(
-        <div id="postImageModel" className="uk-modal coment_popup">
-            <div className="uk-modal-dialog uk-modal-dialog-blank">
-            <button className="uk-modal-close uk-close" type="button" onClick={this.handleCloseImagePopUp}></button>
-              <div className="uk-grid">
-
-                <div className="uk-width-small-3-4 popup_img_left">
-                  <div className="image-gallery-slide">
-                  {this.state.clickedPostImage?<img src={this.state.clickedPostImage}/>:null}
-                  {this.state.clickedPostVideo?<iframe src={this.state.clickedPostVideo} height="500" width="700"/>:null}
-                </div>
-                </div>
-                <div className="uk-width-small-1-4 popup_img_right">
-
-                  {this.loadPostByInfo(this.state.clickedUser,this.state.clickedPost)}
-                  <h5 className="coment_heading">Comments</h5>
-                  <ul className="uk-comment-list">
-                    {this.renderComments(this.state.clickedPost)}
-                  </ul>
-
-                    <div className="comenting_form border-top_cf">
-                      <img className="uk-comment-avatar" src={this.getProfileImage(user.profile_image,user.id)} alt="" width="40" height="40"/>
-                      <textarea placeholder="Write Comment..." value={this.state.postComment} onChange={(e)=>this.setState({postComment:e.target.value})} ref="commentBox"></textarea>
-                      <a onClick={this.handleClickPostComment} className="uk-button uk-button-primary comment_btn">Post</a>
-                    </div>
-
-
-                </div>
-              </div>
-          </div>
-        </div>
+   }else{
+    return(
+<div>Loading</div>
       );
-    }
+   }
+   }
 
-    postContentModal(){
-      const{userAuthSession} = this.props;
-      var user = userAuthSession.userObject;
-      return(
-        <div id="postContentModel" className="uk-modal coment_popup">
-            <div className="uk-modal-dialog uk-modal-dialog-blank">
-            <button className="uk-modal-close uk-close" type="button"></button>
-              <div className="uk-grid">
+  //console.log(friendsPost);
 
-                <div className="uk-width-small-1-1 popup_img_right coment_pop_cont">
+}
 
-
-              {this.loadPostByInfo(this.state.clickedUser,this.state.clickedPost)}
-                <h5 className="coment_heading">Comments</h5>
-                <ul className="uk-comment-list" ref="commentsul">
-                  {this.renderComments(this.state.clickedPost)}
-                </ul>
-
-
-              <div className="comenting_form border-top_cf">
-              <img className="uk-comment-avatar" src={this.getProfileImage(user.profile_image,user.id)} alt="" width="40" height="40"/>
-              <textarea placeholder="Write Comment..." value={this.state.postComment} onChange={(e)=>this.setState({postComment:e.target.value})} ref="contentCommentBox"></textarea>
-              <a onClick={this.handleClickPostComment} className="uk-button uk-button-primary comment_btn">Post</a>
-              </div>
-
-
-          </div>
-        </div>
-      </div>
-    </div>
-      )
-    }
-
-    sortByCategory(catId){
-      const{userAuthSession} = this.props;
-      this.setState({active_cat: catId,animation:true});
-      setTimeout(function() { this.setState({animation: false}); }.bind(this), 1000);
-      if(!catId){
-        this.props.fetchUniversalPosts(userAuthSession.userObject.id,0,10);
-      }else if (catId == 'news') {
-        this.props.fetchNewsPosts(userAuthSession.userObject.id);
-      }
-      else{
-
-      this.props.fetchPostByFriendsCategory(userAuthSession.userObject.id,catId);
-
-
-    }
-    if(this.state.filter == 'all'){
-
-    }else{
-      setTimeout(function() {
-
-        // Main content container
-          var container = $('#content');
-
-          // Masonry + ImagesLoaded
-          container.imagesLoaded(function(){
-            container.masonry({
-              // selector for entry content
-              columnWidth: 280,
-              itemSelector: '.item',
-              isFitWidth:'true',
-              isAnimated: true
-            });
-          });
+_myImageGalleryRenderer(item) {
+  //console.log('==============');
+  //console.log(item); console.log('==============');
+    // your own image error handling
+    const onImageError = this._handleImageError;
+    return (
+      <div className='image-gallery-image'>
+        {item.video?<iframe src={item.video} height="500" width="700"/>:<img src={item.original}/>}
 
 
 
-  }, 1000);
-    }
-      //this.props.fetchInitialData(userAuthSession.userObject.id, catId);
-    }
-
-    renderCategoriesContent(){
-      const{categories} = this.props;
-      var categoriesElement = [];
-
-      if(categories)
-      categoriesElement.push(<li id="all" onClick={this.sortByCategory.bind(this,null)} className={!this.state.active_cat? "active_sm":''}>All</li>);
-      // categoriesElement.push(<li id="all" onClick={this.sortByCategory.bind(this,'news')} className={this.state.active_cat == 'news'? "active_sm":''}>News</li>);
-      Object.keys(categories).map(function (key) {
-        var item = categories[key];
-        categoriesElement.push(<li id={item.id} onClick={this.sortByCategory.bind(this,item.id)} className={this.state.active_cat == item.id ? "active_sm":''}>{item.category_name}</li>);
-      }, this);
-
-
-      return (
-        {categoriesElement}
-          );
-    }
-
-    handleFilterFeeds(){
-
-      var state = this.refs.filterFeeds.getDOMNode().value;
-      this.setState({filter:state,animation:true,isLoading:true});
-        setTimeout(function() { this.setState({animation: false,isLoading:false}); }.bind(this), 1000);
-
-
-    }
-
-    renderSortContent(){
-      return(
-      <div className="uk-width-small-1-1 shortlist_menu">
-        <ul>
-          <li onClick={this.filterFeeds.bind(this,'all')} className={this.state.filter === 'all'?'active_sm':''}>All</li>
-          <li onClick={this.filterFeeds.bind(this,'photos')} className={this.state.filter === 'photos'?'active_sm':''}>Photos</li>
-        </ul>
       </div>
     )
-    }
+  }
+
+ renderImageContentModel(){
+   const{userAuthSession} = this.props;
+   var user = userAuthSession.userObject;
+
+   if(this.state.postLargeImage){
+     var imageContent = (
+       <div className="image-gallery-slide">
+       <img className="single-slide" src={this.state.postLargeImage}/>
+       </div>
+     )
+   }else if (this.state.popupVideo) {
+     var imageContent = (
+       <div className="image-gallery-slide">
+       <iframe  src={this.state.popupVideo} height="500" width="700"/>
+       </div>
+       );
+   }else{
+     var imageContent = null;
+   }
 
 
-    loadMore(){
-      console.log("Load more");
-    }
-    render() {
 
-          return (
-            <div>
-              {this.state.isLoading?<div className="loading" style={{display:'block'}}></div>:null}
+   return(
+     <div>
+     <div id="postImageModel" className="uk-modal coment_popup">
+         <div className="uk-modal-dialog uk-modal-dialog-blank">
+         <button className="uk-modal-close uk-close" type="button" onClick={this.handleCloseImagePopUp}></button>
+           <div className="uk-grid">
 
-              <div className="uk-width-small-1-1 shortlist_menu">
-                <ul>
-                  {this.renderCategoriesContent()}
-                </ul>
-              <div className="uk-float-right">
-              <label>Filter</label>
-                <select name="sort" ref="filterFeeds" onChange={this.handleFilterFeeds}>
-                  <option selected="true" value="all">All</option>
-                  <option value="photos">Photos</option>
-                  <option value="news">News</option>
-                  </select>
+             <div className="uk-width-small-3-4 popup_img_left" ref="largeSliderContent">
+                   {/* {(this.state.postLargeImage || this.state.popupVideo)?
+                     {imageContent}:this.renderFriendsPostImagesLargeSlider(this.state.clickedUser)} */}
+                    {this.loadPostImg(this.state.clickedUser,this.state.clickedPost,null)}
+                    <button type="button" data-role="none" className="slick-prev" onClick={this.loadPrevImg.bind(this,this.state.clickedUser,this.state.clickedPost)}>Previous</button>
+                    <button type="button" data-role="none" className="slick-next" onClick={this.loadNextImg.bind(this,this.state.clickedUser,this.state.clickedPost)}> Next</button>
+
+             </div>
+             <div className="uk-width-small-1-4 popup_img_right">
+
+             {this.loadPostByInfo(this.state.clickedUser,this.state.clickedPost)}
+
+             <Comments
+               postId={this.state.clickedPost}
+               comments={this.props.comments}
+               userAuthSession={this.props.userAuthSession}
+               fetchComments={this.props.fetchComments}
+               postComment={(req)=>this.props.postComments(req) }
+               page="dashboard"
+               />
+
+
+             </div>
+           </div>
+       </div>
+     </div>
+     <div id="postSingleImageModel" className="uk-modal coment_popup">
+         <div className="uk-modal-dialog uk-modal-dialog-blank">
+         <button className="uk-modal-close uk-close" type="button" onClick={this.handleCloseImagePopUp}></button>
+           <div className="uk-grid">
+
+             <div className="uk-width-small-3-4 popup_img_left" ref="largeSliderContent">
+
+                    {this.loadPostImg(this.state.clickedUser,this.state.clickedPost,true)}
               </div>
-            </div>
-            {/* {this.renderPhotos()} */}
-              {(this.state.filter == 'all' || this.state.filter == 'news')?
-                 <PostView
-                   fetchUniversalPosts={this.props.fetchUniversalPosts}
-                   postComment={this.props.postComment}
-                   fetchComments={this.props.fetchComments}
-                   userAuthSession={this.props.userAuthSession}
-                   comments={this.props.comments}
-                   posts={this.props.posts}
-                   filter={this.state.filter}
-                   loadSinglePostContent={(postId,userId,popupImage,popupContent,postVideo)=>this.loadSinglePostContent(postId,userId,popupImage,popupContent,postVideo)}
-                   />:
-                 <PhotosView
-                   posts={this.props.posts}
-                   animation={this.state.animation}
-                   loadSinglePostContent={(postId,userId,popupImage,popupContent,postVideo)=>this.loadSinglePostContent(postId,userId,popupImage,popupContent,postVideo)}
-                />}
-              {this.postImageModal()}
-              {this.postContentModal()}
-            </div>
-              );
+             <div className="uk-width-small-1-4 popup_img_right">
+
+             {this.loadPostByInfo(this.state.clickedUser,this.state.clickedPost)}
+
+             <Comments
+               postId={this.state.clickedPost}
+               comments={this.props.comments}
+               userAuthSession={this.props.userAuthSession}
+               fetchComments={this.props.fetchComments}
+               postComment={(req)=>this.props.postComments(req) }
+               page="dashboard"
+               />
+
+
+             </div>
+           </div>
+       </div>
+     </div>
+   </div>
+   )
+ }
+
+
+ loadPostByInfo(userId,postId){
+
+   if(userId){
+   const{dashboardData,userAuthSession} = this.props;
+
+
+   // if latest post
+   // if(userAuthSession.userObject.id === userId){
+   //     var friendData = userAuthSession.userObject;
+   //     var postContent = dashboardData.latestPost.content;
+   // }else{
+
+     //friends profile data
+
+   var findPost = _.findKey(dashboardData.friends, function (o) { return o.id == userId;})
+    var friendData = dashboardData.friends[findPost];
+
+
+   // post content
+   if(postId){
+
+     var findPost = _.findKey(dashboardData.friendsPostImages[userId], function (o) { return o.id == postId;})
+     if(!findPost){
+       var findPost = _.findKey(dashboardData.friends, function (o) { return o.post_id == postId;})
+       var friendPost = dashboardData.friends[findPost];
+
+       var postContent = friendPost.post_content;
+     }else {
+       var postContent = dashboardData.friendsPostImages[userId][findPost].content;
+     }
+
+   }else{
+       var postContent = null;
+   }
+//  }
+
+
+
+ var profile_link = "/user/"+friendData.id;
+ // if(postId){
+ //
+ //   var post = visitedUser.posts[postId];
+ //   var postContent = post.content;
+ // }else{
+ //     var postContent = null;
+ // }
+
+   if(friendData)
+   return(
+     <article className="uk-comment">
+         <header className="uk-comment-header">
+             <img src={getProfileImage(friendData.profile_image,userId)} className="uk-comment-avatar" width="60" height="60"/>
+             <Link to={profile_link}>
+               <h4 className="uk-comment-title">{friendData.first_name} {friendData.last_name}</h4>
+             </Link>
+
+             <div className="uk-comment-meta"><span>{friendData.address}</span></div>
+         </header>
+
+         <div className="uk-comment-body">
+           <div className="uk-width-small-1-1 post_control">
+           <p>{postContent}</p>
+           </div>
+         </div>
+     </article>
+   )
+ }else{
+   return(
+     <div>No record</div>
+   )
+ }
+ }
+
+ resetEmailForm(){
+   this.refs.Subject.getDOMNode().value = '';
+   this.refs.emailBody.getDOMNode().value = '';
+   this.setState({errorMessage:null});
+ }
+
+ renderSendEmailModel(){
+   const{dashboardData} = this.props;
+   var errorLabel;
+   if(this.state.showMessage){
+   if(this.state.errorMessage && this.state.errorMessage.sendEmail){
+       errorLabel = (
+         <div className="uk-alert uk-alert-danger"><p>{this.state.errorMessage.sendEmail}</p></div>
+       )
+     }
+     else if (dashboardData && dashboardData.error) {
+       errorLabel = (
+         <div className="uk-alert uk-alert-danger"><p>{dashboardData.error}</p></div>
+       )
+     }else if (dashboardData && dashboardData.success) {
+       errorLabel = (
+         <div className="uk-alert uk-alert-success"><p>{dashboardData.success}</p></div>
+       )
+     }
+   }
+   return(
+     <div id="sendEmail" className="uk-modal" ref="modal" >
+          <div className="uk-modal-dialog">
+             <button type="button" className="uk-modal-close uk-close" onClick={this.pauseAllYoutube}></button>
+
+             <div className="uk-modal-header">
+                 <h3>Send Email</h3>
+             </div>
+             {errorLabel}
+            <form className="uk-form">
+                   <div className="uk-form-row">
+                       <input className="uk-width-1-1 uk-form-large" placeholder="To" type="text" ref="sendto" disabled="disabled"/>
+                   </div>
+                   <div className="uk-form-row">
+                       <input className="uk-width-1-1 uk-form-large" placeholder="Subject" type="text" ref="Subject"/>
+                   </div>
+                   <div className="uk-form-row">
+                      <textarea className="uk-width-1-1 uk-form-large" placeholder="Body" rows="8" ref="emailBody"></textarea>
+
+                   </div>
+                   <div className="uk-form-row">
+                       <a className="uk-button uk-button-primary uk-button-large" onClick={this.handleOnClickSendEmail}>Send Mail</a>
+                   </div>
+               </form>
+          </div>
+        </div>
+   );
+ }
+
+ handleOnClickSendEmail(){
+   const{userAuthSession} = this.props;
+   var to = this.refs.sendto.getDOMNode().value;
+   var from = userAuthSession.userObject.email;
+   var subject = this.refs.Subject.getDOMNode().value.trim();
+   var content = this.refs.emailBody.getDOMNode().value.trim();
+
+   if(subject == ''){
+     this.setState({errorMessage:{sendEmail:"Please enter subject"}});
+   }else if (content == '') {
+     this.setState({errorMessage:{sendEmail:"Please enter content"}});
+   }else {
+   this.props.sendEmail(from,to,subject,content);
+   this.setState({errorMessage:null});
+   }
+   this.setState({showMessage:true});
+
+ }
+
+
+  render(){
+    const{dashboardData, userAuthSession} = this.props;
+    var friendsElement = [];
+    var friends = dashboardData.friends;
+
+    if(friends)
+    Object.keys(friends).map((key)=> {
+
+      var item = friends[key];
+      console.log(item);
+      var user_id = friends[key].id;
+      var profile_link = "/user/"+user_id;
+      var content = item.post_content;
+      //console.log(item);
+      if(item){
+        var content_length = content.length;
+        var post_image = item.post_image || item.youtube_image;
+        if(post_image){
+
+          var imgSrc = this.state.uploadDir+"user_"+user_id+"/thumbs/"+post_image;
         }
 
+
+        var postVideo;
+        var postImage;
+        var content_type;
+        var timestamp = moment(item.post_date);
+        var formatted = timestamp.format('YYYY-MM-DD HH:mm:ss');
+        // Image content
+        if(item.post_image){
+          if(content_length > 300){
+          content = content.substring(0,300).concat(' ...LoadMore');
+          }else{
+          content = content;
+          }
+           postImage = this.state.uploadDir+"user_"+user_id+"/"+item.post_image;
+           content_type="image";
+        }
+        //Video Content
+        else if (item.youtube_image) {
+          if(content.length > 300){
+          content = content.substring(0,300).concat(' ...LoadMore');
+          }else{
+          content = content;
+          }
+           postVideo = item.youtube_url;
+           content_type="video";
+
+        }
+
+        //text content
+        else {
+          if(content.length > 500){
+          content = content.substring(0,500).concat(' ...LoadMore');
+          }else{
+          content = content;
+          }
+          content_type="text";
+        }
+      }
+
+      var slider_images = this.renderFriendsPostImagesSmallSlider(user_id);
+      friendsElement.push(
+          <div ref="animate" key={key} className={this.state.animation ? "uk-grid dash_top_head dash_botom_list animated fadeIn":'uk-grid dash_top_head dash_botom_list animated'} id={item.id}>
+
+            <div className="uk-width-small-1-2">
+              <div className="uk-grid uk-grid-small top_usinfo">
+                <div className="uk-width-1-10 user_img_left"><Link to={profile_link}><img src={getProfileImage(item.profile_image,user_id)} className=""/></Link></div>
+                <div className="uk-width-9-10 user_bottom_img_right">
+                <h3 className="capital_first"><Link to={profile_link} className="user-name-anchor">{item.first_name} {item.last_name} </Link>
+                <small className="user_location">{item.address}</small>
+                </h3>
+                {(user_id != userAuthSession.userObject.id)?
+                <div className="uk-width-10-10 comm-icon-div">
+
+                <a data-uk-modal="{target:'#sendEmail'}" onClick={this.handleOnClickEmailIcon.bind(this,item.email)} data={item.email}  href="#" className="">
+                <img className="comm-icons" src="public/images/email_icon.png" onClick={()=>this.setState({showMessage:false})}/>
+                </a>
+                <img className="comm-icons" src="public/images/message_icon.png"/>
+                <img className="comm-icons" src="public/images/phone_icon.png"/>
+
+                </div>
+                      :null}
+                </div>
+             </div>
+
+
+             <div className="uk-grid uk-grid-small slider_contt">
+              <div className="uk-slidenav-position uk-margin" data-uk-slider="{autoplay: true}">
+                    <div className="uk-slider-container img_slid">
+                        {slider_images}
+                    </div>
+                </div>
+              </div>
+
+            </div>
+
+
+
+            <div id="animateid" className={this.state.postanimation == user_id ?"uk-width-small-1-2 post_control animated fadeIn":"uk-width-small-1-2 post_control animated"}>
+
+
+              <div>
+              <img src='/public/images/Loading_icon.gif' id={"loader_"+user_id} className="loadingPost"/>
+                <a href="#" className="post_txt_dashboard" data-uk-modal={post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={this.loadSinglePostContent.bind(this,item.post_id,user_id,content_type)}>
+                  {post_image?<img src={imgSrc} className="uk-float-left img_margin_right"/>:null}
+                </a>
+                  <div className="dash-news-heading">
+                      <h3><a target="_blank" href={item.link}>{item.title}</a></h3>
+                      <span>{item.news_source}</span>
+                  </div>
+
+                    <a href="#" className="post_txt_dashboard" data-uk-modal={post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={this.loadSinglePostContent.bind(this,item.post_id,user_id,content_type)}>
+                      <p>{content}</p>
+                  </a>
+                   <small className="user_location post_timestamp">
+                   {/* <TimeAgo date={formatted} formatter= {formatter}  /> */}
+                   </small>
+
+                <p>
+
+
+                  {item.prev && item.post_count!=1?<small onClick={this.loadPrevPost.bind(this,item.post_id,user_id)} href="" className="uk-slidenav uk-slidenav-previous"></small>:null}
+                  {item.next && item.post_count!=1?<small onClick={this.loadNextPost.bind(this,item.post_id,user_id)} className="uk-slidenav uk-slidenav-next"></small>:null}
+
+                </p>
+              </div>
+            </div>
+         </div>);
+
+    });
+
+    if(friendsElement && friendsElement.length > 0){
+    return(
+      <div >
+
+    {friendsElement}
+    {this.renderPostContentModel()}
+    {this.renderImageContentModel()}
+    {this.renderSendEmailModel()}
+  </div>
+
+
+    )
+  }else {
+      return(
+        <div>No friend is added in this category, <Link to="manage_friends">Manage Friends </Link>here.</div>
+      )
+    }
+  }
 }

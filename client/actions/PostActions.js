@@ -9,6 +9,8 @@ export const Post_Comment_Success = 'Post_Comment_Success';
 export const Delete_Post_Success = 'Delete_Post_Success';
 export const Fetch_News_Posts_Success = 'Fetch_News_Posts_Success';
 export const Fetch_News_Posts_Failed = 'Fetch_News_Posts_Failed';
+export const Initialize_Posts = 'Initialize_Posts';
+export const Fetch_More_Posts_Success = 'Fetch_More_Posts_Success';
 
 export function receivedAllposts(posts){
   return{type: Get_All_Posts, data:posts}
@@ -123,9 +125,13 @@ export function fetchUniversalPostsFailed(error){
   return{type:Fetch_Universal_Posts_Failed,error}
 }
 
+export function initializePosts(){
+  return{type:Initialize_Posts}
+}
+
 export function fetchUniversalPosts(userId,limitFrom,limitTo){
   return(dispatch) =>{
-  //  dispatch(initializeComments());
+    dispatch(initializePosts());
     $.ajax({
       type:'POST',
       url:'/api/v1/posts/getUniversalPosts',
@@ -140,6 +146,31 @@ export function fetchUniversalPosts(userId,limitFrom,limitTo){
     }).fail(function(error){
       console.log("Fail posts");
       console.log(error);
+      $(".loading").hide();
+    });
+  }
+}
+
+export function fetchMorePostsSuccess(posts) {
+  return{type: Fetch_More_Posts_Success, posts}
+}
+
+export function fetchMorePosts(userId,limitFrom,limitTo){
+  return(dispatch) =>{
+    //dispatch(initializePosts());
+    $.ajax({
+      type:'POST',
+      url:'/api/v1/posts/getUniversalPosts',
+      data:{userId:userId,limitFrom:limitFrom,limitTo:limitTo},
+      dataType:'JSON',
+    }).done(function(result){
+      if(result.error){
+
+      }else {
+        dispatch(fetchMorePostsSuccess(result.posts));
+      }
+    }).fail(function(error){
+
       $(".loading").hide();
     });
   }
@@ -177,18 +208,21 @@ export function fetchNewsPostsFailed(error){
   return{type: Fetch_News_Posts_Failed,error}
 }
 
-export function fetchNewsPosts(userId){
+export function fetchNewsPosts(userId,limitFrom,limitTo){
+  //console.log(userId,limitFrom,limitTo);
   return(dispatch) =>{
-  //  dispatch(initializeComments());
+    dispatch(initializePosts());
     $.ajax({
-      type:'GET',
-      url:'/api/v1/posts/getNewsPosts/'+userId,
-
+      type:'POST',
+      url:'/api/v1/posts/getNewsPosts',
+      data:{userId:userId,limitFrom:limitFrom,limitTo:limitTo},
+      dataType:'JSON',
     }).done(function(result){
       if(result.error){
-        dispatch(fetchNewsPostsFailed(result.error));
+
       }else {
-        dispatch(fetchNewsPostsSuccess(result.posts));
+        console.log(result);
+        dispatch(fetchUniversalPostsSuccess(result.posts));
       }
     }).fail(function(error){
       console.log("Fail posts");
@@ -197,6 +231,7 @@ export function fetchNewsPosts(userId){
     });
   }
 }
+
 
 export function fetchPostByFriendsCategory(userId,catId){
   return(dispatch) =>{
@@ -251,5 +286,30 @@ export function deletePost(Id) {
 			//	dispatch(handleErrorMessage(error));
 			});
 
+  }
+}
+
+
+
+export function fetchPhotos(userId,limitFrom,limitTo){
+  return(dispatch) =>{
+    dispatch(initializePosts());
+    $.ajax({
+      type:'POST',
+      url:'/api/v1/posts/getPhotosPost',
+      data:{userId:userId,limitFrom:limitFrom,limitTo:limitTo},
+      dataType:'JSON',
+    }).done(function(result){
+      if(result.error){
+
+      }else {
+        console.log(result);
+        dispatch(fetchUniversalPostsSuccess(result.posts));
+      }
+    }).fail(function(error){
+      console.log("Fail posts");
+      console.log(error);
+      $(".loading").hide();
+    });
   }
 }

@@ -7,7 +7,8 @@ export default class PostView extends Component {
     super(props);
     this.state={
       clickedPost:null,
-      itemsPerPage:4
+      itemsPerPage:10,
+      totalItems:null,
     }
   }
 
@@ -33,16 +34,15 @@ export default class PostView extends Component {
 
   loadMore(itemsPerPage){
     const{userAuthSession} = this.props;
-    this.setState({itemsPerPage:itemsPerPage+this.state.itemsPerPage});
-    console.log(itemsPerPage);
-    console.log("****")
-    this.props.fetchUniversalPosts(userAuthSession.userObject.id,itemsPerPage,itemsPerPage+this.state.itemsPerPage);
+    //this.setState({itemsPerPage:itemsPerPage+this.state.itemsPerPage});
+
+    this.props.fetchMorePosts(userAuthSession.userObject.id,itemsPerPage,this.state.itemsPerPage);
   }
 
 
   render(){
     const{posts} = this.props;
-
+    if(posts){
     var postItem = [];
     var len = Object.keys(posts).length;
 
@@ -53,7 +53,9 @@ export default class PostView extends Component {
         var post_image = post.image || post.youtube_image;
         var content = post.content;
 
-
+        // var postCount = i + parseInt(this.state.itemsPerPage);
+        // console.log("count="+postCount);
+        // console.log(len);
 
         // Image content
         if(post_image && post.image){
@@ -135,7 +137,8 @@ export default class PostView extends Component {
                 :null}
             </div>
           </article>
-          {/* {i>=this.state.itemsPerPage?<a onClick={this.loadMore.bind(this,this.state.itemsPerPage)}>Load More</a>:null} */}
+
+          {(len % this.state.itemsPerPage == 0 && i == len) ?<div className="uk-width-large-1"><a className="loadMore" onClick={this.loadMore.bind(this,len)}>Load More</a></div>:null}
         </div>
 
     );i++;
@@ -149,9 +152,16 @@ export default class PostView extends Component {
 }
     return(
       <div>
+
           {postItem}
+
       </div>
 
     )
+  }else {
+    return (
+      <div></div>
+    )
   }
+}
 }

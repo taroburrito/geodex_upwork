@@ -25,6 +25,9 @@ export default class FeedsList extends Component {
           replyContent:null,
           isLoading:false,
           windowHeight:1,
+          photosPerPage:30,
+          newsPerPage:10,
+          postPerPage:10,
         },
         this.handleFilterFeeds = this.handleFilterFeeds.bind(this);
         this.handleCloseImagePopUp = this.handleCloseImagePopUp.bind(this);
@@ -466,7 +469,7 @@ console.log(commentElement);
       this.setState({active_cat: catId,animation:true});
       setTimeout(function() { this.setState({animation: false}); }.bind(this), 1000);
       if(!catId){
-        this.props.fetchUniversalPosts(userAuthSession.userObject.id,0,10);
+        this.props.fetchUniversalPosts(userAuthSession.userObject.id,0,100);
       }else if (catId == 'news') {
         this.props.fetchNewsPosts(userAuthSession.userObject.id);
       }
@@ -499,7 +502,7 @@ console.log(commentElement);
 
   }, 1000);
     }
-      //this.props.fetchInitialData(userAuthSession.userObject.id, catId);
+      this.props.fetchInitialData(userAuthSession.userObject.id, catId);
     }
 
     renderCategoriesContent(){
@@ -521,11 +524,19 @@ console.log(commentElement);
     }
 
     handleFilterFeeds(){
-
+      const{userAuthSession} = this.props;
       var state = this.refs.filterFeeds.getDOMNode().value;
-      this.setState({filter:state,animation:true,isLoading:true});
+      if(state == 'photos'){
+        this.props.fetchPhotos(userAuthSession.userObject.id,0,this.state.photosPerPage);
+      }else if (state == 'news') {
+        this.props.fetchNewsPosts(userAuthSession.userObject.id,0,this.state.newsPerPage);
+      }
+      else {
+        this.props.fetchUniversalPosts(userAuthSession.userObject.id,0,this.state.postPerPage);
+      }
+      this.setState({filter:state,animation:true,isLoading:true,active_cat:null});
         setTimeout(function() { this.setState({animation: false,isLoading:false}); }.bind(this), 1000);
-  
+
 
     }
 
@@ -566,6 +577,7 @@ console.log(commentElement);
             {/* {this.renderPhotos()} */}
               {(this.state.filter == 'all' || this.state.filter == 'news')?
                  <PostView
+                   fetchMorePosts={this.props.fetchMorePosts}
                    fetchUniversalPosts={this.props.fetchUniversalPosts}
                    postComment={this.props.postComment}
                    fetchComments={this.props.fetchComments}
@@ -576,6 +588,8 @@ console.log(commentElement);
                    loadSinglePostContent={(postId,userId,popupImage,popupContent,postVideo)=>this.loadSinglePostContent(postId,userId,popupImage,popupContent,postVideo)}
                    />:
                  <PhotosView
+                   userAuthSession={this.props.userAuthSession}
+                   fetchMorePosts={this.props.fetchMorePosts}
                    posts={this.props.posts}
                    animation={this.state.animation}
                    loadSinglePostContent={(postId,userId,popupImage,popupContent,postVideo)=>this.loadSinglePostContent(postId,userId,popupImage,popupContent,postVideo)}

@@ -26,7 +26,8 @@ export default class PhotosView extends Component {
             columnWidth: 280,
             itemSelector: '.item',
             isFitWidth:'true',
-            isAnimated: true
+            isAnimated: true,
+            itemsPerPage:30
           });
         });
 
@@ -39,10 +40,12 @@ export default class PhotosView extends Component {
     this.props.loadSinglePostContent(postId,userId,popupImage,popupContent,postVideo);
   }
 
+
+
   render(){
 
     const{posts} = this.props;
-    if(posts)
+    if(posts){
     var postItem = [];
     var len = Object.keys(posts).length;
 
@@ -87,6 +90,7 @@ export default class PhotosView extends Component {
                 <img src={imgSrc} className="feedImg"/>
             </a>
         </div>
+        
       );i++;
     }
 
@@ -116,5 +120,10 @@ export default class PhotosView extends Component {
       <div>Loading....</div>
     )
   }
+}else {
+  return(
+    <div></div>
+  )
+}
   }
 }

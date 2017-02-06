@@ -53,8 +53,7 @@ export function getAllFriendsList(friendsListState={}, action){
         case Change_Friend_Cat_Success:
         var currentData =  Object.assign({}, friendsListState);
         if(currentData.categorizedFriendList){
-          console.log("userReducer");
-          console.log(action);
+        
           var friendId = action.friendId;
         currentData.categorizedFriendList[friendId] = action.data[friendId];
       }else {

@@ -6,7 +6,9 @@ import {Get_All_Posts,
         Fetch_Universal_Posts_Failed,
         Post_Comment_Success,
         Fetch_News_Posts_Success,
-        Fetch_News_Posts_Failed
+        Fetch_News_Posts_Failed,
+        Initialize_Posts,
+        Fetch_More_Posts_Success
       } from '../actions/PostActions';
 
 export function updatePostsList(postsListState={},action){
@@ -50,22 +52,36 @@ export function updateComments(postCommentsState={}, action){
 
 export function updateFeeds(universalPosts={},action){
   switch (action.type) {
+
     case Fetch_Universal_Posts_Success:
-    console.log(action.posts);
+    // var prevItems = Object.assign([], universalPosts);
+    // var newArr = prevItems.concat(action.posts);
     return Object.assign({}, action.posts);
+      break;
+
+    case Fetch_More_Posts_Success:
+    var prevItems = Object.assign([], universalPosts);
+    var newArr = prevItems.concat(action.posts);
+    console.log(newArr);
+    return Object.assign({}, newArr);
+      break;
+    case Initialize_Posts:
+      return null;
       break;
 
     case Fetch_News_Posts_Success:
     return Object.assign({}, action.posts);
       break;
 
-      case Fetch_News_Posts_Failed:
-          return Object.assign({},null);
-        break;
-      case Fetch_Universal_Posts_Failed:
-      return Object.assign({}, null);
-        break;
-        break;
+    case Fetch_News_Posts_Failed:
+        return Object.assign({},null);
+      break;
+
+    case Fetch_Universal_Posts_Failed:
+    return Object.assign({}, null);
+      break;
+
+
     default:
     return universalPosts;
   }

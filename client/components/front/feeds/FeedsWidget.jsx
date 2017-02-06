@@ -7,7 +7,7 @@ export default class FeedsWidget extends Component {
     constructor(props){
         super(props);
         this.state={
-            itemsPerPage:100
+            itemsPerPage:10,
         }
 
     }
@@ -37,10 +37,13 @@ export default class FeedsWidget extends Component {
                userAuthSession={this.props.userAuthSession}
                fetchPostByFriendsCategory={this.props.fetchPostByFriendsCategory}
                fetchUniversalPosts={this.props.fetchAllPosts}
+               fetchMorePosts={this.props.fetchMorePosts}
                fetchComments={this.props.fetchComments}
                comments={this.props.comments}
                postComment={this.props.postComment}
                fetchNewsPosts={this.props.fetchNewsPosts}
+               fetchPhotos={this.props.fetchPhotos}
+
                />
             </div>
 
