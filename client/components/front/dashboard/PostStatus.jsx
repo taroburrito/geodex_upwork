@@ -139,14 +139,16 @@ export default class PostStatus extends Component {
                     modal.hide();
                     self.setState({uploadImages:null,uploadedIndex:null,showCropTool:false});
                   }else{
-                    if(height > width){
+                    // console.log("height/width="+height/width);
+                    // console.log("width/height="+width/height);
+                    if(height > width || parseFloat(width/height) > 1.75){
                       self.setState({
                           image: upload.target.result,
                           fileData:file,
                           videoLink:null,
                           videoImage:null,
-                          previewImageWidth:250,
-                          previewImageHeight:250,
+                          previewImageWidth:220,
+                          previewImageHeight:140,
                           showCropTool:true,
                         });
                     }else{
@@ -155,8 +157,8 @@ export default class PostStatus extends Component {
                           fileData:file,
                           videoLink:null,
                           videoImage:null,
-                          previewImageWidth:250,
-                          previewImageHeight:250,
+                          previewImageWidth:220,
+                          previewImageHeight:140,
                           showCropTool:false,
                         });
                     }
@@ -300,8 +302,8 @@ reader.readAsDataURL(file);
          <AvatarEditor
            image={this.state.image}
            ref="avatar"
-           width={250}
-           height={250}
+           width={this.state.previewImageWidth}
+           height={this.state.previewImageHeight}
            border={10}
            color={[255, 255, 255, 0.6]} // RGBA
            scale={parseFloat(this.state.scale)}

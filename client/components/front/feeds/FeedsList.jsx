@@ -25,9 +25,9 @@ export default class FeedsList extends Component {
           replyContent:null,
           isLoading:false,
           windowHeight:1,
-          photosPerPage:30,
-          newsPerPage:10,
-          postPerPage:10,
+          photosPerPage:100,
+          newsPerPage:100,
+          postPerPage:100,
         },
         this.handleFilterFeeds = this.handleFilterFeeds.bind(this);
         this.handleCloseImagePopUp = this.handleCloseImagePopUp.bind(this);
@@ -465,44 +465,44 @@ console.log(commentElement);
     }
 
     sortByCategory(catId){
-  //     const{userAuthSession} = this.props;
-  //     this.setState({active_cat: catId,animation:true});
-  //     setTimeout(function() { this.setState({animation: false}); }.bind(this), 1000);
-  //     if(!catId){
-  //       this.props.fetchUniversalPosts(userAuthSession.userObject.id,0,100);
-  //     }else if (catId == 'news') {
-  //       this.props.fetchNewsPosts(userAuthSession.userObject.id);
-  //     }
-  //     else{
-  //
-  //     this.props.fetchPostByFriendsCategory(userAuthSession.userObject.id,catId);
-  //
-  //
-  //   }
-  //   if(this.state.filter == 'all'){
-  //
-  //   }else{
-  //     setTimeout(function() {
-  //
-  //       // Main content container
-  //         var container = $('#content');
-  //
-  //         // Masonry + ImagesLoaded
-  //         container.imagesLoaded(function(){
-  //           container.masonry({
-  //             // selector for entry content
-  //             columnWidth: 280,
-  //             itemSelector: '.item',
-  //             isFitWidth:'true',
-  //             isAnimated: true
-  //           });
-  //         });
-  //
-  //
-  //
-  // }, 1000);
-  //   }
-  //     this.props.fetchInitialData(userAuthSession.userObject.id, catId);
+      const{userAuthSession} = this.props;
+      this.setState({active_cat: catId,animation:true});
+      setTimeout(function() { this.setState({animation: false}); }.bind(this), 1000);
+      if(!catId){
+        this.props.fetchUniversalPosts(userAuthSession.userObject.id,0,100);
+      }else if (catId == 'news') {
+        this.props.fetchNewsPosts(userAuthSession.userObject.id);
+      }
+      else{
+
+      this.props.fetchPostByFriendsCategory(userAuthSession.userObject.id,catId);
+
+
+    }
+    if(this.state.filter == 'all'){
+
+    }else{
+      setTimeout(function() {
+
+        // Main content container
+          var container = $('#content');
+
+          // Masonry + ImagesLoaded
+          container.imagesLoaded(function(){
+            container.masonry({
+              // selector for entry content
+              columnWidth: 280,
+              itemSelector: '.item',
+              isFitWidth:'true',
+              isAnimated: true
+            });
+          });
+
+
+
+  }, 1000);
+    }
+      this.props.fetchInitialData(userAuthSession.userObject.id, catId);
     }
 
     renderCategoriesContent(){
@@ -534,7 +534,7 @@ console.log(commentElement);
       else {
         this.props.fetchUniversalPosts(userAuthSession.userObject.id,0,this.state.postPerPage);
       }
-      this.setState({filter:state,animation:true,isLoading:true,active_cat:null});
+      this.setState({filter:state,animation:true,isLoading:true});
         setTimeout(function() { this.setState({animation: false,isLoading:false}); }.bind(this), 1000);
 
 

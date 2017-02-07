@@ -138,7 +138,7 @@ export default class PostView extends Component {
             </div>
           </article>
 
-          {(len % this.state.itemsPerPage == 0 && i == len) ?<div className="uk-width-large-1"><a className="loadMore" onClick={this.loadMore.bind(this,len)}>Load More</a></div>:null}
+          {/* {(len % this.state.itemsPerPage == 0 && i == len) ?<div className="uk-width-large-1"><a className="loadMore" onClick={this.loadMore.bind(this,len)}>Load More</a></div>:null} */}
         </div>
 
     );i++;

@@ -105,7 +105,7 @@ export default class DashboardPage extends Component {
     var scale = parseFloat(e.target.value);
      this.setState({ scale: scale })
   }
-  
+
 
   onSlide(e){
     this.pauseAllYoutube();
