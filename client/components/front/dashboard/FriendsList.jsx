@@ -645,11 +645,18 @@ _myImageGalleryRenderer(item) {
         }
       }
 
+      var animateidBlockClass;
+      if(content == ''){
+        animateidBlockClass = 'uk-width-small-1-4';
+      }else{
+        animateidBlockClass = 'uk-width-small-1-2';
+      }
+
       var slider_images = this.renderFriendsPostImagesSmallSlider(user_id);
       friendsElement.push(
           <div ref="animate" key={key} className={this.state.animation ? "uk-grid dash_top_head dash_botom_list animated fadeIn":'uk-grid dash_top_head dash_botom_list animated'} id={item.id}>
 
-            <div className="uk-width-small-1-2">
+            <div  className={content =="" ? "uk-width-small-3-4 no_pading":'uk-width-small-1-2 no_pading'}>
               <div className="uk-grid uk-grid-small top_usinfo">
                 <div className="uk-width-1-10 user_img_left"><Link to={profile_link}><img src={getProfileImage(item.profile_image,user_id)} className=""/></Link></div>
                 <div className="uk-width-9-10 user_bottom_img_right">
@@ -683,13 +690,13 @@ _myImageGalleryRenderer(item) {
 
 
 
-            <div id="animateid" className={this.state.postanimation == user_id ?"uk-width-small-1-2 post_control animated fadeIn":"uk-width-small-1-2 post_control animated"}>
+            <div id="animateid" className={this.state.postanimation == user_id ?animateidBlockClass+" post_control animated fadeIn":animateidBlockClass+" post_control animated"}>
 
 
               <div>
               <img src='/public/images/Loading_icon.gif' id={"loader_"+user_id} className="loadingPost"/>
                 <a href="#" className="post_txt_dashboard" data-uk-modal={post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={this.loadSinglePostContent.bind(this,item.post_id,user_id,content_type)}>
-                  {post_image?<img src={imgSrc} className="uk-float-left img_margin_right"/>:null}
+                  {post_image?<img src={imgSrc} className="uk-float-right img_margin_left"/>:null}
                 </a>
                   <div className="dash-news-heading">
                       <h3><a target="_blank" href={item.link}>{item.title}</a></h3>
