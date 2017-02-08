@@ -597,7 +597,7 @@ _myImageGalleryRenderer(item) {
       var user_id = friends[key].id;
       var profile_link = "/user/"+user_id;
       var content = item.post_content;
-      //console.log(item);
+      console.log(item);
       if(item){
         var content_length = content.length;
         var post_image = item.post_image || item.youtube_image;
@@ -647,7 +647,7 @@ _myImageGalleryRenderer(item) {
 
       var animateidBlockClass;
       if(content == ''){
-        animateidBlockClass = 'uk-width-small-1-4';
+        animateidBlockClass = 'uk-width-small-2-10';
       }else{
         animateidBlockClass = 'uk-width-small-1-2';
       }
@@ -656,48 +656,54 @@ _myImageGalleryRenderer(item) {
       friendsElement.push(
           <div ref="animate" key={key} className={this.state.animation ? "uk-grid dash_top_head dash_botom_list animated fadeIn":'uk-grid dash_top_head dash_botom_list animated'} id={item.id}>
 
-            <div  className={content =="" ? "uk-width-small-3-4 no_pading":'uk-width-small-1-2 no_pading'}>
+            <div  className={content =="" ? "uk-width-small-8-10 no_pading":'uk-width-small-1-2 no_pading'}>
+             
+
+
               <div className="uk-grid uk-grid-small top_usinfo">
-                <div className="uk-width-1-10 user_img_left"><Link to={profile_link}><img src={getProfileImage(item.profile_image,user_id)} className=""/></Link></div>
-                <div className="uk-width-9-10 user_bottom_img_right">
-                <h3 className="capital_first"><Link to={profile_link} className="user-name-anchor">{item.first_name} {item.last_name} </Link>
-                <small className="user_location">{item.address}</small>
-                </h3>
-                {(user_id != userAuthSession.userObject.id)?
-                <div className="uk-width-10-10 comm-icon-div">
+                <div className={content =="" ? "uk-width-2-10 user_img_left":"uk-width-3-10 user_img_left"} ><Link to={profile_link}><img src={getProfileImage(item.profile_image,user_id)} className=""/></Link>
 
-                <a data-uk-modal="{target:'#sendEmail'}" onClick={this.handleOnClickEmailIcon.bind(this,item.email)} data={item.email}  href="#" className="">
-                <img className="comm-icons" src="public/images/email_icon.png" onClick={()=>this.setState({showMessage:false})}/>
-                </a>
-                <img className="comm-icons" src="public/images/message_icon.png"/>
-                <img className="comm-icons" src="public/images/phone_icon.png"/>
+                  <div className="uk-grid uk-grid-small top_usinfo">
+                    <div className="uk-width-10-10 user_bottom_img_right">
+                      <h3 className="capital_first"><Link to={profile_link} className="user-name-anchor">{item.first_name} {item.last_name} </Link>
+                      <small className="user_location">{item.address}</small>
+                      </h3>
+                      {(user_id != userAuthSession.userObject.id)?
+                        <div className="uk-width-10-10 comm-icon-div">
 
+                        <a data-uk-modal="{target:'#sendEmail'}" onClick={this.handleOnClickEmailIcon.bind(this,item.email)} data={item.email}  href="#" className="">
+                        <img className="comm-icons" src="public/images/email_icon.png" onClick={()=>this.setState({showMessage:false})}/>
+                        </a>
+                        <img className="comm-icons" src="public/images/message_icon.png"/>
+                        <img className="comm-icons" src="public/images/phone_icon.png"/>
+
+                        </div>
+                            :null}
+                      </div>
+            </div>
                 </div>
-                      :null}
-                </div>
-             </div>
-
-
-             <div className="uk-grid uk-grid-small slider_contt">
-              <div className="uk-slidenav-position uk-margin" data-uk-slider="{autoplay: true}">
+                
+                <div className={content =="" ? "uk-width-8-10":"uk-width-7-10"}>
+                 <div className="uk-grid uk-grid-small slider_contt">
+                <div className="uk-slidenav-position uk-margin" data-uk-slider="{autoplay: true}">
                     <div className="uk-slider-container img_slid">
                         {slider_images}
                     </div>
                 </div>
               </div>
-
+              </div>
+             </div>
             </div>
-
-
-
             <div id="animateid" className={this.state.postanimation == user_id ?animateidBlockClass+" post_control animated fadeIn":animateidBlockClass+" post_control animated"}>
 
 
               <div>
               <img src='/public/images/Loading_icon.gif' id={"loader_"+user_id} className="loadingPost"/>
+               
                 <a href="#" className="post_txt_dashboard" data-uk-modal={post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={this.loadSinglePostContent.bind(this,item.post_id,user_id,content_type)}>
                   {post_image?<img src={imgSrc} className="uk-float-right img_margin_left"/>:null}
                 </a>
+               
                   <div className="dash-news-heading">
                       <h3><a target="_blank" href={item.link}>{item.title}</a></h3>
                       <span>{item.news_source}</span>

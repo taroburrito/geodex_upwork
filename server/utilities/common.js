@@ -254,11 +254,7 @@ function processImage(img,dest){
   }
   console.log(x+"---"+y);
     if (image.bitmap.width === image.bitmap.height ) {
-        if(image.bitmap.width>250){
-          image.resize(200,200);
-        }else{
-          image.write(dest);
-        }
+        image.resize(Jimp.AUTO,150).write(dest);
 
     }else if(image.bitmap.width > 450 || image.bitmap.height > 450){
         image.resize(Jimp.AUTO,150).write(dest);

@@ -23,7 +23,7 @@ export default class PhotosView extends Component {
         container.imagesLoaded(function(){
           container.masonry({
             // selector for entry content
-            columnWidth: 280,
+            columnWidth: 320,
             itemSelector: '.item',
             isFitWidth:'true',
             isAnimated: true,
