@@ -13,6 +13,7 @@ import SignUpForm from '../components/authentication/SignUpForm';
 import LoginForm from '../components/authentication/LoginForm';
 import Home from '../components/front/Home';
 import LandingPage from '../components/static_pages/landing_page/LandingPage.jsx';
+import LockScreen from '../components/static_pages/landing_page/LockScreen';
 
 // containers
 import MainLoginPage from './admin/MainLoginPage';
@@ -49,6 +50,14 @@ class App extends Component {
       landingPage = children;
     }else{
     //  landingPage = <HomePage/>;
+    }
+
+    if(!localStorage.getItem('verifyAuth')){
+      return(
+        <div className="full_width">
+          <LockScreen/>
+        </div>
+      )
     }
 
     if (baseUrl == 'admin'){

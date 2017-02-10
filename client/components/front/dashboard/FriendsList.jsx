@@ -160,6 +160,11 @@ export default class FriendsList extends Component {
         var item = friendsPost[friendId];
         var post_image = item.post_image;
         var postImage = this.state.uploadDir+"user_"+user_id+"/thumbs/"+post_image;
+        if(item.content.length > 300){
+        var content = item.content.substring(0,100).concat(' ...');
+        }else{
+        var content = item.content;
+        }
       //  console.log(item);
         // Image content
         if(item.post_image){
@@ -178,10 +183,20 @@ export default class FriendsList extends Component {
 
         if(post_image && item.is_news !='yes'){
         friendElement.push(
-            <div key={item.i} className="slider_image uk-grid-small uk-grid-width-medium-1-4">
+            <div key={item.i} className="slider_image uk-grid-small uk-grid-width-medium-1-1">
+              <figure className="uk-overlay uk-overlay-hover">
+
+
+
               <a data-uk-modal="{target:'#postImageModel'}"  onClick={this.loadPostContent.bind(this,item.id,item.user_id,null,item.content,i,null)}>
                 <img src={postImage}/>
-               </a>
+
+               <figcaption className="uk-overlay-panel uk-overlay-background uk-overlay-bottom">
+
+                   <p>{content}</p>
+               </figcaption>
+             </a>
+               </figure>
            </div>
         );
         i++;
@@ -657,7 +672,7 @@ _myImageGalleryRenderer(item) {
           <div ref="animate" key={key} className={this.state.animation ? "uk-grid dash_top_head dash_botom_list animated fadeIn":'uk-grid dash_top_head dash_botom_list animated'} id={item.id}>
 
             <div  className={content =="" ? "uk-width-small-8-10 no_pading":'uk-width-small-1-2 no_pading'}>
-             
+
 
 
               <div className="uk-grid uk-grid-small top_usinfo">
@@ -682,7 +697,7 @@ _myImageGalleryRenderer(item) {
                       </div>
             </div>
                 </div>
-                
+
                 <div className={content =="" ? "uk-width-8-10":"uk-width-7-10"}>
                  <div className="uk-grid uk-grid-small slider_contt">
                 <div className="uk-slidenav-position uk-margin" data-uk-slider="{autoplay: true}">
@@ -699,11 +714,11 @@ _myImageGalleryRenderer(item) {
 
               <div>
               <img src='/public/images/Loading_icon.gif' id={"loader_"+user_id} className="loadingPost"/>
-               
+
                 <a href="#" className="post_txt_dashboard" data-uk-modal={post_image?"{target:'#postImageModel'}":"{target:'#postContentModel'}"} onClick={this.loadSinglePostContent.bind(this,item.post_id,user_id,content_type)}>
                   {post_image?<img src={imgSrc} className="uk-float-right img_margin_left"/>:null}
                 </a>
-               
+
                   <div className="dash-news-heading">
                       <h3><a target="_blank" href={item.link}>{item.title}</a></h3>
                       <span>{item.news_source}</span>

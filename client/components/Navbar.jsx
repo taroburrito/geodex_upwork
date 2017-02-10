@@ -158,9 +158,9 @@ export default class Navbar extends Component {
       <div>
 				<nav className="uk-navbar fixed-nav innerpage_nav">
 						<Link className="uk-navbar-brand uk-hidden-small" to="home"><img src="public/images/logo.png" alt=""/></Link>
-            {!localStorage.getItem("verifyAuth")?
+            {/* {!localStorage.getItem("verifyAuth")?
         <a href={"#auth"} data-uk-modal><img src="public/images/lock.png" className="lockset"/></a>
-        :null}
+        :null} */}
           <ul className="uk-navbar-nav uk-hidden-small uk-float-right">
               <li><a onClick={()=>this.changeContent('aboutUs')} href="#/pages/aboutUs">About Us</a></li>
               <li><Link to="pages/contactUs">Contact Us</Link></li>

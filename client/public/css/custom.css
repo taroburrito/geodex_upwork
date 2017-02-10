@@ -2662,11 +2662,44 @@ ul.uk-comment-list li {
   font-size: 12px;
 }
 .lockset {
-    color: #999;
-    margin-left: -23px;
-      margin-top: 14px;
-      width: 14px;
+    margin-top: 14px;
+    width: 65px;
+    float: none;
+    background: #eee;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-left: 0;
+    box-shadow: 0 0 5px #ccc inset;
+}
 
+.logo-splash {
+    /* display: flex; */
+    /* flex-direction: row; */
+    /* justify-content: center; */
+    align-items: center;
+    height: 100%;
+    font-family: Organo;
+    font-size: x-large;
+    margin-top: 15%;
+    max-width: 200px;
+    margin: 15% auto;
+}
+
+.logo-splash a {
+    display: inline-block;
+    float: none;
+    margin: 0 auto;
+    width: auto;
+    text-align: center;
+    margin-left: 33%;
+}
+
+
+.logo-splash h1 {
+    float: left;
+    width: 100%;
+    text-align: center;
 }
 
 .loadMore {
@@ -2767,4 +2800,21 @@ small.user_location {
 
 .my_profile .user_img_left img {
     max-width: 100%;
+}
+
+
+
+figcaption.uk-overlay-panel.uk-overlay-background.uk-overlay-bottom {
+    margin-left: 5%;
+    padding: 2%;
+    /* color: #fff; */
+    /* font-size: 12px; */
+}
+
+
+figcaption.uk-overlay-panel.uk-overlay-background.uk-overlay-bottom p {
+    font-size: 12px!important;
+    line-height: 15px!important;
+    color: #fff !important;
+    text-align: left!important;
 }
