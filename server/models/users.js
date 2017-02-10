@@ -122,38 +122,36 @@ var userModel = {
     getDashboardData: function(userId,catId, callback){
 
       var dbConnection = dbConnectionCreator();
-      var getLatestPostSqlString = constructLatestPostSqlString(userId);
+      //var getLatestPostSqlString = constructLatestPostSqlString(userId);
       var getUsersCategoriesSqlString = constructGetUserCategoriesSqlString(userId);
       var getUserFriendsListSqlString = constructgetUserFriendsListSqlString(userId);
       if(!catId){
+        var getFriendsListForDashboardSqlString = constructFriendListForDashboardSqlString(userId);
+        var getFriendsListWithRecentPostSqlString = constructFriendsListWithRecentPost(userId);
+      }else{
+        var getFriendsListForDashboardSqlString = constructFriendListByCatForDashboardSqlString(userId,catId);
+      }
 
-      var getFriendsListForDashboardSqlString = constructFriendListForDashboardSqlString(userId);
-    }else{
-      var getFriendsListForDashboardSqlString = constructFriendListByCatForDashboardSqlString(userId,catId);
-
-    }
-  
       var profileData;
       var userCategoriesData;
+      var friends_post;
 
-      dbConnection.query(getLatestPostSqlString, function (error, results, fields) {
-          if (error) {
+      //dbConnection.query(getLatestPostSqlString, function (error, results, fields) {
+          // if (error) {
+          //
+          //     dbConnection.end(); return(callback({error: "Error in latest post query"}));
+          // }else {
 
-              dbConnection.end(); return(callback({error: "Error in latest post query"}));
-          }else {
-
-            if (results.length === 0) {
-                var latestPost = null;
-            }else{
-              /* create object of latestPost */
-              var latestPost = userModel.convertRowsToUserProfileObject(results[0]);
-              }
+            // if (results.length === 0) {
+            //     var latestPost = null;
+            // }else{
+            //   /* create object of latestPost */
+            //   var latestPost = userModel.convertRowsToUserProfileObject(results[0]);
+            //   }
 
             /*Get categories result of a user and admin*/
             dbConnection.query(getUsersCategoriesSqlString, function (error1, results1, fields1) {
               if (error1) {
-
-
                   dbConnection.end(); return(callback({error: error1}));
               }else {
 
@@ -167,8 +165,25 @@ var userModel = {
                   });
                 }
 
+                //Get friends list with recent post
 
-                /*Get friendList of user*/
+                dbConnection.query(getFriendsListWithRecentPostSqlString,function(error,result,fields){
+                  if(error){
+                    return(callback({error:error, status:400}));
+                  }else{
+
+                   if (result.length === 0) {
+                    var friends_post = null
+                  }else {
+                    var friends_post = {};
+                    result.forEach(function (data) {
+                        friends_post[data.id] = userModel.convertRowsToUserProfileObject(data);
+                        friends_post[data.id].prev = true;
+                    });
+                  }
+
+
+                  /*Get friendList of user*/
                 dbConnection.query(getFriendsListForDashboardSqlString,function(error3,result3,fields3){
                   if(error3){
                   return(callback({error: "Error in get friends for dashboard query",status:400,query:getFriendsListForDashboardSqlString}));
@@ -182,7 +197,7 @@ var userModel = {
                       var i = 0;
                       result3.forEach(function (friendIndex) {
                           friends[i] = userModel.convertRowsToUserProfileObject(friendIndex);
-                          friends[i].prev = true;
+                          //friends[i].prev = true;
                           //if(friendIndex.status == 1)
                           friendsIds.push(friendIndex.id);
                           i++;
@@ -214,24 +229,25 @@ var userModel = {
 
                               });
                             }
-                            dbConnection.end(); return(callback({latestPost: latestPost,categories: categories,friends:friends,friendsPostImages:postImage}));
+                            dbConnection.end(); return(callback({categories: categories,friends:friends,friendsPostImages:postImage, friends_post:friends_post}));
                           }
                         });
                       }else{
-                        dbConnection.end(); return(callback({latestPost: latestPost,categories: categories,friends:null,friendsPostImages:null}));
+                        dbConnection.end(); return(callback({categories: categories,friends:null,friendsPostImages:null}));
                       }
 
 
 
                   }
                 });
-
+              }
+              });
 
               }
             });
 
-          }
-      });
+        //  }
+    //  });
     },
 
     getUserProfile: function (userId, callback) {
@@ -1019,22 +1035,47 @@ function constructFreindsPostImagesSqlString(friendsIds){
   return query;
 }
 
-function constructFriendListForDashboardSqlString(userId){
+function constructFriendsListWithRecentPost(userId){
   var query="SELECT (a.user_id) id, LOWER(first_name) first_name, LOWER(last_name) last_name, dob,gender,address,latitude,longitude,"+
              "profile_image,cover_image,c.id post_id,(image) post_image,(content) post_content,(select count(1) from gx_posts where user_id = a.user_id) post_count, youtube_url, youtube_image,is_news,news_source,title,link, u.email, (b.modified) created,(c.created) post_date"+
             " FROM `gx_user_details` a,(SELECT receiver_id, modified FROM `gx_friends_list` WHERE sender_id ='"+userId+"'  AND STATUS = 1 UNION SELECT sender_id, modified FROM `gx_friends_list` WHERE receiver_id ='"+userId+"' AND STATUS = 1) b,"+
             " (SELECT t1.* FROM gx_posts t1  WHERE t1.id = (SELECT t2.id FROM gx_posts t2 WHERE t2.user_id = t1.user_id  and (content!= '' or youtube_url != '') ORDER BY t2.id DESC LIMIT 1) ) c,"+
             " gx_users u WHERE (a.user_id =  '"+userId+"' AND a.user_id = c.user_id AND a.user_id = u.id)"+
             " OR (a.user_id = b.receiver_id AND a.user_id = c.user_id AND a.user_id = u.id) GROUP BY a.user_id  ORDER BY c.id desc";
-            return query;
+  return query;
+}
+
+function constructFriendListForDashboardSqlString(userId){
+  // var query="SELECT (a.user_id) id, LOWER(first_name) first_name, LOWER(last_name) last_name, dob,gender,address,latitude,longitude,"+
+  //            "profile_image,cover_image,c.id post_id,(image) post_image,(content) post_content,(select count(1) from gx_posts where user_id = a.user_id) post_count, youtube_url, youtube_image,is_news,news_source,title,link, u.email, (b.modified) created,(c.created) post_date"+
+  //           " FROM `gx_user_details` a,(SELECT receiver_id, modified FROM `gx_friends_list` WHERE sender_id ='"+userId+"'  AND STATUS = 1 UNION SELECT sender_id, modified FROM `gx_friends_list` WHERE receiver_id ='"+userId+"' AND STATUS = 1) b,"+
+  //           " (SELECT t1.* FROM gx_posts t1  WHERE t1.id = (SELECT t2.id FROM gx_posts t2 WHERE t2.user_id = t1.user_id  and (content!= '' or youtube_url != '') ORDER BY t2.id DESC LIMIT 1) ) c,"+
+  //           " gx_users u WHERE (a.user_id =  '"+userId+"' AND a.user_id = c.user_id AND a.user_id = u.id)"+
+  //           " OR (a.user_id = b.receiver_id AND a.user_id = c.user_id AND a.user_id = u.id) GROUP BY a.user_id  ORDER BY c.id desc";
+  //
+
+  var query="SELECT (a.user_id) id, LOWER(first_name) first_name, LOWER(last_name) last_name, dob,gender,address,latitude,longitude,"+
+             "profile_image,cover_image,c.id post_id,(image) post_image,(content) post_content,(select count(1) from gx_posts where user_id = a.user_id) post_count, youtube_url, youtube_image,is_news,news_source,title,link, u.email, (b.modified) created,(c.created) post_date"+
+            " FROM `gx_user_details` a,(SELECT receiver_id, modified FROM `gx_friends_list` WHERE sender_id ='"+userId+"'  AND STATUS = 1 UNION SELECT sender_id, modified FROM `gx_friends_list` WHERE receiver_id ='"+userId+"' AND STATUS = 1) b,"+
+            " (SELECT t1.* FROM gx_posts t1  WHERE t1.id = (SELECT t2.id FROM gx_posts t2 WHERE t2.user_id = t1.user_id   ORDER BY t2.id DESC LIMIT 1) ) c,"+
+            " gx_users u WHERE (a.user_id =  '"+userId+"' AND a.user_id = c.user_id AND a.user_id = u.id)"+
+            " OR (a.user_id = b.receiver_id AND a.user_id = c.user_id AND a.user_id = u.id) GROUP BY a.user_id  ORDER BY c.id desc";
+
+             return query;
 }
 
 function constructFriendListByCatForDashboardSqlString(userId,catId){
+  // var query="SELECT (a.user_id) id, LOWER(first_name) first_name,last_name,dob,gender,address,latitude,longitude,"+
+  //            "profile_image,cover_image,c.id post_id,(image) post_image,(content) post_content,(select count(1) from gx_posts where user_id = a.user_id) post_count,youtube_url, youtube_image,is_news,news_source,title,link, u.email, (b.modified) created, fc.category_id"+
+  //           " FROM `gx_user_details` a,(SELECT receiver_id, modified FROM `gx_friends_list` WHERE sender_id ='"+userId+"'  AND STATUS = 1 UNION SELECT sender_id, modified FROM `gx_friends_list` WHERE receiver_id ='"+userId+"' AND STATUS = 1) b,"+
+  //           " (SELECT t1.* FROM gx_posts t1 WHERE t1.id = (SELECT t2.id FROM gx_posts t2 WHERE t2.user_id = t1.user_id  and (content!= '' or youtube_url != '') ORDER BY t2.id DESC LIMIT 1) ) c,  gx_users u, gx_friends_category fc WHERE a.user_id = b.receiver_id AND a.user_id = c.user_id AND a.user_id = u.id AND a.user_id = fc.friend_id AND fc.category_id='"+catId+"' GROUP BY a.user_id ORDER BY c.id desc";
+  //
   var query="SELECT (a.user_id) id, LOWER(first_name) first_name,last_name,dob,gender,address,latitude,longitude,"+
              "profile_image,cover_image,c.id post_id,(image) post_image,(content) post_content,(select count(1) from gx_posts where user_id = a.user_id) post_count,youtube_url, youtube_image,is_news,news_source,title,link, u.email, (b.modified) created, fc.category_id"+
             " FROM `gx_user_details` a,(SELECT receiver_id, modified FROM `gx_friends_list` WHERE sender_id ='"+userId+"'  AND STATUS = 1 UNION SELECT sender_id, modified FROM `gx_friends_list` WHERE receiver_id ='"+userId+"' AND STATUS = 1) b,"+
-            " (SELECT t1.* FROM gx_posts t1 WHERE t1.id = (SELECT t2.id FROM gx_posts t2 WHERE t2.user_id = t1.user_id  and (content!= '' or youtube_url != '') ORDER BY t2.id DESC LIMIT 1) ) c,  gx_users u, gx_friends_category fc WHERE a.user_id = b.receiver_id AND a.user_id = c.user_id AND a.user_id = u.id AND a.user_id = fc.friend_id AND fc.category_id='"+catId+"' GROUP BY a.user_id ORDER BY c.id desc";
-            return query;
+            " (SELECT t1.* FROM gx_posts t1 WHERE t1.id = (SELECT t2.id FROM gx_posts t2 WHERE t2.user_id = t1.user_id  ORDER BY t2.id DESC LIMIT 1) ) c,  gx_users u, gx_friends_category fc WHERE a.user_id = b.receiver_id AND a.user_id = c.user_id AND a.user_id = u.id AND a.user_id = fc.friend_id AND fc.category_id='"+catId+"' GROUP BY a.user_id ORDER BY c.id desc";
+
+        return query;
 }
 function constructLatestPostSqlString(userId){
   var query = "Select * from gx_posts WHERE user_id="+userId+" Order By id desc Limit 1";

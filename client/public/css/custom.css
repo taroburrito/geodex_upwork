@@ -2818,3 +2818,67 @@ figcaption.uk-overlay-panel.uk-overlay-background.uk-overlay-bottom p {
     color: #fff !important;
     text-align: left!important;
 }
+
+
+/*gray strip*/
+.gray_strip {
+    width: auto;
+    background: #eee;
+    padding: 6px;
+    margin-left: -10px;
+}
+
+.gray_strip small.user_location {
+    color: #b6b6b6;
+    font-size: 12px;
+    line-height: 11px;
+    margin-bottom: 3px;
+    margin-top: 5px;
+    width: auto;
+    float: none;
+    padding-left: 5px;
+}
+
+.gray_strip .top_usinfo .comm-icon-div {
+    float: none;
+    /* margin-top: 2px; */
+    width: 100px;
+    /* padding-top: 9px; */
+    display: block;
+}
+
+
+.gray_strip a.pro_i {
+    float: left;
+    margin-right: 10px;
+}
+
+
+.gray_strip .user_bottom_img_right h3 {
+    margin-bottom: 2px;
+    padding-right: 10px;
+}
+
+.top_usinfo.gray_strip_2 {
+    float: left;
+}
+
+a.pro_i img {
+    width: 42px;
+}
+
+
+.uk-grid.uk-grid-small.below_gray_s {
+    width: 100%;
+    padding-left: 0;
+    border: 1px solid #eee;
+    padding: 9px;
+    padding-left: 0;
+    padding-right: 12px;
+}
+
+.dash_botom_list.new_d  {
+    background: #fff none repeat scroll 0 0;
+    border: none;
+    padding: 0;
+}

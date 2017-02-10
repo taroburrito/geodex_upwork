@@ -30,7 +30,7 @@ class HomePage extends Component{
 
   render(){
     const {userAuthSession, dispatch} = this.props;
-    console.log(this.props);
+    
     if(userAuthSession.isLoggedIn){
 
       return(

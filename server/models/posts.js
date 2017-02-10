@@ -516,7 +516,15 @@ function constructGetPostById(id){
 }
 
 function constructGetPostSibling(postid,userId){
-  var query="SELECT (a.user_id) id, LOWER(first_name) first_name, LOWER(last_name) last_name, dob, gender, address, latitude, longitude, profile_image, cover_image, c.id post_id, (image) post_image, (content) post_content,youtube_url, youtube_image,is_news,news_source,title,link,(select count(1) from gx_posts where user_id = a.user_id) post_count, youtube_url, youtube_image, u.email, modified, (c.created) post_date FROM `gx_user_details` a, (SELECT * FROM gx_posts WHERE id = (SELECT MAX(id) FROM gx_posts WHERE id < "+postid+" AND user_id = "+userId+" AND content != '')) c, gx_users u WHERE a.user_id = "+userId+" AND a.user_id = c.user_id AND a.user_id = u.id GROUP BY a.user_id ORDER BY c.id DESC ";
+  var query=
+   "SELECT (a.user_id) id, LOWER(first_name) first_name, LOWER(last_name) last_name,"+
+   " dob, gender, address, latitude, longitude, profile_image, cover_image, c.id post_id, (image) post_image,"+
+   " (content) post_content,youtube_url, youtube_image,is_news,news_source,title,link,"+
+   " (select count(1) from gx_posts where user_id = a.user_id) post_count, youtube_url,"+
+   " youtube_image, u.email, modified, (c.created) post_date FROM `gx_user_details` a,"+
+   " (SELECT * FROM gx_posts WHERE id = (SELECT MAX(id) FROM gx_posts WHERE"+
+   " id < "+postid+" AND user_id = "+userId+" AND content != '')) c, gx_users u WHERE a.user_id = "+userId+""+
+   " AND a.user_id = c.user_id AND a.user_id = u.id GROUP BY a.user_id ORDER BY c.id DESC ";
   return query;
 }
 

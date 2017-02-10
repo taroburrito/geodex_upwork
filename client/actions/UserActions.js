@@ -438,8 +438,8 @@ export function updateCategoryById(id, value){
   }
 }
 
-export function fetchPreviousPostSuccess(data) {
-  return {type:Fetch_Previous_Post_Success,data}
+export function fetchPreviousPostSuccess(data,userId) {
+  return {type:Fetch_Previous_Post_Success,data,userId}
 }
 
 export function fetchPreviousPostFailed(data) {
@@ -468,7 +468,7 @@ return(dispatch) => {
       if(Object.keys(data).length === 0 && data.constructor === Object){
         dispatch(fetchPreviousPostFailed(userid));
       }else{
-        dispatch(fetchPreviousPostSuccess(data));
+        dispatch(fetchPreviousPostSuccess(data,userid));
       }
     }).fail(function(error){
       $("#loader_"+userid).hide();
@@ -478,8 +478,8 @@ return(dispatch) => {
   }
 }
 
-export function fetchNextPostSuccess(data) {
-  return {type:Fetch_Next_Post_Success,data}
+export function fetchNextPostSuccess(data,userId) {
+  return {type:Fetch_Next_Post_Success,data,userId}
 }
 
 export function fetchNextPostFailed(data) {
@@ -502,7 +502,7 @@ return(dispatch) => {
       if(Object.keys(data).length === 0 && data.constructor === Object){
         dispatch(fetchNextPostFailed(userid));
       }else{
-        dispatch(fetchNextPostSuccess(data));
+        dispatch(fetchNextPostSuccess(data,userid));
       }
 
     }).fail(function(error){

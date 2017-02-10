@@ -51,31 +51,28 @@ export default class PostStatus extends Component {
     }
 
     if(!formData.image && !formData.youtube_url && !formData.newsImage){
-      console.log("Not Called");
+
       this.setState({handleMessage:{error:"Please choose image",success:null}});
     }else{
-
-      //this.setState({loading:true});
-      console.log("Called");
       this.props.onClickSavePost(formData);
       if(this.state.uploadImages){
         var uploadedIndex = this.state.uploadedIndex + 1;
         var imgLength = this.state.uploadImages.length;
-        console.log("imgLength:"+imgLength)
-        console.log("uploadedIndex:"+uploadedIndex)
+
         if(imgLength > uploadedIndex){
           this.setState({uploadedIndex:uploadedIndex});
           this.previewImage(this.state.uploadImages[uploadedIndex]);
-          console.log(this.state.uploadImages);
+
 
         }else{
           //setTimeout(function(){
-          this.props.fetchInitialData(userAuthSession.userObject.id,null);
+          //this.props.fetchInitialData(userAuthSession.userObject.id,null);
         //  }.bind(this),1000);
            var modal = UIkit.modal("#statusImageModel");
            modal.hide();
            this.setState({uploadImages:null,uploadedIndex:null});
         }
+        this.props.fetchInitialData(userAuthSession.userObject.id,null);
 
       }else{
         setTimeout(function(){
@@ -111,7 +108,7 @@ export default class PostStatus extends Component {
       this.setState({uploadImages:images});
       this.setState({uploadedIndex:0});
       var file = evt.target.files[0];
-        console.log("Width here");
+
         this.previewImage(file);
       }else {
         this.props.addAlert("","You can choose maximum four images at a time");
@@ -139,8 +136,7 @@ export default class PostStatus extends Component {
                     modal.hide();
                     self.setState({uploadImages:null,uploadedIndex:null,showCropTool:false});
                   }else{
-                    // console.log("height/width="+height/width);
-                    // console.log("width/height="+width/height);
+
                     if(height > width || parseFloat(width/height) > 1.75){
                       self.setState({
                           image: upload.target.result,
@@ -211,7 +207,7 @@ reader.readAsDataURL(file);
   }
 
   handleClickCheckBox(e){
-    console.log(e.target.checked);
+
     if(e.target.checked){
     this.setState({isNewsChecked:'yes'});
   }else{
@@ -242,7 +238,7 @@ reader.readAsDataURL(file);
 
   renderStatusModel(){
     const {dashboardData} = this.props;
-    console.log(dashboardData);
+
     var news = dashboardData.news;
     var errorLabel;
     var newsImg;

@@ -9,7 +9,7 @@ export default class LockScreen extends Component {
   constructor(props) {
     super(props);
     this.verifyLogin = this.verifyLogin.bind(this);
-    
+
     this.state={
       error:null,
       success:null,
@@ -74,7 +74,7 @@ export default class LockScreen extends Component {
     return(
       <div>
         <div className="logo-splash">
-          <h1>AMBULIST</h1>
+        <img src="public/images/logo_a_b.png"/>
           <a href={"#auth"} data-uk-modal><img src="public/images/iconmonstr-lock.png" className="lockset"/></a>
       </div>
 
