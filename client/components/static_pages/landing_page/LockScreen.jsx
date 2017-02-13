@@ -30,7 +30,7 @@ export default class LockScreen extends Component {
     console.log(this.props.page);
     console.log("*")
     //this.props.verifyLockPwd(pwd);
-    if(pwd == 'root'){
+    if(pwd == '@mbul!st@$#@!'){
       localStorage.setItem("verifyAuth",true);
       this.setState({error:null,success:"Congratulation your password is confirmed, You can now access the site"});
       setTimeout(function(){
