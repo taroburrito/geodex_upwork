@@ -485,12 +485,13 @@ form.uk-search.search_dash_nav {
 }
 
 .shortlist_menu {
-  border-bottom: 1px solid #ccc;
-  color: #333;
-  float: left;
-  margin-bottom: 20px;
-  margin-top: 18px;
-  /*padding-bottom: 10px;*/
+    border-bottom: 1px solid #ccc;
+    color: #333;
+    float: left;
+    margin-bottom: 20px;
+    margin-top: 18px;
+    /* padding-bottom: 10px; */
+    width: 98.5%;
 }
 
 .shortlist_menu > ul {
@@ -1986,7 +1987,7 @@ background: #fff !important;
 }
 
 .full_width {
-  background: rgb(243, 245, 246) none repeat scroll 0 0;
+    background: #fff;
 }
 
 body.uk-height-1-1 {
@@ -2663,14 +2664,14 @@ ul.uk-comment-list li {
 }
 .lockset {
     margin-top: 14px;
-    width: 65px;
+    width: 50px;
     float: none;
-    background: #eee;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
+    /* background: #eee; */
+    /* padding: 10px; */
+    /* border-radius: 5px; */
+    /* border: 1px solid #ccc; */
     margin-left: 0;
-    box-shadow: 0 0 5px #ccc inset;
+    /* box-shadow: 0 0 5px #ccc inset; */
 }
 
 .logo-splash {
@@ -2682,7 +2683,7 @@ ul.uk-comment-list li {
     font-family: Organo;
     font-size: x-large;
     margin-top: 15%;
-    max-width: 200px;
+    max-width: 220px;
     margin: 15% auto;
 }
 
@@ -2692,7 +2693,7 @@ ul.uk-comment-list li {
     margin: 0 auto;
     width: auto;
     text-align: center;
-    margin-left: 33%;
+    margin-left: 41%;
 }
 
 
@@ -2823,9 +2824,10 @@ figcaption.uk-overlay-panel.uk-overlay-background.uk-overlay-bottom p {
 /*gray strip*/
 .gray_strip {
     width: auto;
-    background: #eee;
+    /* background: #eee; */
     padding: 6px;
     margin-left: -10px;
+    padding-left: 12px;
 }
 
 .gray_strip small.user_location {
@@ -2881,4 +2883,25 @@ a.pro_i img {
     background: #fff none repeat scroll 0 0;
     border: none;
     padding: 0;
+}
+
+.uk-text-small.uk-pull-left.f_r_p.uk-float-center {
+    text-align: center;
+}
+
+.f_r_p a.uk-width-1-4.uk-button.uk-button-primary.uk-button-large {
+    background: #D6D6D6;
+    border: none;
+    color: black;
+    border-radius: 0;
+    padding-top: 4px;
+}
+
+
+.uk-grid.dash_top_head.my_profile .uk-width-small-1-2 {
+    padding: 0;
+}
+
+.uk-grid.dash_top_head.my_profile  .uk-grid-small {
+    margin-left: -7px;
 }

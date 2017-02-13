@@ -9,11 +9,18 @@ export default class LockScreen extends Component {
   constructor(props) {
     super(props);
     this.verifyLogin = this.verifyLogin.bind(this);
+    this._handleKeyPress = this._handleKeyPress.bind(this);
 
     this.state={
       error:null,
       success:null,
     }
+  }
+
+  _handleKeyPress(e){
+    if(e.key=='Enter'){
+        this.verifyLogin();
+      }
   }
 
   verifyLogin(){
@@ -82,7 +89,7 @@ export default class LockScreen extends Component {
         <div className="uk-modal-dialog">
            <button type="button" className="uk-modal-close uk-close"></button>
            <div className="uk-modal-header">
-               <h2>Verify site authentication by typing password here.</h2>
+
            </div>
            {ValidationMesssage}
            <div className="uk-form-row">
@@ -90,7 +97,7 @@ export default class LockScreen extends Component {
            </div>
 
            <div className="uk-form-row">
-             <div className="uk-text-small uk-pull-left f_r_p">
+             <div className="uk-text-small uk-pull-left f_r_p uk-float-center">
                <a className="uk-width-1-4 uk-button uk-button-primary uk-button-large" onClick={this.verifyLogin}>Verify</a>
              </div>
           </div>

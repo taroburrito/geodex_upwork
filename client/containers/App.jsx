@@ -52,7 +52,7 @@ class App extends Component {
 
     if(!localStorage.getItem('verifyAuth')){
       return(
-        <div className="full_width">
+        <div>
           <LockScreen/>
         </div>
       )
