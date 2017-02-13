@@ -12,6 +12,8 @@ export const Fetch_News_Posts_Failed = 'Fetch_News_Posts_Failed';
 export const Initialize_Posts = 'Initialize_Posts';
 export const Fetch_More_Posts_Success = 'Fetch_More_Posts_Success';
 
+import {fetchDashboardData} from '../utilities/ServerSocket';
+
 export function receivedAllposts(posts){
   return{type: Get_All_Posts, data:posts}
 }
@@ -40,6 +42,7 @@ export function addPost(formData){
         console.log(data.error);
       }else{
       console.log(data);
+      fetchDashboardData(formData.user_id,null);
     //  dispatch(addPostSuccess(data.post));
 
       }$(".loading").hide();
