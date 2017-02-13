@@ -64,6 +64,14 @@ var setPostRoutes = function (router) {
       })
     })
 
+    router.post('/api/v1/posts/getNoNewsPosts',function(req,res){
+
+      postModel.getNoNewsPosts(req.body.userId,req.body.limitFrom,req.body.limitTo,function(result){
+        return res.json(result);
+      })
+    })
+
+
 
 
     router.get('/api/v1/posts/getPostByFriendsCategory/:userId/:catId',function(req,res){

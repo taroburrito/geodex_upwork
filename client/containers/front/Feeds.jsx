@@ -11,6 +11,7 @@ import {fetchLimitedUniversalPosts,
         fetchNewsPosts,
         fetchPhotos,
         fetchMorePosts,
+        fetchNoNewsPosts,
       } from '../../actions/PostActions';
 import {fetchCategoriesByUser} from '../../actions/CategoryActions';
 import FeedsWidget from '../../components/front/feeds/FeedsWidget';
@@ -31,6 +32,7 @@ export default class Feeds extends Component {
       return(
         <div className="full_width">
             <FeedsWidget
+              fetchNoNewsPosts={(userId,limitFrom,limitTo)=>dispatch(fetchNoNewsPosts(userId,limitFrom,limitTo))}
               fetchMorePosts ={(userId,limitFrom,limitTo)=>dispatch(fetchMorePosts(userId,limitFrom,limitTo))}
               fetchNewsPosts={(userId,limitFrom,limitTo)=>dispatch(fetchNewsPosts(userId,limitFrom,limitTo))}
               fetchAllPosts={(userId,limitFrom,limitTo)=>dispatch(fetchUniversalPosts(userId,limitFrom,limitTo))}

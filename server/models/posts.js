@@ -328,6 +328,33 @@ var postModel = {
         }
       })
     },
+    getNoNewsPosts: function(userId,limitFrom,limitTo,callback){
+
+      var dbConnection = dbConnectionCreator();
+
+      var getUniversalPostsSql = constructNoNewsPostSql(userId,limitFrom,limitTo);
+      dbConnection.query(getUniversalPostsSql,function(error,results,fields){
+        if(error){
+
+          return(callback({error:error,status:400,query:getUniversalPostsSql,message:"Error in get all posts"}));
+        }else if (results.length == 0) {
+
+          return(callback({error:"empty result",status:400,message:"No post to show"}));
+        }else{
+
+          var posts = [];
+          results.forEach(function (result) {
+            posts.push(postModel.convertRowsToObject(result));
+          //  posts['test'] = "testing";
+              // comments[result.id] = postModel.convertRowsToObject(result);
+          });
+          dbConnection.end();
+
+          return(callback({status:200,posts,query:getUniversalPostsSql}));
+        }
+      })
+    },
+
 
     getPostByFriendsCategory: function(userId,catId,callback){
       var dbConnection = dbConnectionCreator();
@@ -456,6 +483,35 @@ function constructNewsPostSql(userId,limitFrom,limitTo){
             " ORDER BY a.id DESC LIMIT "+limitFrom+", "+limitTo;
   return sql;
 }
+
+function constructNoNewsPostSql(userId,limitFrom,limitTo){
+  if(!limitTo){
+    var sql = "SELECT a.*,"+
+              " CONCAT(b.first_name, ' ', b.last_name) NAME,"+
+              " b.profile_image,b.address,b.user_id, c.email"+
+              " from gx_posts as a,"+
+              " gx_user_details as b,"+
+              " gx_users as c"+
+              " WHERE b.user_id = a.user_id"+
+              " AND c.id  = a.user_id"+
+              " AND  a.is_news !='yes'  AND a.user_id IN (SELECT receiver_id FROM `gx_friends_list` WHERE sender_id ='"+userId+"'  AND STATUS = 1 UNION SELECT sender_id  FROM `gx_friends_list` WHERE receiver_id ='"+userId+"' AND STATUS = 1)"+
+              " ORDER BY a.id DESC";
+  }else {
+    var sql = "SELECT a.*,"+
+              " CONCAT(b.first_name, ' ', b.last_name) NAME,"+
+              " b.profile_image,b.address,b.user_id, c.email"+
+              " from gx_posts as a,"+
+              " gx_user_details as b,"+
+              " gx_users as c"+
+              " WHERE b.user_id = a.user_id"+
+              " AND c.id  = a.user_id"+
+              " AND  a.is_news !='yes'  AND a.user_id IN (SELECT receiver_id FROM `gx_friends_list` WHERE sender_id ='"+userId+"'  AND STATUS = 1 UNION SELECT sender_id  FROM `gx_friends_list` WHERE receiver_id ='"+userId+"' AND STATUS = 1)"+
+              " ORDER BY a.id DESC LIMIT "+limitFrom+", "+limitTo;
+  }
+
+  return sql;
+}
+
 
 
 function constructgetNewsPostsSql(userId){

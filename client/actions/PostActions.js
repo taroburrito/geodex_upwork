@@ -236,6 +236,32 @@ export function fetchNewsPosts(userId,limitFrom,limitTo){
 }
 
 
+export function fetchNoNewsPosts(userId,limitFrom,limitTo){
+  //console.log(userId,limitFrom,limitTo);
+  return(dispatch) =>{
+    dispatch(initializePosts());
+    $.ajax({
+      type:'POST',
+      url:'/api/v1/posts/getNoNewsPosts',
+      data:{userId:userId,limitFrom:limitFrom,limitTo:limitTo},
+      dataType:'JSON',
+    }).done(function(result){
+      if(result.error){
+
+      }else {
+        console.log(result);
+        dispatch(fetchUniversalPostsSuccess(result.posts));
+      }
+    }).fail(function(error){
+
+      console.log(error);
+      $(".loading").hide();
+    });
+  }
+}
+
+
+
 export function fetchPostByFriendsCategory(userId,catId){
   return(dispatch) =>{
   //  dispatch(initializeComments());

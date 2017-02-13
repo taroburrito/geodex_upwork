@@ -92,7 +92,17 @@ export default class PostView extends Component {
           var postImage = null;
         }
 
-        if((this.props.filter == 'news' && post.is_news == 'yes') || (this.props.filter =='all')){
+        if(this.props.filter != 'photos'){
+          if(this.props.filter == 'news' && post.is_news == 'yes' ){
+            var isRender = true;
+          }else if (this.props.filter == 'no_news' && post.is_news != 'yes') {
+            var isRender = true;
+          }else if (this.props.filter == 'all') {
+            var isRender = true;
+          }else {
+            var isRender = false;
+          }
+          if(isRender)
       postItem.push(
 
       <div className={this.props.animation?"feeds-box animated  fadeIn":"feeds-box animated"}>

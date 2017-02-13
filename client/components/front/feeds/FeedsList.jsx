@@ -491,7 +491,7 @@ console.log(commentElement);
           container.imagesLoaded(function(){
             container.masonry({
               // selector for entry content
-              columnWidth: 280,
+              columnWidth: 320,
               itemSelector: '.item',
               isFitWidth:'true',
               isAnimated: true
@@ -500,10 +500,10 @@ console.log(commentElement);
 
 
 
-  }, 1000);
+        }, 1000);
     }
-      this.props.fetchInitialData(userAuthSession.userObject.id, catId);
-    }
+this.props.fetchPostByFriendsCategory(userAuthSession.userObject.id, catId);
+  }
 
     renderCategoriesContent(){
       const{categories} = this.props;
@@ -527,13 +527,16 @@ console.log(commentElement);
       const{userAuthSession} = this.props;
       var state = this.refs.filterFeeds.getDOMNode().value;
       if(state == 'photos'){
-        this.props.fetchPhotos(userAuthSession.userObject.id,0,this.state.photosPerPage);
+      //  this.props.fetchPhotos(userAuthSession.userObject.id,0,this.state.photosPerPage);
       }else if (state == 'news') {
-        this.props.fetchNewsPosts(userAuthSession.userObject.id,0,this.state.newsPerPage);
+      //  this.props.fetchNewsPosts(userAuthSession.userObject.id,0,this.state.newsPerPage);
+      }else if (state == 'no_news') {
+      //  this.props.fetchNoNewsPosts(userAuthSession.userObject.id,0,null);
       }
       else {
-        this.props.fetchUniversalPosts(userAuthSession.userObject.id,0,this.state.postPerPage);
+      //  this.props.fetchUniversalPosts(userAuthSession.userObject.id,0,this.state.postPerPage);
       }
+
       this.setState({filter:state,animation:true,isLoading:true});
         setTimeout(function() { this.setState({animation: false,isLoading:false}); }.bind(this), 1000);
 
@@ -571,11 +574,12 @@ console.log(commentElement);
                   <option selected="true" value="all">All</option>
                   <option value="photos">Photos</option>
                   <option value="news">News</option>
+                  <option value="no_news">No News</option>
                   </select>
               </div>
             </div>
             {/* {this.renderPhotos()} */}
-              {(this.state.filter == 'all' || this.state.filter == 'news')?
+              {(this.state.filter != 'photos')?
                  <PostView
                    fetchMorePosts={this.props.fetchMorePosts}
                    fetchUniversalPosts={this.props.fetchUniversalPosts}
