@@ -40,7 +40,7 @@ export function addPost(formData){
         console.log(data.error);
       }else{
       console.log(data);
-      dispatch(addPostSuccess(data.post));
+    //  dispatch(addPostSuccess(data.post));
 
       }$(".loading").hide();
 

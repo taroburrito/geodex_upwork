@@ -54,6 +54,7 @@ export default class PostStatus extends Component {
 
       this.setState({handleMessage:{error:"Please choose image",success:null}});
     }else{
+      console.log("called save")
       this.props.onClickSavePost(formData);
       if(this.state.uploadImages){
         var uploadedIndex = this.state.uploadedIndex + 1;
@@ -72,12 +73,14 @@ export default class PostStatus extends Component {
            modal.hide();
            this.setState({uploadImages:null,uploadedIndex:null});
         }
+        console.log("called initial")
         this.props.fetchInitialData(userAuthSession.userObject.id,null);
 
       }else{
-        setTimeout(function(){
+
+      //  setTimeout(function(){
         this.props.fetchInitialData(userAuthSession.userObject.id,null);
-      }.bind(this),2000);
+    //  }.bind(this),2000);
       }
 
       // setTimeout(function(){
