@@ -26,9 +26,7 @@ export default class LockScreen extends Component {
   verifyLogin(){
 
     var pwd = this.refs.authPwd.getDOMNode().value.trim();
-    console.log(pwd)
-    console.log(this.props.page);
-    console.log("*")
+    
     //this.props.verifyLockPwd(pwd);
     if(pwd == '@mbul!st@$#@!'){
       localStorage.setItem("verifyAuth",true);
