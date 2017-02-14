@@ -2808,6 +2808,8 @@ small.user_location {
 figcaption.uk-overlay-panel.uk-overlay-background.uk-overlay-bottom {
     margin-left: 5%;
     padding: 2%;
+    max-height: 90%;
+    overflow: hidden;
     /* color: #fff; */
     /* font-size: 12px; */
 }

@@ -461,32 +461,28 @@ _myImageGalleryRenderer(item) {
    if(userId){
    const{dashboardData,userAuthSession} = this.props;
 
-
-   // if latest post
-   // if(userAuthSession.userObject.id === userId){
-   //     var friendData = userAuthSession.userObject;
-   //     var postContent = dashboardData.latestPost.content;
-   // }else{
-
-     //friends profile data
-
+   // Friends info
    var findPost = _.findKey(dashboardData.friends, function (o) { return o.id == userId;})
-    var friendData = dashboardData.friends[findPost];
+   var friendData = dashboardData.friends[findPost];
 
 
-   // post content
+   //Friends Post content
    if(postId){
 
+     //Find post index from slider images
      var findPost = _.findKey(dashboardData.friendsPostImages[userId], function (o) { return o.id == postId;})
      if(!findPost){
-       var findPost = _.findKey(dashboardData.friends, function (o) { return o.post_id == postId;})
-       var friendPost = dashboardData.friends[findPost];
+       // var findPost = _.findKey(dashboardData.friends, function (o) { return o.post_id == postId;})
+
+       // Friends Recent Post
+       var friendPost = dashboardData.friends_post[userId];
        if(friendPost){
        var postContent = friendPost.post_content;
      }else{
         var postContent = null;
      }
      }else {
+
        var postContent = dashboardData.friendsPostImages[userId][findPost].content;
      }
 
