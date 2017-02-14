@@ -61,6 +61,7 @@ export default class FriendsList extends Component {
     const{dashboardData,userAuthSession} = this.props;
 
     if(is_single){
+        if(this.state.showLargeSlider){
        var friendsPost = dashboardData.friends_post;
       if(friendsPost){
     //  var findPostKey = _.findKey(friendsPost, function (o) { return o.post_id == postId;})
@@ -80,6 +81,11 @@ export default class FriendsList extends Component {
          );
        }
     }
+  }else {
+    return(
+      <div className="loading" style={{display:'block'}}>Loading</div>
+    )
+  }
     }else {
       if(this.state.showLargeSlider){
       var friendsPost = dashboardData.friendsPostImages[userId];
