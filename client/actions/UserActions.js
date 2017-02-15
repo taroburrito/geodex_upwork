@@ -108,7 +108,7 @@ export function deleteFriendSuccess(id){
 
 export function clickedDeleteFriend(id) {
 
-//  return (dispatch) => {
+  return (dispatch) => {
 
     $.ajax({
 			type: 'POST',
@@ -123,7 +123,7 @@ export function clickedDeleteFriend(id) {
 						//dispatch(optimisticUniversalAddFail());
 					} else {
 						console.log("delete friend success", data);
-						//dispatch(deleteFriendSuccess(id));
+						dispatch(deleteFriendSuccess(id));
 					}
 
 				})
@@ -132,7 +132,7 @@ export function clickedDeleteFriend(id) {
         $(".loading").hide();
 			  //dispatch(optimisticUniversalAddFail()); //TODO figure out what to pass
 			});
-//}
+}
 }
 
 

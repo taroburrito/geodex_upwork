@@ -123,7 +123,6 @@ export default class Navbar extends Component {
                           <ul className="uk-nav uk-nav-dropdown">
 
                               <li><Link to="settings">Settings </Link></li>
-                              <li><Link to={"user/"+this.props.userAuthSession.userObject.id}>MyProfile </Link></li>
                               <li><Link to="manage_friends">Manage friends</Link></li>
                               <li><Link to="manage_requests">Manage friends request</Link></li>
                             <li><a href="#" onClick={this.props.logout}>Logout</a></li>

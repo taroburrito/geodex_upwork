@@ -1037,8 +1037,8 @@ function constructFreindsPostImagesSqlString(friendsIds){
 
 function constructFriendsListWithRecentPost(userId){
   var query="SELECT (a.user_id) id, LOWER(first_name) first_name, LOWER(last_name) last_name, dob,gender,address,latitude,longitude,"+
-             "profile_image,cover_image,c.id post_id,(image) post_image,(content) post_content,(select count(1) from gx_posts where user_id = a.user_id) post_count, youtube_url, youtube_image,is_news,news_source,title,link, u.email, (b.modified) created,(c.created) post_date"+
-            " FROM `gx_user_details` a,(SELECT receiver_id, modified FROM `gx_friends_list` WHERE sender_id ='"+userId+"'  AND STATUS = 1 UNION SELECT sender_id, modified FROM `gx_friends_list` WHERE receiver_id ='"+userId+"' AND STATUS = 1) b,"+
+             "profile_image,cover_image,c.id post_id,(image) post_image,(content) post_content,(select count(1) from gx_posts where user_id = a.user_id) post_count, youtube_url, youtube_image,is_news,news_source,title,link, u.email,  created,(c.created) post_date"+
+            " FROM `gx_user_details` a,(SELECT receiver_id FROM `gx_friends_list` WHERE sender_id ='"+userId+"'  AND STATUS = 1 UNION SELECT sender_id FROM `gx_friends_list` WHERE receiver_id ='"+userId+"' AND STATUS = 1 UNION Select id from `gx_users` WHERE id='"+userId+"') b,"+
             " (SELECT t1.* FROM gx_posts t1  WHERE t1.id = (SELECT t2.id FROM gx_posts t2 WHERE t2.user_id = t1.user_id  and (content!= '' or youtube_url != '') ORDER BY t2.id DESC LIMIT 1) ) c,"+
             " gx_users u WHERE (a.user_id =  '"+userId+"' AND a.user_id = c.user_id AND a.user_id = u.id)"+
             " OR (a.user_id = b.receiver_id AND a.user_id = c.user_id AND a.user_id = u.id) GROUP BY a.user_id  ORDER BY c.id desc";
@@ -1055,8 +1055,8 @@ function constructFriendListForDashboardSqlString(userId){
   //
 
   var query="SELECT (a.user_id) id, LOWER(first_name) first_name, LOWER(last_name) last_name, dob,gender,address,latitude,longitude,"+
-             "profile_image,cover_image,c.id post_id,(image) post_image,(content) post_content,(select count(1) from gx_posts where user_id = a.user_id) post_count, youtube_url, youtube_image,is_news,news_source,title,link, u.email, (b.modified) created,(c.created) post_date"+
-            " FROM `gx_user_details` a,(SELECT receiver_id, modified FROM `gx_friends_list` WHERE sender_id ='"+userId+"'  AND STATUS = 1 UNION SELECT sender_id, modified FROM `gx_friends_list` WHERE receiver_id ='"+userId+"' AND STATUS = 1) b,"+
+             "profile_image,cover_image,c.id post_id,(image) post_image,(content) post_content,(select count(1) from gx_posts where user_id = a.user_id) post_count, youtube_url, youtube_image,is_news,news_source,title,link, u.email,  created,(c.created) post_date"+
+            " FROM `gx_user_details` a,(SELECT receiver_id  FROM `gx_friends_list` WHERE sender_id ='"+userId+"'  AND STATUS = 1 UNION SELECT sender_id FROM `gx_friends_list` WHERE receiver_id ='"+userId+"' AND STATUS = 1 UNION Select id from `gx_users` WHERE id='"+userId+"') b,"+
             " (SELECT t1.* FROM gx_posts t1  WHERE t1.id = (SELECT t2.id FROM gx_posts t2 WHERE t2.user_id = t1.user_id   ORDER BY t2.id DESC LIMIT 1) ) c,"+
             " gx_users u WHERE (a.user_id =  '"+userId+"' AND a.user_id = c.user_id AND a.user_id = u.id)"+
             " OR (a.user_id = b.receiver_id AND a.user_id = c.user_id AND a.user_id = u.id) GROUP BY a.user_id  ORDER BY c.id desc";
@@ -1071,8 +1071,8 @@ function constructFriendListByCatForDashboardSqlString(userId,catId){
   //           " (SELECT t1.* FROM gx_posts t1 WHERE t1.id = (SELECT t2.id FROM gx_posts t2 WHERE t2.user_id = t1.user_id  and (content!= '' or youtube_url != '') ORDER BY t2.id DESC LIMIT 1) ) c,  gx_users u, gx_friends_category fc WHERE a.user_id = b.receiver_id AND a.user_id = c.user_id AND a.user_id = u.id AND a.user_id = fc.friend_id AND fc.category_id='"+catId+"' GROUP BY a.user_id ORDER BY c.id desc";
   //
   var query="SELECT (a.user_id) id, LOWER(first_name) first_name,last_name,dob,gender,address,latitude,longitude,"+
-             "profile_image,cover_image,c.id post_id,(image) post_image,(content) post_content,(select count(1) from gx_posts where user_id = a.user_id) post_count,youtube_url, youtube_image,is_news,news_source,title,link, u.email, (b.modified) created, fc.category_id"+
-            " FROM `gx_user_details` a,(SELECT receiver_id, modified FROM `gx_friends_list` WHERE sender_id ='"+userId+"'  AND STATUS = 1 UNION SELECT sender_id, modified FROM `gx_friends_list` WHERE receiver_id ='"+userId+"' AND STATUS = 1) b,"+
+             "profile_image,cover_image,c.id post_id,(image) post_image,(content) post_content,(select count(1) from gx_posts where user_id = a.user_id) post_count,youtube_url, youtube_image,is_news,news_source,title,link, u.email,  created, fc.category_id"+
+            " FROM `gx_user_details` a,(SELECT receiver_id FROM `gx_friends_list` WHERE sender_id ='"+userId+"'  AND STATUS = 1 UNION SELECT sender_id FROM `gx_friends_list` WHERE receiver_id ='"+userId+"' AND STATUS = 1 UNION Select id from `gx_users` WHERE id='"+userId+"') b,"+
             " (SELECT t1.* FROM gx_posts t1 WHERE t1.id = (SELECT t2.id FROM gx_posts t2 WHERE t2.user_id = t1.user_id  ORDER BY t2.id DESC LIMIT 1) ) c,  gx_users u, gx_friends_category fc WHERE a.user_id = b.receiver_id AND a.user_id = c.user_id AND a.user_id = u.id AND a.user_id = fc.friend_id AND fc.category_id='"+catId+"' GROUP BY a.user_id ORDER BY c.id desc";
 
         return query;

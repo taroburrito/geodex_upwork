@@ -37,6 +37,7 @@ export default class Profile extends Component {
        this.handleClickPostComment = this.handleClickPostComment.bind(this);
        this.onSlide = this.onSlide.bind(this);
        this.loadMorePosts = this.loadMorePosts.bind(this);
+       this.handleOnClickSendEmail = this.handleOnClickSendEmail.bind(this);
 
 
 
@@ -811,6 +812,86 @@ renderPostImageModal(){
 );
 }
 
+resetEmailForm(){
+   this.refs.Subject.getDOMNode().value = '';
+   this.refs.emailBody.getDOMNode().value = '';
+   this.setState({errorMessage:null});
+ }
+
+
+handleOnClickEmailIcon(email){ 
+      this.refs.sendto.getDOMNode().value = email;
+      this.resetEmailForm();
+     // console.log(email);
+  }
+
+renderSendEmailModel(){
+   const{dashboardData} = this.props;
+   var errorLabel;
+   if(this.state.showMessage){
+   if(this.state.errorMessage && this.state.errorMessage.sendEmail){
+       errorLabel = (
+         <div className="uk-alert uk-alert-danger"><p>{this.state.errorMessage.sendEmail}</p></div>
+       )
+     }
+     else if (dashboardData && dashboardData.error) {
+       errorLabel = (
+         <div className="uk-alert uk-alert-danger"><p>{dashboardData.error}</p></div>
+       )
+     }else if (dashboardData && dashboardData.success) {
+       errorLabel = (
+         <div className="uk-alert uk-alert-success"><p>{dashboardData.success}</p></div>
+       )
+     }
+   }
+   return(
+     <div id="sendEmail" className="uk-modal" ref="modal" >
+          <div className="uk-modal-dialog">
+             <button type="button" className="uk-modal-close uk-close" onClick={this.pauseAllYoutube}></button>
+
+             <div className="uk-modal-header">
+                 <h3>Send Email</h3>
+             </div>
+             {errorLabel}
+            <form className="uk-form">
+                   <div className="uk-form-row">
+                       <input className="uk-width-1-1 uk-form-large" placeholder="To" type="text" ref="sendto" disabled="disabled"/>
+                   </div>
+                   <div className="uk-form-row">
+                       <input className="uk-width-1-1 uk-form-large" placeholder="Subject" type="text" ref="Subject"/>
+                   </div>
+                   <div className="uk-form-row">
+                      <textarea className="uk-width-1-1 uk-form-large" placeholder="Body" rows="8" ref="emailBody"></textarea>
+
+                   </div>
+                   <div className="uk-form-row">
+                       <a className="uk-button uk-button-primary uk-button-large" onClick={this.handleOnClickSendEmail}>Send Mail</a>
+                   </div>
+               </form>
+          </div>
+        </div>
+   );
+ }
+
+ handleOnClickSendEmail(){
+   const{userAuthSession} = this.props;
+   var to = this.refs.sendto.getDOMNode().value;
+   var from = userAuthSession.userObject.email;
+   var subject = this.refs.Subject.getDOMNode().value.trim();
+   var content = this.refs.emailBody.getDOMNode().value.trim();
+
+   if(subject == ''){
+     this.setState({errorMessage:{sendEmail:"Please enter subject"}});
+   }else if (content == '') {
+     this.setState({errorMessage:{sendEmail:"Please enter content"}});
+   }else {
+   this.props.sendEmail(from,to,subject,content);
+   this.setState({errorMessage:null});
+   }
+   this.setState({showMessage:true});
+
+ }
+
 renderPostContentModal(){
   const{userAuthSession} = this.props;
   var user = userAuthSession.userObject;
@@ -878,7 +959,15 @@ renderPostContentModal(){
                       {(userAuthSession.userObject.id != this.props.profileId)? this.renderAddFriendLink(): null}
                     <h3 className="name-heading">{userProfileData.first_name} {userProfileData.last_name}</h3>
                     <h4>{userProfileData.address}</h4>
-                    <h5>{userProfileData.email} <i className="uk-icon-envelope"></i></h5>
+                    {/*<h5>{userProfileData.email} <i className="uk-icon-envelope"></i></h5>*/}
+                    {(userAuthSession.userObject.id != this.props.profileId)? 
+                         <a data-uk-modal="{target:'#sendEmail'}"  onClick={this.handleOnClickEmailIcon.bind(this,userProfileData.email)} data={userProfileData.email}  href="javascript:void(0)" className="">
+                    {userProfileData.email}
+                    </a>
+                      : <h5>{userProfileData.email}</h5>
+                    }
+                    
+                   
                     </div>
                     </div>
                   </div>
@@ -919,6 +1008,7 @@ renderPostContentModal(){
         </div>
         {this.renderPostImageModal()}
         {this.renderPostContentModal()}
+        {this.renderSendEmailModel()}
       </div>
 
       );

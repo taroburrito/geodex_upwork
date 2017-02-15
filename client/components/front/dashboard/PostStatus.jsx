@@ -101,7 +101,8 @@ export default class PostStatus extends Component {
   }
 
   handleImageChange(evt) {
-
+      this.handleClickImgIcon();
+      var modal = UIkit.modal("#statusImageModel");
       var imgLength = evt.target.files.length;
       var images = [];
       if(imgLength <= 4){
@@ -111,10 +112,15 @@ export default class PostStatus extends Component {
       this.setState({uploadImages:images});
       this.setState({uploadedIndex:0});
       var file = evt.target.files[0];
-
         this.previewImage(file);
       }else {
         this.props.addAlert("","You can choose maximum four images at a time");
+      }
+
+      if(imgLength > 0){
+        modal.show();
+      }else{
+        modal.hide();
       }
 
 
@@ -133,8 +139,8 @@ export default class PostStatus extends Component {
               var width = img.naturalWidth,
                   height = img.naturalHeight;
 
-                  if(width < 560){
-                    self.props.addAlert("","Upload image of min width 560px.");
+                  if(width < 250){
+                    self.props.addAlert("","Upload image of min width 250px.");
                     var modal = UIkit.modal("#statusImageModel");
                     modal.hide();
                     self.setState({uploadImages:null,uploadedIndex:null,showCropTool:false});
@@ -420,8 +426,10 @@ reader.readAsDataURL(file);
            </label>
            <a className="uk-button uk-button-primary uk-button-large" onClick={this.handleSavePost}>Post</a>
            <div className="yt_img">
-             <i data-uk-tooltip title="Upload Image" className="uk-icon-image" data-uk-modal="{target:'#statusImageModel'}" style={{cursor:"pointer"}} onClick={this.handleClickImgIcon}></i>
-
+            <label className="fileContainer">
+             <i data-uk-tooltip title="Upload Image" className="uk-icon-image"  style={{cursor:"pointer"}} ></i>
+             <input type="file"  ref="file" className="uk-float-left"  onChange={this.handleImageChange.bind(this)} multiple={true}/>
+             </label>
            </div>
 
           </div>

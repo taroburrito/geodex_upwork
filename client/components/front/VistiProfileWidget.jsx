@@ -28,6 +28,8 @@ export default class VisitProfileWidget extends Component {
                         fetchComments={this.props.fetchComments}
                         postComment={this.props.postComment}
                         deletePost={this.props.deletePost}
+                        sendEmail={this.props.sendEmail}
+                       dashboardData={this.props.dashboardData}
                         />
 
                     </div>

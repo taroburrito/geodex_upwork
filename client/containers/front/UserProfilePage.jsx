@@ -6,7 +6,7 @@ import {getVisitedUserDetail} from '../../utilities/ServerSocket';
 import {fetchCommentsByPost,postComment,deletePost} from '../../actions/PostActions';
 
 import { clickAddFriend,fetchUserProfile, reloadingProfilePage,clickAcceptRequest, clickDenyFriendRequest } from '../../actions/ProfileActions';
-
+import {sendEmailFromDashboard} from '../../actions/UserActions';
 export default class UserProfilePage extends Component {
   constructor(props, context) {
     super(props);
@@ -42,6 +42,10 @@ export default class UserProfilePage extends Component {
          dispatch(fetchCommentsByPost(postId))}
         postComment = {(req)=>dispatch(postComment(req))}
         deletePost={(postId)=>dispatch(deletePost(postId))}
+
+        sendEmail={(to,from,content)=>
+        dispatch(sendEmailFromDashboard(to,from,content))}
+        dashboardData={this.props.dashboardData}
          />
       </div>
     );
@@ -61,6 +65,7 @@ function select(state) {
     userAuthSession: state.userAuthSession,
     visitedUser: state.visitedUser,
     comments:state.postComments,
+    dashboardData:state.dashboardData,
   };
 }
 
