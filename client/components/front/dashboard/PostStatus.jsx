@@ -293,7 +293,8 @@ reader.readAsDataURL(file);
    if(this.state.image){
 
      if(this.state.uploadImages && (this.state.uploadImages.length > this.state.uploadedIndex+1)){
-       var saveText = "Save&Next";
+       //var saveText = "Save&Next";
+       var saveText = "Next";
      }else{
        var saveText = "Save";
      }
@@ -383,7 +384,7 @@ reader.readAsDataURL(file);
 
              <input className="uk-checkbox" type="checkbox" ref="isCheck" onChange={this.handleClickCheckBox} checked={(this.state.isNewsChecked == 'yes')? true:false}/> News
              </div>
-               <button className="uk-button uk-modal-close" type="button" onClick={this.handleClickCancelPost}>Cancel</button>
+               <button className="uk-button uk-button-primary uk-modal-close" type="button" onClick={this.handleClickCancelPost}>Cancel</button>
                {saveBtn}
            </div>
 

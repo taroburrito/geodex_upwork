@@ -483,7 +483,7 @@ form.uk-search.search_dash_nav {
     background: #fff none repeat scroll 0 0;
     border-radius: 3px;
     margin-top: 5px;
-    width: 30%;
+    width: 31.5%;
     margin-left: .2%;
 }
 
@@ -810,7 +810,7 @@ form.uk-search.search_dash_nav {
 }
 
 .profile_post_right{
- background: rgba(0, 0, 0, 0) url("../images/divider_post.jpg") repeat-y scroll left top;
+ /*background: rgba(0, 0, 0, 0) url("../images/divider_post.jpg") repeat-y scroll left top;*/
   }
 
 .post_control a {
@@ -1090,7 +1090,7 @@ ul.placesSuggest_suggests {
   margin-top: 0;
   padding: 0;
   position: absolute;
-  width: 98%;
+  width: 91%;
   z-index: 1;
   box-shadow: 5px 5px 5px rgba(0,0,0,0.2);
   border-radius: 0 0 5px 5px;
@@ -1491,7 +1491,8 @@ form.uk-search.search_dash_nav {
 }
 
 .af_border a {
-  color:#666666;
+    color: #666666;
+    text-transform: capitalize;
 }
 
 .slider_image {
@@ -2883,8 +2884,8 @@ figcaption.uk-overlay-panel.uk-overlay-background.uk-overlay-bottom p {
 
 a.pro_i img {
     width: 42px;
+    border-radius: 50%;
 }
-
 
 .uk-grid.uk-grid-small.below_gray_s {
     width: 100%;
@@ -2951,9 +2952,35 @@ a.pro_i img {
 
 
 .pro_right a {
-    color: #fff;
+    color: #333;
     font-family: open sans;
     font-size: 15px;
     margin: 10px 0;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.9);
+    text-shadow: none;
+    margin-right: 10px;
+    border: none;
+}
+
+span.placesSuggest_suggestLabel {
+    padding-right: 5px;
+}
+
+
+
+.uk-button.uk-button-primary {
+    border-radius: 3px;
+    background: #e5e5e5;
+    border: none;
+    color: #333333;
+    text-shadow: none;
+}
+
+
+.uk-button.uk-button-primary:hover  {
+  background: #009dd8;
+  color:#fff;
+}
+
+.dash_top_head .uk-width-small-1-2 {
+    padding-left: 10px;
 }
