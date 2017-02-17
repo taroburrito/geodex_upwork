@@ -189,7 +189,7 @@ export default class FriendsList extends Component {
         }
         //console.log(item);
 
-        if(post_image && item.is_news !='yes'){
+        if(post_image && item.is_news !='yes' && item.link == ''){
         friendElement.push(
             <div key={item.i} className="slider_image uk-grid-small uk-grid-width-medium-1-1">
               <figure className="uk-overlay uk-overlay-hover">
@@ -610,7 +610,7 @@ _myImageGalleryRenderer(item) {
  __renderRecentPost(user_id){
    const{dashboardData} = this.props;
    var friendsPost = dashboardData.friends_post;
-   if(friendsPost[user_id]){
+   if(friendsPost && friendsPost[user_id]){
      var item = friendsPost[user_id];
      var profile_link = "/user/"+user_id;
      var content = item.post_content;
@@ -802,7 +802,7 @@ _myImageGalleryRenderer(item) {
 
             <div className="uk-grid uk-grid-small below_gray_s">
 
-            <div  className={(dashboardData.friends_post[user_id])?"uk-width-small-1-2":"uk-width-small-1-1"}>
+            <div  className={(dashboardData.friends_post && dashboardData.friends_post[user_id])?"uk-width-small-1-2":"uk-width-small-1-1"}>
 
               <div className="uk-grid uk-grid-small top_usinfo">
                     <div className="uk-width-1">
