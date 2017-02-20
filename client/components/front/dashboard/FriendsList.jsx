@@ -216,8 +216,10 @@ export default class FriendsList extends Component {
 
 
       const settings = {
-        slidesToShow:3,
+        slidesToShow:2,
         infinite:false,
+        slidesToScroll:1,
+        variableWidth:true
        // slikGoTo:this.state.currentSlide
       };
       return(
