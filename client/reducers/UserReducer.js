@@ -65,7 +65,7 @@ export function getAllFriendsList(friendsListState={}, action){
         const newState = Object.assign([], friendsListState);
         //console.log(newState);
         //console.log(action);
-        //delete newState.friendsList["'"+action.id+"'"];
+        delete newState.friendsList["'"+action.id+"'"];
         //newState.friendsList.splice(action.id, 1);
         return Object.assign({}, newState);
         break;

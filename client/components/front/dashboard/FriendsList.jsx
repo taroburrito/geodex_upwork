@@ -223,7 +223,7 @@ export default class FriendsList extends Component {
       // };
 
       const settings = {
-        slidesToShow:3,
+        slidesToShow:1,
         infinite:false,
        // slikGoTo:this.state.currentSlide
       };
