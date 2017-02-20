@@ -328,10 +328,11 @@ var userModel = {
 
     getAllFriends: function(userId, callback){
       var dbConnection = dbConnectionCreator();
-      var getUserFriendsListSqlString = constructgetUserFriendsListSqlString(userId);
+      var getUserFriendsListSqlString = constructgetSortedUserFriendsListSqlString(userId);
       var getAllCategorisedFriendSqlString = constructGetAllCategorisedFriendSqlString(userId);
     //  dbConnection.end(); return(callback({error: getUserFriendsListSqlString}));
       //console.log("ANGEL: getting user details");
+      //return(callback(getUserFriendsListSqlString));
       dbConnection.query(getUserFriendsListSqlString, function (error, results, fields) {
           if (error) {
 
@@ -342,7 +343,7 @@ var userModel = {
           } else {
             var friends = {};
             results.forEach(function (result) {
-                friends[result.id] = userModel.convertRowsToUserProfileObject(result);
+                friends["'"+result.id+"'"] = userModel.convertRowsToUserProfileObject(result);
             });
 
             dbConnection.query(getAllCategorisedFriendSqlString,function(error1,results1,fields1){
@@ -1238,6 +1239,19 @@ function constructGetUserProfileSqlString(userId) {
 
     return query;
 
+}
+
+function constructgetSortedUserFriendsListSqlString(userId){
+   var query = "SELECT gfl.*,gu.email, gud.user_id, gud.first_name, gud.last_name, gud.address, gud.profile_image from gx_friends_list as gfl"+
+  " left join gx_user_details as gud on gfl.receiver_id = gud.user_id"+
+  " left join gx_users as gu on gu.id = gud.user_id"+
+  " WHERE  gfl.sender_id="+ mysql.escape(userId)+" Union"+
+  " SELECT gfl.*, gu.email,gud.user_id, gud.first_name, gud.last_name, gud.address, gud.profile_image from gx_friends_list as gfl"+
+  " left join gx_user_details as gud on gfl.sender_id = gud.user_id"+
+   " left join gx_users as gu on gu.id = gud.user_id"+
+  " WHERE   gfl.receiver_id="+ mysql.escape(userId)+" AND gu.status='active'"+" ORDER BY last_name";
+
+  return query;
 }
 
 function constructgetUserFriendsListSqlString(userId){
