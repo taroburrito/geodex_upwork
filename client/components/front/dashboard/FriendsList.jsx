@@ -214,19 +214,19 @@ export default class FriendsList extends Component {
 
       });
 
-        const settings = {
-        slidesToShow:2,
-        infinite:false,
-        slidesToScroll:1,
-      //  variableWidth:true
-       // slikGoTo:this.state.currentSlide
-      };
-
-      // const settings = {
-      //   slidesToShow:3,
+      //   const settings = {
+      //   slidesToShow:2,
       //   infinite:false,
+      //   slidesToScroll:1,
+      //   variableWidth:true
       //  // slikGoTo:this.state.currentSlide
       // };
+
+      const settings = {
+        slidesToShow:3,
+        infinite:false,
+       // slikGoTo:this.state.currentSlide
+      };
       return(
        <div>
          <Slider {...settings}>
