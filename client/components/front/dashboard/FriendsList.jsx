@@ -189,7 +189,7 @@ export default class FriendsList extends Component {
         }
         //console.log(item);
 
-        if(post_image && item.is_news !='yes' && item.link == ''){
+        if(post_image && item.is_news !='yes' && !item.link){
         friendElement.push(
             <div key={item.i} className="slider_image uk-grid-small uk-grid-width-medium-1-1">
               <figure className="uk-overlay uk-overlay-hover">
