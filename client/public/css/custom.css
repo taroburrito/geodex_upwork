@@ -1313,6 +1313,10 @@ p.text-align-left .uk-button-large {
 .af_border img {
   background: #fff none repeat scroll 0 0;
   border-right: 1px solid #eee;
+      border-radius: 5px;
+}
+.profile_page_pic img {
+    border-radius: 5px;
 }
 
 .add-friend-button{
@@ -1877,6 +1881,7 @@ img.uk-float-right.img_margin_left {
 
 .uk-comment-avatar{
   border: 1px solid #e5e5e5;
+      border-radius: 5px;
 }
 
 .dash_botom_list.bg_gry_lr {
@@ -2816,6 +2821,7 @@ small.user_location {
 
 .my_profile .user_img_left img {
     max-width: 100%;
+        border-radius: 5px;
 }
 
 
@@ -2884,7 +2890,7 @@ figcaption.uk-overlay-panel.uk-overlay-background.uk-overlay-bottom p {
 
 a.pro_i img {
     width: 42px;
-    border-radius: 50%;
+    border-radius: 5px;
 }
 
 .uk-grid.uk-grid-small.below_gray_s {
